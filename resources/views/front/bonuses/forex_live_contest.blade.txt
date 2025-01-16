@@ -1,0 +1,51 @@
+@extends('front.layout.app')
+
+@section('main_content')
+<div class="page-top">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h2>Forex Live Contest</h2>
+                <nav class="breadcrumb-container">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Forex Live Contest</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="page-content">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <!-- Check if there are any Forex Live Contest bonuses -->
+                @if($forexBonuses->isEmpty())
+                    <div class="alert alert-warning" role="alert">
+                        No Forex Live Contest bonuses available at the moment.
+                    </div>
+                @else
+                    <!-- Displaying forex live contest list -->
+                    <ul class="list-group">
+                        @foreach($forexBonuses as $bonus)
+                            @if($bonus->promo_type === 'Forex Live Contest')
+                                <li class="list-group-item">
+                                    <h4>{{ $bonus->name }}</h4>
+                                    <p>{{ $bonus->description }}</p>
+                                    <p><strong>Deposit Method:</strong> {{ $bonus->deposit_method }}</p>
+                                    <p><strong>Contest Details:</strong> {{ $bonus->bonus_details }}</p>
+                                </li>
+                            @endif
+                        @endforeach
+                    </ul>
+
+                    <!-- Pagination links -->
+                    {{ $forexBonuses->links() }}
+                @endif
+            </div>
+        </div>
+    </div>
+</div>
+@endsection

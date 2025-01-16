@@ -1,0 +1,50 @@
+@extends('front.layout.app')
+
+@section('main_content')
+<div class="page-top">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h2>Forex No Deposit Bonus</h2>
+                <nav class="breadcrumb-container">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Forex No Deposit Bonus</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="page-content">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h2 class="section_title">No Deposit Bonus</h2>
+            </div>
+
+            @foreach ($forexBonuses as $bonus)
+            <div class="col-md-3 mb-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title">{{ $bonus->title }}</h5>
+                    </div>
+                    <div class="card-body">
+                        <!-- <p><strong>Author:</strong> {{ $bonus->author_name }}</p>
+                        <p><strong>Promo Type:</strong> {{ $bonus->promo_type }}</p>
+                        <p><strong>Description:</strong> {{ Str::limit(strip_tags($bonus->description), 100) }}</p> -->
+                        @if ($bonus->feature_image)
+                        <img src="{{ Storage::url($bonus->feature_image) }}" alt="Feature Image" class="bonus-image img-fluid mb-3">
+                        @else
+                        <p>No image available.</p>
+                        @endif
+                        <a href="{{ $bonus->link }}" target="_blank" class="btn btn-primary">View Details</a>
+                    </div>
+                </div>
+            </div>
+            @endforeach
+        </div>
+    </div>
+</div>
+@endsection
