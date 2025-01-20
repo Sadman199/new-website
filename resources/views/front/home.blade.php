@@ -66,7 +66,6 @@ $current_language_id = \App\Models\Language::where('short_name', $current_short_
             @endif
         </div>
     </div>
-
     <div class="news_ticker_wrapper" style="position: relative; width: 100%; height: 85px;">
   <iframe
     id="news_ticker_iframe"
@@ -76,7 +75,6 @@ $current_language_id = \App\Models\Language::where('short_name', $current_short_
     height="85"
     style="border: unset;"
   ></iframe>
-
   <!-- Invisible Overlay to capture clicks -->
   <a
     href="https://oneroyal.com/en/open-account/sign-up"

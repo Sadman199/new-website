@@ -567,8 +567,6 @@
             </div>
         </div>
    </section>
-
-
    <section class="testimonial_review">
         <div class="container">
             <div class="row">
@@ -693,6 +691,4 @@
         });
     </script>
 </div>
-
-
 @endsection

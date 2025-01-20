@@ -13,15 +13,13 @@ $global_categories = \App\Models\Category::with('rSubCategory')->where('show_on_
             <img src="{{ asset('uploads/'.$global_setting_data->logo) }}" alt="Logo" id="navbarLogo">
             </a>
         </div>
-
         <!-- Toggle Button -->
         <button class="navbar-toggler custom-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
             aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="toggler-icon"></span>
-        <span class="toggler-icon"></span>
-        <span class="toggler-icon"></span>
-    </button>
-
+                <span class="toggler-icon"></span>
+                <span class="toggler-icon"></span>
+                <span class="toggler-icon"></span>
+        </button>
 
         <!-- Navbar Content -->
         <div class="collapse navbar-collapse justify-content-end" id="navbarSupportedContent">
