@@ -27,12 +27,12 @@
 <div class="page-content s_padding">
     <div class="container">
         <div class="row">
-            <div class="col-lg-9 col-md-6">
+            <div class="col-lg-9 col-md-12">
                 <div class="category-page">
                     <div class="row">
                         @if($post_data->isNotEmpty())
                             @foreach($post_data as $item)
-                                <div class="col-lg-4 col-md-12">
+                                <div class="col-lg-4 col-md-6">
                                     <div class="site_card">
                                         <div class="c_card_image">
                                             <div class="tag_card">{{ $sub_category_data->sub_category_name }}</div>
@@ -89,7 +89,6 @@
             </div>
         </div>
     </div>
-
     <section class="site_add">
         @if($home_ad_data->above_footer_ad_status == 'Show' || $home_ad_data->above_search_ad_status == 'Show')
             <div class="container">

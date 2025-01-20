@@ -119,29 +119,34 @@ $current_language_id = \App\Models\Language::where('short_name',$current_short_n
         <div class="archive">
             @php
                 $archive_array = [];
-                $all_post_data = \App\Models\Post::orderBy('id','desc')->get();
+                $all_post_data = \App\Models\Post::orderBy('id', 'desc')->get();
                 foreach($all_post_data as $row) {
                     $ts = strtotime($row->created_at);
-                    $month = date('m',$ts);
-                    $month_full = date('F',$ts);
-                    $year = date('Y',$ts);
-                    $archive_array[] = $month.'-'.$month_full.'-'.$year;
+                    $month = date('m', $ts);
+                    $month_full = date('F', $ts);
+                    $year = date('Y', $ts);
+                    $archive_array[] = $month . '-' . $month_full . '-' . $year;
                 }
                 $archive_array = array_values(array_unique($archive_array));
             @endphp
-            <form action="{{ route('archive_show') }}" method="post">
+            <form action="{{ route('archive_show') }}" method="post" class="custom-archive-form">
                 @csrf
-                <select name="archive_month_year" class="form-select" onChange="this.form.submit()">
-                    <option value="">{{ SELECT_MONTH }}</option>
-                    @for($i=0;$i<count($archive_array);$i++)
-                        @php
-                            $temp_arr = explode('-',$archive_array[$i]);
-                        @endphp
-                        <option value="{{ $temp_arr[0].'-'.$temp_arr[2] }}">{{ $temp_arr[1] }}, {{ $temp_arr[2] }}</option>
-                    @endfor
-                </select>
+                <div class="custom-select-container">
+                    <select name="archive_month_year" class="custom-select" onChange="this.form.submit()">
+                        <option value="">{{ SELECT_MONTH }}</option>
+                        @for($i = 0; $i < count($archive_array); $i++)
+                            @php
+                                $temp_arr = explode('-', $archive_array[$i]);
+                            @endphp
+                            <option value="{{ $temp_arr[0] . '-' . $temp_arr[2] }}">
+                                {{ $temp_arr[1] }}, {{ $temp_arr[2] }}
+                            </option>
+                        @endfor
+                    </select>
+                </div>
             </form>
         </div>
+
     </div>
     <div class="widget s_w_c">
         @foreach($global_sidebar_bottom_ad as $row)

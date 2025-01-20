@@ -431,9 +431,10 @@
                     </div>
 
                     <div class="col-md-3">
-                         <!-- Associated Countries -->
+                        <!-- Associated Countries -->
                         <div class="form-group">
                             <label for="associated_countries">Associated Countries</label>
+
                             <!-- Checkbox for Asian -->
                             <div>
                                 <label>
@@ -478,16 +479,62 @@
                             <div>
                                 <label>
                                     <input type="checkbox" name="associated_countries[]" value="South Africa"
-                                        {{ in_array('South Africa', old('associated_countries', [])) ? 'checked' : '' }}> South
-                                    Africa
+                                        {{ in_array('South Africa', old('associated_countries', [])) ? 'checked' : '' }}> South Africa
                                 </label>
                             </div>
 
-                            <!-- Add more countries in similar fashion -->
+                            <!-- Checkbox for Germany -->
+                            <div>
+                                <label>
+                                    <input type="checkbox" name="associated_countries[]" value="Germany"
+                                        {{ in_array('Germany', old('associated_countries', [])) ? 'checked' : '' }}> Germany
+                                </label>
+                            </div>
+
+                            <!-- Checkbox for France -->
+                            <div>
+                                <label>
+                                    <input type="checkbox" name="associated_countries[]" value="France"
+                                        {{ in_array('France', old('associated_countries', [])) ? 'checked' : '' }}> France
+                                </label>
+                            </div>
+
+                            <!-- Checkbox for India -->
+                            <div>
+                                <label>
+                                    <input type="checkbox" name="associated_countries[]" value="India"
+                                        {{ in_array('India', old('associated_countries', [])) ? 'checked' : '' }}> India
+                                </label>
+                            </div>
+
+                            <!-- Checkbox for China -->
+                            <div>
+                                <label>
+                                    <input type="checkbox" name="associated_countries[]" value="China"
+                                        {{ in_array('China', old('associated_countries', [])) ? 'checked' : '' }}> China
+                                </label>
+                            </div>
+
+                            <!-- Checkbox for Japan -->
+                            <div>
+                                <label>
+                                    <input type="checkbox" name="associated_countries[]" value="Japan"
+                                        {{ in_array('Japan', old('associated_countries', [])) ? 'checked' : '' }}> Japan
+                                </label>
+                            </div>
+
+                            <!-- Checkbox for Brazil -->
+                            <div>
+                                <label>
+                                    <input type="checkbox" name="associated_countries[]" value="Brazil"
+                                        {{ in_array('Brazil', old('associated_countries', [])) ? 'checked' : '' }}> Brazil
+                                </label>
+                            </div>
 
                             @error('associated_countries')<small class="text-danger">{{ $message }}</small>@enderror
                         </div>
                     </div>
+
 
                     <div class="col-md-3">
                         <!-- VPS Hosting (Boolean) -->

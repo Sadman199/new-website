@@ -20,8 +20,10 @@
         <link rel="icon" type="image/png" href="{{ asset('uploads/'.$global_setting_data->favicon) }}">
 
         @include('front.layout.styles')
-        
         @include('front.layout.scripts')
+        @include('front.layout.responsive')
+
+
 
         <link href="https://fonts.googleapis.com/css2?family=Maven+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
 
@@ -137,7 +139,7 @@
         <div class="footer">
             <div class="container">
                 <div class="row">
-                    <div class="col-md-3">
+                    <div class="col-lg-3 col-md-4">
                         <div class="f_item">
                             <h2 class="heading">Forex Demo Contest</h2>
                             @if($demoContest->isNotEmpty())
@@ -158,7 +160,7 @@
                             </ul>
                         </div>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-lg-3 col-md-4">
                         <div class="f_item">
                             <h2 class="heading">Forex Live Contest</h2>
                             @if($liveContest->isNotEmpty())
@@ -184,7 +186,7 @@
 
                         </div>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-lg-3 col-md-4">
                         <div class="f_item">
                             <h2 class="heading">Forex Cashback Rebate</h2>
                             @if($forexCashbackRebate->isNotEmpty())
@@ -205,7 +207,7 @@
 
                         </div>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-lg-3 col-md-4">
                         <div class="f_item">
                             <h2 class="heading">Crypto Bonus Promotion</h2>
                             @if($cryptoBonusPromotion->isNotEmpty())
@@ -229,13 +231,13 @@
 
                         </div>
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-lg-6 col-md-4">
                         <div class="f_item">
                         <h2 class="heading">Meet Brokers Court: Your Forex Guide</h2>
                         <p class="f_dec">Brokers Court is your trusted guide in the world of forex trading. We specialize in promoting top-tier forex brokers, providing in-depth reviews, exclusive promotions, and unbiased insights to help traders make informed decisions. Whether you're a seasoned professional or a beginner, Brokers Court empowers you with the resources and knowledge to succeed in the competitive forex market.</p>
                         </div>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-lg-3 col-md-4">
                         <div class="f_item">
                             <h2 class="heading">{{ FOOTER_COL_2_HEADING }}</h2>
                             <ul class="useful-links">
@@ -272,7 +274,7 @@
 
                         </div>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-lg-3 col-md-4">
                         <div class="f_item">
                             <h2 class="heading">{{ FOOTER_COL_3_HEADING }}</h2>
                             <div class="list-item">

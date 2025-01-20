@@ -7,8 +7,8 @@
 <div class="page-top">
     <div class="breadcrumb_wrapper">
         <div class="container">
-            <div class="row">
-                <div class="col-md-12">
+            <div class="row d-flex align-items-center justify-content-center">
+                <div class="col-md-7">
                    <div class="hero-content">
                     <h2 class="b_c_h">{{ $bonus->title }}</h2>
                         <nav>
@@ -17,8 +17,7 @@
                                 <li class="breadcrumb-item">
                                     <a href="{{ $promo_route }}">{{ $promo_type }}</a>
                                 </li>
-                                <li class="breadcrumb-item active" aria-current="page">{{ Str::limit($bonus->title, 50) }}
-                                </li>
+                              
                             </ol>
                         </nav>
                    </div>
@@ -34,7 +33,7 @@
                         <div class="bonus-card">
                             <div class="bonus-card-header">
                                 <div class="row">
-                                    <div class="col-md-2 d-flex flex-column justify-content-center align-items-center">
+                                    <div class="col-lg-2 col-md-4 d-flex flex-column justify-content-center align-items-center">
                                         @if ($bonus->feature_image)
                                         <img src="{{ asset($bonus->feature_image) }}" class="bonus-image" alt="Feature Image">
                                         @else
@@ -42,7 +41,7 @@
                                         @endif
                                     </div>
 
-                                    <div class="col-md-7 d-flex flex-column justify-content-center align-items-center">
+                                    <div class="col-lg-7 col-md-8 d-flex flex-column justify-content-center align-items-center">
                                         <div class="b_p_w">
                                         <div class="bonus-prize-wrapper">
                                             <!-- Image with rounded "Prize" text -->
@@ -70,26 +69,24 @@
                                         </div>
                                     </div>
 
-                                    <div class="col-lg-3 d-flex justify-content-center align-items-center">
-                                        <div class="bonus-details-card">
-                                            <div class="detail-item">
+                                    <div class="col-lg-3 col-12 d-flex justify-content-lg-center align-items-lg-center flex-column">
+                                        <div class="bonus-details-card p-3 w-100">
+                                            <div class="detail-item mb-2">
                                                 <strong>Author:</strong>
                                                 <span>{{ strip_tags($bonus->author_name) }}</span>
                                             </div>
-                                            <div class="detail-item">
+                                            <div class="detail-item mb-2">
                                                 <strong>Publish Date:</strong>
                                                 <span>{{ strip_tags($bonus->publish_date) }}</span>
                                             </div>
-                                            <div class="detail-item">
+                                            <div class="detail-item mb-2">
                                                 <strong>Bonus Type:</strong>
                                                 <span>{{ strip_tags($bonus->promo_type) }}</span>
                                             </div>
-                                            <div class="detail-item">
+                                            <div class="detail-item mb-2">
                                                 <strong>Bonus Category:</strong>
                                                 <span>{{ strip_tags($bonus->bonus_category) }}</span>
                                             </div>
-
-
                                         </div>
                                     </div>
                                 </div>
@@ -99,7 +96,7 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-lg-3">
+                <div class="col-lg-3 col-md-12">
                     <div class="broker-sticky-container">
                         <div class="side_bar_add">
                             <span class="l_b_h"> Octa Deposit Bonus</span> @foreach($global_sidebar_top_ad as $row) <div class="ad-sidebar"> @if($row->sidebar_ad_url == '') <img src="{{ asset('uploads/'.$row->sidebar_ad) }}" alt=""> @else <a href="{{ $row->sidebar_ad_url }}">
@@ -118,7 +115,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-md-6">
+                <div class="col-lg-6 col-md-12">
                     <!-- Participation Details -->
                     <div class="b_c_wrapper">
                         <h3 class="r_v_h">Participation Details</h3>
@@ -150,15 +147,11 @@
                         <p class="t_d">{{ strip_tags($bonus->description) }}</p>
                     </div>
                     <!-- Links -->
-                    <div class="b_c_wrapper">
+                    <!-- <div class="b_c_wrapper">
                         <h3 class="r_v_h">Links</h3>
                         <ul class="list-unstyled">
                             <li>
                                 <strong>Terms & Conditions:</strong>
-                                <a href="{{ $bonus->terms_conditions_url }}" target="_blank"
-                                    class="text-decoration-none">
-                                    View Terms
-                                </a>
                             </li>
                             <li>
                                 <strong>Affiliate Link:</strong>
@@ -173,11 +166,11 @@
                                 </a>
                             </li>
                         </ul>
-                    </div>
+                    </div> -->
                 </div>
 
                 <!-- Sidebar -->
-                <div class="col-lg-3 col-md-4">
+                <div class="col-lg-3 col-md-12">
                     <div class="broker-sticky-container">
                         <div class="sidebar">
                             <div class="recent-bonuses">

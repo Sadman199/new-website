@@ -15,10 +15,13 @@ $global_categories = \App\Models\Category::with('rSubCategory')->where('show_on_
         </div>
 
         <!-- Toggle Button -->
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+        <button class="navbar-toggler custom-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
             aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
+        <span class="toggler-icon"></span>
+        <span class="toggler-icon"></span>
+        <span class="toggler-icon"></span>
+    </button>
+
 
         <!-- Navbar Content -->
         <div class="collapse navbar-collapse justify-content-end" id="navbarSupportedContent">
@@ -72,66 +75,74 @@ $global_categories = \App\Models\Category::with('rSubCategory')->where('show_on_
 
                  
                 <li class="nav-item dropdown position-static">
-                        <a class="nav-link dropdown-toggle c_nav" href="#" id="brokersDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            Brokerage Types
-                        </a>
-                        <div class="dropdown-menu custom-dropdown-menu mega-menu" aria-labelledby="brokersDropdown">
-                            <div class="row">
-                                @php
-                                    // Split accountTypes into two chunks
-                                    $accountTypeChunks = array_chunk($accountTypes, ceil(count($accountTypes) / 2));
-                                @endphp
+                    <a class="nav-link dropdown-toggle c_nav" href="#" id="brokersDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    Types of Brokers
+                    </a>
+                    <div class="dropdown-menu custom-dropdown-menu mega-menu" aria-labelledby="brokersDropdown">
+                        <div class="row">
+                            @php
+                                // Hardcode the accountTypes array with all available types
+                                $accountTypes = [
+                                    'Standard Accounts',
+                                    'Islamic Account',
+                                    'ECN Accounts',
+                                    'Classic Account',
+                                    'Copy Trading Accounts',
+                                    'VIP Accounts',
+                                    'Raw Account',
+                                    'Micro Accounts'
+                                ];
 
-                                @foreach ($accountTypeChunks as $chunk)
-                                    <div class="col-lg-6">
-                                        <div class="account-types">
-                                            <ul class="list-disc pl-5">
-                                                @foreach ($chunk as $type)
-                                                    <li>
-                                                        <a class="dropdown-item" href="{{ route('brokers.byAccountType', ['type' => strtolower(str_replace(' ', '-', $type))]) }}" class="text-lg text-blue-600 hover:text-blue-800">
-                                                            {{ $type }}
-                                                        </a>
-                                                    </li>
-                                                @endforeach
-                                            </ul>
-                                        </div>
+                                // Split accountTypes into two chunks for better layout
+                                $accountTypeChunks = array_chunk($accountTypes, ceil(count($accountTypes) / 2));
+                            @endphp
+
+                            @foreach ($accountTypeChunks as $chunk)
+                                <div class="col-lg-6">
+                                    <div class="account-types">
+                                        <ul class="list-disc pl-5">
+                                            @foreach ($chunk as $type)
+                                                <li>
+                                                    <a class="dropdown-item" href="{{ route('brokers.byAccountType', ['type' => strtolower(str_replace(' ', '-', $type))]) }}" class="text-lg text-blue-600 hover:text-blue-800">
+                                                        {{ $type }}
+                                                    </a>
+                                                </li>
+                                            @endforeach
+                                        </ul>
                                     </div>
-                                @endforeach
-                            </div>
+                                </div>
+                            @endforeach
                         </div>
-                    </li>
-
-
+                    </div>
+                </li>
 
                 <li class="nav-item dropdown position-static">
                     <a class="nav-link dropdown-toggle c_nav" href="#" id="countriesDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    Regional Brokers
+                        Regional Brokers
                     </a>
                     <div class="dropdown-menu custom-dropdown-menu mega-menu" aria-labelledby="countriesDropdown">
                         <div class="row">
                             <!-- Brokers by Country -->
                             <div class="col-lg-12">
-                                <div class="b_icon_w">
-                                    <i class="fas fa-flag c_b_icon"></i>
-                                    <span>Brokers by Country:</span>
-                                </div>
                                 <div class="row">
                                     @php
-                                        $countries = $brokers->pluck('associated_countries')
-                                            ->flatten()
-                                            ->unique()
-                                            ->sort()
-                                            ->values();
-                                        $columns = $countries->chunk(ceil($countries->count() / 2)); // Split into 2 columns
+                                        // Define a static list of all countries
+                                        $allCountries = collect([
+                                            'Asia', 'USA', 'Canada', 'UK', 'Australia', 'South Africa', 
+                                            'Germany', 'France', 'India', 'China', 'Japan', 'Brazil'
+                                        ]);
+
+                                        // Split into 3 columns
+                                        $columns = $allCountries->chunk(ceil($allCountries->count() / 3));
                                     @endphp
 
                                     @foreach ($columns as $column)
-                                        <div class="col-md-6">
+                                        <div class="col-md-4">
                                             <ul class="list-unstyled">
                                                 @foreach ($column as $country)
                                                     <li>
                                                         <a class="dropdown-item" href="{{ route('broker_by_country', ['country' => urlencode($country)]) }}">
-                                                            Top {{ $country }} Forex Platforms
+                                                            {{ $country }} Brokers
                                                         </a>
                                                     </li>
                                                 @endforeach
@@ -143,6 +154,8 @@ $global_categories = \App\Models\Category::with('rSubCategory')->where('show_on_
                         </div>
                     </div>
                 </li>
+
+                
 
                 <!-- Categories Mega Dropdown -->
                 @foreach($global_categories->where('language_id', $current_language_id) as $item)

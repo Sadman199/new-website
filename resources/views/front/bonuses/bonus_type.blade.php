@@ -4,7 +4,6 @@
 <div id="loader-overlay">
     <div class="loader"></div>
 </div>
-
 <div class="page-top">
     <div class="b_breadcrumb_wrapper">
         <div class="container">
@@ -12,7 +11,6 @@
                 <div class="col-md-7">
                     <div class="hero-content">
                         <h2 class="b_c_h">{{ $promo_type }}</h2>
-                                
                         <nav>
                             <ol class="breadcrumb">
                                 <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
@@ -28,7 +26,7 @@
 
 <div class="page-content s_padding">
     <div class="container">
-        <div class="col-md-8">
+        <div class="col-lg-8 col-md-12">
             <div class="f_dynamic_content">
                 @if ($promo_type === 'Forex Deposit Bonus')
                         <div>
@@ -60,13 +58,13 @@
 
 
         <div class="row">
-            <div class="col-md-8">
+            <div class="col-lg-9 col-md-12">
                 @if ($forexBonuses->isEmpty())
-                    <p class="text-center text-muted">No bonuses available at the moment.</p>
+                    <p class="text-center text-muted n_a_moment_text">No bonuses available at the moment.</p>
                 @else
                     <div class="row">
                         @foreach ($forexBonuses as $bonus)
-                            <div class="col-md-6">
+                            <div class="col-lg-6 col-md-12 col-sm-12">
                                 <div class="b_blog_card horizontal-card">
                                     <div class="card-content">
                                         <div class="blog-image-wrapper">
@@ -120,7 +118,7 @@
                     </div>
                 @endif
             </div>
-            <div class="col-lg-3">
+            <div class="col-lg-3 col-md-6">
                 <div class="sidebar">
                     <div class="s_bar_wrapper">
                         <div class="side_bar_add">

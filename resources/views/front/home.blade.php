@@ -11,8 +11,8 @@ $current_language_id = \App\Models\Language::where('short_name', $current_short_
 <div id="loader-overlay">
     <div class="loader"></div>
 </div>
-<section class="hero">
-    <div class="hero_main_content">
+<section class="hero_main_content">
+    <div class="hero">
         <div class="container">
             <!-- Heading and sponsored container in flex row -->
             <div class="d-flex justify-content-between align-items-center">
@@ -29,7 +29,7 @@ $current_language_id = \App\Models\Language::where('short_name', $current_short_
             @if ($top_brokers->count() > 0)
             <div class="row">
                 @foreach($top_brokers as $broker)
-                <div class="col-md-4">
+                <div class="col-lg-4 col-md-6">
                     <div class="broker-card">
                             @if ($broker->logo)
                                 <img src="{{ asset($broker->logo) }}" alt="Broker Logo">
@@ -66,60 +66,131 @@ $current_language_id = \App\Models\Language::where('short_name', $current_short_
             @endif
         </div>
     </div>
+
+    <div class="news_ticker_wrapper" style="position: relative; width: 100%; height: 85px;">
+  <iframe
+    id="news_ticker_iframe"
+    class="news_ticker"
+    src="https://fxpricing.com/fx-widget/ticker-tape-widget.php?id=1,2,3,5,14,20&border=show&speed=50&click_target=blank&theme=transparent&by-cr=28A745&sl-cr=DC3545&flags=circle&d_mode=compact-name&column=ask,bid,spread&lang=en&font=Arial, sans-serif"
+    width="100%"
+    height="85"
+    style="border: unset;"
+  ></iframe>
+
+  <!-- Invisible Overlay to capture clicks -->
+  <a
+    href="https://oneroyal.com/en/open-account/sign-up"
+    target="_blank"
+    rel="noopener noreferrer"
+    style="
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 10; /* Make sure the overlay is on top of the iframe */
+      background: transparent;
+    "
+  ></a>
+</div>
+
+<div id="fx-pricing-widget-copyright">
+  <span>Powered by </span><a href="https://fxpricing.com/" target="_blank">FX Pricing</a>
+</div>
+
+<style type="text/css">
+  #fx-pricing-widget-copyright {
+    text-align: center;
+    font-size: 13px;
+    font-family: sans-serif;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    color: #9db2bd;
+  }
+  #fx-pricing-widget-copyright a {
+    text-decoration: unset;
+    color: #bb3534;
+    font-weight: 600;
+  }
+</style>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const tickerWrapper = document.querySelector(".news_ticker_wrapper");
+    const iframe = document.getElementById("news_ticker_iframe");
+
+    // Add a hover event to stop the scrolling (by disabling pointer events)
+    tickerWrapper.addEventListener("mouseenter", function () {
+      iframe.style.pointerEvents = "none"; // Stops interaction with iframe, effectively pausing ticker
+    });
+
+    // Add a hoverout event to resume the scrolling (by enabling pointer events)
+    tickerWrapper.addEventListener("mouseleave", function () {
+      iframe.style.pointerEvents = "auto"; // Resumes interaction with iframe, effectively starting the ticker again
+    });
+  });
+</script>
+
+
+
 </section>
 <section class="hero_content s_padding">
     <div class="container">
         <div class="row">
-            <div class="col-md-4">
-                <div class="col-lg-12">
-                    <h2 class="section_title">Deposit Bonus</h2>
+            <div class="col-lg-4 col-md-6">
+                <div class="hc_content">
+                    <div class="col-lg-12">
+                        <h2 class="section_title">Deposit Bonus</h2>
+                    </div>
+                    @foreach ($forex_bonus_data as $bonus)
+                    <ul>
+                        <li>
+                            <div class="b_card">
+                                @if ($bonus->feature_image)
+                                <img src="{{ asset($bonus->feature_image) }}" class="custom-img" alt="Feature Image">
+                                @else
+                                <p>No image available.</p>
+                                @endif
+                                <div class="card_content">
+                                    <h5 class="custom-card-title"></h5>
+                                    <a class="b_card_heading"
+                                        href="{{ route('deposit-bonuses.detail', $bonus->slug) }}">{{ Str::limit($bonus->title, 30) }}</a>
+                                    <p>{{ Str::limit(strip_tags($bonus->description), 50) }}</p>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                    @endforeach
                 </div>
-                @foreach ($forex_bonus_data as $bonus)
-                <ul>
-                    <li>
-                        <div class="b_card">
+            </div>
+            <div class="col-lg-4 col-md-6">
+                <div class="hc_content">
+                    <div class="col-lg-12">
+                        <h2 class="section_title">No Deposit Bonus</h2>
+                    </div>
+                    @foreach ($noDepositBonuses as $bonus)
+                    <ul>
+                        <li>
+                            <div class="b_card">
                             @if ($bonus->feature_image)
                             <img src="{{ asset($bonus->feature_image) }}" class="custom-img" alt="Feature Image">
                             @else
                             <p>No image available.</p>
                             @endif
-                            <div class="card_content">
-                                <h5 class="custom-card-title"></h5>
-                                <a class="b_card_heading"
-                                    href="{{ route('deposit-bonuses.detail', $bonus->slug) }}">{{ Str::limit($bonus->title, 30) }}</a>
-                                <p>{{ Str::limit(strip_tags($bonus->description), 50) }}</p>
-                            </div>
-                        </div>
-                    </li>
-                </ul>
-                @endforeach
-            </div>
-            <div class="col-md-4">
-                <div class="col-lg-12">
-                    <h2 class="section_title">No Deposit Bonus</h2>
-                </div>
-                @foreach ($noDepositBonuses as $bonus)
-                <ul>
-                    <li>
-                        <div class="b_card">
-                        @if ($bonus->feature_image)
-                        <img src="{{ asset($bonus->feature_image) }}" class="custom-img" alt="Feature Image">
-                        @else
-                        <p>No image available.</p>
-                        @endif
 
-                            <div class="card_content">
-                                <a class="b_card_heading"
-                                    href="{{ route('no-deposit-bonuses.detail', $bonus->slug) }}">{{ Str::limit($bonus->title, 20) }}</a>
-                                <p>{{ Str::limit(strip_tags($bonus->description), 50) }}</p>
+                                <div class="card_content">
+                                    <a class="b_card_heading"
+                                        href="{{ route('no-deposit-bonuses.detail', $bonus->slug) }}">{{ Str::limit($bonus->title, 20) }}</a>
+                                    <p>{{ Str::limit(strip_tags($bonus->description), 50) }}</p>
+                                </div>
                             </div>
-                        </div>
-                    </li>
-                </ul>
-                @endforeach
+                        </li>
+                    </ul>
+                    @endforeach
+               </div>
             </div>
 
-            <div class="col-md-4">
+            <div class="col-lg-4 col-md-6">
                 <ul class="nav nav-pills h_c_b_nav" id="pills-tab" role="tablist">
                     <li class="nav-item" role="presentation">
                         <button class="nav-link active" id="pills-home-tab" data-bs-toggle="pill" data-bs-target="#pills-home" type="button" role="tab" aria-controls="pills-home" aria-selected="true">{{ RECENT_NEWS }}</button>
@@ -152,7 +223,7 @@ $current_language_id = \App\Models\Language::where('short_name', $current_short_
                                             <div class="category">
                                                 <span class="badge bg-success">{{ optional($item->rSubCategory)->sub_category_name }}</span>
                                             </div>
-                                           
+                                        
 
                                             <h2>
                                                 @if($item->rSubCategory)
@@ -195,7 +266,7 @@ $current_language_id = \App\Models\Language::where('short_name', $current_short_
                                             <div class="category">
                                                 <span class="badge bg-success">{{ optional($item->rSubCategory)->sub_category_name }}</span>
                                             </div>
-                                           
+                                        
                                                 <h2>
                                                     @if($item->rSubCategory)
                                                         <a href="{{ route('news_detail', ['subcategory_slug' => $item->rSubCategory->slug, 'post_slug' => $item->slug]) }}">
@@ -249,7 +320,7 @@ $current_language_id = \App\Models\Language::where('short_name', $current_short_
             </p>
             @if ($featured_brokers->count() > 0)
             @foreach($featured_brokers as $broker)
-            <div class="col-md-3">
+            <div class="col-lg-3 col-md-6 col-12">
                 <div class="broker_card">
                     <!-- Upper Portion -->
                     <div class="broker_content">
@@ -363,7 +434,7 @@ $current_language_id = \App\Models\Language::where('short_name', $current_short_
                  @if ($best_leverage_brokers->count() > 0)
                     <div class="row">
                         @foreach($best_leverage_brokers as $broker)
-                        <div class="col-md-4 mb-4">
+                        <div class="col-lg-4 col-md-6">
                             <div class="broker-layer">
                                 <!-- Background Section -->
                                 <div class="broker-background" style="background-image: url('{{ asset($broker->logo ?? 'default-logo.png') }}');"></div>
@@ -419,7 +490,7 @@ $current_language_id = \App\Models\Language::where('short_name', $current_short_
         </div>
         <div class="row">
             @foreach($regulatedBrokers as $broker)
-            <div class="col-md-4 mb-4">
+            <div class="col-lg-4 col-md-6">
                 <div class="broker-layer">
                     <div class="broker-background" style="background-image: url('{{ asset($broker->logo ?? 'default-logo.png') }}');"></div>
                     <div class="broker-content">
@@ -511,7 +582,7 @@ $current_language_id = \App\Models\Language::where('short_name', $current_short_
 <section class="Compare_broker s_padding section-muted">
     <div class="container">
         <div class="row">
-            <div class="col-md-7">
+            <div class="col-lg-7 col-md-12">
                 <h2 class="section_title">Compare Brokers</h2>
                 <div class="compare_hub">
                     <form action="{{ route('brokers.getComparison') }}" method="POST" id="compareForm">
@@ -565,7 +636,7 @@ $current_language_id = \App\Models\Language::where('short_name', $current_short_
                     </form>
                 </div>
             </div>
-            <div class="col-md-5">
+            <div class="col-lg-5 col-md-12">
                <h2 class="section_title">Subscribe to Our Newsletter</h2>
                 <!-- Subscribe Form -->
                 <form action="{{ route('subscribe') }}" method="POST" class="subscribe-form">
@@ -594,8 +665,8 @@ $current_language_id = \App\Models\Language::where('short_name', $current_short_
         </div>
         <div class="row">
             @foreach($non_regulatedBrokers as $broker)
-            <div class="col-md-4">
-                <div class="broker-card tr_broker_card">
+            <div class="col-lg-2 col-md-4">
+                <div class="tr_broker_card">
                     <img alt="{{ $broker->name }} logo" src="{{ asset($broker->logo) }}" />
                     <div class="broker-info">
                         <div class="b_h_info">
@@ -606,16 +677,6 @@ $current_language_id = \App\Models\Language::where('short_name', $current_short_
                             <a href="{{ $broker->url }}">
                                 <i class="fas fa-chevron-right"></i>
                             </a>
-                        </div>
-                    
-                        <div class="description-wrapper">
-                            <p class="short-description r_f_c">
-                                {{ Str::limit(strip_tags($broker->short_description), 35) }}
-                            </p>
-                            <i class="info-icon fas fa-info-circle"></i>
-                            <span class="full-description">
-                                {{ strip_tags($broker->short_description) }}
-                            </span>
                         </div>
                     </div>
                 </div>

@@ -1,0 +1,420 @@
+/* Extra Small Devices (Phones) */
+@media (max-width: 576px) {
+
+    /* Styles for very small screens (e.g., phones) */
+
+    .hero {
+        height: auto;
+        background: url("/resources/business-infographics-hologram-made-by-businessman.jpg");
+        background-position: center;
+        padding: 50px 0px;
+    }
+
+    section.site_add {
+        display: none;
+    }
+
+    .hc_content {
+        margin-bottom: 40px;
+    }
+
+    .custom-img {
+        width: 60px;
+        height: 60px;
+    }
+
+    .ad-section-1 img {
+        margin-bottom: 30px;
+    }
+
+    .s_padding {
+        padding: 30px 0;
+    }
+
+    h2.section_title {
+        font-size: 22px;
+        margin-bottom: 15px;
+    }
+
+    .video_content .video-heading h2 {
+        font-size: 22px;
+        font-weight: bold;
+    }
+
+    .compare_hub {
+        margin-bottom: 40px;
+    }
+
+    .footer {
+        padding: 30px 0px;
+        color: #e0e0e0;
+    }
+
+    .f_item {
+        display: flex;
+        margin-bottom: 20px;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+    p.f_dec {
+        text-align: center;
+    }
+
+    .navbar.fixed-top .navbar-collapse,
+    .navbar.sticky-top .navbar-collapse {
+        background: #f6f5f2;
+        margin-top: 10px;
+        padding: 20px;
+        border-radius: 5px;
+    }
+
+
+    .toggler-icon {
+        display: block;
+        width: 25px;
+        height: 3px;
+        background-color: #333;
+        margin: 5px 0;
+        transition: all 0.3s;
+    }
+
+    .mega-menu {
+        padding: 20px;
+        margin-top: 10px !important;
+    }
+
+    .mega-menu .dropdown-item {
+        padding: 5px 0px;
+        font-size: 14px;
+    }
+
+    .footer ul.useful-links {
+        display: flex;
+        padding: 0;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .breadcrumb_wrapper,
+    .b_breadcrumb_wrapper,
+    .breadcrumb_wrapper_by_country,
+    .breadcrumb_wrapper_by_account,
+    .breadcrumb_wrapper_by_comparison,
+    .breadcrumb_wrapper_by_sub,
+    .breadcrumb_wrapper_by_contact,
+    .breadcrumb_wrapper_by_tag,
+    .breadcrumb_wrapper_by_trams,
+    .breadcrumb_wrapper_by_privacy,
+    .breadcrumb_wrapper_by_broker_detail,
+    .breadcrumb_wrapper_by_video,
+    .breadcrumb_wrapper_by_disclaimer {
+        padding: 80px 0;
+        height: auto;
+        color: white;
+    }
+
+    h2.b_c_h {
+        line-height: 35px;
+        font-size: 25px;
+    }
+
+    .b_btn_wrapper {
+        gap: 15px;
+        justify-content: flex-start;
+    }
+
+    .pagination {
+        margin-top: 20px;
+    }
+
+    .accout_type_list_wrapper {
+        justify-content: flex-start;
+        gap: 20px;
+    }
+
+    .footer ul.social {
+        overflow: hidden;
+    }
+
+    h4.compare-subheading {
+        font-size: 16px;
+        margin-bottom: 10px;
+    }
+
+    .subscribe-form {
+        padding: 20px 20px;
+    }
+
+    .footer ul.social {
+        margin-bottom: 0px;
+    }
+
+    .bonus-prize {
+        font-size: 16px;
+        line-height: 25px;
+    }
+
+    .additional-info {
+        margin-bottom: 20px;
+    }
+
+    .b_c_wrapper {
+        margin-top: 20px;
+    }
+
+    .f_dynamic_content p {
+        margin-bottom: 20px;
+    }
+
+    p.n_a_moment_text {
+        text-align: left !important;
+        margin-bottom: 20px;
+    }
+
+    .tag_container {
+        margin-bottom: 30px;
+    }
+    .sub {
+        gap: 10px;
+        font-weight: 400;
+        font-size: 14px;
+    }
+
+    .post-content-wrapper {
+        padding: 20px 10px 0px 10px;
+    }
+
+    .comparison_table th {
+        font-size: 16px;
+    }
+    span.b_s {
+        font-size: 18px;
+    }
+
+    strong.rbh_highlight {
+       font-weight: 600;
+        font-size: 18px;
+    }
+
+    .testimonial_review {
+        padding: 40px 0;
+    }
+
+    .compare-title {
+        font-size: 25px;
+        font-weight: 500;
+    }
+    .bonus-image {
+       margin-bottom: 20px;
+    }
+}
+
+/* Small Devices (Tablets) */
+@media (min-width: 577px) and (max-width: 768px) {
+    .hero {
+        height: auto;
+        background: url("/resources/business-infographics-hologram-made-by-businessman.jpg");
+        background-position: center;
+        padding: 50px 0px;
+    }
+
+    section.site_add {
+        display: none;
+    }
+
+    .compare_hub {
+        margin-bottom: 30px;
+    }
+
+    .footer {
+        padding: 50px 0px;
+    }
+
+    .footer ul.social {
+        margin-bottom: 0;
+        overflow: hidden;
+    }
+    .navbar.fixed-top .navbar-collapse,
+    .navbar.sticky-top .navbar-collapse {
+        background: #f6f5f2;
+        margin-top: 10px;
+        padding: 20px;
+        border-radius: 5px;
+    }
+
+
+    .toggler-icon {
+        display: block;
+        width: 25px;
+        height: 3px;
+        background-color: #333;
+        margin: 5px 0;
+        transition: all 0.3s;
+    }
+    .breadcrumb_wrapper, .b_breadcrumb_wrapper, .breadcrumb_wrapper_by_country, .breadcrumb_wrapper_by_account, .breadcrumb_wrapper_by_comparison, .breadcrumb_wrapper_by_sub, .breadcrumb_wrapper_by_contact, .breadcrumb_wrapper_by_tag, .breadcrumb_wrapper_by_trams, .breadcrumb_wrapper_by_privacy, .breadcrumb_wrapper_by_broker_detail, .breadcrumb_wrapper_by_video, .breadcrumb_wrapper_by_disclaimer {
+        height: auto;
+    }
+    .b_btn_wrapper {
+        gap: 15px;
+        justify-content:left ;
+    }
+
+    .pagination {
+        margin-top: 20px;
+    }
+    .bonus-image {
+        margin-bottom: 20px;
+    }
+    .bonus-prize {
+        font-size: 20px;
+        line-height: 27px;
+    }
+    h2.b_c_h {
+        line-height: 40px;
+        font-size: 30px;
+    }
+
+    .f_dynamic_content p {
+        margin-bottom: 30px;
+    }
+
+    .accout_type_list_wrapper {
+        justify-content: left; 
+        gap: 20px;
+    }
+
+    .tag_container {
+        margin-bottom: 30px;
+    }
+    .ac_list_wrapper {
+        justify-content: flex-start;
+        gap: 30px;
+    }
+    .comparison_table th {
+        font-size: 16px;
+    }
+    .p_c_box {
+        margin-bottom: 30px;
+    }
+    .broker-sticky-container {
+        justify-content: space-between;
+    }
+    
+}
+
+/* Medium Devices (Tablets and Small Laptops) */
+@media (min-width: 769px) and (max-width: 992px) {
+    .hero {
+        height: auto;
+        background: url("/resources/business-infographics-hologram-made-by-businessman.jpg");
+        background-position: center;
+        padding: 50px 0px;
+    }
+    .broker-card {
+        display: flex;
+        align-items: normal;
+        justify-content: center;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    section.site_add {
+        display: none;
+    }
+    .navbar.fixed-top .navbar-collapse,
+    .navbar.sticky-top .navbar-collapse {
+        background: #f6f5f2;
+        margin-top: 10px;
+        padding: 20px;
+        border-radius: 5px;
+    }
+
+
+    .toggler-icon {
+        display: block;
+        width: 25px;
+        height: 3px;
+        background-color: #333;
+        margin: 5px 0;
+        transition: all 0.3s;
+    }
+    .breadcrumb_wrapper, .b_breadcrumb_wrapper, .breadcrumb_wrapper_by_country, .breadcrumb_wrapper_by_account, .breadcrumb_wrapper_by_comparison, .breadcrumb_wrapper_by_sub, .breadcrumb_wrapper_by_contact, .breadcrumb_wrapper_by_tag, .breadcrumb_wrapper_by_trams, .breadcrumb_wrapper_by_privacy, .breadcrumb_wrapper_by_broker_detail, .breadcrumb_wrapper_by_video, .breadcrumb_wrapper_by_disclaimer {
+        height: auto;
+    }
+
+    .b_btn_wrapper {
+        gap: 20px;
+        justify-content: flex-start;
+    }
+
+    .broker-sticky-container {
+        display: flex;
+        position: sticky;
+        top: 110px;
+        gap: 10px; 
+    }
+    
+    .broker-sticky-container .side_bar_add,
+    .broker-sticky-container .featured-brokers {
+        flex: 1;
+        width: 50%; /
+    }
+    
+    .broker-sticky-container .side_bar_add {
+        display: flex;
+        flex-direction: column; 
+        align-items: flex-start;
+    }
+    
+    .sidebar {
+        display: flex;
+        flex-wrap: wrap; 
+        gap: 15px; 
+        width: 100%; 
+    }
+    .sidebar .recent-bonuses {
+        flex: 1; 
+        width: 50%; 
+        display: flex;
+        flex-direction: column; 
+    }
+    .broker-card-img {
+        max-width: 100%;
+        height: auto;
+        margin-bottom: 10px;
+    }
+
+    .bonus-prize {
+        font-size: 20px;
+        line-height: 30px;
+    }
+    .bonus-details-card {
+        margin-top: 20px;
+    }
+    .tag_wrapper {
+        margin-bottom: 30px;
+    }
+    .compare_hub {
+        margin-bottom: 30px;
+    }
+
+
+
+
+    
+    
+
+ 
+}
+
+/* Large Devices (Laptops and Desktops) */
+@media (min-width: 993px) and (max-width: 1200px) {
+    /* Add styles here */
+}
+
+/* Extra Large Devices (Large Desktops) */
+@media (min-width: 1201px) {
+    /* Add styles here */
+}

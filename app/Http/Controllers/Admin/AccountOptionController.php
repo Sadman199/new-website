@@ -80,8 +80,8 @@ class AccountOptionController extends Controller
         $accountOption->access_to_pro_features = $request->has('access_to_pro_features'); // Access to professional features
         $accountOption->exclusive_offers = $request->exclusive_offers; // Special offers (nullable)
         $accountOption->account_management = $request->has('account_management'); // Dedicated account manager
-        $accountOption->trading_instruments = $request->trading_instruments ? json_encode($request->trading_instruments) : null; // List of instruments (JSON)
-        $accountOption->risk_management_tools = $request->risk_management_tools ? json_encode($request->risk_management_tools) : null; // Risk management tools (JSON)
+        $accountOption->trading_instruments = $request->trading_instruments ?: null; // Store as plain text
+        $accountOption->risk_management_tools = $request->risk_management_tools ?: null; // Store as plain text        
         $accountOption->bonus_eligibility = $request->has('bonus_eligibility'); // Whether eligible for bonuses
         $accountOption->personalized_education = $request->has('personalized_education'); // Personalized education
         $accountOption->exclusive_webinars = $request->has('exclusive_webinars'); // Exclusive webinars access
@@ -157,8 +157,8 @@ class AccountOptionController extends Controller
        $accountOption->access_to_pro_features = $request->has('access_to_pro_features'); // Access to professional features
        $accountOption->exclusive_offers = $request->exclusive_offers; // Special offers (nullable)
        $accountOption->account_management = $request->has('account_management'); // Dedicated account manager
-       $accountOption->trading_instruments = $request->trading_instruments ? json_encode($request->trading_instruments) : null; // List of instruments (JSON)
-       $accountOption->risk_management_tools = $request->risk_management_tools ? json_encode($request->risk_management_tools) : null; // Risk management tools (JSON)
+       $accountOption->trading_instruments = $request->trading_instruments ?: null; // Store as plain text
+       $accountOption->risk_management_tools = $request->risk_management_tools ?: null; // Store as plain text 
        $accountOption->bonus_eligibility = $request->has('bonus_eligibility'); // Whether eligible for bonuses
        $accountOption->personalized_education = $request->has('personalized_education'); // Personalized education
        $accountOption->exclusive_webinars = $request->has('exclusive_webinars'); // Exclusive webinars access

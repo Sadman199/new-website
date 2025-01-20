@@ -5,7 +5,7 @@
     <div class="breadcrumb_wrapper_by_broker_detail">
         <div class="container">
             <div class="row d-flex align-items-center justify-content-center">
-                <div class="col-md-7">
+                <div class="col-lg-7 col-md-12">
                    <div class="hero-content">
                    <h2 class="b_c_h"><span>{{ $broker->name }}</span> 2024 Review: Key Features & Insights</h2>
                         <nav>
@@ -29,7 +29,7 @@
                     <div class="sticky-panel">
                         <div class="row">
                             <!-- Broker Logo and Rating Section -->
-                            <div class="col-md-3 col-md-3 border-right">
+                            <div class="col-lg-3 col-md-6 border-right">
                                 <div class="d-flex justify-content-start align-items-center h-100">
                                     <div class="b_d_image_box">
                                         @if ($broker->logo)
@@ -47,7 +47,7 @@
                                 </div>
                             </div>
                             <!-- Pros and Cons Section -->
-                            <div class="col-md-6 border-right">
+                            <div class="col-lg-6 col-md-6 border-right">
                                 <div class="">
                                     <div class="p_c_box">
                                         <span>Pros:</span>
@@ -76,7 +76,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-3">
+                            <div class="col-lg-3 col-md-12">
                                 <div class="">
                                     <div class="bottom_attributes">
                                         <div class="bt_c">
@@ -103,7 +103,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-md-9">
+                <div class="col-lg-9 col-md-12">
                     <div class="broker_left_detail s_padding">
                         <div class="broker_s_d">
                             <h2>Trade Securely with {{ $broker->name }}: Forex, CFDs & Crypto</h2>
@@ -119,7 +119,7 @@
                                 added transparency.</p>
 
                             <div class="custom-table-responsive">
-                                <table class="custom-table">
+                                <table class="comparison_table">
                                     <tbody>
                                         <tr>
                                             <th>Languages:</th>
@@ -166,7 +166,7 @@
                                 support their trading activities.</p>
 
                             <div class="custom-table-responsive">
-                                <table class="custom-table">
+                                <table class="comparison_table">
                                     <tbody>
                                         <tr>
                                             <th>Minimum Deposit:</th>
@@ -216,11 +216,11 @@
                                 trading, all designed to support traders' success.</p>
 
                             <div class="custom-table-responsive">
-                                <table class="custom-table">
+                                <table class="comparison_table">
                                     <tbody>
                                         <tr>
                                             <th>Account Types:</th>
-                                            <td>{{ strip_tags($broker->account_types) }}</td>
+                                            <td>{{ $broker->account_types ? (is_array($accountTypes = json_decode($broker->account_types)) ? implode(', ', $accountTypes) : $broker->account_types) : '' }}</td>
                                         </tr>
                                         <tr>
                                             <th>Capitalization:</th>
@@ -384,18 +384,23 @@
                         <div class="conclusion_details">
                             <h3 class="r_v_h">Conclusion:</h3>
                             <p>
-                                {{ $broker->name }} is a forex broker operating from {{ $broker->country }}{{ $broker->country == 'Cyprus' ? ' (Headquarters), operates globally' : '' }} 
-                                and offers various account types {{ $broker->account_types ? 'such as ' . $broker->account_types : '' }}. 
-                                The broker provides access to trading platforms {{ $broker->platforms ? 'like ' . strip_tags($broker->platforms) : '' }} 
-                                and supports payment methods {{ $broker->payment_methods ? 'including ' . strip_tags($broker->payment_methods) : '' }}. 
+                                {{ $broker->name }} is a forex broker operating from {{ $broker->country }}{{ $broker->country == 'Cyprus' ? ' (Headquarters), operates globally' : '' }}. 
+                                and offers various account types 
+                                {{ $broker->account_types ? 'such as ' . (is_array($accountTypes = json_decode($broker->account_types)) ? implode(', ', $accountTypes) : $broker->account_types) : '' }}. 
+                                The broker provides access to trading platforms 
+                                {{ $broker->platforms ? 'like ' . (is_array($platforms = json_decode($broker->platforms)) ? implode(', ', $platforms) : strip_tags($broker->platforms)) : '' }} 
+                                and supports payment methods 
+                                {{ $broker->payment_methods ? 'including ' . (is_array($paymentMethods = json_decode($broker->payment_methods)) ? implode(', ', $paymentMethods) : strip_tags($broker->payment_methods)) : '' }}. 
                                 With a minimum deposit of {{ $broker->minimum_deposit ?? 'an affordable amount' }}, 
                                 traders can enjoy spreads starting from {{ $broker->spreads ?? 'competitive rates' }} 
                                 and leverage of up to {{ $broker->leverage ?? 'industry-standard levels' }}.
                             </p>
+
+
                         </div>
                     </div>
                 </div>
-                <div class="col-md-3">
+                <div class="col-lg-3 col-md-12">
                     <div class="broker-sticky-container s_padding">
                         <div class="b_s_box">
                             @if ($broker->logo)
@@ -404,7 +409,7 @@
                             <p>No logo available.</p>
                             @endif
                             <div class="b_s_box_content">
-                                <div class="rating_wrapper">
+                                <div class="rating_wrapper_b_d">
                                     <div class="rating">
                                         <?php
                                         $rating = $broker->rating;
@@ -551,7 +556,7 @@
 
                                         <!-- Submit Button -->
                                         <div class="m_sbutton">
-                                            <button type="submit" class="broker_submit_btn">Submit Review</button>
+                                            <button type="submit" class="compare-card-link">Submit Review</button>
                                         </div>
                                     </form>
                                 @endif
@@ -618,7 +623,7 @@
             </div>
         </div>
     </section>
-    <section class="compare-brokers-section s_padding">
+    <section class="compare-brokers-section">
         <div class="container">
             <div class="row">
                 <div class="col-md-12">

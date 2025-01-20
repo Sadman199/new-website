@@ -4,9 +4,9 @@
 <div class="page-top">
     <div class="breadcrumb_wrapper_by_disclaimer">
         <div class="container">
-            <div class="row">
-                <div class="hero-content">
-                    <div class="col-md-8">
+            <div class="row d-flex align-items-center justify-content-center">
+                <div class="col-md-7">
+                    <div class="hero-content">
                         <h2 class="b_c_h">Disclaimer: Transparency & Responsibility</h2>
                         <p class="h_s_dec">Brokers Court provides information for general purposes only and does not offer financial advice. Verify details with brokers before making decisions.</p>
                         <nav>

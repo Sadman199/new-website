@@ -5,8 +5,8 @@
     <div class="breadcrumb_wrapper_by_contact">
         <div class="container">
             <div class="row d-flex align-items-center justify-content-center">
-                <div class="hero-content">
-                    <div class="col-md-6">
+                <div class="col-md-7">
+                    <div class="hero-content">
                         <h2 class="b_c_h">We're Here to Help!</h2>
                         <p class="h_s_dec">Have questions or need assistance? Reach out to us anytime, and our team will get back to you as soon as possible. We're here to make your experience seamless and stress-free</p>
                         <nav>

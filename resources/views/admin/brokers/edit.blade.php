@@ -459,70 +459,124 @@
                         </div>
                     </div>
                     <!-- Associated Countries -->
-                    <div class="col-md-3">
-                        <div class="form-group">
-                            <label for="associated_countries">Associated Countries</label>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="associated_countries">Associated Countries</label>
 
-                            <div>
-                                <label>
-                                    <input type="checkbox" name="associated_countries[]" value="Asia"
-                                        {{ in_array('Asia', old('associated_countries', $broker->associated_countries ?? [])) ? 'checked' : '' }}>
-                                    Asian Broker
-                                </label>
+                                <!-- Checkbox for Asian -->
+                                <div>
+                                    <label>
+                                        <input type="checkbox" name="associated_countries[]" value="Asia"
+                                            {{ in_array('Asia', old('associated_countries', $broker->associated_countries ?? [])) ? 'checked' : '' }}>
+                                        Asian Broker
+                                    </label>
+                                </div>
+
+                                <!-- Checkbox for USA -->
+                                <div>
+                                    <label>
+                                        <input type="checkbox" name="associated_countries[]" value="USA"
+                                            {{ in_array('USA', old('associated_countries', $broker->associated_countries ?? [])) ? 'checked' : '' }}>
+                                        USA
+                                    </label>
+                                </div>
+
+                                <!-- Checkbox for Canada -->
+                                <div>
+                                    <label>
+                                        <input type="checkbox" name="associated_countries[]" value="Canada"
+                                            {{ in_array('Canada', old('associated_countries', $broker->associated_countries ?? [])) ? 'checked' : '' }}>
+                                        Canada
+                                    </label>
+                                </div>
+
+                                <!-- Checkbox for UK -->
+                                <div>
+                                    <label>
+                                        <input type="checkbox" name="associated_countries[]" value="UK"
+                                            {{ in_array('UK', old('associated_countries', $broker->associated_countries ?? [])) ? 'checked' : '' }}>
+                                        UK
+                                    </label>
+                                </div>
+
+                                <!-- Checkbox for Australia -->
+                                <div>
+                                    <label>
+                                        <input type="checkbox" name="associated_countries[]" value="Australia"
+                                            {{ in_array('Australia', old('associated_countries', $broker->associated_countries ?? [])) ? 'checked' : '' }}>
+                                        Australia
+                                    </label>
+                                </div>
+
+                                <!-- Checkbox for South Africa -->
+                                <div>
+                                    <label>
+                                        <input type="checkbox" name="associated_countries[]" value="South Africa"
+                                            {{ in_array('South Africa', old('associated_countries', $broker->associated_countries ?? [])) ? 'checked' : '' }}>
+                                        South Africa
+                                    </label>
+                                </div>
+
+                                <!-- Checkbox for Germany -->
+                                <div>
+                                    <label>
+                                        <input type="checkbox" name="associated_countries[]" value="Germany"
+                                            {{ in_array('Germany', old('associated_countries', $broker->associated_countries ?? [])) ? 'checked' : '' }}>
+                                        Germany
+                                    </label>
+                                </div>
+
+                                <!-- Checkbox for France -->
+                                <div>
+                                    <label>
+                                        <input type="checkbox" name="associated_countries[]" value="France"
+                                            {{ in_array('France', old('associated_countries', $broker->associated_countries ?? [])) ? 'checked' : '' }}>
+                                        France
+                                    </label>
+                                </div>
+
+                                <!-- Checkbox for India -->
+                                <div>
+                                    <label>
+                                        <input type="checkbox" name="associated_countries[]" value="India"
+                                            {{ in_array('India', old('associated_countries', $broker->associated_countries ?? [])) ? 'checked' : '' }}>
+                                        India
+                                    </label>
+                                </div>
+
+                                <!-- Checkbox for China -->
+                                <div>
+                                    <label>
+                                        <input type="checkbox" name="associated_countries[]" value="China"
+                                            {{ in_array('China', old('associated_countries', $broker->associated_countries ?? [])) ? 'checked' : '' }}>
+                                        China
+                                    </label>
+                                </div>
+
+                                <!-- Checkbox for Japan -->
+                                <div>
+                                    <label>
+                                        <input type="checkbox" name="associated_countries[]" value="Japan"
+                                            {{ in_array('Japan', old('associated_countries', $broker->associated_countries ?? [])) ? 'checked' : '' }}>
+                                        Japan
+                                    </label>
+                                </div>
+
+                                <!-- Checkbox for Brazil -->
+                                <div>
+                                    <label>
+                                        <input type="checkbox" name="associated_countries[]" value="Brazil"
+                                            {{ in_array('Brazil', old('associated_countries', $broker->associated_countries ?? [])) ? 'checked' : '' }}>
+                                        Brazil
+                                    </label>
+                                </div>
+
+                                @error('associated_countries')
+                                <small class="text-danger">{{ $message }}</small>
+                                @enderror
                             </div>
-
-                            <!-- Checkbox for USA -->
-                            <div>
-                                <label>
-                                    <input type="checkbox" name="associated_countries[]" value="USA"
-                                        {{ in_array('USA', old('associated_countries', $broker->associated_countries ?? [])) ? 'checked' : '' }}>
-                                    USA
-                                </label>
-                            </div>
-
-                            <!-- Checkbox for Canada -->
-                            <div>
-                                <label>
-                                    <input type="checkbox" name="associated_countries[]" value="Canada"
-                                        {{ in_array('Canada', old('associated_countries', $broker->associated_countries ?? [])) ? 'checked' : '' }}>
-                                    Canada
-                                </label>
-                            </div>
-
-                            <!-- Checkbox for UK -->
-                            <div>
-                                <label>
-                                    <input type="checkbox" name="associated_countries[]" value="UK"
-                                        {{ in_array('UK', old('associated_countries', $broker->associated_countries ?? [])) ? 'checked' : '' }}>
-                                    UK
-                                </label>
-                            </div>
-
-                            <!-- Checkbox for Australia -->
-                            <div>
-                                <label>
-                                    <input type="checkbox" name="associated_countries[]" value="Australia"
-                                        {{ in_array('Australia', old('associated_countries', $broker->associated_countries ?? [])) ? 'checked' : '' }}>
-                                    Australia
-                                </label>
-                            </div>
-
-                            <!-- Checkbox for South Africa -->
-                            <div>
-                                <label>
-                                    <input type="checkbox" name="associated_countries[]" value="South Africa"
-                                        {{ in_array('South Africa', old('associated_countries', $broker->associated_countries ?? [])) ? 'checked' : '' }}>
-                                    South Africa
-                                </label>
-                            </div>
-
-                            <!-- Add more countries in similar fashion -->
-
-                            @error('associated_countries')
-                            <small class="text-danger">{{ $message }}</small>
-                            @enderror
                         </div>
-                    </div>
+
                     <!-- VPS Hosting (Boolean) -->
                     <div class="col-md-3">
                         <div class="form-group">

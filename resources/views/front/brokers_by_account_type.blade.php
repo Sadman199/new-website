@@ -4,8 +4,6 @@
 <div id="loader-overlay">
     <div class="loader"></div>
 </div>
-
-
 <div class="page-top">
     <div class="breadcrumb_wrapper_by_account">
         <div class="container">
@@ -73,11 +71,11 @@
             </div>
             </div>
             <div class="row">
-                <div class="col-md-9">
+                <div class="col-lg-9 col-md-12">
                     <div class="row">
                         @if($brokers->isNotEmpty())
                             @foreach($brokers as $broker)
-                                <div class="col-md-4">
+                                <div class="col-lg-4 col-md-6 col-sm-12">
                                     <div class="ac_broker_card">
                                         <!-- Upper Portion -->
                                         <div class="broker_content">

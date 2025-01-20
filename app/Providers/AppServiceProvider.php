@@ -95,9 +95,6 @@ class AppServiceProvider extends ServiceProvider
    $cryptoBonusPromotion = ForexBonus::where('promo_type', 'Crypto Bonus Promotion')->latest()->take(6)->get();
    View::share('cryptoBonusPromotion', $cryptoBonusPromotion);
 
-
-
-   
 }
 
 

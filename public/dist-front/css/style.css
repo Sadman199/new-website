@@ -1,4 +1,4 @@
-body{
+body {
   background-color: #f6f5f2;
   font-weight: 500;
 
@@ -1397,7 +1397,7 @@ h2.add_heading {
 }
 
 .footer ul.social li a {
-  color: #2a2a2a;
+  color: #fff;
   background: #5374d3;
   width: 35px;
   height: 35px;
@@ -2090,7 +2090,10 @@ ul.nav.nav-pills.h_c_b_nav {
 }
 
 
-
+.conclusion_details p {
+  color: #4b5a61;
+  font-weight: 400;
+}
 
 .custom-card-title {
   font-size: 20px;
@@ -2099,7 +2102,7 @@ ul.nav.nav-pills.h_c_b_nav {
 }
 
 .custom-img {
-  width: auto;
+  width: 80px;
   height: 80px;
   object-fit: cover;
   border-radius: 5px;
@@ -2162,8 +2165,8 @@ p.ac_c_S {
 
 /* Submit Button */
 .site_button {
-  background-color: #ffc107;
-  color: #121212;
+  background-color: #7f8c8d;
+  color: #ffff;
   border: none;
   border-radius: 10px;
   padding: 10px 25px;
@@ -2172,6 +2175,14 @@ p.ac_c_S {
   cursor: pointer;
   transition: background-color 0.3s ease, transform 0.2s ease;
 }
+
+.rating_wrapper_b_d {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  margin-bottom: 10px;
+}
+
 
 button.site_button.b_o_live_btn {
   width: 100%;
@@ -2191,6 +2202,7 @@ img.broker_logo {
   width: 65px;
   border-radius: 5px;
 }
+
 .broker_card {
   padding: 20px;
   background-color: #0c111d91;
@@ -2961,6 +2973,7 @@ li.b_list i {
   padding: 12px 15px;
   text-align: left;
   border: 1px solid #ddd;
+  color: #2c3e50;
 }
 
 .custom-table th {
@@ -2977,7 +2990,7 @@ li.b_list i {
 }
 
 .custom-table td {
-  color: #555;
+  color: #4b5a61;
 }
 
 @media (max-width: 768px) {
@@ -3156,6 +3169,7 @@ h1.r_b_h {
 p.t_d {
   margin-bottom: 20px;
   color: #4b5a61;
+  font-weight: 400;
 }
 
 span.b_s {
@@ -3207,7 +3221,7 @@ p.t_c_text {
 }
 
 p.h_s_dec {
-  text-align: left;
+  text-align: center;
   margin-bottom: 10px;
   font-weight: 400;
 }
@@ -3246,7 +3260,7 @@ p.h_s_dec {
 }
 
 .b_breadcrumb_wrapper {
-  background-image: linear-gradient(to top, rgb(0 0 0 / 44%), rgb(0 0 0 / 84%)), url("/resources/bonus.png");
+  background-image: linear-gradient(to top, rgb(0 0 0 / 44%), rgb(0 0 0 / 84%)), url("/resources/bonus_type.jpg");
 }
 
 .breadcrumb_wrapper_by_country {
@@ -3314,7 +3328,8 @@ p.h_s_dec {
   flex-direction: column;
 }
 
-a.author_name, a.c_name {
+a.author_name,
+a.c_name {
   color: #fff;
 }
 
@@ -3514,11 +3529,13 @@ p.b_e_date {
 
 .b_btn_wrapper {
   display: flex;
-  gap: 10px;
+  gap: 15px;
   margin-top: 10px;
-  justify-content: space-between;
 }
-
+p.blog-description {
+  font-weight: 400;
+  color: #4b5a61;
+}
 .c_now_btn {
   padding: 5px 10px;
   background-color: #27ae60;
@@ -3664,9 +3681,10 @@ h2.b_c_h {
 }
 
 .additional-info li {
-  font-size: 1rem;
-  color: #555;
+  font-size: 14px;
+  color: #4b5a61;
   margin-bottom: 10px;
+  font-weight: 400;
 }
 
 .bonus-type-details {
@@ -3675,7 +3693,18 @@ h2.b_c_h {
   line-height: 1.6;
 }
 
-
+.badge {
+  display: inline-block;
+  padding: 5px 10px;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1;
+  color: #fff;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: baseline;
+  border-radius: 3px;
+}
 
 .bonus-prize-image-wrapper {
   position: relative;
@@ -3800,6 +3829,7 @@ h2.b_c_h {
   text-align: left;
   border: 2px solid #fcfcfc;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06), 0 1px 4px rgba(0, 0, 0, 0.04);
+  color: #4b5a61;
 }
 
 .eael-data-table thead tr th:not(:first-child),
@@ -4093,15 +4123,10 @@ p.b_f_t {
 }
 
 
-/* Section Styling */
-/* Section Styling */
 .compare-brokers-section {
   background: linear-gradient(to right, #f6f5f2, #eaeaea);
-  /* Soft gradient for elegance */
-  padding: 60px 20px;
+  padding: 50px 0px 0px 0px;
   border-radius: 15px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  /* Modern shadow */
 }
 
 /* Title Styling */
@@ -4215,6 +4240,7 @@ textarea.form-control.b_control {
   position: relative;
   border: 2px solid #fcfcfc;
   font-size: 20px;
+  color: #2c3e50;
 }
 
 .accordion__header::after {
@@ -4710,11 +4736,11 @@ a.nav-link.mx-1.aclist {
   from {
     transform: rotate(0deg);
   }
-
   to {
     transform: rotate(360deg);
   }
 }
+
 
 
 
@@ -4737,7 +4763,7 @@ a.nav-link.mx-1.aclist {
   align-items: flex-end;
   transition: transform 0.4s ease, box-shadow 0.4s ease;
   background: #f6f5f2;
-  /* Match body background */
+  margin-bottom: 24px;
 }
 
 /* Hover effect for layer */
@@ -4933,4 +4959,173 @@ h4.compare-subheading {
   color: #4b5a61;
   margin-bottom: 20px;
   font-weight: 400;
+}
+
+/* Container for the form */
+.archive {
+  width: 100%;
+  padding: 20px;
+  box-sizing: border-box;
+  border-radius: 8px;
+  border: 2px solid #fcfcfc;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06), 0 1px 4px rgba(0, 0, 0, 0.04);
+  margin: 20px 0;
+}
+
+/* Select box container */
+.custom-archive-form .custom-select-container {
+  position: relative;
+  width: 100%;
+}
+
+/* Style for the select box */
+.custom-select {
+  width: 100%;
+  padding: 10px 20px;
+  font-size: 16px;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  appearance: none;
+  transition: all 0.3s ease;
+}
+
+/* Hover effect */
+.custom-select:hover {
+  border-color: #888;
+}
+
+/* Focus effect */
+.custom-select:focus {
+  border-color: #007BFF;
+  outline: none;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+}
+
+/* Custom arrow for select box */
+.custom-select-container::after {
+  content: '\25BC';
+  font-size: 18px;
+  color: #888;
+  position: absolute;
+  top: 50%;
+  right: 15px;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+/* Styling for option list */
+.custom-select option {
+  padding: 10px;
+  background-color: #fff;
+  color: #333;
+}
+
+/* Change the background color on hover of option */
+.custom-select option:hover {
+  background-color: #f1f1f1;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .archive {
+    padding: 15px;
+  }
+
+  .custom-select {
+    font-size: 14px;
+    padding: 8px 16px;
+  }
+}
+
+div#fx-pricing-widget-copyright {
+  display: none;
+}
+
+
+.tr_broker_card {
+  background-color: #fff;
+  border: 2px solid #fcfcfc;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.3s, box-shadow 0.3s;
+  margin-bottom: 24px;
+}
+
+.tr_broker_card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 16px rgba(231, 76, 60, 0.5); /* Danger glow */
+}
+
+.tr_broker_card img {
+  width: 100%;
+  height: 120px;
+  object-fit: cover;
+  border-bottom: 2px solid #fcfcfc;
+}
+
+.tr_broker_card .broker-info {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.b_h_info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.text-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.text-container .non_tag {
+  background-color: #e74c3c;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.text-container a {
+  font-size: 16px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 0.3s;
+}
+
+.text-container a:hover {
+  color: #e74c3c; /* Danger accent */
+}
+
+.b_h_info .redirect {
+  background-color: #e74c3c;
+  color: #fff;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 14px;
+  text-decoration: none;
+  transition: background-color 0.3s, transform 0.3s;
+}
+
+.b_h_info .redirect:hover {
+  background-color: #c0392b; /* Darker danger */
+  transform: scale(1.1);
+}
+
+#fx-pricing-widget-copyright {
+  display: none;
 }
