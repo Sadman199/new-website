@@ -30,7 +30,7 @@ $global_categories = \App\Models\Category::with('rSubCategory')->where('show_on_
                 <!-- Forex Bonus Mega Dropdown -->
                 <li class="nav-item dropdown position-static">
                     <a class="nav-link dropdown-toggle c_nav" href="#" id="forexBonusDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        Forex Bonus
+                        Bonus
                     </a>
                     <div class="dropdown-menu mega-menu" aria-labelledby="forexBonusDropdown">
                         <div class="row">
@@ -74,7 +74,7 @@ $global_categories = \App\Models\Category::with('rSubCategory')->where('show_on_
                  
                 <li class="nav-item dropdown position-static">
                     <a class="nav-link dropdown-toggle c_nav" href="#" id="brokersDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    Types of Brokers
+                    Broker Types
                     </a>
                     <div class="dropdown-menu custom-dropdown-menu mega-menu" aria-labelledby="brokersDropdown">
                         <div class="row">
@@ -153,8 +153,6 @@ $global_categories = \App\Models\Category::with('rSubCategory')->where('show_on_
                     </div>
                 </li>
 
-                
-
                 <!-- Categories Mega Dropdown -->
                 @foreach($global_categories->where('language_id', $current_language_id) as $item)
                     <li class="nav-item dropdown position-static">
@@ -179,6 +177,8 @@ $global_categories = \App\Models\Category::with('rSubCategory')->where('show_on_
                         </div>
                     </li>
                 @endforeach
+
+                
             </ul>
         </div>
     </div>
