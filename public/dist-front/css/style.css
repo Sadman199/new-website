@@ -4385,6 +4385,7 @@ td.heading-tage {
 p.section_dec {
   margin-bottom: 30px;
   color: #4b5a61;
+  font-weight: 400;
 }
 
 .s_btn_wrapper {
@@ -4666,7 +4667,7 @@ p.b_min_depo {
 }
 
 .f_dynamic_content p {
-  font-weight: 400;
+  font-weight: 500;
   margin-bottom: 40px;
   color: #4b5a61;
 }
@@ -4880,6 +4881,10 @@ img.c_logo {
 .subscribe-form:hover {
   box-shadow: 0 6px 30px rgba(0, 0, 0, 0.15);
 }
+td.t_bold {
+  font-weight: 600;
+  font-size: 16px;
+}
 
 /* Title styling */
 .subscribe-title {
@@ -4889,14 +4894,13 @@ img.c_logo {
   margin-bottom: 10px;
 }
 
-/* Description styling */
 .subscribe-description {
   text-align: left;
-  font-size: 14px;
+  font-size: 15px;
   color: #4b5a61;
+  font-weight: 400;
   margin-bottom: 20px;
 }
-
 /* Form label styling */
 .form-label {
   font-size: 14px;

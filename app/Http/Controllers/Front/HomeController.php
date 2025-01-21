@@ -191,11 +191,11 @@ class HomeController extends Controller
         }
         $current_language_id = Language::where('short_name', $current_short_name)->first()->id;
         $page_data = Page::where('language_id', $current_language_id)->first();
-
+        $home_ad_data = HomeAdvertisement::where('id', 1)->first();
         $broker1 = Broker::where('slug', $broker1_slug)->firstOrFail();
         $broker2 = Broker::where('slug', $broker2_slug)->firstOrFail();
 
-        return view('front.broker_comparison_result', compact('page_data', 'broker1', 'broker2'));
+        return view('front.broker_comparison_result', compact('page_data', 'broker1', 'broker2','home_ad_data'));
     }
 
     public function getComparison(Request $request)

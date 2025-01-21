@@ -8,4 +8,5 @@ use Illuminate\Database\Eloquent\Model;
 class TopAdvertisement extends Model
 {
     use HasFactory;
+
 }

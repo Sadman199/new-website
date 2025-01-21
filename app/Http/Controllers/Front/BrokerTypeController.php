@@ -16,44 +16,32 @@ class BrokerTypeController extends Controller
     public function showRegulatedBrokers()
     {
 
-        Helpers::read_json(); // Optional helper functionality
-        // Determine the current language
+        Helpers::read_json(); 
         if (!session()->get('session_short_name')) {
             $current_short_name = Language::where('is_default', 'Yes')->first()->short_name;
         } else {
             $current_short_name = session()->get('session_short_name');
         }
-    
-        // Get the current language ID
-        $current_language_id = Language::where('short_name', $current_short_name)->first()->id;
-
-        // Fetch the page data for the current language
+            $current_language_id = Language::where('short_name', $current_short_name)->first()->id;
         $page_data = Page::where('language_id', $current_language_id)->first();
-
-
+        $home_ad_data = HomeAdvertisement::where('id', 1)->first();
         $regulatedBrokers = Broker::whereHas('accountOptions', function($query) {
             $query->where('is_regulated', true);
         })->get();
 
-        return view('front.regulated', compact('regulatedBrokers','page_data'));
+        return view('front.regulated', compact('regulatedBrokers','page_data','home_ad_data'));
     }
 
     public function showNonRegulatedBrokers()
     {
-        Helpers::read_json(); // Optional helper functionality
-    
-        // Determine the current language
-        if (!session()->get('session_short_name')) {
+        Helpers::read_json(); 
+            if (!session()->get('session_short_name')) {
             $current_short_name = Language::where('is_default', 'Yes')->first()->short_name;
         } else {
             $current_short_name = session()->get('session_short_name');
         }
-    
-        // Get the current language ID
-        $current_language_id = Language::where('short_name', $current_short_name)->first()->id;
+            $current_language_id = Language::where('short_name', $current_short_name)->first()->id;
 
-    
-        // Fetch the page data for the current language
         $page_data = Page::where('language_id', $current_language_id)->first();
 
         $nonRegulatedBrokers = Broker::whereHas('accountOptions', function($query) {

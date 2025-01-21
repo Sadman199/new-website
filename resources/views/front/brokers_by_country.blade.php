@@ -1,6 +1,9 @@
 @extends('front.layout.app')
 @section('title', 'BrokersCourt | Discover Top Brokers by Country or Region')
 @section('main_content')
+<div id="loader-overlay">
+    <div class="loader"></div>
+</div>
 <div class="page-top">
     <div class="breadcrumb_wrapper_by_country">
         <div class="container">
@@ -60,7 +63,7 @@
                         <div class="col-md-9">
                             <div class="row">
                                 @foreach ($brokers as $broker)
-                                <div class="col-md-4">
+                                <div class="col-lg-4 col-md-6">
                                 <div class="ac_broker_card">
                                         <!-- Upper Portion -->
                                         <div class="broker_content">
@@ -173,7 +176,7 @@
                                 @endforeach
                             </div>
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-lg-3 col-md-6">
                             <div class="sidebar">
                                 <div class="side_bar_add">
                                     <span class="l_b_h"> Octa Deposit Bonus</span>
@@ -230,28 +233,32 @@
             <div class="row">
                 @foreach($regulatedBrokers as $broker)
                 <div class="col-md-4">
-                    <div class="broker-card tr_broker_card">
-                        <img alt="{{ $broker->name }} logo" src="{{ asset($broker->logo) }}" />
-                        <div class="broker-info">
-                            <div class="b_h_info">
-                                <div class="text-container">
-                                    <span>Trade with</span>
-                                    <a href="">{{ $broker->name }}</a>
-                                </div>
-                                <a href="{{ $broker->url }}">
-                                    <i class="fas fa-chevron-right"></i>
-                                </a>
+                    <div class="broker-layer">
+                        <div class="broker-background" style="background-image: url('{{ asset($broker->logo ?? 'default-logo.png') }}');"></div>
+                        <div class="broker-content">
+                            <div class="broker-header">
+                                <a href="{{ $broker->url }}"><h4>{{ $broker->name }}</h4></a>
+                                <p class="broker-leverage"><strong>Leverage:</strong> {{ $broker->leverage }}</p>
                             </div>
-                        
-                            <div class="description-wrapper">
-                                    <p class="short-description r_f_c">
-                                        {{ Str::limit(strip_tags($broker->short_description), 35) }}
-                                    </p>
-                                    <i class="info-icon fas fa-info-circle"></i>
-                                    <span class="full-description">
-                                        {{ strip_tags($broker->short_description) }}
-                                    </span>
+                            <div class="broker-footer">
+                                <div class="rating-wrapper">
+                                    <div class="rating">
+                                        <?php
+                                        $rating = $broker->rating;
+                                        for ($i = 1; $i <= 5; $i++) {
+                                            if ($i <= $rating) {
+                                                echo '<span class="star filled">&#9733;</span>';
+                                            } elseif ($i - 0.5 == $rating) {
+                                                echo '<span class="star half">&#9733;</span>';
+                                            } else {
+                                                echo '<span class="star">&#9734;</span>';
+                                            }
+                                        }
+                                        ?>
+                                    </div>
                                 </div>
+                                <a href="{{ route('broker_detail', ['slug' => $broker->slug]) }}" class="review-button">Read Review</a>
+                            </div>
                         </div>
                     </div>
                 </div>    

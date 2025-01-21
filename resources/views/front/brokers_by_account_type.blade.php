@@ -28,47 +28,47 @@
     <div class="type_of_a_c_wrapper s_padding">
         <div class="container">
             <div class="row">
-            <div class="col-md-8">
-                <div class="f_dynamic_content">
-                    @if ($type === 'Standard Accounts')
-                        <div>
-                            <p><strong>Standard Accounts</strong> are designed for traders of all experience levels. They provide a balanced trading environment with competitive spreads, access to major financial instruments, and reliable execution. This account type is ideal for those seeking simplicity and consistency.</p>
-                        </div>
-                    @elseif ($type === 'Islamic Account')
-                        <div>
-                            <p><strong>Islamic Accounts</strong> cater to traders who follow Sharia law. These accounts ensure compliance by eliminating swaps and interest fees on overnight positions. They provide a fair trading environment without compromising religious principles.</p>
-                        </div>
-                    @elseif ($type === 'ECN Accounts')
-                        <div>
-                            <p><strong>ECN Accounts</strong> are perfect for traders looking for direct access to liquidity providers. With ultra-low spreads, lightning-fast execution, and no dealing desk intervention, this account is tailored for professionals and high-frequency traders.</p>
-                        </div>
-                    @elseif ($type === 'Classic Account')
-                        <div>
-                            <p><strong>Classic Accounts</strong> are a great choice for traditional traders who value a straightforward experience. With simple features, competitive conditions, and no hidden surprises, these accounts are perfect for those who appreciate stability in their trading.</p>
-                        </div>
-                    @elseif ($type === 'Copy Trading Accounts')
-                        <div>
-                            <p><strong>Copy Trading Accounts</strong> revolutionize trading by allowing you to follow and replicate the strategies of experienced traders. Whether you're new to trading or prefer a hands-off approach, this account type empowers you to grow alongside market experts.</p>
-                        </div>
-                    @elseif ($type === 'VIP Accounts')
-                        <div>
-                            <p><strong>VIP Accounts</strong> are designed for elite traders who demand the best. Enjoy exclusive privileges, including personal account managers, priority customer support, tighter spreads, and customized solutions to suit your trading needs.</p>
-                        </div>
-                    @elseif ($type === 'Raw Account')
-                        <div>
-                            <p><strong>Raw Accounts</strong> offer direct market access with raw spreads from liquidity providers. With minimal transaction costs and precise execution, this account is perfect for traders who prioritize cost efficiency and transparency.</p>
-                        </div>
-                    @elseif ($type === 'Micro Accounts')
-                        <div>
-                            <p><strong>Micro Accounts</strong> are tailored for beginners or those who want to start trading with smaller amounts. Trade in smaller lot sizes, manage risk effectively, and gain hands-on experience without a significant financial commitment.</p>
-                        </div>
-                    @else
-                        <div>
-                            <p>Discover the benefits of <strong>{{ $type }}</strong> and find out how this account type can elevate your trading experience. Each account is tailored to meet specific trading preferences and needs.</p>
-                        </div>
-                    @endif
+                <div class="col-lg-9 col-md-12">
+                    <div class="f_dynamic_content">
+                        @if ($type === 'Standard Accounts')
+                            <div>
+                                <p><strong>Standard Accounts</strong> are designed for traders of all experience levels. They provide a balanced trading environment with competitive spreads, access to major financial instruments, and reliable execution. This account type is ideal for those seeking simplicity and consistency.</p>
+                            </div>
+                        @elseif ($type === 'Islamic Account')
+                            <div>
+                                <p><strong>Islamic Accounts</strong> cater to traders who follow Sharia law. These accounts ensure compliance by eliminating swaps and interest fees on overnight positions. They provide a fair trading environment without compromising religious principles.</p>
+                            </div>
+                        @elseif ($type === 'ECN Accounts')
+                            <div>
+                                <p><strong>ECN Accounts</strong> are perfect for traders looking for direct access to liquidity providers. With ultra-low spreads, lightning-fast execution, and no dealing desk intervention, this account is tailored for professionals and high-frequency traders.</p>
+                            </div>
+                        @elseif ($type === 'Classic Account')
+                            <div>
+                                <p><strong>Classic Accounts</strong> are a great choice for traditional traders who value a straightforward experience. With simple features, competitive conditions, and no hidden surprises, these accounts are perfect for those who appreciate stability in their trading.</p>
+                            </div>
+                        @elseif ($type === 'Copy Trading Accounts')
+                            <div>
+                                <p><strong>Copy Trading Accounts</strong> revolutionize trading by allowing you to follow and replicate the strategies of experienced traders. Whether you're new to trading or prefer a hands-off approach, this account type empowers you to grow alongside market experts.</p>
+                            </div>
+                        @elseif ($type === 'VIP Accounts')
+                            <div>
+                                <p><strong>VIP Accounts</strong> are designed for elite traders who demand the best. Enjoy exclusive privileges, including personal account managers, priority customer support, tighter spreads, and customized solutions to suit your trading needs.</p>
+                            </div>
+                        @elseif ($type === 'Raw Account')
+                            <div>
+                                <p><strong>Raw Accounts</strong> offer direct market access with raw spreads from liquidity providers. With minimal transaction costs and precise execution, this account is perfect for traders who prioritize cost efficiency and transparency.</p>
+                            </div>
+                        @elseif ($type === 'Micro Accounts')
+                            <div>
+                                <p><strong>Micro Accounts</strong> are tailored for beginners or those who want to start trading with smaller amounts. Trade in smaller lot sizes, manage risk effectively, and gain hands-on experience without a significant financial commitment.</p>
+                            </div>
+                        @else
+                            <div>
+                                <p>Discover the benefits of <strong>{{ $type }}</strong> and find out how this account type can elevate your trading experience. Each account is tailored to meet specific trading preferences and needs.</p>
+                            </div>
+                        @endif
+                    </div>
                 </div>
-            </div>
             </div>
             <div class="row">
                 <div class="col-lg-9 col-md-12">
@@ -191,7 +191,7 @@
                         @endif
                     </div>
                 </div>
-                <div class="col-md-3">
+                <div class="col-lg-3 col-md-6">
                     <div class="sidebar">
                         <div class="side_bar_add">
                             <span class="l_b_h"> Octa Deposit Bonus</span>

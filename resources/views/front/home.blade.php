@@ -92,9 +92,7 @@ $current_language_id = \App\Models\Language::where('short_name', $current_short_
   ></a>
 </div>
 
-<div id="fx-pricing-widget-copyright">
-  <span>Powered by </span><a href="https://fxpricing.com/" target="_blank">FX Pricing</a>
-</div>
+
 
 <style type="text/css">
   #fx-pricing-widget-copyright {
@@ -188,15 +186,17 @@ $current_language_id = \App\Models\Language::where('short_name', $current_short_
                </div>
             </div>
 
-            <div class="col-lg-4 col-md-6">
-                <ul class="nav nav-pills h_c_b_nav" id="pills-tab" role="tablist">
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link active" id="pills-home-tab" data-bs-toggle="pill" data-bs-target="#pills-home" type="button" role="tab" aria-controls="pills-home" aria-selected="true">{{ RECENT_NEWS }}</button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="pills-profile-tab" data-bs-toggle="pill" data-bs-target="#pills-profile" type="button" role="tab" aria-controls="pills-profile" aria-selected="false">{{ POPULAR_NEWS }}</button>
-                    </li>
-                </ul>
+            <div class="col-lg-4 col-md-12">
+                <div class="n_v_wrapper">
+                    <ul class="nav nav-pills h_c_b_nav" id="pills-tab" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="pills-home-tab" data-bs-toggle="pill" data-bs-target="#pills-home" type="button" role="tab" aria-controls="pills-home" aria-selected="true">{{ RECENT_NEWS }}</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="pills-profile-tab" data-bs-toggle="pill" data-bs-target="#pills-profile" type="button" role="tab" aria-controls="pills-profile" aria-selected="false">{{ POPULAR_NEWS }}</button>
+                        </li>
+                    </ul>
+                </div>
                 <div class="widget">
                     <div class="news">
                         <div class="tab-content" id="pills-tabContent">
@@ -293,7 +293,7 @@ $current_language_id = \App\Models\Language::where('short_name', $current_short_
 <section class="site_top_add">
     <div class="container">
         <div class="row justify-content-center align-items-center">
-            <div class="col-md-8">
+            <div class="col-lg-8 col-md-12">
                 @if($global_top_ad_data->top_ad_status == 'Show')
                 <div class="ad-section-1">
                     @if($global_top_ad_data->top_ad_url == '')

@@ -209,6 +209,18 @@
     .bonus-image {
        margin-bottom: 20px;
     }
+
+    .broker-card img {
+        width: 55px;
+        max-height: 55px;
+        margin-right: 0px;
+    }
+    .broker-card {
+        padding: 10px;
+        gap: 10px;
+        align-items: center;
+    }
+    
 }
 
 /* Small Devices (Tablets) */
@@ -312,13 +324,6 @@
         background-position: center;
         padding: 50px 0px;
     }
-    .broker-card {
-        display: flex;
-        align-items: normal;
-        justify-content: center;
-        flex-direction: column;
-        gap: 10px;
-    }
 
     section.site_add {
         display: none;
@@ -400,11 +405,25 @@
         margin-bottom: 30px;
     }
 
+    .n_v_wrapper {
+        margin-top: 30px;
+    }
 
-
-
+    .broker-card img {
+        width: 55px;
+        max-height: 55px;
+        margin-right: 0px;
+    }
+    .broker-card {
+        padding: 10px;
+        gap: 10px;
+        align-items: center;
+    }
     
-    
+    h2.b_c_h {
+        line-height: 40px;
+        font-size: 30px;
+    }
 
  
 }

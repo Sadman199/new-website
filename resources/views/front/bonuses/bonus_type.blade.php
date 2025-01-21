@@ -8,7 +8,7 @@
     <div class="b_breadcrumb_wrapper">
         <div class="container">
             <div class="row d-flex align-items-center justify-content-center">
-                <div class="col-md-7">
+                <div class="col-lg-7 col-md-12">
                     <div class="hero-content">
                         <h2 class="b_c_h">{{ $promo_type }}</h2>
                         <nav>
@@ -26,7 +26,7 @@
 
 <div class="page-content s_padding">
     <div class="container">
-        <div class="col-lg-8 col-md-12">
+        <div class="col-lg-9 col-md-12">
             <div class="f_dynamic_content">
                 @if ($promo_type === 'Forex Deposit Bonus')
                         <div>
