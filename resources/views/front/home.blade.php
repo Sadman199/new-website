@@ -580,7 +580,7 @@ $current_language_id = \App\Models\Language::where('short_name', $current_short_
 <section class="Compare_broker s_padding section-muted">
     <div class="container">
         <div class="row">
-            <div class="col-lg-7 col-md-12">
+            <div class="col-lg-12 col-md-12">
                 <h2 class="section_title">Compare Brokers</h2>
                 <div class="compare_hub">
                     <form action="{{ route('brokers.getComparison') }}" method="POST" id="compareForm">
@@ -634,22 +634,7 @@ $current_language_id = \App\Models\Language::where('short_name', $current_short_
                     </form>
                 </div>
             </div>
-            <div class="col-lg-5 col-md-12">
-               <h2 class="section_title">Subscribe to Our Newsletter</h2>
-                <!-- Subscribe Form -->
-                <form action="{{ route('subscribe') }}" method="POST" class="subscribe-form">
-                    @csrf
-                    <p class="subscribe-description">Stay updated with the latest news and offers.</p>
-
-                    <div class="form-group">
-                        <label for="email" class="form-label">Enter Your Email</label>
-                        <div class="input-container">
-                            <input type="email" name="email" id="email" class="form-input" placeholder="Your Email" required>
-                            <button type="submit" class="submit-btn">Subscribe</button>
-                        </div>
-                    </div>
-                </form>
-            </div>
+           
         </div>
     </div>   
 </section>
@@ -657,34 +642,65 @@ $current_language_id = \App\Models\Language::where('short_name', $current_short_
     <div class="container">
         <div class="row">
             <div class="col-md-12">
-                <h2 class="section_title">⚠️ Non-Regulated Brokers</h2>
+                <h2 class="section_title">Non-Regulated Brokers</h2>
                 <p class="section_dec">Proceed with caution! These brokers are <strong>not regulated</strong>, which means there is a higher risk of losing your funds. </p>
             </div>
         </div>
         <div class="row">
-            @foreach($non_regulatedBrokers as $broker)
-            <div class="col-lg-2 col-md-4">
-                <div class="tr_broker_card">
-                    <img alt="{{ $broker->name }} logo" src="{{ asset($broker->logo) }}" />
-                    <div class="broker-info">
-                        <div class="b_h_info">
-                            <div class="text-container">
-                                  <div class="non_tag">Non Regulated</div>
-                                <a href="">{{ $broker->name }}</a>
+                <div class="broker-row">
+                @foreach($non_regulatedBrokers as $broker)
+                    <div class="t_b_c_wrapper">
+                        <div class="tr_broker_card">
+                            <div class="card-content">
+                                <img class="t_b_c_img" alt="{{ $broker->name }} logo" src="{{ asset($broker->logo) }}" />
+                                <div class="broker-info">
+                                    <div class="b_h_info">
+                                        <div class="text-container">
+                                            <div class="non_tag">Non Regulated</div>
+                                            <div class="broker-name">{{ $broker->name }}</div> <!-- Broker name inside a div -->
+                                        </div>
+                                        <a href="{{ $broker->url }}" class="arrow-link">
+                                            <i class="fas fa-chevron-right"></i>
+                                        </a>
+                                    </div>
+                                </div>
                             </div>
-                            <a href="{{ $broker->url }}">
-                                <i class="fas fa-chevron-right"></i>
-                            </a>
                         </div>
                     </div>
-                </div>
+                @endforeach
             </div>
-            @endforeach
+
+
             <div class="s_btn_wrapper">
                 <a href="{{ route('non_regulated_brokers') }}" class="s_btn group">
                     <span class="overlay"></span>
                     View More
                 </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="s_n_erapper s_padding">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="s_dec_wrapper">
+                    <h2>Subscribe to Our Newsletter</h2>
+                    <p>Stay updated with the latest news and offers.</p>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                    <form action="{{ route('subscribe') }}" method="POST" class="">
+                    @csrf
+                    <div class="form-group">
+                        <div class="input-container">
+                            <input type="email" name="email" id="email" class="form-input" placeholder="Your Email" required>
+                            <button type="submit" class="submit-btn">Subscribe</button>
+                        </div>
+                    </div>
+                </form>
             </div>
         </div>
     </div>

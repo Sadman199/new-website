@@ -22,79 +22,79 @@ class AdminForexBonusController extends Controller
     {
         return view('admin.forex_bonuses.create');
     }
-
     public function store(Request $request)
-{
-    // Validate the incoming data
-    $request->validate([
-        'title' => 'required|string|max:255',
-        'slug' => 'required|string|max:255|unique:forex_bonuses,slug', // Ensure slug is unique
-        'publish_date' => 'required|date',
-        'author_name' => 'required|string|max:255',
-        'promo_type' => 'required|in:Forex Deposit Bonus,Forex No Deposit Bonus,Forex Live Contest,Forex Demo Contest,Forex Cashback Rebate,Crypto Bonus Promotion',
-        'description' => 'required|string',
-        'eligibility_criteria' => 'nullable|string', // Matches schema addition
-        'expiry_date' => 'nullable|date',
-        'min_deposit' => 'nullable|numeric|min:0', // Ensures the value is a non-negative number
-        'bonus_type_details' => 'nullable|string',
-        'feature_image' => 'required|image|mimes:jpg,png,jpeg,gif,webp|max:2048', // Added max size for better control
-        'link' => 'required|url',
-        'terms_conditions_url' => 'nullable|url',
-        'affiliate_link' => 'nullable|url',
-        'bonus_category' => 'nullable|string',
-        'promotion_status' => 'nullable|in:ongoing,limited-time,expired',
-        'participate' => 'required|string',
-        'how_to_participate' => 'required|string',
-        'details' => 'required|string',
-        'general_terms' => 'required|string',
-        'prize' => 'required|string|max:255', // Limited to prevent overly long prize descriptions
-    ]);
-
-    // Handle the image upload
-    if ($request->hasFile('feature_image')) {
-        // Get current timestamp and file extension
-        $now = time();
-        $ext = $request->file('feature_image')->extension();
-        
-        // Create a unique file name
-        $final_name = 'feature_image_' . $now . '.' . $ext;
-        
-        // Move the file to the desired directory
-        $request->file('feature_image')->move(public_path('uploads/forex_bonuses/'), $final_name);
-        
-        // Save the path in the forex bonus instance
-        $forexBonus->feature_image = 'uploads/forex_bonuses/' . $final_name;
+    {
+        // Validate the incoming data
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'slug' => 'required|string|max:255|unique:forex_bonuses,slug', // Ensure slug is unique
+            'publish_date' => 'required|date',
+            'author_name' => 'required|string|max:255',
+            'promo_type' => 'required|in:Forex Deposit Bonus,Forex No Deposit Bonus,Forex Live Contest,Forex Demo Contest,Forex Cashback Rebate,Crypto Bonus Promotion',
+            'description' => 'required|string',
+            'eligibility_criteria' => 'nullable|string', // Matches schema addition
+            'expiry_date' => 'nullable|date',
+            'min_deposit' => 'nullable|numeric|min:0', // Ensures the value is a non-negative number
+            'bonus_type_details' => 'nullable|string',
+            'feature_image' => 'required|image|mimes:jpg,png,jpeg,gif,webp|max:2048', // Added max size for better control
+            'link' => 'required|url',
+            'terms_conditions_url' => 'nullable|url',
+            'affiliate_link' => 'nullable|url',
+            'bonus_category' => 'nullable|string',
+            'promotion_status' => 'nullable|in:ongoing,limited-time,expired',
+            'participate' => 'required|string',
+            'how_to_participate' => 'required|string',
+            'details' => 'required|string',
+            'general_terms' => 'required|string',
+            'prize' => 'required|string|max:255', // Limited to prevent overly long prize descriptions
+        ]);
+    
+        // Handle the image upload
+        $featureImagePath = null;
+        if ($request->hasFile('feature_image')) {
+            // Get current timestamp and file extension
+            $now = time();
+            $ext = $request->file('feature_image')->extension();
+            
+            // Create a unique file name
+            $final_name = 'feature_image_' . $now . '.' . $ext;
+            
+            // Move the file to the desired directory
+            $request->file('feature_image')->move(public_path('uploads/forex_bonuses/'), $final_name);
+            
+            // Set the feature image path
+            $featureImagePath = 'uploads/forex_bonuses/' . $final_name;
+        }
+    
+        // Store the Forex Bonus in the database
+        ForexBonus::create([
+            'title' => $request->input('title'),
+            'slug' => $request->input('slug'),  // Store the slug
+            'publish_date' => $request->input('publish_date'),
+            'author_name' => $request->input('author_name'),
+            'promo_type' => $request->input('promo_type'),
+            'description' => $request->input('description'),
+            'feature_image' => $featureImagePath,  // Use the uploaded image path
+            'link' => $request->input('link'),
+            'participate' => $request->input('participate'),
+            'how_to_participate' => $request->input('how_to_participate'),
+            'details' => $request->input('details'),
+            'general_terms' => $request->input('general_terms'),
+            'prize' => $request->input('prize'),
+            'eligibility_criteria' => $request->input('eligibility_criteria'),
+            'expiry_date' => $request->input('expiry_date'),
+            'min_deposit' => $request->input('min_deposit'),
+            'bonus_type_details' => $request->input('bonus_type_details'),
+            'terms_conditions_url' => $request->input('terms_conditions_url'),
+            'affiliate_link' => $request->input('affiliate_link'),
+            'bonus_category' => $request->input('bonus_category'),
+            'promotion_status' => $request->input('promotion_status', 'ongoing'),  // Default to 'ongoing'
+        ]);
+    
+        // Redirect to the index page with a success message
+        return redirect()->route('admin_forex_bonus_show')->with('success', 'Forex Bonus created successfully!');
     }
     
-    
-    // Store the Forex Bonus in the database
-    ForexBonus::create([
-        'title' => $request->input('title'),
-        'slug' => $request->input('slug'),  // Store the slug
-        'publish_date' => $request->input('publish_date'),
-        'author_name' => $request->input('author_name'),
-        'promo_type' => $request->input('promo_type'),
-        'description' => $request->input('description'),
-        'feature_image' => 'forex_bonuses/' . $final_name,  // Use the relative path
-        'link' => $request->input('link'),
-        'participate' => $request->input('participate'),
-        'how_to_participate' => $request->input('how_to_participate'),
-        'details' => $request->input('details'),
-        'general_terms' => $request->input('general_terms'),
-        'prize' => $request->input('prize'),
-        'eligibility_criteria' => $request->input('eligibility_criteria'),
-        'expiry_date' => $request->input('expiry_date'),
-        'min_deposit' => $request->input('min_deposit'),
-        'bonus_type_details' => $request->input('bonus_type_details'),
-        'terms_conditions_url' => $request->input('terms_conditions_url'),
-        'affiliate_link' => $request->input('affiliate_link'),
-        'bonus_category' => $request->input('bonus_category'),
-        'promotion_status' => $request->input('promotion_status', 'ongoing'),  // Default to 'ongoing'
-    ]);
-
-    // Redirect to the index page with a success message
-    return redirect()->route('admin_forex_bonus_show')->with('success', 'Forex Bonus created successfully!');
-}
 
 
     // Show the form to edit an existing Forex Bonus post

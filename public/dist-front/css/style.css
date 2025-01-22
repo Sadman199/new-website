@@ -2711,7 +2711,7 @@ p.section-dec {
 
 .hero {
   position: relative;
-  height: 550px;
+  height: 650px;
   background: url("/resources/business-infographics-hologram-made-by-businessman.jpg") center/cover no-repeat;
   color: white;
   margin-top: 100px;
@@ -4865,17 +4865,16 @@ img.c_logo {
 
 
 /* Styling for the subscribe section */
-.subscribe-form {
-  padding: 36px 30px;
-  border-radius: 10px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-  width: 100%;
-  margin: 0 auto;
-  text-align: center;
-  transition: all 0.3s ease;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08), 0 2px 6px rgba(0, 0, 0, 0.04);
-  border: 2px solid #fcfcfc;
+.s_n_erapper{
+  background: #0E1A33;
+}
+.s_dec_wrapper h2{
+  color: #fff;
+  text-transform: uppercase;
+}
 
+.s_dec_wrapper p{
+   color: #fff;
 }
 
 .subscribe-form:hover {
