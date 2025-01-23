@@ -63,7 +63,10 @@ class HomeController extends Controller
       $regulatedBrokers = Broker::whereHas('accountOptions', function($query) {
           $query->where('is_regulated', 1);
       })->get();
-      
+      $forex_tips = Post::with('rSubCategory')->whereHas('rSubCategory', function ($query) {
+        $query->where('sub_category_name', 'Forex Tips'); // Replace 'Forex Tips' with your actual subcategory name
+    })->latest()->take(5)->get();
+
       $non_regulatedBrokers = Broker::whereHas('accountOptions', function($query) {
           $query->where('is_regulated', false); // Fetch non-regulated brokers
       })->take(6)->get();
@@ -100,13 +103,10 @@ class HomeController extends Controller
           'liveContest',
           'forexCashbackRebate',
           'cryptoBonusPromotion',
-          'non_regulatedBrokers'
+          'non_regulatedBrokers',
+          'forex_tips'
       ));
   }
-
-
-
-
 
     public function get_subcategory_by_category($id)
     {
@@ -177,10 +177,18 @@ class HomeController extends Controller
         $type = strtolower(trim(str_replace('-', ' ', $type)));
         return view('front.brokers_by_account_type', compact('brokers', 'type', 'page_data', 'featured_brokers', 'accountTypes', 'home_ad_data'));
     }
-    
 
-    
 
+
+
+    public function showComparisonDropdown()
+    {
+        // Fetch all brokers from the database and limit to 10
+        $brokers = Broker::limit(10)->get();
+    
+        return view('front.home', compact('brokers'));
+    }
+    
     public function compare($broker1_slug, $broker2_slug)
     {
         Helpers::read_json(); // Optional helper functionality
@@ -194,9 +202,12 @@ class HomeController extends Controller
         $home_ad_data = HomeAdvertisement::where('id', 1)->first();
         $broker1 = Broker::where('slug', $broker1_slug)->firstOrFail();
         $broker2 = Broker::where('slug', $broker2_slug)->firstOrFail();
-
-        return view('front.broker_comparison_result', compact('page_data', 'broker1', 'broker2','home_ad_data'));
+    
+        return view('front.broker_comparison_result', compact('page_data', 'broker1', 'broker2', 'home_ad_data'));
     }
+
+
+    
 
     public function getComparison(Request $request)
     {
@@ -213,7 +224,27 @@ class HomeController extends Controller
         return response()->json(['success' => true]);
     }
 
-    
+
+    public function showBrokerComparison()
+{
+    // Fetch language settings
+    Helpers::read_json(); 
+    if (!session()->get('session_short_name')) {
+        $current_short_name = Language::where('is_default', 'Yes')->first()->short_name;
+    } else {
+        $current_short_name = session()->get('session_short_name');
+    }
+    $current_language_id = Language::where('short_name', $current_short_name)->first()->id;
+
+    // Fetch page data for the current language
+    $page_data = Page::where('language_id', $current_language_id)->first();
+    $featured_brokers = Broker::where('featured_broker', 1)->latest() ->take(6)->get();
+
+    // Fetch brokers for comparison
+    $brokers = Broker::with('accountOptions')->get(); // Adjust relationships as needed
+
+    return view('front.broker_comparison', compact('brokers', 'page_data','featured_brokers'));
+}
 
 
 }

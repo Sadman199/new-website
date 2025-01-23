@@ -31,25 +31,27 @@ $current_language_id = \App\Models\Language::where('short_name', $current_short_
                 @foreach($top_brokers as $broker)
                 <div class="col-lg-4 col-md-6">
                     <div class="broker-card">
-                            @if ($broker->logo)
+                        <div class="d_card_header">
+                             @if ($broker->logo)
                                 <img src="{{ asset($broker->logo) }}" alt="Broker Logo">
                             @else
                                 <p>No logo available</p>
                             @endif
-
-                        <div class="broker-info">
-                            <div class="b_h_info">
-                                <div class="text-container">
-                                    <span>Trade with</span>
-                                    <a class="b_c_b_name" href="">{{ $broker->name }}</a>
-                                </div>
+                            <div class="text-container">
+                                <span>Trade with</span>
+                                <a class="b_c_b_name" href="">{{ $broker->name }}</a>
                                 <a href="{{ $broker->url }}">
                                     <i class="fas fa-chevron-right"></i>
                                 </a>
                             </div>
+                        </div>
+                        <div class="broker-info">
+                            <div class="b_h_info">
+                                
+                            </div>
                             <div class="description-wrapper">
                                 <p class="short-description hero_p">
-                                    {{ Str::limit(strip_tags($broker->short_description), 30) }}
+                                    {{ Str::limit(strip_tags($broker->title), 60) }}
                                 </p>
                                 <i class="info-icon fas fa-info-circle"></i>
                                 <span class="full-description">
@@ -66,69 +68,8 @@ $current_language_id = \App\Models\Language::where('short_name', $current_short_
             @endif
         </div>
     </div>
-    <div class="news_ticker_wrapper" style="position: relative; width: 100%; height: 85px;">
-  <iframe
-    id="news_ticker_iframe"
-    class="news_ticker"
-    src="https://fxpricing.com/fx-widget/ticker-tape-widget.php?id=1,2,3,5,14,20&border=show&speed=50&click_target=blank&theme=transparent&by-cr=28A745&sl-cr=DC3545&flags=circle&d_mode=compact-name&column=ask,bid,spread&lang=en&font=Arial, sans-serif"
-    width="100%"
-    height="85"
-    style="border: unset;"
-  ></iframe>
-  <!-- Invisible Overlay to capture clicks -->
-  <a
-    href="https://oneroyal.com/en/open-account/sign-up"
-    target="_blank"
-    rel="noopener noreferrer"
-    style="
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: 10; /* Make sure the overlay is on top of the iframe */
-      background: transparent;
-    "
-  ></a>
-</div>
-
-
-
-<style type="text/css">
-  #fx-pricing-widget-copyright {
-    text-align: center;
-    font-size: 13px;
-    font-family: sans-serif;
-    margin-top: 10px;
-    margin-bottom: 10px;
-    color: #9db2bd;
-  }
-  #fx-pricing-widget-copyright a {
-    text-decoration: unset;
-    color: #bb3534;
-    font-weight: 600;
-  }
-</style>
-
-<script>
-  document.addEventListener("DOMContentLoaded", function () {
-    const tickerWrapper = document.querySelector(".news_ticker_wrapper");
-    const iframe = document.getElementById("news_ticker_iframe");
-
-    // Add a hover event to stop the scrolling (by disabling pointer events)
-    tickerWrapper.addEventListener("mouseenter", function () {
-      iframe.style.pointerEvents = "none"; // Stops interaction with iframe, effectively pausing ticker
-    });
-
-    // Add a hoverout event to resume the scrolling (by enabling pointer events)
-    tickerWrapper.addEventListener("mouseleave", function () {
-      iframe.style.pointerEvents = "auto"; // Resumes interaction with iframe, effectively starting the ticker again
-    });
-  });
-</script>
-
-
-
+    <iframe src="https://fxpricing.com/fx-widget/ticker-tape-widget.php?id=1,2,3,5,14,20&border=show&speed=50&fcs_link=hide&click_target=blank&theme=transparent&by-cr=28A745&sl-cr=DC3545&flags=circle&d_mode=compact-name&column=ask,bid,spread&lang=en&font=Arial, sans-serif" width="100%" height="85" style="border: unset;"></iframe><div id="fx-pricing-widget-copyright"><span>Powered by </span><a href="https://fxpricing.com/" target="_blank">FX Pricing</a></div><style type="text/css">#fx-pricing-widget-copyright{text-align: center; font-size: 13px; font-family: sans-serif; margin-top: 10px; margin-bottom: 10px; color: #9db2bd;} #fx-pricing-widget-copyright a{text-decoration: unset; color: #bb3534; font-weight: 600;}</style>
+</section>
 </section>
 <section class="hero_content s_padding">
     <div class="container">
@@ -150,8 +91,8 @@ $current_language_id = \App\Models\Language::where('short_name', $current_short_
                                 <div class="card_content">
                                     <h5 class="custom-card-title"></h5>
                                     <a class="b_card_heading"
-                                        href="{{ route('deposit-bonuses.detail', $bonus->slug) }}">{{ Str::limit($bonus->title, 30) }}</a>
-                                    <p>{{ Str::limit(strip_tags($bonus->description), 50) }}</p>
+                                        href="{{ route('deposit-bonuses.detail', $bonus->slug) }}">{{ Str::limit($bonus->title, 50) }}</a>
+                                   
                                 </div>
                             </div>
                         </li>
@@ -173,11 +114,9 @@ $current_language_id = \App\Models\Language::where('short_name', $current_short_
                             @else
                             <p>No image available.</p>
                             @endif
-
                                 <div class="card_content">
                                     <a class="b_card_heading"
-                                        href="{{ route('no-deposit-bonuses.detail', $bonus->slug) }}">{{ Str::limit($bonus->title, 20) }}</a>
-                                    <p>{{ Str::limit(strip_tags($bonus->description), 50) }}</p>
+                                        href="{{ route('no-deposit-bonuses.detail', $bonus->slug) }}">{{ Str::limit($bonus->title, 50) }}</a>
                                 </div>
                             </div>
                         </li>
@@ -185,105 +124,46 @@ $current_language_id = \App\Models\Language::where('short_name', $current_short_
                     @endforeach
                </div>
             </div>
-
             <div class="col-lg-4 col-md-12">
-                <div class="n_v_wrapper">
-                    <ul class="nav nav-pills h_c_b_nav" id="pills-tab" role="tablist">
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link active" id="pills-home-tab" data-bs-toggle="pill" data-bs-target="#pills-home" type="button" role="tab" aria-controls="pills-home" aria-selected="true">{{ RECENT_NEWS }}</button>
-                        </li>
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="pills-profile-tab" data-bs-toggle="pill" data-bs-target="#pills-profile" type="button" role="tab" aria-controls="pills-profile" aria-selected="false">{{ POPULAR_NEWS }}</button>
-                        </li>
-                    </ul>
-                </div>
-                <div class="widget">
-                    <div class="news">
-                        <div class="tab-content" id="pills-tabContent">
-                            <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
-                                @php
-                                    $recent_news_data = \App\Models\Post::with('rSubCategory')
-                                        ->where('language_id', $current_language_id)
-                                        ->latest()
-                                        ->take(4)
-                                        ->get();
-                                @endphp
-                                @foreach($recent_news_data as $item)
-                                    @php
-                                        $user_data = $item->author_id == 0 ? \App\Models\Admin::find($item->admin_id) : \App\Models\Author::find($item->author_id);
-                                        $updated_date = $item->updated_at->format('d F, Y');
-                                    @endphp
-                                    <div class="news-item">
-                                        <div class="left">
-                                            <img src="{{ asset('uploads/'.$item->post_photo) }}" alt="">
+            <h2 class="section_title">Forex Tips</h2>
+                <div class="vertical-slider-wrapper">
+                    <div class="vertical-slider">
+                        @foreach($forex_tips as $tip)
+                            <div class="f_news_wrapper">
+                                <div class="f_news_content">
+                                    <a class="f_tips_title" href="{{ route('news_detail', ['subcategory_slug' => $tip->rSubCategory->slug, 'post_slug' => $tip->slug]) }}">
+                                        <h5>{{ Str::limit($tip->post_title, 60) }}</h5>
+                                    </a>
+                                    <div class="author_date">
+                                        <div class="publish_warapper">
+                                            @php
+                                                $icons = [
+                                                    '/resources/dollar-symbol.png',
+                                                    '/resources/euro.png',
+                                                    '/resources/performance.png',
+                                                    '/resources/earth.png'
+                                                ];
+
+                                                $randomIcon = $icons[array_rand($icons)];
+                                            @endphp
+
+                                            <img src="{{ $randomIcon }}" alt="" class="pb_img">
+                                            <p class="updated_date">{{ $tip->updated_at->diffForHumans() }}</p>
                                         </div>
-                                        <div class="right">
-                                            <div class="category">
-                                                <span class="badge bg-success">{{ optional($item->rSubCategory)->sub_category_name }}</span>
-                                            </div>
-                                        
-
-                                            <h2>
-                                                @if($item->rSubCategory)
-                                                    <a href="{{ route('news_detail', ['subcategory_slug' => $item->rSubCategory->slug, 'post_slug' => $item->slug]) }}">
-                                                        {{ Str::limit($item->post_title, 30) }}
-                                                    </a>
-                                                @else
-                                                    <span>{{ Str::limit($item->post_title, 30) }}</span>
-                                                @endif
-                                            </h2>
-
-
-                                            <div class="date-user">
-                                                <div class="user"><a href="javascript:void;">{{ $user_data->name }}</a></div>
-                                                <div class="date"><a href="javascript:void;">{{ $updated_date }}</a></div>
-                                            </div>
-                                        </div>
+                                        <p class="author_name">
+                                            @php
+                                                $user_data = $tip->author_id == 0 
+                                                    ? \App\Models\Admin::find($tip->admin_id) 
+                                                    : \App\Models\Author::find($tip->author_id);
+                                            @endphp
+                                            <i class="fas fa-user profile_icon"></i>
+                                            {{ $user_data ? $user_data->name : 'Unknown Author' }}
+                                        </p>
                                     </div>
-                                @endforeach
+                                </div>
+                                <img class="forex_tips_img" src="{{ asset('uploads/'.$tip->post_photo) }}" alt="">
                             </div>
-
-                            <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
-                                @php
-                                    $popular_news_data = \App\Models\Post::with('rSubCategory')
-                                        ->where('language_id', $current_language_id)
-                                        ->orderBy('visitors', 'desc')
-                                        ->take(4)
-                                        ->get();
-                                @endphp
-                                @foreach($popular_news_data as $item)
-                                    @php
-                                        $user_data = $item->author_id == 0 ? \App\Models\Admin::find($item->admin_id) : \App\Models\Author::find($item->author_id);
-                                        $updated_date = $item->updated_at->format('d F, Y');
-                                    @endphp
-                                    <div class="news-item">
-                                        <div class="left">
-                                            <img src="{{ asset('uploads/'.$item->post_photo) }}" alt="">
-                                        </div>
-                                        <div class="right">
-                                            <div class="category">
-                                                <span class="badge bg-success">{{ optional($item->rSubCategory)->sub_category_name }}</span>
-                                            </div>
-                                        
-                                                <h2>
-                                                    @if($item->rSubCategory)
-                                                        <a href="{{ route('news_detail', ['subcategory_slug' => $item->rSubCategory->slug, 'post_slug' => $item->slug]) }}">
-                                                            {{ Str::limit($item->post_title, 30) }}
-                                                        </a>
-                                                    @else
-                                                        <span>{{ Str::limit($item->post_title, 30) }}</span>
-                                                    @endif
-                                                </h2>
-
-                                            <div class="date-user">
-                                                <div class="user"><a href="javascript:void;">{{ $user_data->name }}</a></div>
-                                                <div class="date"><a href="javascript:void;">{{ $updated_date }}</a></div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                @endforeach
-                            </div>
-                        </div>
+                        @endforeach
                     </div>
                 </div>
             </div>
@@ -320,30 +200,30 @@ $current_language_id = \App\Models\Language::where('short_name', $current_short_
             @foreach($featured_brokers as $broker)
             <div class="col-lg-3 col-md-6 col-12">
                 <div class="broker_card">
+                    <div class="l_r_wrap">
+                        <div class="broker-logo">
+                            @if ($broker->logo)
+                            <img src="{{ asset($broker->logo) }}" alt="Broker Logo" class="broker_logo">
+                            @else
+                            <p>No logo available.</p>
+                            @endif
+                        </div>
+                        <div class="rating_wrapper">
+                            <div class="rating">
+                            <?php
+                                $rating = $broker->rating;
+                                for ($i = 1; $i <= 5; $i++) {
+                                    echo '<span class="star ' . ($i <= $rating ? 'filled' : ($i - 0.5 == $rating ? 'half' : '')) . '">';
+                                    echo $i <= $rating || $i - 0.5 == $rating ? '&#9733;' : '&#9734;';
+                                    echo '</span>';
+                                }
+                                ?>
+                            </div>
+                            <span class="rating">Overall {{ $broker->rating }}</span>
+                        </div>
+                    </div>
                     <!-- Upper Portion -->
-                    <div class="broker_content">
-                         <div class="l_r_wrap">
-                            <div class="broker-logo">
-                                @if ($broker->logo)
-                                <img src="{{ asset($broker->logo) }}" alt="Broker Logo" class="broker_logo">
-                                @else
-                                <p>No logo available.</p>
-                                @endif
-                            </div>
-                            <div class="rating_wrapper">
-                                <div class="rating">
-                                <?php
-                                    $rating = $broker->rating;
-                                    for ($i = 1; $i <= 5; $i++) {
-                                        echo '<span class="star ' . ($i <= $rating ? 'filled' : ($i - 0.5 == $rating ? 'half' : '')) . '">';
-                                        echo $i <= $rating || $i - 0.5 == $rating ? '&#9733;' : '&#9734;';
-                                        echo '</span>';
-                                    }
-                                    ?>
-                                </div>
-                                <span class="rating">Overall {{ $broker->rating }}</span>
-                            </div>
-                         </div>
+                    <div class="broker_content_home b_c_home">
                          <!-- Tab Section -->
                         <div class="tab_wrapper">
                             <ul class="nav nav-tabs ac_list_wrapper" id="featuredTab{{ $broker->id }}" role="tablist">
@@ -400,7 +280,7 @@ $current_language_id = \App\Models\Language::where('short_name', $current_short_
                         </div>
                     </div>
                     <!-- Button Section -->
-                    <div class="b_btn_wrapper">
+                    <div class="b_btn_wrapper b_c_home">
                         <a href="{{ route('broker_detail', ['slug' => $broker->slug]) }}">
                             <button class="site_button">
                                 <i class="fas fa-external-link-alt"></i> Read Review
@@ -421,6 +301,137 @@ $current_language_id = \App\Models\Language::where('short_name', $current_short_
         </div>
     </div>
 </section>
+<section class="e_c s_padding">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8">
+                <h2 class="section_title">Live Economic Calendar</h2>
+                <p class="section_dec">Stay updated with the latest global market news and financial events. This live widget brings you real-time insights and updates from major markets worldwide, helping you make informed trading decisions.
+                </p>
+                <div class="c_economic_calendar">
+                    <!-- TradingView Widget BEGIN -->
+                    <div class="tradingview-widget-container">
+                    <div class="tradingview-widget-container__widget"></div>
+                    <div class="tradingview-widget-copyright"><a href="https://www.tradingview.com/" rel="noopener nofollow" target="_blank"><span class="blue-text">Track all markets on TradingView</span></a></div>
+                    <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-events.js" async>
+                    {
+                    "colorTheme": "light",
+                    "isTransparent": true,
+                    "width": "100%",
+                    "height": "500",
+                    "locale": "en",
+                    "importanceFilter": "-1,0,1",
+                    "countryFilter": "ar,au,br,ca,cn,fr,de,in,id,it,jp,kr,mx,ru,sa,za,tr,gb,us,eu"
+                    }
+                    </script>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                 <h2 class="section_title">Popular & Latest Forex News</h2>
+                 <p class="section_dec">Get trending updates and key forex news, from market insights to central bank decisions, to stay ahead in trading.</p>
+                 <div class="n_v_wrapper">
+                    <ul class="nav nav-pills h_c_b_nav" id="pills-tab" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="pills-home-tab" data-bs-toggle="pill" data-bs-target="#pills-home" type="button" role="tab" aria-controls="pills-home" aria-selected="true">{{ RECENT_NEWS }}</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="pills-profile-tab" data-bs-toggle="pill" data-bs-target="#pills-profile" type="button" role="tab" aria-controls="pills-profile" aria-selected="false">{{ POPULAR_NEWS }}</button>
+                        </li>
+                    </ul>
+                </div>
+                <div class="widget">
+                    <div class="news">
+                        <div class="tab-content" id="pills-tabContent">
+                            <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
+                                @php
+                                    $recent_news_data = \App\Models\Post::with('rSubCategory')
+                                        ->where('language_id', $current_language_id)
+                                        ->latest()
+                                        ->take(4)
+                                        ->get();
+                                @endphp
+                                @foreach($recent_news_data as $item)
+                                    @php
+                                        $user_data = $item->author_id == 0 ? \App\Models\Admin::find($item->admin_id) : \App\Models\Author::find($item->author_id);
+                                        $updated_date = $item->updated_at->diffForHumans();
+                                        @endphp
+                                    <div class="news-item">
+                                        <div class="right">
+                                            <div class="category">
+                                                <span class="badge bg-success">{{ optional($item->rSubCategory)->sub_category_name }}</span>
+                                            </div>
+                                            <h2>
+                                                @if($item->rSubCategory)
+                                                    <a href="{{ route('news_detail', ['subcategory_slug' => $item->rSubCategory->slug, 'post_slug' => $item->slug]) }}">
+                                                        {{ Str::limit($item->post_title, 60) }}
+                                                    </a>
+                                                @else
+                                                    <span>{{ Str::limit($item->post_title, 60) }}</span>
+                                                @endif
+                                            </h2>
+                                            <div class="date-user">
+                                                <div class="user"><a href="javascript:void;">{{ $user_data->name }}</a></div>
+                                                <div class="date"><a href="javascript:void;">{{ $updated_date }}</a></div>
+                                            </div>
+                                        </div>
+                                        <div class="left">
+                                            <img src="{{ asset('uploads/'.$item->post_photo) }}" alt="">
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+
+                            <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
+                                @php
+                                    $popular_news_data = \App\Models\Post::with('rSubCategory')
+                                        ->where('language_id', $current_language_id)
+                                        ->orderBy('visitors', 'desc')
+                                        ->take(4)
+                                        ->get();
+                                @endphp
+                                @foreach($popular_news_data as $item)
+                                    @php
+                                        $user_data = $item->author_id == 0 ? \App\Models\Admin::find($item->admin_id) : \App\Models\Author::find($item->author_id);
+                                        $updated_date = $item->updated_at->diffForHumans();
+                                        @endphp
+                                    <div class="news-item">
+                                        <div class="right">
+                                            <div class="category">
+                                                <span class="badge bg-success">{{ optional($item->rSubCategory)->sub_category_name }}</span>
+                                            </div>
+                                        
+                                                <h2>
+                                                    @if($item->rSubCategory)
+                                                        <a href="{{ route('news_detail', ['subcategory_slug' => $item->rSubCategory->slug, 'post_slug' => $item->slug]) }}">
+                                                            {{ Str::limit($item->post_title, 60) }}
+                                                        </a>
+                                                    @else
+                                                        <span>{{ Str::limit($item->post_title, 60) }}</span>
+                                                    @endif
+                                                </h2>
+
+                                            <div class="date-user">
+                                                <div class="user"><a href="javascript:void;">{{ $user_data->name }}</a></div>
+                                                <div class="date"><a href="javascript:void;">{{ $updated_date }}</a></div>
+                                            </div>
+                                        </div>
+                                        <div class="left">
+                                            <img src="{{ asset('uploads/'.$item->post_photo) }}" alt="">
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</section>
 <section class="leverage_section s_padding">
     <div class="container">
         <div class="row">
@@ -432,19 +443,23 @@ $current_language_id = \App\Models\Language::where('short_name', $current_short_
                  @if ($best_leverage_brokers->count() > 0)
                     <div class="row">
                         @foreach($best_leverage_brokers as $broker)
-                        <div class="col-lg-4 col-md-6">
-                            <div class="broker-layer">
-                                <!-- Background Section -->
-                                <div class="broker-background" style="background-image: url('{{ asset($broker->logo ?? 'default-logo.png') }}');"></div>
-
-                                <!-- Content Section -->
+                        <div class="col-lg-3 col-md-6">
+                            <div class="broker_layer">
+                                <div class="b_l_img_wrapper">
+                                    <img class="broker_layer_image" alt="{{ $broker->name }} logo" src="{{ asset($broker->logo) }}" />
+                                </div>
+                                <div class="hover_description_wrapper">
+                                    <span class="full_description_w">
+                                        {{ strip_tags($broker->short_description) }}
+                                    </span>
+                                </div>
                                 <div class="broker-content">
                                     <div class="broker-header">
-                                        <h4>{{ $broker->name }}</h4>
+                                        <a href="{{ $broker->url }}"><h4>{{ $broker->name }}</h4></a>
                                         <p class="broker-leverage"><strong>Leverage:</strong> {{ $broker->leverage }}</p>
                                     </div>
-                                    <!-- Rating and Action -->
                                     <div class="broker-footer">
+                                    <a href="{{ route('broker_detail', ['slug' => $broker->slug]) }}" class="review-button">Read Review</a>
                                         <div class="rating-wrapper">
                                             <div class="rating">
                                                 <?php
@@ -461,7 +476,6 @@ $current_language_id = \App\Models\Language::where('short_name', $current_short_
                                                 ?>
                                             </div>
                                         </div>
-                                        <a href="{{ route('broker_detail', ['slug' => $broker->slug]) }}" class="review-button">Read Review</a>
                                     </div>
                                 </div>
                             </div>
@@ -488,15 +502,23 @@ $current_language_id = \App\Models\Language::where('short_name', $current_short_
         </div>
         <div class="row">
             @foreach($regulatedBrokers as $broker)
-            <div class="col-lg-4 col-md-6">
-                <div class="broker-layer">
-                    <div class="broker-background" style="background-image: url('{{ asset($broker->logo ?? 'default-logo.png') }}');"></div>
+            <div class="col-lg-3 col-md-6">
+                <div class="broker_layer">
+                    <div class="b_l_img_wrapper">
+                        <img class="broker_layer_image" alt="{{ $broker->name }} logo" src="{{ asset($broker->logo) }}" />
+                    </div>
+                    <div class="hover_description_wrapper">
+                        <span class="full_description_w">
+                            {{ strip_tags($broker->short_description) }}
+                        </span>
+                    </div>
                     <div class="broker-content">
                         <div class="broker-header">
                             <a href="{{ $broker->url }}"><h4>{{ $broker->name }}</h4></a>
                             <p class="broker-leverage"><strong>Leverage:</strong> {{ $broker->leverage }}</p>
                         </div>
                         <div class="broker-footer">
+                        <a href="{{ route('broker_detail', ['slug' => $broker->slug]) }}" class="review-button">Read Review</a>
                             <div class="rating-wrapper">
                                 <div class="rating">
                                     <?php
@@ -513,7 +535,6 @@ $current_language_id = \App\Models\Language::where('short_name', $current_short_
                                     ?>
                                 </div>
                             </div>
-                            <a href="{{ route('broker_detail', ['slug' => $broker->slug]) }}" class="review-button">Read Review</a>
                         </div>
                     </div>
                 </div>
@@ -577,67 +598,6 @@ $current_language_id = \App\Models\Language::where('short_name', $current_short_
     </div>
     @endif
 </section>
-<section class="Compare_broker s_padding section-muted">
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-12 col-md-12">
-                <h2 class="section_title">Compare Brokers</h2>
-                <div class="compare_hub">
-                    <form action="{{ route('brokers.getComparison') }}" method="POST" id="compareForm">
-                        @csrf
-                        <div class="row">
-                            <div class="col-md-6">
-                            <h4 class="compare-subheading">Select Broker 1</h4>
-                                <div class="compare-dropdown">
-                                    <button type="button" class="compare-toggle" id="compare_broker1_toggle">
-                                        -- Select Broker --
-                                        <i class="fas fa-chevron-down toggle-icon"></i>
-                                    </button>
-                                    <ul class="compare-menu" id="compare_broker1_menu">
-                                        @foreach($brokers as $broker)
-                                        <li class="b_data_list" data-value="{{ $broker->slug }}">
-                                            <img src="{{ asset($broker->logo) }}" alt="{{ $broker->name }}" class="c_logo">
-                                            {{ $broker->name }}
-                                        </li>
-                                        @endforeach
-                                    </ul>
-                                    <input type="hidden" name="broker1_id" id="compare_broker1" required>
-                                    <span class="compare-error-message" id="compare_broker1_error">Please select a broker.</span>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                            <h4 class="compare-subheading">Select Broker 2</h4>
-                                <div class="compare-dropdown">
-                                    <button type="button" class="compare-toggle" id="compare_broker2_toggle">
-                                        -- Select Broker --
-                                        <i class="fas fa-chevron-down toggle-icon"></i>
-                                    </button>
-                                    <ul class="compare-menu" id="compare_broker2_menu">
-                                        @foreach($brokers as $broker)
-                                        <li class="b_data_list" data-value="{{ $broker->slug }}">
-                                            <img src="{{ asset($broker->logo) }}" alt="{{ $broker->name }}" class="c_logo">
-                                            {{ $broker->name }}
-                                        </li>
-                                        @endforeach
-                                    </ul>
-                                    <input type="hidden" name="broker2_id" id="compare_broker2" required>
-                                    <span class="compare-error-message" id="compare_broker2_error">Please select a broker.</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="s_btn_wrapper">
-                            <button type="submit" class="s_btn group">
-                                <span class="overlay"></span>
-                                Compare
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-           
-        </div>
-    </div>   
-</section>
 <section class="non_regulated_section s_padding">
     <div class="container">
         <div class="row">
@@ -647,30 +607,28 @@ $current_language_id = \App\Models\Language::where('short_name', $current_short_
             </div>
         </div>
         <div class="row">
-                <div class="broker-row">
+            <div class="non-regulated-slider owl-carousel">
                 @foreach($non_regulatedBrokers as $broker)
-                    <div class="t_b_c_wrapper">
-                        <div class="tr_broker_card">
-                            <div class="card-content">
-                                <img class="t_b_c_img" alt="{{ $broker->name }} logo" src="{{ asset($broker->logo) }}" />
-                                <div class="broker-info">
-                                    <div class="b_h_info">
-                                        <div class="text-container">
-                                            <div class="non_tag">Non Regulated</div>
-                                            <div class="broker-name">{{ $broker->name }}</div> <!-- Broker name inside a div -->
-                                        </div>
-                                        <a href="{{ $broker->url }}" class="arrow-link">
-                                            <i class="fas fa-chevron-right"></i>
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
+                <div class="col-lg-12">
+                    <div class="nr_wrapper">
+                        <img class="n_r_b_logo" alt="{{ $broker->name }} logo" src="{{ asset($broker->logo) }}" />
+                        <div class="broker-info">
+                            <div class="non_tag">Non Regulated</div>
+                            <div class="nr_b_info">
+                                {{ $broker->name }}
+                                <a href="{{ $broker->url }}" class="arrow-link">
+                                <i class="fas fa-chevron-right"></i>
+                            </a>
+                            </div> 
+                            
                         </div>
                     </div>
+                </div>
                 @endforeach
             </div>
 
 
+           
             <div class="s_btn_wrapper">
                 <a href="{{ route('non_regulated_brokers') }}" class="s_btn group">
                     <span class="overlay"></span>
@@ -680,7 +638,6 @@ $current_language_id = \App\Models\Language::where('short_name', $current_short_
         </div>
     </div>
 </section>
-
 <section class="s_n_erapper s_padding">
     <div class="container">
         <div class="row">
@@ -779,7 +736,6 @@ $(document).ready(function() {
     });
     @endforeach
 });
-
 $(document).ready(function () {
   handleAdBannersForAllPages('.hero', {
     offset: 250,

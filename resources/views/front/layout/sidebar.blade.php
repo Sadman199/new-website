@@ -63,9 +63,14 @@ $current_language_id = \App\Models\Language::where('short_name',$current_short_n
                                            
                                         </div>
                                         <div class="right">                                      
-                                                <a class="s_c_tilte" href="{{ route('news_detail', ['subcategory_slug' => $item->rSubCategory->slug, 'post_slug' => $item->slug]) }}">
-                                                    {{ Str::limit($item->post_title, 30) }}
-                                                </a>                                    
+                                        <a class="s_c_tilte" href="{{ route('news_detail', [
+                                                'subcategory_slug' => $item->rSubCategory ? $item->rSubCategory->slug : 'default-category', 
+                                                'post_slug' => $item->slug
+                                            ]) }}">
+                                                {{ Str::limit($item->post_title, 30) }}
+                                            </a>
+
+                                  
                                             <div class="date_user_side_bar">
                                                 <div class="user"><a class="s_s_d" href="javascript:void;">{{ $user_data->name }}</a></div>
                                                 <div class="date"><a class="s_s_d" href="javascript:void;">{{ $updated_date }}</a></div>
@@ -94,9 +99,14 @@ $current_language_id = \App\Models\Language::where('short_name',$current_short_n
                                           
                                         </div>
                                         <div class="right">
-                                                <a class="s_c_tilte" href="{{ route('news_detail', ['subcategory_slug' => $item->rSubCategory->slug, 'post_slug' => $item->slug]) }}">
-                                                    {{ Str::limit($item->post_title, 30) }}
-                                                </a>   
+                                        <a class="s_c_tilte" href="{{ route('news_detail', [
+                                                'subcategory_slug' => $item->rSubCategory ? $item->rSubCategory->slug : 'default-category', 
+                                                'post_slug' => $item->slug
+                                            ]) }}">
+                                                {{ Str::limit($item->post_title, 30) }}
+                                            </a>
+
+
 
                                             <div class="date_user_side_bar">
                                                 <div class="user"><a class="s_s_d" href="javascript:void;">{{ $user_data->name }}</a></div>

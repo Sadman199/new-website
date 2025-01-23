@@ -323,3 +323,34 @@ $(document).ready(function () {
 });
 
 
+$('.broker_layer').on('click', function() {
+    const descriptionWrapper = $(this).find('.hover_description_wrapper');
+    const isVisible = descriptionWrapper.data('visible') === true;
+
+    // Toggle visibility
+    if (isVisible) {
+        descriptionWrapper.css('height', '0'); // Hide the description
+        descriptionWrapper.data('visible', false);
+    } else {
+        descriptionWrapper.css('height', 'auto'); // Show the description
+        descriptionWrapper.data('visible', true);
+    }
+});
+
+
+
+    $(document).ready(function(){
+        $(".non-regulated-slider").owlCarousel({
+            loop: true,          
+            margin: 15,          
+            nav: true,           
+            dots: false,         
+            responsive: {      
+                0: { items: 1 },
+                600: { items: 2 },
+                1000: { items: 7 }
+            }
+        });
+    });
+
+

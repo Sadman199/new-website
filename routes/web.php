@@ -345,6 +345,7 @@ Route::get('/brokers/compare', [HomeController::class, 'compare'])->name('broker
 Route::get('/brokers/compare/{broker1_slug}-vs-{broker2_slug}', [HomeController::class, 'compare'])->name('brokers.compare');
 Route::post('/brokers/compare', [HomeController::class, 'getComparison'])->name('brokers.getComparison');
 Route::get('/compare/{broker1}/{broker2}', [HomeController::class, 'compare'])->name('compare');
+Route::get('/broker-comparison', [HomeController::class, 'showBrokerComparison'])->name('broker.comparison');
 
 Route::get('/reviews/pending', [ReviewController::class, 'pending'])->name('reviews.pending');
 Route::post('/reviews/{review}/approve', [ReviewController::class, 'approve'])->name('reviews.approve');
@@ -355,7 +356,11 @@ Route::post('/brokers/{broker}/reviews', [ReviewController::class, 'store'])->na
 Route::post('/contact', [ContactController::class, 'submitForm'])->name('contact_form_submit');
 Route::get('/regulated-brokers', [BrokerTypeController::class, 'showRegulatedBrokers'])->name('regulated_brokers');
 Route::get('/non-regulated-brokers', [BrokerTypeController::class, 'showNonRegulatedBrokers'])->name('non_regulated_brokers');
+
 // Frontend Routes
 Route::post('/subscribe', [SubscriberController::class, 'subscribe'])->name('subscribe');
 Route::get('/verify-subscription/{token}/{email}', [SubscriberController::class, 'verify'])->name('subscriber_verify');
+Route::get('/brokers/comparison', [HomeController::class, 'showComparisonDropdown'])->name('brokers.comparison.dropdown');
+
+
 

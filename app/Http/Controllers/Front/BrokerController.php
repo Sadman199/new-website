@@ -35,9 +35,6 @@ class BrokerController extends Controller
         // Fetch the page data for the current language
         $page_data = Page::where('language_id', $current_language_id)->first();
     
-
-
-        
         // Fetch the latest 5 brokers
         $brokers = Broker::latest()->take(5)->get();
     

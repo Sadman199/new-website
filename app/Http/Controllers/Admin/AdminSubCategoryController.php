@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Category;
 use App\Models\SubCategory;
+use Illuminate\Support\Str;
+
 
 class AdminSubCategoryController extends Controller
 {
@@ -30,6 +32,7 @@ class AdminSubCategoryController extends Controller
 
         $sub_category = new SubCategory();
         $sub_category->sub_category_name = $request->sub_category_name;
+        $sub_category->slug = $request->slug ?? Str::slug($request->sub_category_name);
         $sub_category->show_on_menu = $request->show_on_menu;
         $sub_category->show_on_home = $request->show_on_home;
         $sub_category->sub_category_order = $request->sub_category_order;
@@ -56,6 +59,7 @@ class AdminSubCategoryController extends Controller
 
         $sub_category = SubCategory::where('id',$id)->first();
         $sub_category->sub_category_name = $request->sub_category_name;
+        $sub_category->slug = $request->slug ?? Str::slug($request->sub_category_name);
         $sub_category->show_on_menu = $request->show_on_menu;
         $sub_category->show_on_home = $request->show_on_home;
         $sub_category->sub_category_order = $request->sub_category_order;

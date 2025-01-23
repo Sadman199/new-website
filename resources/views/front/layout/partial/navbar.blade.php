@@ -66,11 +66,12 @@ $global_categories = \App\Models\Category::with('rSubCategory')->where('show_on_
                                 @endforeach
                                 
                             </div>
-
                         </div>
                     </div>
                 </li>
-
+                <li class="nav-item">
+                    <a class="nav-link c_nav"  href="{{ route('broker.comparison') }}">Broker Comparison</a>
+                </li>
                  
                 <li class="nav-item dropdown position-static">
                     <a class="nav-link dropdown-toggle c_nav" href="#" id="brokersDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
