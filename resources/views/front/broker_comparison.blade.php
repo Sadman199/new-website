@@ -25,8 +25,7 @@
     </div>
 </div>
 
-<div class="page-content s_padding">
-
+<div class="page-content">
     <section class="Compare_broker">
         <div class="container">
             <div class="row">
@@ -157,7 +156,70 @@
             </div>
         </div>
     </section>
+    <section class="s_n_wrapper s_padding">
+    <div class="container">
+        <div class="d-flex justify-content-center align-items-center text-center">
+            <div class="col-lg-7">
+                <div class="s_dec_wrapper">
+                    <h2>Subscribe to Our Newsletter</h2>
+                    <p>Stay informed with the latest promotions, news, tips, and exclusive content delivered right to your inbox, keeping you updated and connected effortlessly.</p>
+                </div>
 
+                <form action="{{ route('subscribe') }}" method="POST" class="">
+                    @csrf
+                    <div class="form-group">
+                        <div class="input-container">
+                            <input type="email" name="email" id="email" class="form-input" placeholder="Your Email" required>
+                            <button type="submit" class="submit-btn">Subscribe</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    </section>
+    <section class="site_add">
+        @if($home_ad_data->above_footer_ad_status == 'Show' || $home_ad_data->above_search_ad_status == 'Show')
+            <div class="container">
+                <div class="row">
+                    @if($home_ad_data->above_footer_ad_status == 'Show')
+                    <div class="col-md-8">
+                        @if($home_ad_data->above_footer_ad_url == '')
+                            <img class="add_image_left" src="{{ asset('uploads/'.$home_ad_data->above_footer_ad) }}" alt="">
+                        @else
+                            <a href="{{ $home_ad_data->above_footer_ad_url }}">
+                                <img class="add_image_left" src="{{ asset('uploads/'.$home_ad_data->above_footer_ad) }}" alt="">
+                            </a>
+                        @endif
+                    </div>
+                    @endif
+
+                    @if($home_ad_data->above_search_ad_status == 'Show')
+                    <div class="col-md-8">
+                        <div class="add_image-wrapper">
+                            @if($home_ad_data->above_search_ad_url == '')
+                                <img class="add_image_right" src="{{ asset('uploads/'.$home_ad_data->above_search_ad) }}" alt="">
+                            @else
+                                <a href="{{ $home_ad_data->above_search_ad_url }}">
+                                    <img class="add_image_right" src="{{ asset('uploads/'.$home_ad_data->above_search_ad) }}" alt="">
+                                </a>
+                            @endif
+                        </div>
+                    </div>
+                    @endif
+                </div>
+            </div>
+        @endif
+    </section>
+    <script>
+        $(document).ready(function () {
+        handleAdBannersForAllPages('.breadcrumb_wrapper_by_comparison', {
+            offset: 200, // Adjust as needed
+            fadeDuration: 400,
+            slideDuration: 600,
+        });
+        });
+    </script>
 </div>
 
 @endsection

@@ -3,8 +3,6 @@ $brokers = \App\Models\Broker::all(); // Fetch brokers dynamically
 $global_categories = \App\Models\Category::with('rSubCategory')->where('show_on_menu',
 'Show')->orderBy('category_order', 'asc')->get();
 @endphp
-
-
 <nav class="navbar custom-nav navbar-expand-lg fixed-top" id="mainNavbar">
     <div class="container position-relative">
       <!-- Logo -->
@@ -20,7 +18,6 @@ $global_categories = \App\Models\Category::with('rSubCategory')->where('show_on_
                 <span class="toggler-icon"></span>
                 <span class="toggler-icon"></span>
         </button>
-
         <!-- Navbar Content -->
         <div class="collapse navbar-collapse justify-content-end" id="navbarSupportedContent">
             <ul class="navbar-nav mb-2 mb-lg-0 site_ul">
@@ -69,10 +66,6 @@ $global_categories = \App\Models\Category::with('rSubCategory')->where('show_on_
                         </div>
                     </div>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link c_nav"  href="{{ route('broker.comparison') }}">Broker Comparison</a>
-                </li>
-                 
                 <li class="nav-item dropdown position-static">
                     <a class="nav-link dropdown-toggle c_nav" href="#" id="brokersDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                     Broker Types
@@ -114,7 +107,6 @@ $global_categories = \App\Models\Category::with('rSubCategory')->where('show_on_
                         </div>
                     </div>
                 </li>
-
                 <li class="nav-item dropdown position-static">
                     <a class="nav-link dropdown-toggle c_nav" href="#" id="countriesDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         Regional Brokers
@@ -153,7 +145,6 @@ $global_categories = \App\Models\Category::with('rSubCategory')->where('show_on_
                         </div>
                     </div>
                 </li>
-
                 <!-- Categories Mega Dropdown -->
                 @foreach($global_categories->where('language_id', $current_language_id) as $item)
                     <li class="nav-item dropdown position-static">
@@ -178,46 +169,31 @@ $global_categories = \App\Models\Category::with('rSubCategory')->where('show_on_
                         </div>
                     </li>
                 @endforeach
-
-                
             </ul>
         </div>
     </div>
 </nav>
-
 <script>
 $(document).ready(function () {
-    // Add fadeIn/fadeOut effect with easing for dropdowns
     $('.nav-item.dropdown').on('click', function (e) {
         var $this = $(this);
         var $menu = $this.find('.dropdown-menu');
-
-        // If the dropdown is already open, close it with fadeOut
         if ($this.hasClass('show')) {
             $menu.stop(true, true).fadeOut(100, 'easeInOutQuad');  // Fade out with easing
             $this.removeClass('show');
         } else {
-            // Close all other open dropdowns
             $('.nav-item.dropdown').not($this).find('.dropdown-menu').stop(true, true).fadeOut(100, 'easeInOutQuad');
             $('.nav-item.dropdown').removeClass('show');
-
-            // Open the clicked dropdown with fadeIn
             $menu.stop(true, true).fadeIn(100, 'easeInOutQuad');  // Fade in with easing
             $this.addClass('show');
         }
     });
 });
-
-
 document.addEventListener("DOMContentLoaded", function () {
     const navbar = document.getElementById("mainNavbar");
-
-    // Set the initial scroll state
     if (window.scrollY > 50) {
         navbar.classList.add("scrolled");
     }
-
-    // Add scroll event listener
     window.addEventListener("scroll", function () {
         if (window.scrollY > 50) {
             navbar.classList.add("scrolled");
@@ -226,7 +202,4 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 });
-
-
-
 </script>

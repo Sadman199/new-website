@@ -33,7 +33,9 @@ $current_language_id = \App\Models\Language::where('short_name', $current_short_
                     <div class="broker-card">
                         <div class="d_card_header">
                              @if ($broker->logo)
+                             <div class="broker-logo">
                                 <img src="{{ asset($broker->logo) }}" alt="Broker Logo">
+                            </div>
                             @else
                                 <p>No logo available</p>
                             @endif
@@ -76,9 +78,16 @@ $current_language_id = \App\Models\Language::where('short_name', $current_short_
         <div class="row">
             <div class="col-lg-4 col-md-6">
                 <div class="hc_content">
-                    <div class="col-lg-12">
+                    <div class="s_content_wrapper">
                         <h2 class="section_title">Deposit Bonus</h2>
+                        <div class="s_btn_wrapper">
+                            <a href="" class="s_btn group">
+                                <span class="overlay"></span>
+                                See All
+                            </a>
+                        </div>
                     </div>
+
                     @foreach ($forex_bonus_data as $bonus)
                     <ul>
                         <li>
@@ -102,8 +111,14 @@ $current_language_id = \App\Models\Language::where('short_name', $current_short_
             </div>
             <div class="col-lg-4 col-md-6">
                 <div class="hc_content">
-                    <div class="col-lg-12">
+                    <div class="s_content_wrapper">
                         <h2 class="section_title">No Deposit Bonus</h2>
+                        <div class="s_btn_wrapper">
+                            <a href="" class="s_btn group">
+                                <span class="overlay"></span>
+                                See All
+                            </a>
+                        </div>
                     </div>
                     @foreach ($noDepositBonuses as $bonus)
                     <ul>
@@ -125,7 +140,15 @@ $current_language_id = \App\Models\Language::where('short_name', $current_short_
                </div>
             </div>
             <div class="col-lg-4 col-md-12">
-            <h2 class="section_title">Forex Tips</h2>
+                <div class="s_content_wrapper">
+                    <h2 class="section_title">Forex Tips</h2>
+                    <div class="s_btn_wrapper">
+                        <a href="" class="s_btn group">
+                            <span class="overlay"></span>
+                            All Tips
+                        </a>
+                    </div>
+                </div>
                 <div class="vertical-slider-wrapper">
                     <div class="vertical-slider">
                         @foreach($forex_tips as $tip)
@@ -190,8 +213,14 @@ $current_language_id = \App\Models\Language::where('short_name', $current_short_
 <section class="feature_brokers">
     <div class="container">
         <div class="row">
-            <div class="d-flex justify-content-between align-items-center mb-3">
+            <div class="d-flex justify-content-between align-items-center">
                 <h2 class="f_b_heading">Explore Our Featured Brokers</h2>
+                <div class="s_btn_wrapper">
+                    <a href="{{ route('broker.comparison') }}" class="s_btn group">
+                        <span class="overlay"></span>
+                        Broker Comparison
+                    </a>
+                </div>
             </div>
             <p class="f_b_dec">
                 Find the top forex brokers of 2024 with excellent platforms, low spreads, and tools for all traders.
@@ -318,7 +347,7 @@ $current_language_id = \App\Models\Language::where('short_name', $current_short_
                     "colorTheme": "light",
                     "isTransparent": true,
                     "width": "100%",
-                    "height": "500",
+                    "height": "535",
                     "locale": "en",
                     "importanceFilter": "-1,0,1",
                     "countryFilter": "ar,au,br,ca,cn,fr,de,in,id,it,jp,kr,mx,ru,sa,za,tr,gb,us,eu"
@@ -335,10 +364,10 @@ $current_language_id = \App\Models\Language::where('short_name', $current_short_
                  <div class="n_v_wrapper">
                     <ul class="nav nav-pills h_c_b_nav" id="pills-tab" role="tablist">
                         <li class="nav-item" role="presentation">
-                            <button class="nav-link active" id="pills-home-tab" data-bs-toggle="pill" data-bs-target="#pills-home" type="button" role="tab" aria-controls="pills-home" aria-selected="true">{{ RECENT_NEWS }}</button>
+                            <button class="nav-link active n_p_btn" id="pills-home-tab" data-bs-toggle="pill" data-bs-target="#pills-home" type="button" role="tab" aria-controls="pills-home" aria-selected="true">{{ RECENT_NEWS }}</button>
                         </li>
                         <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="pills-profile-tab" data-bs-toggle="pill" data-bs-target="#pills-profile" type="button" role="tab" aria-controls="pills-profile" aria-selected="false">{{ POPULAR_NEWS }}</button>
+                            <button class="nav-link n_p_btn" id="pills-profile-tab" data-bs-toggle="pill" data-bs-target="#pills-profile" type="button" role="tab" aria-controls="pills-profile" aria-selected="false">{{ POPULAR_NEWS }}</button>
                         </li>
                     </ul>
                 </div>
@@ -459,7 +488,12 @@ $current_language_id = \App\Models\Language::where('short_name', $current_short_
                                         <p class="broker-leverage"><strong>Leverage:</strong> {{ $broker->leverage }}</p>
                                     </div>
                                     <div class="broker-footer">
-                                    <a href="{{ route('broker_detail', ['slug' => $broker->slug]) }}" class="review-button">Read Review</a>
+                                       <div class="s_btn_wrapper">
+                                            <a href="{{ route('broker_detail', ['slug' => $broker->slug]) }}" class="s_btn group">
+                                                <span class="overlay"></span>
+                                                Read Review
+                                            </a>
+                                        </div>
                                         <div class="rating-wrapper">
                                             <div class="rating">
                                                 <?php
@@ -496,7 +530,16 @@ $current_language_id = \App\Models\Language::where('short_name', $current_short_
     <div class="container">
         <div class="row">
            <div class="col-md-12">
-                <h2 class="section_title">Trade With A Regulated Broker</h2>
+                <div class="s_content_wrapper">
+                    <h2 class="section_title">Trade With A Regulated Broker</h2>
+                    <div class="s_btn_wrapper">
+                        <a href="{{ route('regulated_brokers') }}" class="s_btn group">
+                            <span class="overlay"></span>
+                            See All
+                        </a>
+                    </div>
+                </div>
+                    
                 <p class="section_dec">Trading with a regulated broker ensures security, transparency, and adherence to strict financial standards. It protects your funds and promotes a fair, trustworthy trading environment.</p>
            </div>
         </div>
@@ -518,7 +561,12 @@ $current_language_id = \App\Models\Language::where('short_name', $current_short_
                             <p class="broker-leverage"><strong>Leverage:</strong> {{ $broker->leverage }}</p>
                         </div>
                         <div class="broker-footer">
-                        <a href="{{ route('broker_detail', ['slug' => $broker->slug]) }}" class="review-button">Read Review</a>
+                            <div class="s_btn_wrapper">
+                                <a href="{{ route('broker_detail', ['slug' => $broker->slug]) }}" class="s_btn group">
+                                    <span class="overlay"></span>
+                                    Read Review
+                                </a>
+                            </div>
                             <div class="rating-wrapper">
                                 <div class="rating">
                                     <?php
@@ -540,13 +588,6 @@ $current_language_id = \App\Models\Language::where('short_name', $current_short_
                 </div>
             </div>    
             @endforeach
-            <div class="s_btn_wrapper">
-                <a href="{{ route('regulated_brokers') }}" class="s_btn group">
-                    <span class="overlay"></span>
-                    View More
-                </a>
-            </div>
-
         </div>
     
     </div>
@@ -557,8 +598,14 @@ $current_language_id = \App\Models\Language::where('short_name', $current_short_
         <div class="container">
             <div class="row">
                 <div class="col-md-12">
-                    <div class="video-heading">
-                        <h2>Recent Video Updates</h2>
+                    <div class="s_content_wrapper">
+                        <h2 class="section_title">Recent Video Updates</h2>
+                        <div class="s_btn_wrapper">
+                            <a href="{{ route('video_gallery') }}" class="s_btn group">
+                                <span class="overlay"></span>
+                                See All
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -588,12 +635,6 @@ $current_language_id = \App\Models\Language::where('short_name', $current_short_
                     </div>
                 </div>
             </div>
-            <div class="s_btn_wrapper">
-                <a href="{{ route('video_gallery') }}" class="s_btn group">
-                    <span class="overlay"></span>
-                    View More
-                </a>
-            </div>
         </div>
     </div>
     @endif
@@ -602,7 +643,15 @@ $current_language_id = \App\Models\Language::where('short_name', $current_short_
     <div class="container">
         <div class="row">
             <div class="col-md-12">
-                <h2 class="section_title">Non-Regulated Brokers</h2>
+                <div class="s_content_wrapper">
+                        <h2 class="section_title">Non Regulated Broker</h2>
+                        <div class="s_btn_wrapper">
+                            <a href="{{ route('non_regulated_brokers') }}" class="s_btn group">
+                                <span class="overlay"></span>
+                                See All
+                            </a>
+                        </div>
+                    </div>
                 <p class="section_dec">Proceed with caution! These brokers are <strong>not regulated</strong>, which means there is a higher risk of losing your funds. </p>
             </div>
         </div>
@@ -626,30 +675,20 @@ $current_language_id = \App\Models\Language::where('short_name', $current_short_
                 </div>
                 @endforeach
             </div>
-
-
            
-            <div class="s_btn_wrapper">
-                <a href="{{ route('non_regulated_brokers') }}" class="s_btn group">
-                    <span class="overlay"></span>
-                    View More
-                </a>
-            </div>
         </div>
     </div>
 </section>
-<section class="s_n_erapper s_padding">
+<section class="s_n_wrapper s_padding">
     <div class="container">
-        <div class="row">
-            <div class="col-lg-6">
+        <div class="d-flex justify-content-center align-items-center text-center">
+            <div class="col-lg-7">
                 <div class="s_dec_wrapper">
                     <h2>Subscribe to Our Newsletter</h2>
-                    <p>Stay updated with the latest news and offers.</p>
+                    <p>Stay informed with the latest promotions, news, tips, and exclusive content delivered right to your inbox, keeping you updated and connected effortlessly.</p>
                 </div>
-            </div>
 
-            <div class="col-md-6">
-                    <form action="{{ route('subscribe') }}" method="POST" class="">
+                <form action="{{ route('subscribe') }}" method="POST" class="">
                     @csrf
                     <div class="form-group">
                         <div class="input-container">

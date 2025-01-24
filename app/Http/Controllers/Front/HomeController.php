@@ -51,9 +51,9 @@ class HomeController extends Controller
       $forexCashbackRebate = ForexBonus::where('promo_type', 'Forex Cashback Rebate')->latest()->take(6)->get();
       $cryptoBonusPromotion = ForexBonus::where('promo_type', 'Crypto Bonus Promotion')->latest()->take(6)->get();
       $brokers = Broker::all();
-      $featured_brokers = Broker::where('featured_broker', 1)->latest() ->take(6)->get();
+      $featured_brokers = Broker::where('featured_broker', 1)->latest() ->take(8)->get();
       $top_brokers = Broker::orderBy('rating', 'desc')->take(6)->get();
-      $best_leverage_brokers = Broker::orderBy('leverage', 'desc')->latest()->take(5)->get();
+      $best_leverage_brokers = Broker::orderBy('leverage', 'desc')->latest()->take(8)->get();
       $video_data = Video::where('language_id', $current_language_id)->get();
       $home_ad_data = HomeAdvertisement::where('id', 1)->first();
       $setting_data = Setting::where('id', 1)->first();
@@ -239,11 +239,12 @@ class HomeController extends Controller
     // Fetch page data for the current language
     $page_data = Page::where('language_id', $current_language_id)->first();
     $featured_brokers = Broker::where('featured_broker', 1)->latest() ->take(6)->get();
+    $home_ad_data = HomeAdvertisement::where('id', 1)->first();
 
     // Fetch brokers for comparison
     $brokers = Broker::with('accountOptions')->get(); // Adjust relationships as needed
 
-    return view('front.broker_comparison', compact('brokers', 'page_data','featured_brokers'));
+    return view('front.broker_comparison', compact('brokers', 'page_data','featured_brokers','home_ad_data'));
 }
 
 
