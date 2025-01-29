@@ -212,7 +212,9 @@ Route::group(['prefix' => 'admin/broker', 'middleware' => 'admin:admin'], functi
 Route::group(['prefix' => 'admin/subscribers', 'middleware' => 'admin:admin'], function () {
     Route::patch('{subscriber}/accept', [AdminSubscriberController::class, 'accept'])->name('subscriber.accept');
     Route::patch('{subscriber}/decline', [AdminSubscriberController::class, 'decline'])->name('subscriber.decline');
+    Route::delete('{subscriber}/delete', [AdminSubscriberController::class, 'delete'])->name('subscriber.delete');
 });
+
 
 
 

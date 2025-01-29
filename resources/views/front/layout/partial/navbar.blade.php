@@ -22,7 +22,7 @@ $global_categories = \App\Models\Category::with('rSubCategory')->where('show_on_
         <div class="collapse navbar-collapse justify-content-end" id="navbarSupportedContent">
             <ul class="navbar-nav mb-2 mb-lg-0 site_ul">
                 <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="{{ route('home') }}">HOME</a>
+                    <a class="nav-link c_nav active" aria-current="page" href="{{ route('home') }}">Home</a>
                 </li>
                 <!-- Forex Bonus Mega Dropdown -->
                 <li class="nav-item dropdown position-static">
@@ -155,12 +155,16 @@ $global_categories = \App\Models\Category::with('rSubCategory')->where('show_on_
                             <div class="row">
                                 @php
                                     $chunks = $item->rSubCategory->chunk(ceil($item->rSubCategory->count() / 3));
+                                    $now = now();
                                 @endphp
                                 @foreach($chunks as $chunk)
                                     <div class="col-lg-4">
                                         @foreach($chunk as $item2)
                                             <a class="dropdown-item" href="{{ route('category', $item2->slug) }}">
                                                 {{ $item2->sub_category_name }}
+                                                @if($item2->created_at && $item2->created_at->diffInDays($now) <= 7)
+                                                    <span class="badge bg-success ms-2">New</span>
+                                                @endif
                                             </a>
                                         @endforeach
                                     </div>
@@ -169,6 +173,7 @@ $global_categories = \App\Models\Category::with('rSubCategory')->where('show_on_
                         </div>
                     </li>
                 @endforeach
+
             </ul>
         </div>
     </div>

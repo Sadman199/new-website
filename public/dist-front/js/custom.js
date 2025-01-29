@@ -323,21 +323,24 @@ $(document).ready(function () {
 });
 
 
-$('.broker_layer').on('click', function() {
-    const descriptionWrapper = $(this).find('.hover_description_wrapper');
+
+$('.b_l_img_wrapper').on('click', function (e) {
+    e.stopPropagation(); // Prevent the event from bubbling up
+    
+    const descriptionWrapper = $(this).siblings('.hover_description_wrapper');
     const isVisible = descriptionWrapper.data('visible') === true;
 
-    // Toggle visibility
+    // If it's already visible, close it, else open it
     if (isVisible) {
-        descriptionWrapper.css('height', '0'); // Hide the description
-        descriptionWrapper.data('visible', false);
+        descriptionWrapper.css('height', '0').data('visible', false); // Close the description
     } else {
-        descriptionWrapper.css('height', 'auto'); // Show the description
-        descriptionWrapper.data('visible', true);
+        // Close all descriptions first
+        $('.hover_description_wrapper').css('height', '0').data('visible', false);
+        
+        // Open the description for the clicked card
+        descriptionWrapper.css('height', 'auto').data('visible', true);
     }
 });
-
-
 
     $(document).ready(function(){
         $(".non-regulated-slider").owlCarousel({
@@ -347,10 +350,37 @@ $('.broker_layer').on('click', function() {
             dots: false,         
             responsive: {      
                 0: { items: 1 },
-                600: { items: 2 },
+                600: { items: 3 },
                 1000: { items: 7 }
             }
         });
     });
 
+
+    $(document).ready(function(){
+        $(".best-for-beginners-slider").owlCarousel({
+            items: 3,  // Number of items to show at once
+            loop: true, // Infinite loop
+            margin: 10, // Space between items
+            autoplay: false, // Auto-play the carousel
+            autoplayTimeout: 3000, // Auto-play delay (3 seconds)
+            nav: true, // Enable navigation
+            navText: ['<i class="fa fa-chevron-left"></i>', '<i class="fa fa-chevron-right"></i>'], // Font Awesome 4.x arrow icons
+            responsive: {
+                0: {
+                    items: 1
+                },
+                768: {
+                    items: 2
+                },
+                993: {
+                    items: 3  
+                },
+                1200: {
+                    items: 4
+                }
+            }
+        });
+    });
+    
 

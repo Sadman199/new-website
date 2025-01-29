@@ -1,6 +1,6 @@
 @extends('admin.layout.app')
 
-@section('heading', 'Dashboard')
+@section('heading', 'Greetings from the BrokersCourt Admin Panel!')
 
 @section('main_content')
 <div class="row">
@@ -41,7 +41,7 @@
             </div>
             <div class="card-wrap">
                 <div class="card-header">
-                    <h4>Total News</h4>
+                    <h4>Total Post</h4>
                 </div>
                 <div class="card-body">
                     {{ $total_news }}
@@ -52,14 +52,14 @@
     <div class="col-lg-4 col-md-6 col-sm-6 col-12">
         <div class="card card-statistic-1">
             <div class="card-icon bg-info">
-                <i class="fas fa-camera"></i>
+            <i class="fas fa-briefcase"></i>
             </div>
             <div class="card-wrap">
                 <div class="card-header">
-                    <h4>Total Photos</h4>
+                    <h4>Total Broker </h4>
                 </div>
                 <div class="card-body">
-                    {{ $total_photo }}
+                    {{ $total_broker }}
                 </div>
             </div>
         </div>
@@ -71,7 +71,7 @@
             </div>
             <div class="card-wrap">
                 <div class="card-header">
-                    <h4>Total Vides</h4>
+                    <h4>Total Upload Video</h4>
                 </div>
                 <div class="card-body">
                     {{ $total_video }}
@@ -97,14 +97,15 @@
     <div class="col-lg-4 col-md-6 col-sm-6 col-12">
         <div class="card card-statistic-1">
             <div class="card-icon bg-success">
-                <i class="fas fa-vote-yea"></i>
+            <i class="fas fa-gift"></i> 
             </div>
             <div class="card-wrap">
                 <div class="card-header">
-                    <h4>Total Online Polls</h4>
+                    <h4>Total Bonus</h4>
                 </div>
                 <div class="card-body">
-                    {{ $total_poll }}
+                    {{ $total_forexBonus }}
+                    
                 </div>
             </div>
         </div>
@@ -112,14 +113,14 @@
     <div class="col-lg-4 col-md-6 col-sm-6 col-12">
         <div class="card card-statistic-1">
             <div class="card-icon bg-danger">
-                <i class="fab fa-google-drive"></i>
+            <i class="fas fa-comment-dots"></i> 
             </div>
             <div class="card-wrap">
                 <div class="card-header">
-                    <h4>Total Live Channels</h4>
+                    <h4>Total User Review</h4>
                 </div>
                 <div class="card-body">
-                    {{ $total_channel }}
+                    {{ $total_review }}
                 </div>
             </div>
         </div>
@@ -140,4 +141,7 @@
         </div>
     </div>
 </div>
+
+
+
 @endsection

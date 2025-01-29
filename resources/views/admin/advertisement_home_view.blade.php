@@ -14,7 +14,7 @@
                         <div class="form-group mb-3">
                             <label>Existing Photo</label>
                             <div>
-                                <img src="{{ asset('uploads/'.$home_ad_data->above_search_ad) }}" alt="" style="width:100%;">
+                            <img src="{{ asset('uploads/'.$home_ad_data->above_search_ad) }}" alt="" style="width: 100px; max-height: 100%; object-fit: cover;">
                             </div>
                         </div>
                         <div class="form-group mb-3">
@@ -45,7 +45,7 @@
                         <div class="form-group mb-3">
                             <label>Existing Photo</label>
                             <div>
-                                <img src="{{ asset('uploads/'.$home_ad_data->above_footer_ad) }}" alt="" style="width:100%;">
+                                <img src="{{ asset('uploads/'.$home_ad_data->above_footer_ad) }}" alt="" style="width: 100px; max-height: 100%; object-fit: cover;">
                             </div>
                         </div>
                         <div class="form-group mb-3">

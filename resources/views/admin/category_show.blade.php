@@ -32,17 +32,14 @@
                                     <td>{{ $row->show_on_menu }}</td>
                                     <td>{{ $row->category_order }}</td>
                                     <td>{{ $row->rLanguage->name }}</td>
-                                    <td class="pt_10 pb_10">
-                                        <a href="{{ route('admin_category_edit',$row->id) }}"
-                                            class="btn btn-primary">Edit</a>
-                                        <form action="{{ route('admin_category_delete', $row->id) }}" method="POST"
-                                            onsubmit="return confirm('Are you sure?');">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-danger">Delete</button>
-                                        </form>
-
-                                    </td>
+                                    <td class="pt_10 pb_10" style="display: flex; gap: 10px;">
+                                    <a href="{{ route('admin_category_edit', $row->id) }}" class="btn btn-primary">Edit</a>
+                                    <form action="{{ route('admin_category_delete', $row->id) }}" method="POST" onsubmit="return confirm('Are you sure?');">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-danger">Delete</button>
+                                    </form>
+                                </td>
                                 </tr>
                                 @endforeach
                             </tbody>

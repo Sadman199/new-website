@@ -58,21 +58,23 @@
 
 
         <div class="row">
-            <div class="col-lg-9 col-md-12">
+            <div class="col-lg-8 col-md-12 col-xl-9">
                 @if ($forexBonuses->isEmpty())
                     <p class="text-center text-muted n_a_moment_text">No bonuses available at the moment.</p>
                 @else
                     <div class="row">
                         @foreach ($forexBonuses as $bonus)
-                            <div class="col-lg-6 col-md-12 col-sm-12">
+                            <div class="col-lg-12 col-xl-6 col-md-12 col-sm-12">
                                 <div class="b_blog_card horizontal-card">
                                     <div class="card-content">
                                         <div class="blog-image-wrapper">
+                                           <div class="b_image">
                                             @if ($bonus->feature_image)
-                                            <img src="{{ asset($bonus->feature_image) }}" class="b_b_c_img" alt="Forex Bonus - {{ $bonus->title }}">
-                                            @else
-                                            <p>No image available.</p>
-                                            @endif
+                                                <img src="{{ asset($bonus->feature_image) }}" class="b_b_c_img" alt="Forex Bonus - {{ $bonus->title }}">
+                                                @else
+                                                <p>No image available.</p>
+                                                @endif
+                                           </div>
 
 
                                             <div class="b_img_wrapper">
@@ -92,9 +94,8 @@
                                         </div>
                                         <div class="card-details">
                                             <h3 class="blog-heading">{{ Str::limit($bonus->title, 100) }}</h3>
-                                            <!-- <span class="blog-date">{{ \Carbon\Carbon::parse($bonus->publish_date)->format('F d, Y') }}</span> -->
-                                            <p class="blog-description">{{ Str::limit(strip_tags($bonus->prize), 200) }}</p>
-                                            
+                                            <p class="blog-description">{{ Str::limit(strip_tags($bonus->prize), 100) }}</p>
+                                    
                                             <div class="blog-actions">
                                                 <div class="b_btn_wrapper">
                                                     <div class="b_t">
@@ -118,7 +119,7 @@
                     </div>
                 @endif
             </div>
-            <div class="col-lg-3 col-md-6">
+            <div class="col-lg-4 col-md-6 col-xl-3">
                 <div class="sidebar">
                     <div class="s_bar_wrapper">
                         <div class="side_bar_add">

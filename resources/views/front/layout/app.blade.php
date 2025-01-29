@@ -7,43 +7,48 @@
     $current_short_name = session()->get('session_short_name');
     @endphp
 @endif
-
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-		
-        <meta name="description" content="">
-        <title>@yield('title', 'Default Title')</title>
-		
-        <link rel="icon" type="image/png" href="{{ asset('uploads/'.$global_setting_data->favicon) }}">
 
-        @include('front.layout.styles')
-        @include('front.layout.scripts')
-        @include('front.layout.responsive')
+            <head>
+            <meta charset="utf-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+            <meta name="description" content="BrokersCourt helps you compare and find top forex brokers, read expert reviews, and grab exclusive deals on trading accounts.">
+            <meta name="keywords" content="Forex Brokers, Forex Broker Comparison, Broker Reviews, Forex Deals, Top Forex Brokers">
+            <meta name="author" content="BrokersCourt">
+            <meta name="robots" content="index, follow">
+            <title>@yield('title', 'BrokersCourt - Compare and Find Top Forex Brokers, Reviews, and Deals')</title>
 
+            <!-- Google Tag Manager -->
+            <script async src="https://www.googletagmanager.com/gtm.js?id=GTM-W3MTNWPW"></script>
+            <!-- End Google Tag Manager -->
 
+            <!-- Open Graph / Facebook -->
+            <meta property="og:type" content="website">
+            <meta property="og:url" content="{{ url()->current() }}">
+            <meta property="og:title" content="@yield('title', 'BrokersCourt - Compare and Find Top Forex Brokers, Reviews, and Deals')">
+            <meta property="og:description" content="BrokersCourt helps you compare and find top forex brokers, read expert reviews, and grab exclusive deals on trading accounts.">
+            <meta property="og:image" content="{{ asset('uploads/'.$global_setting_data->favicon) }}">
 
-        <link href="https://fonts.googleapis.com/css2?family=Maven+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
+            <!-- Twitter -->
+            <meta name="twitter:card" content="summary_large_image">
+            <meta name="twitter:creator" content="@BrokersCourt">
+            <meta name="twitter:title" content="@yield('title', 'BrokersCourt - Compare and Find Top Forex Brokers, Reviews, and Deals')">
+            <meta name="twitter:description" content="BrokersCourt helps you compare and find top forex brokers, read expert reviews, and grab exclusive deals on trading accounts.">
+            <meta name="twitter:image" content="{{ asset('uploads/'.$global_setting_data->favicon) }}">
 
-        <script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-6212352ed76fda0a"></script> 
-        
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
-        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+            <link rel="icon" type="image/png" href="{{ asset('uploads/'.$global_setting_data->favicon) }}">
+            @include('front.layout.styles')
+            @include('front.layout.scripts')
+            @include('front.layout.responsive')
 
-        
-        <!-- Google Analytics -->
-        @if($global_setting_data->analytic_status == 'Show')
-        <script async src="https://www.googletagmanager.com/gtag/js?id={{ $global_setting_data->analytic_id }}"></script>
-        <script>
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', '{{ $global_setting_data->analytic_id }}');
-        </script>
-        @endif
-        
+            <link href="https://fonts.googleapis.com/css2?family=Maven+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+            <script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-6212352ed76fda0a"></script>
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+            <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+      
+
         <style>
             .website-menu,
             .website-menu .bg-primary,
@@ -78,7 +83,6 @@
             .widget .news-item .right .date-user .date a:hover,
             .video-carousel .owl-nav .owl-prev,
             .video-carousel .owl-nav .owl-next,
-            li.breadcrumb-item a,
             .category-page-post-item h3 a:hover,
             .category-page-post-item .date-user .user a:hover, 
             .category-page-post-item .date-user .date a:hover,
@@ -108,11 +112,13 @@
             .page-item.active .page-link {
                 color: #fff!important;
             }
-
         </style>
-
     </head>
     <body>
+    <noscript>
+        <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-W3MTNWPW"
+                height="0" width="0" style="display:none;visibility:hidden"></iframe>
+         </noscript>
         <div class="heading-area">
             <div class="container">
                 <div class="row">
@@ -140,46 +146,28 @@
                             <h2 class="heading">Forex Demo Contest</h2>
                             @if($demoContest->isNotEmpty())
                                 @foreach($demoContest as $contest)
-                                    
+                                <ul class="contest-card">
+                                  <li class="contest-title"><a href="">{{ Str::limit($contest->title, 50) }}</a></li> 
+                               </ul>
                                 @endforeach
                             @else
                                 <p>No demo contests available at the moment.</p>
                             @endif
-
-                            <ul class="contest-card">
-                                <li class="contest-title"><a href="">Lorem ipsum dolor sit amet</a></li> 
-                                <li class="contest-title"><a href="">Lorem ipsum dolor sit amet</a></li> 
-                                <li class="contest-title"><a href="">Lorem ipsum dolor sit amet</a></li> 
-                                <li class="contest-title"><a href="">Lorem ipsum dolor sit amet</a></li> 
-                                <li class="contest-title"><a href="">Lorem ipsum dolor sit amet</a></li> 
-                                <li class="contest-title"><a href="">Lorem ipsum dolor sit amet</a></li> 
-                            </ul>
                         </div>
                     </div>
                     <div class="col-lg-3 col-md-4">
                         <div class="f_item">
                             <h2 class="heading">Forex Live Contest</h2>
                             @if($liveContest->isNotEmpty())
-                                <div class="row">
-                                    @foreach($liveContest as $contest)
-                                        <div class="col-md-4"> 
+                                @foreach($liveContest as $contest)
+                                <ul class="contest-card">
+                                    <li class="contest-title"><a href="">{{ Str::limit($contest->title, 50) }}</a></li> 
+                                </ul>
+                                @endforeach
                                 
-                                        </div>
-                                    @endforeach
-                                </div>
                             @else
                                 <p>No live contests available at the moment.</p>
                             @endif
-
-                            <ul class="contest-card">
-                                <li class="contest-title"><a href="">Lorem ipsum dolor sit amet</a></li> 
-                                <li class="contest-title"><a href="">orem ipsum dolor sit amet</a></li> 
-                                <li class="contest-title"><a href="">Lorem ipsum dolor sit amet</a></li> 
-                                <li class="contest-title"><a href="">Lorem ipsum dolor sit amet</a></li> 
-                                <li class="contest-title"><a href="">Lorem ipsum dolor sit amet</a></li> 
-                                <li class="contest-title"><a href="">Lorem ipsum dolor sit amet</a></li> 
-                            </ul>
-
                         </div>
                     </div>
                     <div class="col-lg-3 col-md-4">
@@ -187,19 +175,14 @@
                             <h2 class="heading">Forex Cashback Rebate</h2>
                             @if($forexCashbackRebate->isNotEmpty())
                                    @foreach($forexCashbackRebate as $rebate)
-                                       
+                                <ul class="contest-card">
+                                    <li class="contest-title"><a href="">{{ Str::limit($rebate->title, 50) }}</a></li> 
+                                </ul>
                                     @endforeach
                             @else
                                 <p>No cashback rebates available at the moment.</p>
                             @endif
-                            <ul class="contest-card">
-                                <li class="contest-title"><a href="">Lorem ipsum dolor sit amet</a></li> 
-                                <li class="contest-title"><a href="">Lorem ipsum dolor sit amet</a></li> 
-                                <li class="contest-title"><a href="">Lorem ipsum dolor sit amet</a></li> 
-                                <li class="contest-title"><a href="">Lorem ipsum dolor sit amet</a></li> 
-                                <li class="contest-title"><a href="">Lorem ipsum dolor sit amet</a></li> 
-                                <li class="contest-title"><a href="">Lorem ipsum dolor sit amet</a></li> 
-                            </ul>
+                           
 
                         </div>
                     </div>
@@ -207,24 +190,14 @@
                         <div class="f_item">
                             <h2 class="heading">Crypto Bonus Promotion</h2>
                             @if($cryptoBonusPromotion->isNotEmpty())
-                                @foreach($cryptoBonusPromotion
-                                
-                                
-                                as $promotion)
-                                   
+                                @foreach($cryptoBonusPromotion as $promotion)
+                                <ul class="contest-card">
+                                <li class="contest-title"><a href="">{{ Str::limit($promotion->title, 50) }}</a></li> 
+                                </ul>
                                 @endforeach
                             @else
                             <p>No crypto bonus promotions available at the moment.</p>
                         @endif
-                           <ul class="contest-card">
-                                <li class="contest-title"><a href="">Lorem ipsum dolor sit amet</a></li> 
-                                <li class="contest-title"><a href="">Lorem ipsum dolor sit amet</a></li> 
-                                <li class="contest-title"><a href="">Lorem ipsum dolor sit amet</a></li> 
-                                <li class="contest-title"><a href="">Lorem ipsum dolor sit amet</a></li> 
-                                <li class="contest-title"><a href="">Lorem ipsum dolor sit amet</a></li> 
-                                <li class="contest-title"><a href="">Lorem ipsum dolor sit amet</a></li> 
-                            </ul>
-
                         </div>
                     </div>
                     <div class="col-lg-6 col-md-4">

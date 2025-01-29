@@ -1,15 +1,14 @@
 @extends('admin.layout.app')
 
-@section('heading', 'Forex Review')
+@section('heading', 'All Forex Broker')
 
 @section('button')
-<a href="" class="btn btn-primary"><i class="fas fa-plus"></i> Add</a>
+<a href="{{ route('admin_broker_create') }}" class="btn btn-primary"><i class="fas fa-plus"></i> Add</a>
 @endsection
 
 @section('main_content')
 <div class="card">
     <div class="card-body">
-        <a href="{{ route('admin_broker_create') }}" class="btn btn-success mb-3">Add New Forex Bonus</a>
         <!-- Check if there are any brokers to display -->
         @if($brokers->isEmpty())
         <p>No brokers found.</p>

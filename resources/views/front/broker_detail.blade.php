@@ -27,10 +27,9 @@
             <div class="row">
                 <div class="col-md-12">
                     <div class="sticky-panel">
-                        <div class="row">
-                            <!-- Broker Logo and Rating Section -->
+                        <div class="row d-flex align-items-center justify-content-center">
                             <div class="col-lg-3 col-md-6 border-right">
-                                <div class="d-flex justify-content-start align-items-center h-100">
+                                <div class="b_l_contant">
                                     <div class="b_d_image_box">
                                         @if ($broker->logo)
                                         <img src="{{ asset($broker->logo) }}" alt="Broker Logo"
@@ -38,15 +37,19 @@
                                         @else
                                         <p>No logo available.</p>
                                         @endif
-                                        <div class="b_o_live_btn_wrapper">
-                                            <a href="{!! $broker->open_live !!}" target="_blank" rel="noopener noreferrer">
-                                                <button class="site_button b_o_live_btn">Open Live</button>
+                                        
+                                    </div>
+                                    <div class="b_o_live_btn_wrapper">
+                            
+                                        <div class="s_btn_wrapper">
+                                            <a href="{!! $broker->open_live !!}" target="_blank" rel="noopener noreferrer" class="s_btn groupm w-100">
+                                                <span class="overlay"></span>
+                                                Open Live
                                             </a>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <!-- Pros and Cons Section -->
                             <div class="col-lg-6 col-md-6 border-right">
                                 <div class="">
                                     <div class="p_c_box">
@@ -103,7 +106,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-9 col-md-12">
+                <div class="col-lg-8 col-xl-9 col-md-12">
                     <div class="broker_left_detail s_padding">
                         <div class="broker_s_d">
                             <h2>Trade Securely with {{ $broker->name }}: Forex, CFDs & Crypto</h2>
@@ -111,257 +114,251 @@
                         </div>
                         <div class="review_table">
                             <!-- Broker Details (Basic Information) -->
-                            <h3 class="r_v_h">{{ $broker->name }} Overview</h3>
-                            <p class="t_d">This section provides key details about {{ $broker->name }}, including supported languages,
-                                pricing, deposit and withdrawal methods, and regulatory compliance. These insights help
-                                traders assess the broker's credibility, understand their offerings, and make informed
-                                decisions. We also cover the broker's country of operation and regulated jurisdictions for
-                                added transparency.</p>
+                            <div class="b_info" id="section1">
+                                <h3 class="r_v_h">{{ $broker->name }} Overview</h3>
+                                <p class="t_d">This section provides key details about {{ $broker->name }}, including supported languages,
+                                    pricing, deposit and withdrawal methods, and regulatory compliance. These insights help
+                                    traders assess the broker's credibility, understand their offerings, and make informed
+                                    decisions. We also cover the broker's country of operation and regulated jurisdictions for
+                                    added transparency.</p>
 
-                            <div class="custom-table-responsive">
-                                <table class="comparison_table">
-                                    <tbody>
-                                        <tr>
-                                            <th>Languages:</th>
-                                            <td>{{ strip_tags($broker->languages) }}</td>
-                                        </tr>
-                                        <tr>
-                                            <th>Pricing:</th>
-                                            <td>{{ strip_tags($broker->pricing) }}</td>
-                                        </tr>
-                                        <tr>
-                                            <th>Deposit Methods:</th>
-                                            <td>{{ strip_tags($broker->deposit_methods) }}</td>
-                                        </tr>
-                                        <tr>
-                                            <th>Withdrawal Methods:</th>
-                                            <td>{{ strip_tags($broker->withdrawal_method) }}</td>
-                                        </tr>
-                                        <tr>
-                                            <th>Country:</th>
-                                            <td>{{ strip_tags($broker->country) }}</td>
-                                        </tr>
-                                        <tr>
-                                            <th>Regulation:</th>
-                                            <td>{{ strip_tags($broker->regulation) }}</td>
-                                        </tr>
-                                        <tr>
-                                            <th>Regulated Jurisdictions:</th>
-                                            <td>{{ strip_tags($broker->regulated_jurisdictions) }}</td>
-                                        </tr>
-                                        <tr>
-                                            <th>Regulatory Licenses:</th>
-                                            <td>{{ strip_tags($broker->regulatory_licenses) }}</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-
-
-                            <!-- Trading Features -->
-                            <h3 class="r_v_h">{{ $broker->name }} Trading Capabilities</h3>
-                            <p class="t_d">This section highlights key trading features of {{ $broker->name }}, including minimum
-                                deposit, platforms, leverage, spreads, payment methods, and customer support. It also covers
-                                advanced tools like charting and social trading, helping traders assess the services that
-                                support their trading activities.</p>
-
-                            <div class="custom-table-responsive">
-                                <table class="comparison_table">
-                                    <tbody>
-                                        <tr>
-                                            <th>Minimum Deposit:</th>
-                                            <td>{{ strip_tags($broker->minimum_deposit) }}</td>
-                                        </tr>
-                                        <tr>
-                                            <th>Spreads:</th>
-                                            <td>{{ strip_tags($broker->spreads) }}</td>
-                                        </tr>
-                                        <tr>
-                                            <th>Leverage:</th>
-                                            <td>{{ strip_tags($broker->leverage) }}</td>
-                                        </tr>
-                                        <tr>
-                                            <th>Platforms:</th>
-                                            <td>{{ strip_tags($broker->platforms) }}</td>
-                                        </tr>
-                                        <tr>
-                                            <th>Payment Methods:</th>
-                                            <td>{{ strip_tags($broker->payment_methods) }}</td>
-                                        </tr>
-                                        <tr>
-                                            <th>Customer Support:</th>
-                                            <td>{{ strip_tags($broker->customer_support) }}</td>
-                                        </tr>
-
-                                        <tr>
-                                            <th>Mobile Trading:</th>
-                                            <td>{{ $broker->mobile_trading ? 'Available' : 'Not Available' }}</td>
-                                        </tr>
-                                        <tr>
-                                            <th>Social Trading:</th>
-                                            <td>{{ $broker->social_trading ? 'Available' : 'Not Available' }}</td>
-                                        </tr>
-                                        <tr>
-                                            <th>Charting Tools:</th>
-                                            <td>{{ strip_tags($broker->charting_tools) }}</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-
-                            <!-- Account Information & Miscellaneous -->
-                            <h3 class="r_v_h">{{ $broker->name }} Account and Services</h3>
-                            <p class="t_d">This section covers the types of accounts offered by {{ $broker->name }}, including live and
-                                demo options, along with key services like educational resources, research tools, and mobile
-                                trading, all designed to support traders' success.</p>
-
-                            <div class="custom-table-responsive">
-                                <table class="comparison_table">
-                                    <tbody>
-                                        <tr>
-                                            <th>Account Types:</th>
-                                            <td>{{ $broker->account_types ? (is_array($accountTypes = json_decode($broker->account_types)) ? implode(', ', $accountTypes) : $broker->account_types) : '' }}</td>
-                                        </tr>
-                                        <tr>
-                                            <th>Capitalization:</th>
-                                            <td>{{ strip_tags($broker->capitalization) }}</td>
-                                        </tr>
-                                        <tr>
-                                            <th>Insurance:</th>
-                                            <td>{{ strip_tags($broker->insurance) }}</td>
-                                        </tr>
-                                        <tr>
-                                            <th>Segregation of Funds:</th>
-                                            <td>{{ $broker->segregation_of_funds ? 'Yes' : 'No' }}</td>
-                                        </tr>
-                                        <tr>
-                                            <th>Web Trader:</th>
-                                            <td>{{ strip_tags($broker->web_trader) }}</td>
-                                        </tr>
-                                        <tr>
-                                            <th>Account Managers:</th>
-                                            <td>
-                                                {{ $broker->account_managers == 1 ? 'Available' : 'Not Available' }}
-                                            </td>
-                                        </tr>
-
-                                        <tr>
-                                            <th>Economic Calendar:</th>
-                                            <td>
-                                                {{ $broker->economic_calendar == 1 ? 'Available' : 'Not Available' }}
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <th>VPS Hosting:</th>
-                                            <td>{{ $broker->vps_hosting ? 'Available' : 'Not Available' }}</td>
-                                        </tr>
-                                        <tr>
-                                            <th>Associated Countries:</th>
-                                            <td>{{ implode(', ', array_map('strip_tags', $broker->associated_countries)) }}
-                                            </td>
-                                        </tr>
-
-
-                                        <tr>
-                                            <th>Featured Broker:</th>
-                                            <td>{{ $broker->featured_broker ? 'Yes' : 'No' }}</td>
-                                        </tr>
-                                        <tr>
-                                            <th>Top Broker:</th>
-                                            <td>{{ $broker->top_broker ? 'Yes' : 'No' }}</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                            <h3 class="r_v_h"><span>{{ $broker->name }}</span> News and Analysis</h3>
-                            <p class="t_d">{{ strip_tags($broker->news_and_analysis) }}</p>
-                            <h3 class="r_v_h"><span>{{ $broker->name }}</span> Top Feature</h3>
-                            <p class="t_d">{{ strip_tags($broker->top_feature) }}</p>
-                            <h3 class="r_v_h"><span>{{ $broker->name }}</span> Research Tools</h3>
-                            <p class="t_d">{{ strip_tags($broker->research_tools) }}</p>
-
-                            <h3 class="r_v_h"><span>{{ $broker->name }}</span> Educational Resources</h3>
-                            <p class="t_d">{{ strip_tags($broker->educational_resources) }}</p>
-                        </div>
-
-                        <div class="account_option_field">
-                            <h3 class="r_v_h">Available Account Structures at {{ $broker->name }}</h3>
-                            <div class="account_option_table">
-                                <table class="eael-data-table">
-                                    <thead>
-                                        <tr>
-                                            <th>Account Structure</th>
-                                            <th>Account Currency</th>
-                                            <th>Min Deposit</th>
-                                            <th>Max Leverage</th>
-                                            <th>Spread Type</th>
-                                            <th>Spread Value</th>
-                                            <th>Demo Available</th>
-                                            <th>Features</th>
-                                            <th>Swap Free</th>
-                                            <th>Min Trade Size</th>
-                                            <th>Max Trade Size</th>
-                                            <th>Interest Rate</th>
-                                            <th>access_to_pro_features</th>
-                                            <th>exclusive_offers</th>
-                                            <th>Account Management</th>
-                                            <th>Trading Instruments</th>
-                                            <th>Margin Call Level</th>
-                                            <th>Risk Management Tools</th>
-                                            <th>Bonus Eligibility</th>
-                                            <th>Personalized Education</th>
-                                            <th>Exclusive Webinars</th>
-                                            <th>Maximum Daily Trade Volume</th>
-                                            <th>Trading Hours</th>
-                                            <th>Special Conditions</th>
-                                            <th>Stop Out Level</th>
-                                            <th>Max Open Positions</th>
-                                            <th>Commission</th>
-                                            <th>Interest Rate</th>
-                                            <th>Regulated</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                    @foreach($account_options as $accountOption)
+                                <div class="custom-table-responsive">
+                                    <table class="comparison_table">
+                                        <tbody>
                                             <tr>
-                                                <td>{{ $accountOption->account_type }}</td>
-                                                <td>{{ $accountOption->account_currency }}</td>
-                                                <td>{{ $accountOption->min_deposit }}</td>
-                                                <td>{{ $accountOption->max_leverage }}</td>
-                                                <td>{{ $accountOption->spread_type }}</td>
-                                                <td>{{ $accountOption->spread_value }}</td>
-                                                <td>{{ $accountOption->is_demo_available ? 'Yes' : 'No' }}</td>
-                                                <td>{{ $accountOption->features }}</td>
-                                                <td>{{ $accountOption->swap_free ? 'Yes' : 'No' }}</td>
-                                                <td>{{ $accountOption->min_trade_size }}</td>
-                                                <td>{{ $accountOption->max_trade_size }}</td>
-                                                <td>{{ $accountOption->interest_rate }}</td>
-                                                <td>{{ $accountOption->access_to_pro_features ? 'Yes' : 'No' }}</td>
-                                                <td>{{ $accountOption->exclusive_offers ? 'Yes' : 'No' }}</td>
-                                                <td>{{ $accountOption->account_management }}</td>
-                                                <td>{{ $accountOption->trading_instruments }}</td>
-                                                <td>{{ $accountOption->margin_call_level }}</td>
-                                                <td>{{ $accountOption->risk_management_tools }}</td>
-                                                <td>{{ $accountOption->bonus_eligibility ? 'Yes' : 'No' }}</td>
-                                                <td>{{ $accountOption->personalized_education ? 'Yes' : 'No' }}</td>
-                                                <td>{{ $accountOption->exclusive_webinars ? 'Yes' : 'No' }}</td>
-                                                <td>{{ $accountOption->maximum_daily_trade_volume }}</td>
-                                                <td>{{ $accountOption->trading_hours }}</td>
-                                                <td>{{ $accountOption->special_conditions }}</td>
-                                                <td>{{ $accountOption->stop_out_level }}</td>
-                                                <td>{{ $accountOption->max_open_positions }}</td>
-                                                <td>{{ $accountOption->commission ?? 'N/A' }}</td>
-                                                <td>{{ $accountOption->interest_rate ?? 'N/A' }}</td>
-                                                <td>{{ $accountOption->is_regulated ? 'Yes' : 'No' }}</td>
+                                                <th>Languages:</th>
+                                                <td>{{ strip_tags($broker->languages) }}</td>
                                             </tr>
-                                        @endforeach
+                                            <tr>
+                                                <th>Pricing:</th>
+                                                <td>{{ strip_tags($broker->pricing) }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Deposit Methods:</th>
+                                                <td>{{ strip_tags($broker->deposit_methods) }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Withdrawal Methods:</th>
+                                                <td>{{ strip_tags($broker->withdrawal_method) }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Country:</th>
+                                                <td>{{ strip_tags($broker->country) }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Regulation:</th>
+                                                <td>{{ strip_tags($broker->regulation) }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Regulated Jurisdictions:</th>
+                                                <td>{{ strip_tags($broker->regulated_jurisdictions) }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Regulatory Licenses:</th>
+                                                <td>{{ strip_tags($broker->regulatory_licenses) }}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <!-- Trading Features -->
+                            <div class="b_info" id="section2">
+                                <h3 class="r_v_h">{{ $broker->name }} Trading Capabilities</h3>
+                                <p class="t_d">This section highlights key trading features of {{ $broker->name }}, including minimum
+                                    deposit, platforms, leverage, spreads, payment methods, and customer support. It also covers
+                                    advanced tools like charting and social trading, helping traders assess the services that
+                                    support their trading activities.</p>
 
-                                    </tbody>
-                                </table>
+                                <div class="custom-table-responsive">
+                                    <table class="comparison_table">
+                                        <tbody>
+                                            <tr>
+                                                <th>Minimum Deposit:</th>
+                                                <td>{{ strip_tags($broker->minimum_deposit) }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Spreads:</th>
+                                                <td>{{ strip_tags($broker->spreads) }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Leverage:</th>
+                                                <td>{{ strip_tags($broker->leverage) }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Platforms:</th>
+                                                <td>{{ strip_tags($broker->platforms) }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Payment Methods:</th>
+                                                <td>{{ strip_tags($broker->payment_methods) }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Customer Support:</th>
+                                                <td>{{ strip_tags($broker->customer_support) }}</td>
+                                            </tr>
+
+                                            <tr>
+                                                <th>Mobile Trading:</th>
+                                                <td>{{ $broker->mobile_trading ? 'Available' : 'Not Available' }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Social Trading:</th>
+                                                <td>{{ $broker->social_trading ? 'Available' : 'Not Available' }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Charting Tools:</th>
+                                                <td>{{ strip_tags($broker->charting_tools) }}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <!-- Account Information & Miscellaneous -->
+                             <div class="b_info" id="section3">
+                                <h3 class="r_v_h">{{ $broker->name }} Account and Services</h3>
+                                <p class="t_d">This section covers the types of accounts offered by {{ $broker->name }}, including live and
+                                    demo options, along with key services like educational resources, research tools, and mobile
+                                    trading, all designed to support traders' success.</p>
+                                <div class="custom-table-responsive">
+                                    <table class="comparison_table">
+                                        <tbody>
+                                            <tr>
+                                                <th>Account Types:</th>
+                                                <td>{{ $broker->account_types ? (is_array($accountTypes = json_decode($broker->account_types)) ? implode(', ', $accountTypes) : $broker->account_types) : '' }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Capitalization:</th>
+                                                <td>{{ strip_tags($broker->capitalization) }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Insurance:</th>
+                                                <td>{{ strip_tags($broker->insurance) }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Segregation of Funds:</th>
+                                                <td>{{ $broker->segregation_of_funds ? 'Yes' : 'No' }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Web Trader:</th>
+                                                <td>{{ strip_tags($broker->web_trader) }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Account Managers:</th>
+                                                <td>
+                                                    {{ $broker->account_managers == 1 ? 'Available' : 'Not Available' }}
+                                                </td>
+                                            </tr>
+
+                                            <tr>
+                                                <th>Economic Calendar:</th>
+                                                <td>
+                                                    {{ $broker->economic_calendar == 1 ? 'Available' : 'Not Available' }}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th>VPS Hosting:</th>
+                                                <td>{{ $broker->vps_hosting ? 'Available' : 'Not Available' }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Associated Countries:</th>
+                                                <td>{{ implode(', ', array_map('strip_tags', $broker->associated_countries)) }}
+                                                </td>
+                                            </tr>
+
+
+                                            <tr>
+                                                <th>Featured Broker:</th>
+                                                <td>{{ $broker->featured_broker ? 'Yes' : 'No' }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Top Broker:</th>
+                                                <td>{{ $broker->top_broker ? 'Yes' : 'No' }}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="b_info" id="section3">
+                                <h3 class="r_v_h"><span>{{ $broker->name }}</span> News and Analysis</h3>
+                                <p class="t_d">{{ strip_tags($broker->news_and_analysis) }}</p>
+                            </div>
+                            <div class="b_info" id="section4">
+                                <h3 class="r_v_h"><span>{{ $broker->name }}</span> Top Feature</h3>
+                                <p class="t_d">{{ strip_tags($broker->top_feature) }}</p>
+                            </div>
+                            <div class="b_info" id="section5">
+                                <h3 class="r_v_h"><span>{{ $broker->name }}</span> Research Tools</h3>
+                                <p class="t_d">{{ strip_tags($broker->research_tools) }}</p>
+                            </div>
+                            <div class="b_info" id="section6">
+                                <h3 class="r_v_h"><span>{{ $broker->name }}</span> Educational Resources</h3>
+                                <p class="t_d">{{ strip_tags($broker->educational_resources) }}</p>
+                            </div>
+                            @foreach($account_options as $accountOption)
+                                <h3 class="r_v_h">
+                                    <span>{{ $broker->name }}</span>  Exclusive Offers
+                                </h3>
+                                <p class="t_d">
+                                    {{ strip_tags($accountOption->exclusive_offers) }}
+                                </p>
+                                
+                                <h3 class="r_v_h">
+                                    <span>{{ $broker->name }}</span> Trading Instruments
+                                </h3>
+                                <p class="t_d">
+                                    {{ strip_tags($accountOption->trading_instruments) }}
+                                </p>
+                                
+                                <h3 class="r_v_h">
+                                    <span>{{ $broker->name }}</span> Risk Management Tools
+                                </h3>
+                                <p class="t_d">
+                                    {{ strip_tags($accountOption->risk_management_tools) }}
+                                </p>
+                                
+                                <h3 class="r_v_h">
+                                    <span>{{ $broker->name }}</span> Special Conditions
+                                </h3>
+                                <p class="t_d">
+                                    {{ strip_tags($accountOption->special_conditions) }}
+                                </p>
+                            @endforeach
+                        </div>
+                        <div class="account_option_field" id="section7">
+                            <h3 class="r_v_h">Available Account Structures at {{ $broker->name }}</h3>
+                            <div class="account_option_grid">
+                                @foreach($account_options as $accountOption)
+                                <div class=" row">
+                                    <div class="col-md-6 col-12">
+                                        <div class="account_option_card">
+                                            <p><strong>Account Structure:</strong> {{ $accountOption->account_type }}</p>
+                                            <p><strong>Account Currency:</strong> {{ $accountOption->account_currency }}</p>
+                                            <p><strong>Min Deposit:</strong> {{ $accountOption->min_deposit }}</p>
+                                            <p><strong>Max Leverage:</strong> {{ $accountOption->max_leverage }}</p>
+                                            <p><strong>Spread Type:</strong> {{ $accountOption->spread_type }}</p>
+                                            <p><strong>Spread Value:</strong> {{ $accountOption->spread_value }}</p>
+                                            <p><strong>Demo Available:</strong> {{ $accountOption->is_demo_available ? 'Yes' : 'No' }}</p>
+                                            <p><strong>Swap Free:</strong> {{ $accountOption->swap_free ? 'Yes' : 'No' }}</p>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 col-12">
+                                        <div class="account_option_card">
+                                            <p><strong>Min Trade Size:</strong> {{ $accountOption->min_trade_size }}</p>
+                                            <p><strong>Max Trade Size:</strong> {{ $accountOption->max_trade_size }}</p>
+                                            <p><strong>Interest Rate:</strong> {{ $accountOption->interest_rate ?? 'N/A' }}</p>
+                                            <p><strong>Access to Pro Features:</strong> {{ $accountOption->access_to_pro_features ? 'Yes' : 'No' }}</p>
+                                            <p><strong>Bonus Eligibility:</strong> {{ $accountOption->bonus_eligibility ? 'Yes' : 'No' }}</p>
+                                            <p><strong>Personalized Education:</strong> {{ $accountOption->personalized_education ? 'Yes' : 'No' }}</p>
+                                            <p><strong>Exclusive Webinars:</strong> {{ $accountOption->exclusive_webinars ? 'Yes' : 'No' }}</p>
+                                            <p><strong>Commission:</strong> {{ $accountOption->commission ?? 'N/A' }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                @endforeach
                             </div>
                         </div>
 
-                        <div class="faq-section">
+                        <div class="faq-section" id="section8">
                             <h3 class="r_v_h">Frequently Asked Questions</h3>
                             @if($faqs->isNotEmpty())
                                 <div class="accordion">
@@ -379,8 +376,7 @@
                             @else
                                 <p>No FAQs available for this broker.</p>
                             @endif
-                        </div>
-                           
+                        </div> 
                         <div class="conclusion_details">
                             <h3 class="r_v_h">Conclusion:</h3>
                             <p>
@@ -400,7 +396,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-3 col-md-12">
+                <div class="col-lg-4 col-xl-3 col-md-12">
                     <div class="broker-sticky-container s_padding">
                         <div class="b_s_box">
                             @if ($broker->logo)
@@ -431,12 +427,16 @@
                                 </div>
 
                                 <div class="b_s_b_bton_wrapper">
-                                    <a href="{!! $broker->url !!}" target="_blank" rel="noopener noreferrer">
-                                        <button class="site_button btn btn-primary w-100 mb-2">Visit Site</button>
-                                    </a>
-                                    <a href="{!! $broker->open_demo !!}" target="_blank" rel="noopener noreferrer">
-                                        <button class="site_button btn btn-secondary w-100">Open Demo</button>
-                                    </a>
+                                    <div class="s_btn_wrapper">
+                                        <a href="{!! $broker->url !!}" target="_blank" rel="noopener noreferrer" target="_blank" rel="noopener noreferrer" class="s_btn group w-100 mb-2">
+                                            <span class="overlay"></span>
+                                            Visit Site
+                                        </a>
+                                        <a href="{!! $broker->open_demo !!}" target="_blank" rel="noopener noreferrer" target="_blank" rel="noopener noreferrer" target="_blank" rel="noopener noreferrer" class="s_btn group w-100">
+                                            <span class="overlay"></span>
+                                            Open Demo
+                                        </a>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -567,7 +567,7 @@
             </div>
         </div>
    </section>
-   <section class="testimonial_review">
+   <section class="testimonial_review" id="section9">
         <div class="container">
             <div class="row">
                 <div class="col-md-12">

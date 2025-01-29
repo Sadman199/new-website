@@ -96,7 +96,7 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-lg-3 col-md-12">
+                <div class="col-lg-4 col-xl-3 col-md-12 order-lg-1 order-md-2 order-2">
                     <div class="broker-sticky-container">
                         <div class="side_bar_add">
                             <span class="l_b_h"> Octa Deposit Bonus</span> @foreach($global_sidebar_top_ad as $row) <div class="ad-sidebar"> @if($row->sidebar_ad_url == '') <img src="{{ asset('uploads/'.$row->sidebar_ad) }}" alt=""> @else <a href="{{ $row->sidebar_ad_url }}">
@@ -115,7 +115,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-6 col-md-12">
+                <div class="col-lg-8 col-xl-6 col-md-12 order-lg-2 order-md-1 order-1">
                     <!-- Participation Details -->
                     <div class="b_c_wrapper">
                         <h3 class="r_v_h">Participation Details</h3>
@@ -168,9 +168,7 @@
                         </ul>
                     </div> -->
                 </div>
-
-                <!-- Sidebar -->
-                <div class="col-lg-3 col-md-12">
+                <div class="col-lg-4 col-xl-3 col-md-12 order-lg-3 order-md-3 order-3">
                     <div class="broker-sticky-container">
                         <div class="sidebar">
                             <div class="recent-bonuses">
@@ -258,6 +256,28 @@
             @endif
         </section>
     </div>
+    <section class="s_n_wrapper s_padding">
+    <div class="container">
+        <div class="d-flex justify-content-center align-items-center text-center">
+            <div class="col-lg-7">
+                <div class="s_dec_wrapper">
+                    <h2>Subscribe to Our Newsletter</h2>
+                    <p>Stay informed with the latest promotions, news, tips, and exclusive content delivered right to your inbox, keeping you updated and connected effortlessly.</p>
+                </div>
+
+                <form action="{{ route('subscribe') }}" method="POST" class="">
+                    @csrf
+                    <div class="form-group">
+                        <div class="input-container">
+                            <input type="email" name="email" id="email" class="form-input" placeholder="Your Email" required>
+                            <button type="submit" class="submit-btn">Subscribe</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    </section>
     <script>
         $(document).ready(function () {
         handleAdBannersForAllPages('.breadcrumb_wrapper', {

@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('account_type'); // E.g., Standard, Premium, etc.
             $table->string('account_currency'); // Currency for the account (e.g., USD, EUR)
             $table->decimal('min_deposit', 10, 2); // Minimum deposit for this account type
-            $table->decimal('max_leverage', 5, 2); // Maximum leverage for this account type
+            $table->float('max_leverage'); // Maximum leverage for this account type
             $table->string('spread_type'); // E.g., Fixed, Variable spread
             $table->decimal('spread_value', 5, 2); // Spread value for this account type
             $table->boolean('is_demo_available')->default(false); // Whether demo account is available

@@ -19,6 +19,25 @@
                     href="{{ route('admin_author_show') }}"><i class="fas fa-user-edit"></i> <span>Author
                         List</span></a></li>
 
+
+                        <li class="{{ Request::is('admin/forex-bonus/show') ? 'active' : '' }}">
+                <a class="nav-link" href="{{ route('admin_forex_bonus_show') }}">
+                    <i class="fas fa-share-alt"></i> <span>Forex Bonus</span>
+                </a>
+            </li>
+
+            <li class="{{ Request::is('admin/broker/show') ? 'active' : '' }}">
+                <a class="nav-link" href="{{ route('admin_broker_show') }}">
+                    <i class="fas fa-briefcase"></i> <span>Broker</span>
+                </a>
+            </li>
+
+            <li class="{{ Request::is('admin/reviews*') ? 'active' : '' }}">
+                <a class="nav-link" href="{{ route('reviews.pending') }}">
+                        <i class="fas fa-comments"></i> <span>User Reviews</span>
+                </a>
+            </li>         
+
             <li
                 class="nav-item dropdown {{ Request::is('admin/top-advertisement')||Request::is('admin/home-advertisement')||Request::is('admin/sidebar-advertisement-*') ? 'active' : '' }}">
                 <a href="#" class="nav-link has-dropdown"><i class="fas fa-ad"></i><span>Advertisements</span></a>
@@ -85,10 +104,6 @@
                     href="{{ route('admin_faq_show') }}"><i class="fas fa-question-circle"></i> <span>FAQ
                         Section</span></a></li>
 
-            <li class="{{ Request::is('admin/language/*') ? 'active' : '' }}"><a class="nav-link"
-                    href="{{ route('admin_language_show') }}"><i class="fas fa-language"></i> <span>Languages</span></a>
-            </li>
-
             <li class="nav-item dropdown {{ Request::is('admin/subscriber/*') ? 'active' : '' }}">
                 <a href="#" class="nav-link has-dropdown"><i class="fas fa-users"></i><span>Subscribers</span></a>
                 <ul class="dropdown-menu">
@@ -101,40 +116,9 @@
                 </ul>
             </li>
 
-            <li class="{{ Request::is('admin/live-channel/*') ? 'active' : '' }}"><a class="nav-link"
-                    href="{{ route('admin_live_channel_show') }}"><i class="fab fa-google-drive"></i> <span>Live
-                        Channel</span></a></li>
-
-            <li class="{{ Request::is('admin/online-poll/*') ? 'active' : '' }}"><a class="nav-link"
-                    href="{{ route('admin_online_poll_show') }}"><i class="fas fa-vote-yea"></i> <span>Online
-                        Poll</span></a></li>
-
             <li class="{{ Request::is('admin/social-item/*') ? 'active' : '' }}"><a class="nav-link"
                     href="{{ route('admin_social_item_show') }}"><i class="fas fa-share-alt"></i> <span>Social
                         Items</span></a></li>
-
-            <!-- ============= -->
-
-            <li class="{{ Request::is('admin/forex-bonus/show') ? 'active' : '' }}">
-                <a class="nav-link" href="{{ route('admin_forex_bonus_show') }}">
-                    <i class="fas fa-share-alt"></i> <span>Forex Bonus</span>
-                </a>
-            </li>
-
-            <li class="{{ Request::is('admin/broker/show') ? 'active' : '' }}">
-                <a class="nav-link" href="{{ route('admin_broker_show') }}">
-                    <i class="fas fa-briefcase"></i> <span>Broker</span>
-                </a>
-            </li>
-
-            <li class="{{ Request::is('admin/reviews*') ? 'active' : '' }}">
-                <a class="nav-link" href="{{ route('reviews.pending') }}">
-                        <i class="fas fa-comments"></i> <span>User Reviews</span>
-                </a>
-            </li>
-
-            
-
 
         </ul>
     </aside>

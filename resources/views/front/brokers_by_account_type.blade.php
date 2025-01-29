@@ -71,11 +71,11 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-lg-9 col-md-12">
+                <div class="col-xl-9 col-lg-8 col-md-12">
                     <div class="row">
                         @if($brokers->isNotEmpty())
                             @foreach($brokers as $broker)
-                                <div class="col-lg-4 col-md-6 col-sm-12">
+                                <div class="col-lg-6 col-xl-4 col-md-6 col-sm-12">
                                     <div class="ac_broker_card">
                                         <!-- Upper Portion -->
                                         <div class="broker_content">
@@ -191,7 +191,7 @@
                         @endif
                     </div>
                 </div>
-                <div class="col-lg-3 col-md-6">
+                <div class="col-xl-3 col-lg-4 col-md-6">
                     <div class="sidebar">
                         <div class="side_bar_add">
                             <span class="l_b_h"> Octa Deposit Bonus</span>

@@ -60,10 +60,10 @@
             <div class="row">
                 <div class="col-md-12">
                     <div class="row">
-                        <div class="col-md-9">
+                        <div class="col-lg-8 col-xl-9">
                             <div class="row">
                                 @foreach ($brokers as $broker)
-                                <div class="col-lg-4 col-md-6">
+                                <div class="col-xl-4 col-lg-6 col-md-6">
                                 <div class="ac_broker_card">
                                         <!-- Upper Portion -->
                                         <div class="broker_content">
@@ -176,7 +176,7 @@
                                 @endforeach
                             </div>
                         </div>
-                        <div class="col-lg-3 col-md-6">
+                        <div class="col-lg-4 col-xl-3 col-md-6">
                             <div class="sidebar">
                                 <div class="side_bar_add">
                                     <span class="l_b_h"> Octa Deposit Bonus</span>
@@ -193,14 +193,14 @@
                                 <div class="featured-brokers">
                                     <span class="l_b_h">Featured Brokers</span>
                                     <ul>
-                                        @foreach ($featured_brokers as $featured_broker)
-                                        <a href="{{ route('broker_detail', ['slug' => $featured_broker->slug]) }}"
+                                        @foreach ($f_broker_country as $broker)
+                                        <a href="{{ route('broker_detail', ['slug' => $broker->slug]) }}"
                                             class="broker-side-card-link">
                                             <li class="broker_side_card">
                                                 <div class="b_c_c_content">
-                                                    @if ($featured_broker->logo)
-                                                    <img src="{{ asset('storage/' . $featured_broker->logo) }}"
-                                                        alt="{{ $featured_broker->name }} Broker Logo" class="">
+                                                    @if ($broker->logo)
+                                                    <img src="{{ asset($broker->logo) }}"
+                                                        alt="{{ $broker->name }} Broker Logo" class="">
                                                     @else
                                                     <p>No logo available.</p>
                                                     @endif
@@ -225,22 +225,40 @@
     <section class="regulated_section section-muted s_padding">
         <div class="container">
             <div class="row">
-            <div class="col-md-12">
-                    <h2 class="section_title">Trade With A Regulated Broker</h2>
-                    <p class="section_dec">Trading with a regulated broker ensures security, transparency, and adherence to strict financial standards. It protects your funds and promotes a fair, trustworthy trading environment.</p>
-            </div>
+                <div class="col-md-12">
+                    <div class="s_content_wrapper">
+                        <h2 class="section_title">Trade With A Regulated Broker</h2>
+                        <a href="{{ route('regulated_brokers') }}" class="see-all-button">
+                        See All <span class="arrow-icon">→</span>
+                        </a>
+                    </div>
+                        <p class="section_dec">Trading with a regulated broker ensures security, transparency, and adherence to strict financial standards. It protects your funds and promotes a fair, trustworthy trading environment.</p>
+                </div>
             </div>
             <div class="row">
                 @foreach($regulatedBrokers as $broker)
-                <div class="col-md-4">
-                    <div class="broker-layer">
-                        <div class="broker-background" style="background-image: url('{{ asset($broker->logo ?? 'default-logo.png') }}');"></div>
+                <div class="col-lg-4 col-xl-3">
+                    <div class="broker_layer">
+                        <div class="b_l_img_wrapper">
+                            <img class="broker_layer_image" alt="{{ $broker->name }} logo" src="{{ asset($broker->logo) }}" />
+                        </div>
+                        <div class="hover_description_wrapper">
+                            <span class="full_description_w">
+                                {{ strip_tags($broker->short_description) }}
+                            </span>
+                        </div>
                         <div class="broker-content">
                             <div class="broker-header">
                                 <a href="{{ $broker->url }}"><h4>{{ $broker->name }}</h4></a>
                                 <p class="broker-leverage"><strong>Leverage:</strong> {{ $broker->leverage }}</p>
                             </div>
                             <div class="broker-footer">
+                                <div class="s_btn_wrapper">
+                                    <a href="{{ route('broker_detail', ['slug' => $broker->slug]) }}" class="s_btn group">
+                                        <span class="overlay"></span>
+                                        Read Review
+                                    </a>
+                                </div>
                                 <div class="rating-wrapper">
                                     <div class="rating">
                                         <?php
@@ -257,18 +275,12 @@
                                         ?>
                                     </div>
                                 </div>
-                                <a href="{{ route('broker_detail', ['slug' => $broker->slug]) }}" class="review-button">Read Review</a>
                             </div>
                         </div>
                     </div>
                 </div>    
                 @endforeach
-                <div class="s_btn_wrapper">
-                    <a href="{{ route('regulated_brokers') }}" class="s_btn group">
-                        <span class="overlay"></span>
-                        View More
-                    </a>
-                </div>
+                
 
             </div>
         

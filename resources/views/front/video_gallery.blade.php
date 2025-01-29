@@ -4,7 +4,7 @@
 <div class="page-top">
     <div class="breadcrumb_wrapper_by_video">
         <div class="container">
-            <div class="row">
+            <div class="row d-flex align-items-center justify-content-center">
                 <div class="col-md-7">
                    <div class="hero-content">
                     <h2 class="b_c_h">Watch the Latest Insights on BrokersCourt</h2>

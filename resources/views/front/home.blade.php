@@ -15,21 +15,19 @@ $current_language_id = \App\Models\Language::where('short_name', $current_short_
     <div class="hero">
         <div class="container">
             <!-- Heading and sponsored container in flex row -->
-            <div class="d-flex justify-content-between align-items-center">
-                <h2 class="section-title">Top Rated Brokers</h2>
+            <div class="heading_sponsored">
+                <h1 class="hero_title">Discover the Top-Rated Brokers <br> <span class="h_span">You Can Trust!</span></h1>
                 <div class="sponsored">
                     Sponsored <i class="fas fa-info-circle"></i>
                 </div>
             </div>
 
             <!-- Paragraph placed directly under heading -->
-            <p class="section-dec">Find the best brokers trusted by traders worldwide, offering top-notch services and
-                reliable trading platforms.</p>
-
+            <p class="section-dec">Explore the world’s most trusted brokers, delivering exceptional services and rock-solid trading platforms for traders like you!</p>
             @if ($top_brokers->count() > 0)
             <div class="row">
                 @foreach($top_brokers as $broker)
-                <div class="col-lg-4 col-md-6">
+                <div class="col-12 col-sm-6 col-md-4 col-lg-6 col-xl-4">
                     <div class="broker-card">
                         <div class="d_card_header">
                              @if ($broker->logo)
@@ -48,9 +46,6 @@ $current_language_id = \App\Models\Language::where('short_name', $current_short_
                             </div>
                         </div>
                         <div class="broker-info">
-                            <div class="b_h_info">
-                                
-                            </div>
                             <div class="description-wrapper">
                                 <p class="short-description hero_p">
                                     {{ Str::limit(strip_tags($broker->title), 60) }}
@@ -76,16 +71,13 @@ $current_language_id = \App\Models\Language::where('short_name', $current_short_
 <section class="hero_content s_padding">
     <div class="container">
         <div class="row">
-            <div class="col-lg-4 col-md-6">
+            <div class="col-lg-4 col-md-6 col-sm-12">
                 <div class="hc_content">
                     <div class="s_content_wrapper">
                         <h2 class="section_title">Deposit Bonus</h2>
-                        <div class="s_btn_wrapper">
-                            <a href="" class="s_btn group">
-                                <span class="overlay"></span>
-                                See All
-                            </a>
-                        </div>
+                        <a href="{{ route('broker.comparison') }}" class="see-all-button">
+                        See All <span class="arrow-icon">→</span>
+                        </a>
                     </div>
 
                     @foreach ($forex_bonus_data as $bonus)
@@ -109,15 +101,14 @@ $current_language_id = \App\Models\Language::where('short_name', $current_short_
                     @endforeach
                 </div>
             </div>
-            <div class="col-lg-4 col-md-6">
+            <div class="col-lg-4 col-md-6 col-sm-12">
                 <div class="hc_content">
                     <div class="s_content_wrapper">
                         <h2 class="section_title">No Deposit Bonus</h2>
                         <div class="s_btn_wrapper">
-                            <a href="" class="s_btn group">
-                                <span class="overlay"></span>
-                                See All
-                            </a>
+                        <a href="{{ route('broker.comparison') }}" class="see-all-button">
+                        See All <span class="arrow-icon">→</span>
+                        </a>
                         </div>
                     </div>
                     @foreach ($noDepositBonuses as $bonus)
@@ -139,15 +130,12 @@ $current_language_id = \App\Models\Language::where('short_name', $current_short_
                     @endforeach
                </div>
             </div>
-            <div class="col-lg-4 col-md-12">
+            <div class="col-lg-4 col-md-6 col-sm-12">
                 <div class="s_content_wrapper">
                     <h2 class="section_title">Forex Tips</h2>
-                    <div class="s_btn_wrapper">
-                        <a href="" class="s_btn group">
-                            <span class="overlay"></span>
-                            All Tips
+                    <a href="{{ route('broker.comparison') }}" class="see-all-button">
+                        See All <span class="arrow-icon">→</span>
                         </a>
-                    </div>
                 </div>
                 <div class="vertical-slider-wrapper">
                     <div class="vertical-slider">
@@ -213,21 +201,20 @@ $current_language_id = \App\Models\Language::where('short_name', $current_short_
 <section class="feature_brokers">
     <div class="container">
         <div class="row">
-            <div class="d-flex justify-content-between align-items-center">
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-center text-center text-md-start">
                 <h2 class="f_b_heading">Explore Our Featured Brokers</h2>
-                <div class="s_btn_wrapper">
-                    <a href="{{ route('broker.comparison') }}" class="s_btn group">
-                        <span class="overlay"></span>
-                        Broker Comparison
+                <a href="{{ route('broker.comparison') }}" class="see-all-button-dark">
+                 Broker Comparison <span class="arrow-icon">→</span>
                     </a>
-                </div>
+
             </div>
+
             <p class="f_b_dec">
                 Find the top forex brokers of 2024 with excellent platforms, low spreads, and tools for all traders.
             </p>
             @if ($featured_brokers->count() > 0)
             @foreach($featured_brokers as $broker)
-            <div class="col-lg-3 col-md-6 col-12">
+            <div class="col-12 col-sm-6 col-md-6 col-lg-4 col-xl-3">
                 <div class="broker_card">
                     <div class="l_r_wrap">
                         <div class="broker-logo">
@@ -279,7 +266,7 @@ $current_language_id = \App\Models\Language::where('short_name', $current_short_
                                 <div class="tab-pane fade show active" id="featured-tab1{{ $broker->id }}" role="tabpanel"
                                     aria-labelledby="featured-tab1-tab{{ $broker->id }}">
                                     <div class="broker-info">
-                                        <div class="broker-title bt_w">{{ Str::limit($broker->title, 25) }}</div>
+                                        <div class="broker-title bt_w">{{ Str::limit($broker->title, 30) }}</div>
                                         <div class="broker-details">
                                             <div class="detail_item">
                                                 <span class="label bt_w">Minimum Deposit:</span>
@@ -330,10 +317,271 @@ $current_language_id = \App\Models\Language::where('short_name', $current_short_
         </div>
     </div>
 </section>
-<section class="e_c s_padding">
+<section class="broker_strengths s_padding section-muted">
+    <div class="keys_trengths">
+    <div class="container">
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-center text-center text-md-start row g-5">
+                <div class="col-md-3">
+                    <h4 class="a_broker_heading">Best Brokers for Beginners</h4>
+                </div>
+                <div class="col-md-9">
+                    <div class="owl-carousel best-for-beginners-slider owl-theme">
+                        @foreach($bestForBeginners as $broker)
+                            <div class="item">
+                                <div class="b_item_wrapper">
+                                <div class="b_item_single">
+                                        <div class="b_image">
+                                        <img src="{{ asset($broker->logo) }}" alt="" class="s_img">
+                                        </div>
+                                        <h5>{{ $broker->name }}</h5>
+                                    </div>
+                                    <div class="star-rating">
+                                        <?php
+                                            $rating = $broker->rating;
+                                            $ratingClass = $rating == 5 ? 'full-rating' : 'partial-rating'; // Check if it's 5 stars for green or below 5 for yellow
+                                        ?>
+                                        <div class="stars {{ $ratingClass }}">
+                                            @for ($i = 1; $i <= 5; $i++)
+                                                <span class="star {{ $i <= $rating ? 'filled' : ($i - 0.5 == $rating ? 'half' : '') }}">
+                                                    {!! $i <= $rating || $i - 0.5 == $rating ? '&#9733;' : '&#9734;' !!}
+                                                </span>
+                                            @endfor
+                                        </div>
+                                        <span class="rating-number">({{ $rating }})</span>
+                                    </div>
+                                </div>
+    
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+
+            </div>
+    </div>
+    </div>
+    <div class="spread_ranking">
+    <div class="container">
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-center text-center text-md-start row g-5">
+                <div class="col-md-3">
+                    <h4 class="a_broker_heading">Top Brokers with Tightest Spreads</h4>
+                </div>
+                <div class="col-md-9">
+                    <div class="owl-carousel best-for-beginners-slider owl-theme">
+                    @foreach($spreadRankings as $broker)
+                            <div class="item">
+                                <div class="b_item_wrapper">
+                                <div class="b_item_single">
+                                        <div class="b_image">
+                                        <img src="{{ asset($broker->logo) }}" alt="" class="s_img">
+                                        </div>
+                                        <h5>{{ $broker->name }}</h5>
+                                    </div>
+                                    <div class="star-rating">
+                                        <?php
+                                            $rating = $broker->rating;
+                                            $ratingClass = $rating == 5 ? 'full-rating' : 'partial-rating'; // Check if it's 5 stars for green or below 5 for yellow
+                                        ?>
+                                        <div class="stars {{ $ratingClass }}">
+                                            @for ($i = 1; $i <= 5; $i++)
+                                                <span class="star {{ $i <= $rating ? 'filled' : ($i - 0.5 == $rating ? 'half' : '') }}">
+                                                    {!! $i <= $rating || $i - 0.5 == $rating ? '&#9733;' : '&#9734;' !!}
+                                                </span>
+                                            @endfor
+                                        </div>
+                                        <span class="rating-number">({{ $rating }})</span>
+                                    </div>
+                                </div>
+    
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+
+            </div>
+    </div>
+    </div>
+    <div class="bonus_broker">
+    <div class="container">
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-center text-center text-md-start row g-5">
+                <div class="col-md-3">
+                    <h4 class="a_broker_heading">Best Brokers with Bonuses</h4>
+                </div>
+                <div class="col-md-9">
+                    <div class="owl-carousel best-for-beginners-slider owl-theme">
+                            @foreach($bestBonuses as $broker)
+                                <div class="item">
+                                    <div class="b_item_single">
+                                        <div class="b_image">
+                                            <img src="{{ asset($broker->logo) }}" alt="" class="s_img">
+                                        </div>
+                                        <h5>{{ $broker->name }}</h5>
+                                    </div>
+                                    <div class="star-rating">
+                                        <?php
+                                            $rating = $broker->rating;
+                                            $ratingClass = $rating == 5 ? 'full-rating' : 'partial-rating';
+                                        ?>
+                                        <div class="stars {{ $ratingClass }}">
+                                            @for ($i = 1; $i <= 5; $i++)
+                                                <span class="star {{ $i <= $rating ? 'filled' : ($i - 0.5 == $rating ? 'half' : '') }}">
+                                                    {!! $i <= $rating || $i - 0.5 == $rating ? '&#9733;' : '&#9734;' !!}
+                                                </span>
+                                            @endfor
+                                        </div>
+                                        <span class="rating-number">({{ $rating }})</span>
+                                    </div>                        
+                                    @if($broker->accountOptions->first())
+                                        <div class="offer_content">
+                                            @if($broker->accountOptions->first()->exclusive_offers)
+                                            <p>
+                                                <span class="a_offfer">Offer:</span> 
+                                                {{ Str::limit(strip_tags($broker->accountOptions->first()->exclusive_offers), 100, '...') }}
+                                            </p>
+                                            @endif
+                                            <p><span class="a_offfer">Bonus Eligibility:</span> {{ $broker->accountOptions->first()->bonus_eligibility ? 'Yes' : 'No' }}</p>
+                                        </div>
+                                    @else
+                                        <p>No promotional offers available.</p>
+                                    @endif
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+
+            </div>
+    </div>
+    </div>
+</section>
+<section class="leverage_section s_padding">
     <div class="container">
         <div class="row">
-            <div class="col-md-8">
+            <div class="col-md-12">
+                <h2 class="section_title">Best Leverage Brokers</h2>
+                <p class="section_dec">Explore the best forex brokers of 2024 with top platforms, competitive spreads, and tools for traders of all levels.</p>
+            </div>
+            <div class="col-md-12">
+                 @if ($best_leverage_brokers->count() > 0)
+                    <div class="row">
+                        @foreach($best_leverage_brokers as $broker)
+                        <div class="col-12 col-sm-6 col-md-6 col-lg-4 col-xl-3">
+                            <div class="broker_layer">
+                                <div class="b_l_img_wrapper">
+                                    <img class="broker_layer_image" alt="{{ $broker->name }} logo" src="{{ asset($broker->logo) }}" />
+                                </div>
+                                <div class="hover_description_wrapper">
+                                    <span class="full_description_w">
+                                        {{ strip_tags($broker->short_description) }}
+                                    </span>
+                                </div>
+                                <div class="broker-content">
+                                    <div class="broker-header">
+                                        <a href="{{ $broker->url }}"><h4>{{ $broker->name }}</h4></a>
+                                        <p class="broker-leverage"><strong>Leverage:</strong> {{ $broker->leverage }}</p>
+                                    </div>
+                                    <div class="broker-footer">
+                                       <div class="s_btn_wrapper">
+                                            <a href="{{ route('broker_detail', ['slug' => $broker->slug]) }}" class="s_btn group">
+                                                <span class="overlay"></span>
+                                                Read Review
+                                            </a>
+                                        </div>
+                                        <div class="rating-wrapper">
+                                            <div class="rating">
+                                                <?php
+                                                $rating = $broker->rating;
+                                                for ($i = 1; $i <= 5; $i++) {
+                                                    if ($i <= $rating) {
+                                                        echo '<span class="star filled">&#9733;</span>';
+                                                    } elseif ($i - 0.5 == $rating) {
+                                                        echo '<span class="star half">&#9733;</span>';
+                                                    } else {
+                                                        echo '<span class="star">&#9734;</span>';
+                                                    }
+                                                }
+                                                ?>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        @endforeach
+                    </div>
+                @else
+                <p>No brokers available.</p>
+                @endif
+            </div>
+        
+        </div>
+    </div>
+</section>
+<section class="regulated_section section-muted s_padding">
+    <div class="container">
+        <div class="row">
+           <div class="col-md-12">
+                <div class="s_content_wrapper">
+                    <h2 class="section_title">Trade With A Regulated Broker</h2>
+                    <a href="{{ route('regulated_brokers') }}" class="see-all-button">
+                    See All <span class="arrow-icon">→</span>
+                    </a>
+                </div>
+                    
+                <p class="section_dec">Trading with a regulated broker ensures security, transparency, and adherence to strict financial standards. It protects your funds and promotes a fair, trustworthy trading environment.</p>
+           </div>
+        </div>
+        <div class="row">
+            @foreach($regulatedBrokers as $broker)
+            <div class="col-12 col-sm-6 col-md-6 col-lg-4 col-xl-3">
+                <div class="broker_layer">
+                    <div class="b_l_img_wrapper">
+                        <img class="broker_layer_image" alt="{{ $broker->name }} logo" src="{{ asset($broker->logo) }}" />
+                    </div>
+                    <div class="hover_description_wrapper">
+                        <span class="full_description_w">
+                            {{ strip_tags($broker->short_description) }}
+                        </span>
+                    </div>
+                    <div class="broker-content">
+                        <div class="broker-header">
+                            <a href="{{ $broker->url }}"><h4>{{ $broker->name }}</h4></a>
+                            <p class="broker-leverage"><strong>Leverage:</strong> {{ $broker->leverage }}</p>
+                        </div>
+                        <div class="broker-footer">
+                            <div class="s_btn_wrapper">
+                                <a href="{{ route('broker_detail', ['slug' => $broker->slug]) }}" class="s_btn group">
+                                    <span class="overlay"></span>
+                                    Read Review
+                                </a>
+                            </div>
+                            <div class="rating-wrapper">
+                                <div class="rating">
+                                    <?php
+                                    $rating = $broker->rating;
+                                    for ($i = 1; $i <= 5; $i++) {
+                                        if ($i <= $rating) {
+                                            echo '<span class="star filled">&#9733;</span>';
+                                        } elseif ($i - 0.5 == $rating) {
+                                            echo '<span class="star half">&#9733;</span>';
+                                        } else {
+                                            echo '<span class="star">&#9734;</span>';
+                                        }
+                                    }
+                                    ?>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>    
+            @endforeach
+        </div>
+    
+    </div>
+</section>
+<section class="e_c s_padding section-muted">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-7 col-xl-8">
                 <h2 class="section_title">Live Economic Calendar</h2>
                 <p class="section_dec">Stay updated with the latest global market news and financial events. This live widget brings you real-time insights and updates from major markets worldwide, helping you make informed trading decisions.
                 </p>
@@ -357,10 +605,9 @@ $current_language_id = \App\Models\Language::where('short_name', $current_short_
 
                 </div>
             </div>
-
-            <div class="col-md-4">
+            <div class="col-lg-5 col-xl-4">
                  <h2 class="section_title">Popular & Latest Forex News</h2>
-                 <p class="section_dec">Get trending updates and key forex news, from market insights to central bank decisions, to stay ahead in trading.</p>
+                 <p class="section_dec">Stay ahead in trading with the latest forex updates, from market insights to central bank news.</p>
                  <div class="n_v_wrapper">
                     <ul class="nav nav-pills h_c_b_nav" id="pills-tab" role="tablist">
                         <li class="nav-item" role="presentation">
@@ -461,137 +708,6 @@ $current_language_id = \App\Models\Language::where('short_name', $current_short_
     </div>
 
 </section>
-<section class="leverage_section s_padding">
-    <div class="container">
-        <div class="row">
-            <div class="col-md-12">
-                <h2 class="section_title">Best Leverage Brokers</h2>
-                <p class="section_dec">Explore the best forex brokers of 2024 with top platforms, competitive spreads, and tools for traders of all levels.</p>
-            </div>
-            <div class="col-md-12">
-                 @if ($best_leverage_brokers->count() > 0)
-                    <div class="row">
-                        @foreach($best_leverage_brokers as $broker)
-                        <div class="col-lg-3 col-md-6">
-                            <div class="broker_layer">
-                                <div class="b_l_img_wrapper">
-                                    <img class="broker_layer_image" alt="{{ $broker->name }} logo" src="{{ asset($broker->logo) }}" />
-                                </div>
-                                <div class="hover_description_wrapper">
-                                    <span class="full_description_w">
-                                        {{ strip_tags($broker->short_description) }}
-                                    </span>
-                                </div>
-                                <div class="broker-content">
-                                    <div class="broker-header">
-                                        <a href="{{ $broker->url }}"><h4>{{ $broker->name }}</h4></a>
-                                        <p class="broker-leverage"><strong>Leverage:</strong> {{ $broker->leverage }}</p>
-                                    </div>
-                                    <div class="broker-footer">
-                                       <div class="s_btn_wrapper">
-                                            <a href="{{ route('broker_detail', ['slug' => $broker->slug]) }}" class="s_btn group">
-                                                <span class="overlay"></span>
-                                                Read Review
-                                            </a>
-                                        </div>
-                                        <div class="rating-wrapper">
-                                            <div class="rating">
-                                                <?php
-                                                $rating = $broker->rating;
-                                                for ($i = 1; $i <= 5; $i++) {
-                                                    if ($i <= $rating) {
-                                                        echo '<span class="star filled">&#9733;</span>';
-                                                    } elseif ($i - 0.5 == $rating) {
-                                                        echo '<span class="star half">&#9733;</span>';
-                                                    } else {
-                                                        echo '<span class="star">&#9734;</span>';
-                                                    }
-                                                }
-                                                ?>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        @endforeach
-                    </div>
-                @else
-                <p>No brokers available.</p>
-                @endif
-            </div>
-           
-
-
-        </div>
-    </div>
-</section>
-<section class="regulated_section section-muted s_padding">
-    <div class="container">
-        <div class="row">
-           <div class="col-md-12">
-                <div class="s_content_wrapper">
-                    <h2 class="section_title">Trade With A Regulated Broker</h2>
-                    <div class="s_btn_wrapper">
-                        <a href="{{ route('regulated_brokers') }}" class="s_btn group">
-                            <span class="overlay"></span>
-                            See All
-                        </a>
-                    </div>
-                </div>
-                    
-                <p class="section_dec">Trading with a regulated broker ensures security, transparency, and adherence to strict financial standards. It protects your funds and promotes a fair, trustworthy trading environment.</p>
-           </div>
-        </div>
-        <div class="row">
-            @foreach($regulatedBrokers as $broker)
-            <div class="col-lg-3 col-md-6">
-                <div class="broker_layer">
-                    <div class="b_l_img_wrapper">
-                        <img class="broker_layer_image" alt="{{ $broker->name }} logo" src="{{ asset($broker->logo) }}" />
-                    </div>
-                    <div class="hover_description_wrapper">
-                        <span class="full_description_w">
-                            {{ strip_tags($broker->short_description) }}
-                        </span>
-                    </div>
-                    <div class="broker-content">
-                        <div class="broker-header">
-                            <a href="{{ $broker->url }}"><h4>{{ $broker->name }}</h4></a>
-                            <p class="broker-leverage"><strong>Leverage:</strong> {{ $broker->leverage }}</p>
-                        </div>
-                        <div class="broker-footer">
-                            <div class="s_btn_wrapper">
-                                <a href="{{ route('broker_detail', ['slug' => $broker->slug]) }}" class="s_btn group">
-                                    <span class="overlay"></span>
-                                    Read Review
-                                </a>
-                            </div>
-                            <div class="rating-wrapper">
-                                <div class="rating">
-                                    <?php
-                                    $rating = $broker->rating;
-                                    for ($i = 1; $i <= 5; $i++) {
-                                        if ($i <= $rating) {
-                                            echo '<span class="star filled">&#9733;</span>';
-                                        } elseif ($i - 0.5 == $rating) {
-                                            echo '<span class="star half">&#9733;</span>';
-                                        } else {
-                                            echo '<span class="star">&#9734;</span>';
-                                        }
-                                    }
-                                    ?>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>    
-            @endforeach
-        </div>
-    
-    </div>
-</section>
 <section class="video_section">
     @if($setting_data->video_status == 'Show')
     <div class="video_content">
@@ -599,13 +715,10 @@ $current_language_id = \App\Models\Language::where('short_name', $current_short_
             <div class="row">
                 <div class="col-md-12">
                     <div class="s_content_wrapper">
-                        <h2 class="section_title">Recent Video Updates</h2>
-                        <div class="s_btn_wrapper">
-                            <a href="{{ route('video_gallery') }}" class="s_btn group">
-                                <span class="overlay"></span>
-                                See All
-                            </a>
-                        </div>
+                        <h2 class="v_section_title">Recent Video Updates</h2>
+                        <a href="{{ route('video_gallery') }}" class="see-all-button-dark">
+                        See All <span class="arrow-icon">→</span>
+                        </a>
                     </div>
                 </div>
             </div>
@@ -645,14 +758,11 @@ $current_language_id = \App\Models\Language::where('short_name', $current_short_
             <div class="col-md-12">
                 <div class="s_content_wrapper">
                         <h2 class="section_title">Non Regulated Broker</h2>
-                        <div class="s_btn_wrapper">
-                            <a href="{{ route('non_regulated_brokers') }}" class="s_btn group">
-                                <span class="overlay"></span>
-                                See All
-                            </a>
-                        </div>
+                        <a href="{{ route('non_regulated_brokers') }}" class="see-all-button">
+                        See All <span class="arrow-icon">→</span>
+                        </a>
                     </div>
-                <p class="section_dec">Proceed with caution! These brokers are <strong>not regulated</strong>, which means there is a higher risk of losing your funds. </p>
+                <p class="section_dec">A Non-Regulated Broker operates without oversight from financial authorities, posing higher risks to traders due to limited protections and accountability. Always research thoroughly before trading.</p>
             </div>
         </div>
         <div class="row">
@@ -669,7 +779,6 @@ $current_language_id = \App\Models\Language::where('short_name', $current_short_
                                 <i class="fas fa-chevron-right"></i>
                             </a>
                             </div> 
-                            
                         </div>
                     </div>
                 </div>

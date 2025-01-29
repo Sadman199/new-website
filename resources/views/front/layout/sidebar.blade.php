@@ -14,7 +14,6 @@ $current_language_id = \App\Models\Language::where('short_name',$current_short_n
 
 
 <div class="sidebar">
-
     <div class="widget s_w_c">
       <h2 class="add_heading">Octa Deposit Bonus</h2>
         @foreach($global_sidebar_top_ad as $row)
@@ -33,92 +32,97 @@ $current_language_id = \App\Models\Language::where('short_name',$current_short_n
                 <h2>{{ POPULAR_RECENT_NEWS }}</h2>
             </div>           
 
-            <ul class="nav nav-pills h_c_b_nav" id="pills-tab" role="tablist">
+            <div class="n_v_wrapper">
+                <ul class="nav nav-pills h_c_b_nav" id="pills-tab" role="tablist">
                     <li class="nav-item" role="presentation">
-                        <button class="nav-link active" id="pills-home-tab" data-bs-toggle="pill" data-bs-target="#pills-home" type="button" role="tab" aria-controls="pills-home" aria-selected="true">{{ RECENT_NEWS }}</button>
+                        <button class="nav-link active n_p_btn" id="pills-home-tab" data-bs-toggle="pill" data-bs-target="#pills-home" type="button" role="tab" aria-controls="pills-home" aria-selected="true">{{ RECENT_NEWS }}</button>
                     </li>
                     <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="pills-profile-tab" data-bs-toggle="pill" data-bs-target="#pills-profile" type="button" role="tab" aria-controls="pills-profile" aria-selected="false">{{ POPULAR_NEWS }}</button>
+                        <button class="nav-link n_p_btn" id="pills-profile-tab" data-bs-toggle="pill" data-bs-target="#pills-profile" type="button" role="tab" aria-controls="pills-profile" aria-selected="false">{{ POPULAR_NEWS }}</button>
                     </li>
                 </ul>
-                <div class="widget">
-                    <div class="news">
-                        <div class="tab-content" id="pills-tabContent">
-                            <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
+            </div>
+            <div class="widget">
+                <div class="news">
+                    <div class="tab-content" id="pills-tabContent">
+                        <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
+                            @php
+                                $recent_news_data = \App\Models\Post::with('rSubCategory')
+                                    ->where('language_id', $current_language_id)
+                                    ->latest()
+                                    ->take(4)
+                                    ->get();
+                            @endphp
+                            @foreach($recent_news_data as $item)
                                 @php
-                                    $recent_news_data = \App\Models\Post::with('rSubCategory')
-                                        ->where('language_id', $current_language_id)
-                                        ->latest()
-                                        ->take(4)
-                                        ->get();
-                                @endphp
-                                @foreach($recent_news_data as $item)
-                                    @php
-                                        $user_data = $item->author_id == 0 ? \App\Models\Admin::find($item->admin_id) : \App\Models\Author::find($item->author_id);
-                                        $updated_date = $item->updated_at->format('d F, Y');
+                                    $user_data = $item->author_id == 0 ? \App\Models\Admin::find($item->admin_id) : \App\Models\Author::find($item->author_id);
+                                    $updated_date = $item->updated_at->diffForHumans();
                                     @endphp
-                                    <div class="side_bar_news_item">
-                                        <div class="left">
-                                            <img src="{{ asset('uploads/'.$item->post_photo) }}" alt="">
-                                           
-                                        </div>
-                                        <div class="right">                                      
-                                        <a class="s_c_tilte" href="{{ route('news_detail', [
-                                                'subcategory_slug' => $item->rSubCategory ? $item->rSubCategory->slug : 'default-category', 
-                                                'post_slug' => $item->slug
-                                            ]) }}">
-                                                {{ Str::limit($item->post_title, 30) }}
-                                            </a>
-
-                                  
-                                            <div class="date_user_side_bar">
-                                                <div class="user"><a class="s_s_d" href="javascript:void;">{{ $user_data->name }}</a></div>
-                                                <div class="date"><a class="s_s_d" href="javascript:void;">{{ $updated_date }}</a></div>
-                                            </div>
+                                <div class="news-item">
+                                    <div class="right">
+                                       
+                                        <h2>
+                                            @if($item->rSubCategory)
+                                                <a href="{{ route('news_detail', ['subcategory_slug' => $item->rSubCategory->slug, 'post_slug' => $item->slug]) }}">
+                                                    {{ Str::limit($item->post_title, 40) }}
+                                                </a>
+                                            @else
+                                                <span>{{ Str::limit($item->post_title, 40) }}</span>
+                                            @endif
+                                        </h2>
+                                        <div class="date-user">
+                                            <div class="user"><a href="javascript:void;">{{ $user_data->name }}</a></div>
+                                            <div class="date"><a href="javascript:void;">{{ $updated_date }}</a></div>
                                         </div>
                                     </div>
-                                @endforeach
-                            </div>
+                                    <div class="left">
+                                        <img src="{{ asset('uploads/'.$item->post_photo) }}" alt="">
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
 
-                            <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
+                        <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
+                            @php
+                                $popular_news_data = \App\Models\Post::with('rSubCategory')
+                                    ->where('language_id', $current_language_id)
+                                    ->orderBy('visitors', 'desc')
+                                    ->take(4)
+                                    ->get();
+                            @endphp
+                            @foreach($popular_news_data as $item)
                                 @php
-                                    $popular_news_data = \App\Models\Post::with('rSubCategory')
-                                        ->where('language_id', $current_language_id)
-                                        ->orderBy('visitors', 'desc')
-                                        ->take(4)
-                                        ->get();
-                                @endphp
-                                @foreach($popular_news_data as $item)
-                                    @php
-                                        $user_data = $item->author_id == 0 ? \App\Models\Admin::find($item->admin_id) : \App\Models\Author::find($item->author_id);
-                                        $updated_date = $item->updated_at->format('d F, Y');
+                                    $user_data = $item->author_id == 0 ? \App\Models\Admin::find($item->admin_id) : \App\Models\Author::find($item->author_id);
+                                    $updated_date = $item->updated_at->diffForHumans();
                                     @endphp
-                                    <div class="side_bar_news_item">
-                                        <div class="left">
-                                            <img src="{{ asset('uploads/'.$item->post_photo) }}" alt="">
-                                          
-                                        </div>
-                                        <div class="right">
-                                        <a class="s_c_tilte" href="{{ route('news_detail', [
-                                                'subcategory_slug' => $item->rSubCategory ? $item->rSubCategory->slug : 'default-category', 
-                                                'post_slug' => $item->slug
-                                            ]) }}">
-                                                {{ Str::limit($item->post_title, 30) }}
-                                            </a>
+                                <div class="news-item">
+                                    <div class="right">
+                                       
+                                    
+                                            <h2>
+                                                @if($item->rSubCategory)
+                                                    <a href="{{ route('news_detail', ['subcategory_slug' => $item->rSubCategory->slug, 'post_slug' => $item->slug]) }}">
+                                                        {{ Str::limit($item->post_title, 40) }}
+                                                    </a>
+                                                @else
+                                                    <span>{{ Str::limit($item->post_title, 40) }}</span>
+                                                @endif
+                                            </h2>
 
-
-
-                                            <div class="date_user_side_bar">
-                                                <div class="user"><a class="s_s_d" href="javascript:void;">{{ $user_data->name }}</a></div>
-                                                <div class="date"><a class="s_s_d" href="javascript:void;">{{ $updated_date }}</a></div>
-                                            </div>
+                                        <div class="date-user">
+                                            <div class="user"><a href="javascript:void;">{{ $user_data->name }}</a></div>
+                                            <div class="date"><a href="javascript:void;">{{ $updated_date }}</a></div>
                                         </div>
                                     </div>
-                                @endforeach
-                            </div>
+                                    <div class="left">
+                                        <img src="{{ asset('uploads/'.$item->post_photo) }}" alt="">
+                                    </div>
+                                </div>
+                            @endforeach
                         </div>
                     </div>
                 </div>
+            </div>
         
         </div>
     </div>

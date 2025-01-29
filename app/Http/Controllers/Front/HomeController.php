@@ -23,10 +23,7 @@ class HomeController extends Controller
 
   public function index()
   {
-      // Call the helper to read JSON (your existing logic)
       Helpers::read_json();
-  
-      // Get current language settings
       if (!session()->get('session_short_name')) {
           $current_short_name = Language::where('is_default', 'Yes')->first()->short_name;
       } else {
@@ -39,7 +36,6 @@ class HomeController extends Controller
       if ($language) {
           $current_language_id = $language->id;
       } else {
-          // Handle the case when the language is not found (e.g., use default language ID)
           $current_language_id = Language::where('is_default', 'Yes')->first()->id;
       }
   
@@ -64,12 +60,36 @@ class HomeController extends Controller
           $query->where('is_regulated', 1);
       })->get();
       $forex_tips = Post::with('rSubCategory')->whereHas('rSubCategory', function ($query) {
-        $query->where('sub_category_name', 'Forex Tips'); // Replace 'Forex Tips' with your actual subcategory name
+        $query->where('sub_category_name', 'Forex Tips'); 
     })->latest()->take(5)->get();
 
       $non_regulatedBrokers = Broker::whereHas('accountOptions', function($query) {
-          $query->where('is_regulated', false); // Fetch non-regulated brokers
+          $query->where('is_regulated', false); 
       })->take(6)->get();
+      $bestForBeginners = Broker::whereHas('accountOptions', function ($query) {
+        $query->where('min_deposit', '<=', 10) // Low deposit, adjust threshold as needed
+              ->where('is_demo_available', 1); // Demo account available
+    })->get();
+
+    $bestBonuses = Broker::whereHas('accountOptions', function ($query) {
+        $query->whereNotNull('exclusive_offers') // Brokers with promotional offers
+              ->orWhere('bonus_eligibility', 1); // Brokers eligible for bonuses
+    })->get();
+    
+    $spreadRankings = Broker::with(['accountOptions' => function($query) {
+        $query->orderBy('spread_value', 'asc'); // Order account options by spread value
+    }])
+    ->whereHas('accountOptions', function($query) {
+        $query->whereNotNull('spread_value')
+              ->where('spread_value', '>', 0); // Only consider brokers with valid spread values
+    })
+    ->get();
+    
+
+    
+    
+
+    
   
       // Account types to display on the homepage (the 8 account types)
       $accountTypes = [
@@ -97,21 +117,23 @@ class HomeController extends Controller
           'featured_brokers', 
           'top_brokers', 
           'best_leverage_brokers',
-          'accountTypes', // Pass the account types here
+          'accountTypes', 
           'regulatedBrokers',
           'demoContest',
           'liveContest',
           'forexCashbackRebate',
           'cryptoBonusPromotion',
           'non_regulatedBrokers',
-          'forex_tips'
+          'forex_tips',
+          'bestForBeginners',
+          'bestBonuses',
+          'spreadRankings'
       ));
   }
 
     public function get_subcategory_by_category($id)
     {
         Helpers::read_json();
-        
         $sub_category_data = SubCategory::where('category_id',$id)->get();
         $response = "<option value=''>".SELECT_SUBCATEGORY."</option>";
         foreach($sub_category_data as $item) {
@@ -143,11 +165,11 @@ class HomeController extends Controller
         $current_language_id = Language::where('short_name', $current_short_name)->first()->id;
         $page_data = Page::where('language_id', $current_language_id)->first();
         $brokers = Broker::whereRaw('LOWER(JSON_EXTRACT(associated_countries, "$")) LIKE ?', ['%"' . $country . '"%'])->get();
-        $featured_brokers = Broker::where('featured_broker', 1)->latest() ->take(6)->get();
+        $f_broker_country = Broker::where('featured_broker', 1)->latest() ->take(5)->get();
         $regulatedBrokers = Broker::whereHas('accountOptions', function($query) {
             $query->where('is_regulated', 1);
         })->get();
-        return view('front.brokers_by_country', compact('brokers', 'country','page_data', 'featured_brokers','regulatedBrokers'));
+        return view('front.brokers_by_country', compact('brokers', 'country','page_data', 'f_broker_country','regulatedBrokers'));
     }
     
     public function showByAccountType($type)
@@ -157,9 +179,7 @@ class HomeController extends Controller
         $current_language_id = Language::where('short_name', $current_short_name)->first()->id;
         $page_data = Page::where('language_id', $current_language_id)->first();
         $home_ad_data = HomeAdvertisement::where('id', 1)->first();
-    
         $type = str_replace('-', ' ', $type);
-    
         $brokers = Broker::where('account_types', 'like', '%'.$type.'%')->get();
         $featured_brokers = Broker::where('featured_broker', 1)->latest()->take(6)->get();
     
@@ -173,7 +193,6 @@ class HomeController extends Controller
             'Raw Account',
             'Micro Accounts'
         ];
-    
         $type = strtolower(trim(str_replace('-', ' ', $type)));
         return view('front.brokers_by_account_type', compact('brokers', 'type', 'page_data', 'featured_brokers', 'accountTypes', 'home_ad_data'));
     }
