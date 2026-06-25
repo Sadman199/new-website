@@ -1,76 +1,123 @@
 @extends('admin.layout.app')
 
-@section('heading', 'All Forex Broker')
+@section('heading', 'Forex Brokers Management')
 
 @section('button')
-<a href="{{ route('admin_broker_create') }}" class="btn btn-primary"><i class="fas fa-plus"></i> Add</a>
+<a href="{{ route('admin_broker_create') }}" class="btn btn-primary btn-lg">
+    <i class="fas fa-plus-circle"></i> Add New Broker
+</a>
 @endsection
 
 @section('main_content')
-<div class="card">
-    <div class="card-body">
-        <!-- Check if there are any brokers to display -->
-        @if($brokers->isEmpty())
-        <p>No brokers found.</p>
-        @else
-        <!-- Table to display broker information -->
-        <table class="table table-bordered">
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Logo</th>
-                    <th>URL</th>
-                    <th>Country</th>
-                    <th>Associated Countries</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach($brokers as $broker)
-                <tr>
-                    <td>{{ $broker->name }}</td>
+<div class="section-body">
+    <div class="card shadow">
+        <div class="card-header bg-white">
+            <h4 class="mb-0">Forex Brokers List</h4>
+        </div>
+        <div class="card-body">
+            @if($brokers->isEmpty())
+            <div class="alert alert-info alert-dismissible fade show">
+                <i class="fas fa-info-circle mr-2"></i>
+                No brokers found. Would you like to 
+                <a href="{{ route('admin_broker_create') }}" class="alert-link">add one</a>?
+                <button type="button" class="close" data-dismiss="alert">
+                    <span>&times;</span>
+                </button>
+            </div>
+            @else
+            <div class="table-responsive">
+                <table class="table table-hover table-bordered">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th width="5%">#</th>
+                            <th width="25%">Name</th>
+                            <th width="20%">Logo</th>
+                            <th width="20%">Rating</th>
+                            <th width="30%">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($brokers as $broker)
+                        <tr>
+                            <td>{{ $loop->iteration + ($brokers->currentPage() - 1) * $brokers->perPage() }}</td>
+                            <td>
+                                <strong>{{ $broker->name }}</strong>
+                                @if($broker->is_featured)
+                                <span class="badge badge-warning ml-2">Featured</span>
+                                @endif
+                            </td>
+                            <td>
+                                @if ($broker->logo)
+                                <img src="{{ asset($broker->logo) }}" 
+                                     alt="{{ $broker->name }} logo"
+                                     class="img-thumbnail"
+                                     style="max-height: 50px;">
+                                @else
+                                <span class="badge badge-light">No logo</span>
+                                @endif
+                            </td>
+                            <td>
+                                <div class="star-rating">
+                                    @for($i = 1; $i <= 5; $i++)
+                                        <i class="fas fa-star {{ $i <= ($broker->rating ?? 0) ? 'text-warning' : 'text-secondary' }}"></i>
+                                    @endfor
+                                </div>
+                            </td>
+                            <td>
+                                <div class="btn-group" role="group">
+                                    <a href="{{ route('admin_broker_edit', $broker->id) }}"
+                                       class="btn btn-sm btn-primary"
+                                       title="Edit">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
 
-                    <td>
-                        <!-- Displaying the Broker Logo -->
-                        @if ($broker->logo)
-                            <img src="{{ asset($broker->logo) }}" alt="Broker Logo" style="width:100px">
-                        @else
-                            <p>No logo available</p>
-                        @endif
+                                    <form action="{{ route('admin_broker_delete', $broker->id) }}" 
+                                          method="POST"
+                                          class="d-inline"
+                                          onsubmit="return confirm('Are you sure you want to delete {{ $broker->name }}?');">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" 
+                                                class="btn btn-sm btn-danger"
+                                                title="Delete">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </button>
+                                    </form>
 
-                    </td>
-
-                    <td><a href="{{ $broker->url }}" target="_blank">{{ $broker->url }}</a></td>
-                    <td>{{ $broker->country }}</td>
-
-                    <!-- Display associated countries as a comma-separated list -->
-                    <td>
-                        @if($broker->associated_countries)
-                        @foreach($broker->associated_countries as $country)
-                        {{ $country }},
+                                    <a href="{{ route('admin_broker_show', $broker->id) }}" 
+                                       class="btn btn-sm btn-secondary"
+                                       title="View Details">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
                         @endforeach
-                        @else
-                        No Associated Countries
-                        @endif
-                    </td>
+                    </tbody>
+                </table>
+            </div>
+            @endif
+        </div>
 
-                    <td>
-                        <a href="{{ route('admin_broker_edit', $broker->id) }}" class="btn btn-warning btn-sm">Edit</a>
-                        <!-- Delete Form -->
-                        <form action="{{ route('admin_broker_delete', $broker->id) }}" method="POST" class="d-inline">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="btn btn-danger btn-sm"
-                                onclick="return confirm('Are you sure you want to delete this broker?')">Delete</button>
-                        </form>
-                    </td>
-                </tr>
-                @endforeach
-            </tbody>
-        </table>
+        @if(!$brokers->isEmpty())
+        <div class="card-footer bg-white">
+            {{ $brokers->links('pagination::bootstrap-4') }}
+        </div>
         @endif
     </div>
 </div>
-
-
 @endsection
+
+@push('styles')
+<style>
+    .star-rating {
+        font-size: 0.9rem;
+    }
+    .star-rating .fas.fa-star {
+        margin-right: 2px;
+    }
+    table tbody tr:hover {
+        background-color: rgba(0, 0, 0, 0.02);
+    }
+</style>
+@endpush

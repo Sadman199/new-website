@@ -4,10 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use GeneaLabs\LaravelModelCaching\Traits\Cachable;
 
 class AccountOption extends Model
 {
-    use HasFactory;
+    use HasFactory, Cachable;
 
     // Table associated with the model
     protected $table = 'account_options';
@@ -44,26 +45,23 @@ class AccountOption extends Model
         'is_regulated',
     ];
 
-    // The broker that owns the account option
+    // Cast JSON fields to array or proper types
+    protected $casts = [
+        'trading_instruments' => 'array',
+        'risk_management_tools' => 'array',
+        // 'exclusive_offers' and 'special_conditions' - 
+        // keep as string if not JSON, else cast to 'array' if JSON
+    ];
+
+    // Relationship: the broker that owns this account option
     public function broker()
     {
         return $this->belongsTo(Broker::class);
     }
 
-    // Cast JSON fields to array (e.g., features, instruments, etc.)
-    protected $casts = [
-        'features' => 'array',
-        'trading_instruments' => 'array',
-        'risk_management_tools' => 'array',
-        'exclusive_offers' => 'string',  // assuming this is a string or JSON field
-        'special_conditions' => 'string',  // assuming this is a string
-    ];
-
-    // If necessary, you can also add custom methods or accessors/mutators here
-
-    // Example of a simple accessor to format the `spread_value`:
+    // Accessor: format the spread_value to 2 decimal places
     public function getSpreadValueAttribute($value)
     {
-        return number_format($value, 2);  // Format spread value to two decimal places
+        return number_format($value, 2);
     }
 }

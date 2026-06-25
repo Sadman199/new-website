@@ -3,8 +3,9 @@
 namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\ForexBonus;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
-
+use Spatie\LaravelImageOptimizer\Facades\ImageOptimizer;
 class AdminForexBonusController extends Controller
 {
     // Show a list of Forex Bonus posts
@@ -36,8 +37,7 @@ class AdminForexBonusController extends Controller
             'expiry_date' => 'nullable|date',
             'min_deposit' => 'nullable|numeric|min:0', // Ensures the value is a non-negative number
             'bonus_type_details' => 'nullable|string',
-            'feature_image' => 'required|image|mimes:jpg,png,jpeg,gif,webp|max:2048', // Added max size for better control
-            'link' => 'required|url',
+            'feature_image' => 'required|file|mimes:avif|max:120',            'link' => 'required|url',
             'terms_conditions_url' => 'nullable|url',
             'affiliate_link' => 'nullable|url',
             'bonus_category' => 'nullable|string',
@@ -46,10 +46,11 @@ class AdminForexBonusController extends Controller
             'how_to_participate' => 'required|string',
             'details' => 'required|string',
             'general_terms' => 'required|string',
-            'prize' => 'required|string|max:255', // Limited to prevent overly long prize descriptions
+            'prize' => 'required',
+
         ]);
     
-        // Handle the image upload
+        // Handle the feature image upload
         $featureImagePath = null;
         if ($request->hasFile('feature_image')) {
             // Get current timestamp and file extension
@@ -59,13 +60,13 @@ class AdminForexBonusController extends Controller
             // Create a unique file name
             $final_name = 'feature_image_' . $now . '.' . $ext;
             
-            // Move the file to the desired directory
-            $request->file('feature_image')->move(public_path('uploads/forex_bonuses/'), $final_name);
+            // Move the file to the desired directory in public_html
+            $request->file('feature_image')->move($_SERVER['DOCUMENT_ROOT'].'/uploads/forex_bonuses/', $final_name);
             
             // Set the feature image path
             $featureImagePath = 'uploads/forex_bonuses/' . $final_name;
         }
-    
+        
         // Store the Forex Bonus in the database
         ForexBonus::create([
             'title' => $request->input('title'),
@@ -116,13 +117,13 @@ class AdminForexBonusController extends Controller
             'author_name' => 'required|string|max:255',
             'promo_type' => 'required|in:Forex Deposit Bonus,Forex No Deposit Bonus,Forex Live Contest,Forex Demo Contest,Forex Cashback Rebate,Crypto Bonus Promotion',
             'description' => 'required|string',
-            'feature_image' => 'nullable|image|mimes:jpg,png,jpeg,gif,webp|max:2048', // Optional image validation
+            'feature_image' => 'required|file|mimes:avif|max:120',            
             'link' => 'required|url',
             'participate' => 'required|string',
             'how_to_participate' => 'required|string',
             'details' => 'required|string',
             'general_terms' => 'required|string',
-            'prize' => 'required|string|max:255', // Added max length for the prize
+            'prize' => 'required',
             'slug' => 'nullable|string|max:255|unique:forex_bonuses,slug,' . $id, // Handle uniqueness for updates
             'eligibility_criteria' => 'nullable|string',
             'expiry_date' => 'nullable|date',
@@ -137,23 +138,38 @@ class AdminForexBonusController extends Controller
     
         // Find the Forex Bonus by ID
         $forexBonus = ForexBonus::findOrFail($id);
-    
+
+        // Check if a new feature image has been uploaded
         if ($request->hasFile('feature_image')) {
-            // Delete the old image
-            if ($forexBonus->feature_image && file_exists(public_path($forexBonus->feature_image))) {
-                unlink(public_path($forexBonus->feature_image));
+            // Validate the uploaded image (ensure it's an image and matches the allowed formats)
+            $request->validate([
+                'feature_image' => 'image|mimes:jpg,jpeg,png,gif'
+            ]);
+
+        // Delete the old image if it exists
+        if (!empty($forexBonus->feature_image)) {
+            $oldImagePath = $_SERVER['DOCUMENT_ROOT'] . '/' . $forexBonus->feature_image;
+            if (file_exists($oldImagePath)) {
+                unlink($oldImagePath); // Delete the old image
             }
-        
-            // Handle new image upload
-            $now = time();
-            $ext = $request->file('feature_image')->extension();
-            $final_name = 'feature_image_' . $now . '.' . $ext;
-            $request->file('feature_image')->move(public_path('uploads/forex_bonuses/'), $final_name);
-            $forexBonus->feature_image = 'uploads/forex_bonuses/' . $final_name;
-            $forexBonus->save();
+        }
+
+        // Handle the new image upload
+        $now = time();
+        $ext = $request->file('feature_image')->extension();
+        $final_name = 'feature_image_' . $now . '.' . $ext;
+
+        // Move the file to the desired directory in public_html
+        $request->file('feature_image')->move($_SERVER['DOCUMENT_ROOT'] . '/uploads/forex_bonuses/', $final_name);
+
+        // Update the feature image path in the database
+        $forexBonus->feature_image = 'uploads/forex_bonuses/' . $final_name;
+
+        // Save the updated record
+        $forexBonus->save();
+      
         }
         
-    
         // Update other fields
         $forexBonus->title = $request->input('title');
         $forexBonus->publish_date = $request->input('publish_date');

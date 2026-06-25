@@ -23,10 +23,11 @@ class ContactFormMail extends Mailable
 
     public function build()
     {
-        // Send the email with raw text in the body
-        return $this->subject('New Contact Form Submission')
-                    ->from($this->email)
-                    ->text('emails.contact_text') // We’ll manually define this in the next step
+        return $this->from('info@brokerscourt.com', 'BrokersCourt Website')
+                    ->replyTo($this->email, $this->name)
+                    ->subject('New Contact Form Submission')
+                    ->view('emails.contact_html')   // ✅ HTML version
+                    ->text('emails.contact_text')   // ✅ Plain text fallback
                     ->with([
                         'name' => $this->name,
                         'email' => $this->email,

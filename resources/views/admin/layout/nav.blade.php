@@ -24,3 +24,13 @@
                 </li>
             </ul>
         </nav>
+        
+        
+        <script>
+$(document).ready(function() {
+    $('[data-toggle="sidebar"]').click(function(e) {
+        e.preventDefault();
+        $('body').toggleClass('sidebar-mini');
+    });
+});
+</script>

@@ -1,8 +1,20 @@
 <div class="main-sidebar">
     <aside id="sidebar-wrapper">
-        <div class="sidebar-brand">
-            <a href="{{ route('admin_home') }}">Admin Panel</a>
+     <div class="admin-brand">
+                <div class="brand-container">
+                        <a href="{{ route('admin_home') }}" class="brand-link">
+                        <span class="brand-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M4 5h16v14H4V5zm2 2v10h12V7H6zm5 2h2v6h-2V9zm-3 2h2v4H8v-4zm6 0h2v4h-2v-4z"/>
+                                </svg>
+                        </span>
+                        <span class="brand-name">Dashboard</span>
+                        <span class="brand-badge">PRO</span>
+                        </a>
+                </div>
         </div>
+
+
         <div class="sidebar-brand sidebar-brand-sm">
             <a href="{{ route('admin_home') }}"></a>
         </div>
@@ -10,7 +22,7 @@
         <ul class="sidebar-menu">
 
             <li class="{{ Request::is('admin/home') ? 'active' : '' }}"><a class="nav-link"
-                    href="{{ route('admin_home') }}"><i class="fas fa-home"></i> <span>Dashboard</span></a></li>
+                    href="{{ route('admin_home') }}"><i class="fas fa-home"></i> <span>Home</span></a></li>
 
             <li class="{{ Request::is('admin/setting') ? 'active' : '' }}"><a class="nav-link"
                     href="{{ route('admin_setting') }}"><i class="fas fa-cog"></i> <span>Setting</span></a></li>

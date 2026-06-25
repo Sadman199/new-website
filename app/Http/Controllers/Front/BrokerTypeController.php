@@ -22,14 +22,17 @@ class BrokerTypeController extends Controller
         } else {
             $current_short_name = session()->get('session_short_name');
         }
-            $current_language_id = Language::where('short_name', $current_short_name)->first()->id;
+        $current_language_id = Language::where('short_name', $current_short_name)->first()->id;
         $page_data = Page::where('language_id', $current_language_id)->first();
         $home_ad_data = HomeAdvertisement::where('id', 1)->first();
         $regulatedBrokers = Broker::whereHas('accountOptions', function($query) {
             $query->where('is_regulated', true);
-        })->get();
+        })
+        ->latest()           // Order by created_at descending (latest first)
+        ->paginate(16);      // Get 16 items per page with pagination links
+        
 
-        return view('front.regulated', compact('regulatedBrokers','page_data','home_ad_data'));
+        return view('front.brokers.regulated', compact('regulatedBrokers','page_data','home_ad_data'));
     }
 
     public function showNonRegulatedBrokers()

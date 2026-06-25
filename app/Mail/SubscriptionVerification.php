@@ -21,16 +21,17 @@ class SubscriptionVerification extends Mailable
     }
 
 
-    public function build()
+public function build()
 {
     return $this->subject('Welcome to BrokersCourt!')
                 ->view('emails.subscription_verification')
                 ->with([
-                    'url' => route('subscriber_verify', [
+                    'url' => route('subscriber.verify', [
                         'token' => $this->subscriber->token,
                         'email' => $this->subscriber->email,
                     ]),
                 ]);
 }
+
 
 }

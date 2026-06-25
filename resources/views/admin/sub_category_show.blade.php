@@ -3,59 +3,68 @@
 @section('heading', 'Sub Categories')
 
 @section('button')
-<a href="{{ route('admin_sub_category_create') }}" class="btn btn-primary"><i class="fas fa-plus"></i> Add</a>
+<a href="{{ route('admin_sub_category_create') }}" class="btn btn-primary"><i class="fas fa-plus"></i> Add New</a>
 @endsection
 
 @section('main_content')
-<div class="section-body">
-    <div class="row">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-body">
-                    <div class="table-responsive">
-                        <table class="table table-bordered" id="example1">
-                            <thead>
-                                <tr>
-                                    <th>SL</th>
-                                    <th>Sub Category Name</th>
-                                    <th>Category Name</th>
-                                    <th>Show on menu?</th>
-                                    <th>Show on home?</th>
-                                    <th>Order</th>
-                                    <th>Language</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach($sub_categories as $row)
-                                <tr>
-                                    <td>{{ $loop->iteration }}</td>
-                                    <td>{{ $row->sub_category_name }}</td>
-                                    <td>
-
-                                        {{ $row->rCategory ? $row->rCategory->category_name : 'Default Category Name' }}
-
-                                    </td>
-                                    <td>{{ $row->show_on_menu }}</td>
-                                    <td>{{ $row->show_on_home }}</td>
-                                    <td>{{ $row->sub_category_order }}</td>
-                                    <td>{{ $row->rLanguage->name }}</td>
-                                    <td class="pt_10 pb_10">
-                                        <a href="{{ route('admin_sub_category_edit', $row->id) }}"
-                                            class="btn btn-primary">Edit</a>
-                                        <form action="{{ route('admin_sub_category_delete', $row->id) }}" method="POST"
-                                            style="display:inline;">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-danger"
-                                                onClick="return confirm('Are you sure?');">Delete</button>
-                                        </form>
-                                    </td>
-
-                                </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
+<div class="section-body py-4">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="card shadow-sm border-0">
+                    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">Sub Category List</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover table-bordered" id="example1">
+                                <thead class="thead-dark">
+                                    <tr>
+                                        <th scope="col" class="text-center" style="width: 5%">#</th>
+                                        <th scope="col" style="width: 20%">Sub Category Name</th>
+                                        <th scope="col" style="width: 20%">Category Name</th>
+                                        <th scope="col" class="text-center" style="width: 10%">Show on Menu</th>
+                                        <th scope="col" class="text-center" style="width: 10%">Show on Home</th>
+                                        <th scope="col" class="text-center" style="width: 10%">Order</th>
+                                        <th scope="col" class="text-center" style="width: 15%">Language</th>
+                                        <th scope="col" class="text-center" style="width: 15%">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach($sub_categories as $row)
+                                    <tr>
+                                        <td class="text-center align-middle">{{ $loop->iteration }}</td>
+                                        <td class="align-middle">{{ $row->sub_category_name }}</td>
+                                        <td class="align-middle">{{ $row->rCategory ? $row->rCategory->category_name : 'N/A' }}</td>
+                                        <td class="text-center align-middle">
+                                            <span class="badge @if($row->show_on_menu == 'Show') badge-success @else badge-secondary @endif">
+                                                {{ $row->show_on_menu }}
+                                            </span>
+                                        </td>
+                                        <td class="text-center align-middle">
+                                            <span class="badge @if($row->show_on_home == 'Show') badge-success @else badge-secondary @endif">
+                                                {{ $row->show_on_home }}
+                                            </span>
+                                        </td>
+                                        <td class="text-center align-middle">{{ $row->sub_category_order }}</td>
+                                        <td class="text-center align-middle">{{ $row->rLanguage->name ?? 'N/A' }}</td>
+                                        <td class="text-center align-middle">
+                                            <a href="{{ route('admin_sub_category_edit', $row->id) }}" class="btn btn-primary btn-sm mr-1" title="Edit">
+                                                <i class="fas fa-edit"></i> Edit
+                                            </a>
+                                            <form action="{{ route('admin_sub_category_delete', $row->id) }}" method="POST" style="display: inline;" onsubmit="return confirm('Are you sure you want to delete this sub category?');">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn btn-danger btn-sm" title="Delete">
+                                                    <i class="fas fa-trash"></i> Delete
+                                                </button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>

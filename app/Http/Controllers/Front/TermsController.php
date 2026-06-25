@@ -27,6 +27,6 @@ class TermsController extends Controller
         $cryptoBonusPromotion = ForexBonus::where('promo_type', 'Crypto Bonus Promotion')->latest()->take(6)->get();
         
         $page_data = Page::where('language_id',$current_language_id)->first();
-        return view('front.terms', compact('page_data','demoContest','liveContest','forexCashbackRebate','cryptoBonusPromotion'));
+        return view('front.pages.terms', compact('page_data','demoContest','liveContest','forexCashbackRebate','cryptoBonusPromotion'));
     }
 }

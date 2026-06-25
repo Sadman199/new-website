@@ -1,386 +1,203 @@
-(function ($) {
-
-    "use strict";
-
-    $(".scroll-top").hide();
-    $(window).on("scroll", function () {
-        if ($(this).scrollTop() > 300) {
-            $(".scroll-top").fadeIn();
-        } else {
-            $(".scroll-top").fadeOut();
-        }
-    });
-    $(".scroll-top").on("click", function () {
-        $("html, body").animate({
-            scrollTop: 0,
-        }, 700)
-    });
-
-    $(document).ready(function () {
-        $('.select2').select2({
-            theme: "bootstrap"
-        });
-    });
-
-    new WOW().init();
-
-    $('.video-button').magnificPopup({
-        type: 'iframe',
-        gallery: {
-            enabled: true
-        }
-    });
-
-    $('.magnific').magnificPopup({
-        type: 'image',
-        gallery: {
-            enabled: true
-        }
-    });
-
-    $('.my-news-ticker').AcmeTicker({
-        type: 'typewriter',
-        direction: 'right',
-        speed: 50,
-        controls: {
-            prev: $('.acme-news-ticker-prev'),
-            toggle: $('.acme-news-ticker-pause'),
-            next: $('.acme-news-ticker-next')
-        }
-    });
-
-    $('.related-post-carousel').owlCarousel({
-        loop: false,
-        autoplay: true,
-        autoplayHoverPause: true,
-        autoplaySpeed: 1500,
-        smartSpeed: 1500,
-        margin: 30,
-        mouseDrag: true,
-        nav: true,
-        dots: true,
-        navText: ["<i class='fas fa-angle-left'></i>", "<i class='fas fa-angle-right'></i>"],
-        responsive: {
-            0: {
-                items: 1
-            },
-            600: {
-                items: 1
-            },
-            768: {
-                items: 2
-            },
-            992: {
-                items: 3
-            }
-        }
-    });
-
-    $('.video-carousel').owlCarousel({
-        loop: true,
-        autoplay: false,
-        autoplayHoverPause: true,
-        autoplaySpeed: 1000,
-        smartSpeed: 1000,
-        margin: 30,
-        mouseDrag: true,
-        nav: true,
-        dots: true,
-        navText: ["<i class='fas fa-angle-left'></i>", "<i class='fas fa-angle-right'></i>"],
-        responsive: {
-            0: {
-                items: 1
-            },
-            600: {
-                items: 2
-            },
-            768: {
-                items: 3
-            },
-            992: {
-                items: 4
-            }
-        }
-    });
-
-})(jQuery);
 
 
-document.addEventListener('DOMContentLoaded', function () {
-    let ratingValue = parseFloat("{{ $broker->rating }}"); 
+
+$(document).ready(function () {
+    let ratingValue = parseFloat("{{ $broker->rating }}");
     if (isNaN(ratingValue)) {
-        ratingValue = 0; 
+        ratingValue = 0;
     }
 
-    const stars = document.querySelectorAll('.star');
-    function updateStars() {
-        stars.forEach(star => {
-            const starValue = parseInt(star.getAttribute('data-value'));
-            if (starValue <= ratingValue) {
-                star.classList.add('filled'); 
-            } else {
-                star.classList.remove('filled'); 
-            }
-        });
-    }
-    updateStars();
-});
-
-
-
-$(document).ready(function () {
-    const $navbar = $(".navbar");
-    $(".modal").on("show.bs.modal", function () {
-        const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
-        if (scrollbarWidth > 0) {
-            $navbar.css("margin-right", `${scrollbarWidth}px`);
-        }
-    });
-
-    $(".modal").on("hidden.bs.modal", function () {
-        $navbar.css("margin-right", "");
-    });
-});
-
-
-////load more button on review systes//
-
-    $(document).ready(function () {
-        $('.testimonial-slider-wrapper .testimonial-slider').owlCarousel({
-            loop: true,
-            margin: 10,
-            nav: true,
-            dots: true,
-            autoplay: false,
-            autoplayTimeout: 5000,
-            navText: [
-                '<i class="fas fa-chevron-left"></i>',
-                '<i class="fas fa-chevron-right"></i>'
-            ],
-            responsive: {
-                0: {
-                    items: 1
-                },
-                768: {
-                    items: 2
-                },
-                1024: {
-                    items: 3
-                }
-            }
-        });
-    });
-
-
-// js for copmarison broker for homepage 
-
-$(document).ready(function () {
-    // Toggle dropdown and icon
-    $(".compare-toggle").click(function () {
-        var $menu = $(this).next(".compare-menu");
-        var $icon = $(this).find(".toggle-icon");
-        $(".compare-menu").not($menu).fadeOut(200);
-        $menu.fadeToggle(300);
-        $icon.toggleClass("fa-chevron-down fa-chevron-up");
-    });
-
-    // Select item from dropdown
-    $(".compare-menu li").click(function () {
-        var $dropdown = $(this).closest(".compare-dropdown");
-        var value = $(this).data("value"), text = $(this).text();
-        $dropdown.find("input").val(value).end().find(".compare-toggle").text(text).end().find(".compare-menu").fadeOut(200).end().find(".compare-error-message").hide();
-    });
-
-    // Close dropdown if clicked outside
-    $(document).click(function (e) {
-        if (!$(e.target).closest(".compare-dropdown").length) {
-            $(".compare-menu").fadeOut(200);
-            $(".toggle-icon").removeClass("fa-chevron-up").addClass("fa-chevron-down");
-        }
-    });
-
-    // Validate form
-    $("#compareForm").submit(function (e) {
-        var isValid = true;
-        $(".compare-dropdown").each(function () {
-            var $input = $(this).find("input");
-            var $error = $(this).find(".compare-error-message");
-            if (!$input.val()) { $error.show(); isValid = false; }
-            else $error.hide();
-        });
-        if (!isValid) e.preventDefault();
-    });
-});
-
-
-function handleAdBannersForAllPages(triggerSectionSelector, options = {}) {
-    const settings = $.extend(
-      {
-        addImageLeftSelector: '.add_image_left',
-        addImageRightSelector: '.add_image_right',
-        offset: 200,
-        fadeDuration: 300,
-        slideDuration: 500,
-      },
-      options
-    );
-  
-    const $addImageLeft = $(settings.addImageLeftSelector);
-    const $addImageRight = $(settings.addImageRightSelector);
-    const $triggerSection = $(triggerSectionSelector);
-  
-    let lastScrollTop = 0;
-    let bannersVisible = false;
-  
-    // Ensure banners are off-screen when the page loads
-    $addImageLeft.css('left', `-${settings.offset}px`);
-    $addImageRight.css('right', `-${settings.offset}px`);
-  
-    // Function to toggle banner visibility on scroll
-    $(window).scroll(function () {
-      const currentScrollTop = $(this).scrollTop();
-  
-      if (
-        currentScrollTop > lastScrollTop &&
-        currentScrollTop > $triggerSection.outerHeight()
-      ) {
-        // Scrolling down and past the trigger section
-        if (!bannersVisible) {
-          $addImageLeft
-            .stop(true, true)
-            .fadeTo(settings.fadeDuration, 1)
-            .animate({ left: '0' }, settings.slideDuration);
-          $addImageRight
-            .stop(true, true)
-            .fadeTo(settings.fadeDuration, 1)
-            .animate({ right: '0' }, settings.slideDuration);
-          bannersVisible = true;
-        }
-      } else {
-        // Scrolling up and trigger section comes back into view
-        if (currentScrollTop < $triggerSection.outerHeight()) {
-          $addImageLeft
-            .stop(true, true)
-            .fadeTo(settings.fadeDuration, 0)
-            .animate({ left: `-${settings.offset}px` }, settings.slideDuration);
-          $addImageRight
-            .stop(true, true)
-            .fadeTo(settings.fadeDuration, 0)
-            .animate({ right: `-${settings.offset}px` }, settings.slideDuration);
-          bannersVisible = false;
-        }
-      }
-  
-      lastScrollTop = currentScrollTop <= 0 ? 0 : currentScrollTop; // Prevent negative values
-    });
-  
-    // Trigger scroll behavior immediately on page load
-    $(window).trigger('scroll');
-  }
-
-  
-  $(document).ready(function() {
-    // Select all FAQ toggle buttons
-    $('[data-toggle]').on('click', function() {
-        var selector = $(this).data('toggle');
-        var block = $(selector);
-
-        // Close all other FAQ items
-        $('.accordion__content').each(function() {
-            if ($(this)[0] !== block[0]) {
-                $(this).css('max-height', ''); // Collapse all other items
-                $(this).prev().removeClass('active'); // Remove active class from headers
-            }
-        });
-
-        // Toggle the clicked FAQ item's content
-        if ($(this).hasClass('active')) {
-            block.css('max-height', ''); // Collapse the current item
+    $('.star').each(function () {
+        const starValue = parseInt($(this).data('value'));
+        if (starValue <= ratingValue) {
+            $(this).addClass('filled');
         } else {
-            block.css('max-height', block.prop('scrollHeight') + 'px'); // Expand the current item
+            $(this).removeClass('filled');
+        }
+    });
+});
+
+
+// bottom to top js
+function initScrollToTop() {
+    const $scrollBtn = $('#scrollToTopBtn');
+    const $scrollProgress = $('#scrollProgress');
+    const $scrollPercentage = $('#scrollPercentage');
+    const r = 45;
+    const circumference = 2 * Math.PI * r;
+    $(window).on('scroll', function () {
+        const scrollTop = $(window).scrollTop();
+        const scrollHeight = $(document).height();
+        const windowHeight = $(window).height();
+        const scrollable = scrollHeight - windowHeight;
+        const progress = Math.min(scrollTop / scrollable, 1);
+        const offset = circumference - (progress * circumference);
+        const percent = Math.round(progress * 100);
+
+        $scrollProgress.css('stroke-dashoffset', offset);
+        $scrollPercentage.text(percent + '%');
+
+        // Change button color dynamically
+        if (percent > 70) {
+            $scrollBtn
+                .removeClass('bg-yellow-500 hover:bg-yellow-600')
+                .addClass('bg-green-500 hover:bg-green-600');
+            $scrollProgress.attr('stroke', '#ffffff');
+        } else {
+            $scrollBtn
+                .removeClass('bg-green-500 hover:bg-green-600')
+                .addClass('bg-yellow-500 hover:bg-yellow-600');
+            $scrollProgress.attr('stroke', 'currentColor');
         }
 
-        // Toggle the 'active' class for the clicked header
-        $(this).toggleClass('active');
+        // Toggle visibility
+        if (scrollTop > 300) {
+            $scrollBtn.css({ opacity: 1, pointerEvents: 'auto' });
+        } else {
+            $scrollBtn.css({ opacity: 0, pointerEvents: 'none' });
+        }
     });
-});
-
-document.addEventListener("DOMContentLoaded", function () {
-    const loaderOverlay = document.getElementById("loader-overlay");
-    loaderOverlay.style.display = "none"; // Hide the loader once the page is fully loaded
-});
-
-
-
-$(document).ready(function () {
-    // Adjust the speed factor for the parallax effect
-    const parallaxSpeed = 0.5;
-
-    $(window).on("scroll", function () {
-        let scrollTop = $(this).scrollTop();
-        $(".hero").css("background-position", `center calc(50% + ${scrollTop * parallaxSpeed}px)`);
+    // Scroll to top on click
+    $scrollBtn.on('click', function () {
+        $('html, body').animate({ scrollTop: 0 }, 600);
     });
-});
+    }
 
+    // Re-initialize on load and optionally after every page load (AJAX or Livewire/Turbo visit)
+    $(document).ready(function () {
+        initScrollToTop();
+    });
 
+ $(document).ready(function () {
+        $('.faq-question').on('click', function () {
+            const $answer = $(this).next('.faq-answer');
+            const $icon = $(this).find('.rotate-icon');
 
-$('.b_l_img_wrapper').on('click', function (e) {
-    e.stopPropagation(); // Prevent the event from bubbling up
+            // Toggle the selected answer
+            $answer.slideToggle(200);
+            $icon.toggleClass('rotate-180');
+
+            // Optionally close others
+            $('.faq-answer').not($answer).slideUp(200);
+            $('.rotate-icon').not($icon).removeClass('rotate-180');
+        });
+    });
     
-    const descriptionWrapper = $(this).siblings('.hover_description_wrapper');
-    const isVisible = descriptionWrapper.data('visible') === true;
+    // FAQ for broker details
 
-    // If it's already visible, close it, else open it
-    if (isVisible) {
-        descriptionWrapper.css('height', '0').data('visible', false); // Close the description
-    } else {
-        // Close all descriptions first
-        $('.hover_description_wrapper').css('height', '0').data('visible', false);
-        
-        // Open the description for the clicked card
-        descriptionWrapper.css('height', 'auto').data('visible', true);
+        $(document).ready(function() {
+        $('.filter-btn[data-filter="all"]').addClass('bg-blue-600 text-white').removeClass('bg-white border-gray-300');
+        $('.filter-btn').click(function() {
+            const filter = $(this).data('filter');
+            $('.filter-btn').removeClass('bg-blue-600 text-white').addClass('bg-white border-gray-300');
+            $(this).removeClass('bg-white border-gray-300').addClass('bg-blue-600 text-white');
+                            if (filter === 'all') {
+                $('.resource-card').fadeIn(200);
+            } else {
+                $('.resource-card').hide();
+                $(`.resource-card[data-type="${filter}"]`).fadeIn(200);
+            }
+        });
+    });
+
+
+// bonus section tab
+
+$(document).ready(function() {
+    const $promoTabs = $('#promo-tabs');
+    const $tabButtons = $promoTabs.find('.tab-button');
+    const $tabContents = $promoTabs.find('.tab-content');
+
+    $tabButtons.on('click', function() {
+        const tabId = $(this).data('tab');
+        $tabContents.addClass('hidden');
+        $tabButtons.removeClass('bg-yellow-100 text-yellow-600');
+        $promoTabs.find('#' + tabId).removeClass('hidden');
+        $(this).addClass('bg-yellow-100 text-yellow-600');
+    });
+});
+
+// Top Regulated Rated No Regulation Monthly Top Demo Accounts Low Deposit Tab
+
+$(function () {
+    // Broker Tabs
+    const $brokerTabs = $('#broker-tabs');
+    if ($brokerTabs.length) {
+        const $btns = $brokerTabs.find('.tab-button');
+        const $contents = $brokerTabs.find('.tab-content');
+
+        const activate = $btn => {
+            $btns.removeClass('bg-gray-100 text-yellow-600');
+            $btns.find('svg, i, span').removeClass('text-yellow-600');
+            $contents.addClass('hidden');
+
+            $btn.addClass('bg-gray-100 text-yellow-600');
+            $btn.find('svg, i, span').addClass('text-yellow-600');
+            $brokerTabs.find('#' + $btn.data('tab')).removeClass('hidden');
+        };
+
+        activate($btns.filter('[data-tab="top_rated"]'));
+        $btns.on('click', function () { activate($(this)); });
+    }
+
+    // Promo Tabs
+    const $promoTabs = $('#promo-tabs');
+    if ($promoTabs.length) {
+        const $btns = $promoTabs.find('.tab-button');
+        const $contents = $promoTabs.find('.tab-content');
+
+        $btns.on('click', function () {
+            $btns.removeClass('bg-yellow-100 text-yellow-600');
+            $contents.addClass('hidden');
+
+            $(this).addClass('bg-yellow-100 text-yellow-600');
+            $promoTabs.find('#' + $(this).data('tab')).removeClass('hidden');
+        });
     }
 });
 
-    $(document).ready(function(){
-        $(".non-regulated-slider").owlCarousel({
-            loop: true,          
-            margin: 15,          
-            nav: true,           
-            dots: false,         
-            responsive: {      
-                0: { items: 1 },
-                600: { items: 3 },
-                1000: { items: 7 }
-            }
-        });
-    });
 
 
-    $(document).ready(function(){
-        $(".best-for-beginners-slider").owlCarousel({
-            items: 3,  // Number of items to show at once
-            loop: true, // Infinite loop
-            margin: 10, // Space between items
-            autoplay: false, // Auto-play the carousel
-            autoplayTimeout: 3000, // Auto-play delay (3 seconds)
-            nav: true, // Enable navigation
-            navText: ['<i class="fa fa-chevron-left"></i>', '<i class="fa fa-chevron-right"></i>'], // Font Awesome 4.x arrow icons
-            responsive: {
-                0: {
-                    items: 1
-                },
-                768: {
-                    items: 2
-                },
-                993: {
-                    items: 3  
-                },
-                1200: {
-                    items: 4
-                }
-            }
-        });
+$(document).ready(function(){
+    $('.popular-news-carousel').owlCarousel({
+        loop: true,
+        margin: 20,
+        nav: true,
+        dots: false,
+        autoplay: true,
+        autoplayTimeout: 3000,
+        autoplayHoverPause: true,
+        smartSpeed: 800,
+        responsive: {
+            0: { items: 1 },
+            640: { items: 3 },
+            1024: { items: 6 }
+        }
     });
-    
+});
+
+$(document).ready(function() {
+    var words = ["Featured", "Trusted", "Leading"];
+    var i = 0;
+    var $el = $("#changing-word");
+
+    function changeWord() {
+        $el.removeClass("word-animate"); // reset animation
+
+        // Trigger reflow for animation restart
+        $el[0].offsetWidth;
+
+        $el.addClass("word-animate");
+        $el.text(words[i]);
+        i = (i + 1) % words.length;
+    }
+
+    changeWord(); // initial call
+    setInterval(changeWord, 2000);
+});
+
+
+
+
+
 

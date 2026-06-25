@@ -22,9 +22,19 @@
             </div>
           </div>
           <div class="col-md-3">
-            <div class="form-group">
+         <div class="form-group">
               <label for="max_leverage">Maximum Leverage</label>
-              <input type="number" class="form-control @error('max_leverage') is-invalid @enderror" id="max_leverage" name="max_leverage" value="{{ old('max_leverage') }}" required> @error('max_leverage') <div class="invalid-feedback">{{ $message }}</div> @enderror <small id="maxLeverageHelp" class="form-text text-muted"> Enter the maximum leverage ratio allowed for this account (e.g., 1:500). </small>
+              <input type="text" 
+                     class="form-control @error('max_leverage') is-invalid @enderror" 
+                     id="max_leverage" 
+                     name="max_leverage" 
+                     value="{{ old('max_leverage') }}">
+              @error('max_leverage') 
+                <div class="invalid-feedback">{{ $message }}</div> 
+              @enderror
+              <small id="maxLeverageHelp" class="form-text text-muted"> 
+                Enter the maximum leverage ratio allowed for this account (e.g., 1:500). 
+              </small>
             </div>
           </div>
           <div class="col-md-3">
@@ -62,13 +72,38 @@
           <div class="col-md-3">
             <div class="form-group">
               <label for="min_trade_size">Minimum Trade Size</label>
-              <input type="number" class="form-control @error('min_trade_size') is-invalid @enderror" id="min_trade_size" name="min_trade_size" value="{{ old('min_trade_size') }}" required> @error('min_trade_size') <div class="invalid-feedback">{{ $message }}</div> @enderror <small id="minTradeSizeHelp" class="form-text text-muted"> Enter the minimum trade size for this account type (e.g., 0.01 lots). </small>
+              <input 
+                type="text" 
+                step="0.001" 
+                min="0.001"
+                class="form-control @error('min_trade_size') is-invalid @enderror" 
+                id="min_trade_size" 
+                name="min_trade_size" 
+                value="{{ old('min_trade_size') }}"
+              >
+              @error('min_trade_size')
+                <div class="invalid-feedback">{{ $message }}</div>
+              @enderror
+              <small id="minTradeSizeHelp" class="form-text text-muted">Enter the minimum trade size for this account type (e.g., 0.001 lots).</small>
             </div>
+
           </div>
           <div class="col-md-3">
-            <div class="form-group">
+           <div class="form-group">
               <label for="max_trade_size">Maximum Trade Size</label>
-              <input type="number" class="form-control @error('max_trade_size') is-invalid @enderror" id="max_trade_size" name="max_trade_size" value="{{ old('max_trade_size') }}" required> @error('max_trade_size') <div class="invalid-feedback">{{ $message }}</div> @enderror <small id="maxTradeSizeHelp" class="form-text text-muted"> Enter the maximum trade size for this account type (e.g., 1000 lots). </small>
+              <input 
+                type="text" 
+                step="0.001" 
+                min="0.001"
+                class="form-control @error('max_trade_size') is-invalid @enderror" 
+                id="max_trade_size" 
+                name="max_trade_size" 
+                value="{{ old('max_trade_size') }}"
+              >
+              @error('max_trade_size')
+                <div class="invalid-feedback">{{ $message }}</div>
+              @enderror
+              <small id="maxTradeSizeHelp" class="form-text text-muted">Enter the maximum trade size for this account type (e.g., 1000 lots).</small>
             </div>
           </div>
           <div class="col-md-3">
@@ -92,13 +127,13 @@
           <div class="col-md-3">
             <div class="form-group">
               <label for="commission">Commission</label>
-              <input type="number" step="0.01" class="form-control @error('commission') is-invalid @enderror" id="commission" name="commission" value="{{ old('commission') }}"> @error('commission') <div class="invalid-feedback">{{ $message }}</div> @enderror <small id="commissionHelp" class="form-text text-muted"> Specify the commission charged per trade for this account type, if applicable. Use decimal values (e.g., 5.00 or 0.50). </small>
+              <input type="text" class="form-control @error('commission') is-invalid @enderror" id="commission" name="commission" value="{{ old('commission') }}"> @error('commission') <div class="invalid-feedback">{{ $message }}</div> @enderror <small id="commissionHelp" class="form-text text-muted"> Specify the commission charged per trade for this account type, if applicable. Use decimal values (e.g., 5.00 or 0.50). </small>
             </div>
           </div>
           <div class="col-md-3">
             <div class="form-group">
               <label for="interest_rate">Interest Rate</label>
-              <input type="number" step="0.01" class="form-control @error('interest_rate') is-invalid @enderror" id="interest_rate" name="interest_rate" value="{{ old('interest_rate') }}"> @error('interest_rate') <div class="invalid-feedback">{{ $message }}</div> @enderror <small id="interestRateHelp" class="form-text text-muted"> Enter the interest rate (e.g., 1.25) applied for overnight financing, if applicable. Leave blank if not relevant. </small>
+              <input type="text" class="form-control @error('interest_rate') is-invalid @enderror" id="interest_rate" name="interest_rate" value="{{ old('interest_rate') }}"> @error('interest_rate') <div class="invalid-feedback">{{ $message }}</div> @enderror <small id="interestRateHelp" class="form-text text-muted"> Enter the interest rate (e.g., 1.25) applied for overnight financing, if applicable. Leave blank if not relevant. </small>
             </div>
           </div>
           <div class="col-md-3">
@@ -187,7 +222,7 @@
             <!-- Maximum Daily Trade Volume Field -->
             <div class="form-group">
               <label for="maximum_daily_trade_volume">Maximum Daily Trade Volume</label>
-              <input type="number" step="0.01" class="form-control @error('maximum_daily_trade_volume') is-invalid @enderror" id="maximum_daily_trade_volume" name="maximum_daily_trade_volume" value="{{ old('maximum_daily_trade_volume') }}"> @error('maximum_daily_trade_volume') <div class="invalid-feedback">{{ $message }}</div> @enderror <small id="maxDailyTradeVolumeHelp" class="form-text text-muted"> Enter the maximum trade volume allowed per day for this account type. The volume is in lots or contract units, depending on the broker's system. </small>
+              <input type="number" class="form-control @error('maximum_daily_trade_volume') is-invalid @enderror" id="maximum_daily_trade_volume" name="maximum_daily_trade_volume" value="{{ old('maximum_daily_trade_volume') }}"> @error('maximum_daily_trade_volume') <div class="invalid-feedback">{{ $message }}</div> @enderror <small id="maxDailyTradeVolumeHelp" class="form-text text-muted"> Enter the maximum trade volume allowed per day for this account type. The volume is in lots or contract units, depending on the broker's system. </small>
             </div>
           </div>
           <div class="col-md-3">

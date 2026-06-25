@@ -27,6 +27,6 @@ class PrivacyController extends Controller
         $forexCashbackRebate = ForexBonus::where('promo_type', 'Forex Cashback Rebate')->latest()->take(6)->get();
         $cryptoBonusPromotion = ForexBonus::where('promo_type', 'Crypto Bonus Promotion')->latest()->take(6)->get();
         $page_data = Page::where('language_id',$current_language_id)->first();
-        return view('front.privacy', compact('page_data','demoContest','liveContest','forexCashbackRebate','cryptoBonusPromotion'));
+        return view('front.pages.privacy', compact('page_data','demoContest','liveContest','forexCashbackRebate','cryptoBonusPromotion'));
     }
 }

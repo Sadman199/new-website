@@ -94,9 +94,11 @@ class AppServiceProvider extends ServiceProvider
    // Share Crypto Bonus Promotion
    $cryptoBonusPromotion = ForexBonus::where('promo_type', 'Crypto Bonus Promotion')->latest()->take(6)->get();
    View::share('cryptoBonusPromotion', $cryptoBonusPromotion);
-
+   
+     // ✅ Share Top Rated Brokers (Fixes your navbar error)
+    $topRatedBrokers = Broker::orderBy('rating', 'DESC')->take(6)->get();
+    View::share('topRatedBrokers', $topRatedBrokers);
 }
-
 
 
 }

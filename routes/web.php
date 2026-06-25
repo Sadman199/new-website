@@ -21,8 +21,11 @@ use App\Http\Controllers\Front\LanguageController;
 use App\Http\Controllers\Front\BrokerController;
 use App\Http\Controllers\Front\BonusController;
 use App\Http\Controllers\Front\BrokerTypeController;
-
-
+use App\Http\Controllers\Front\BrokerCountryController;
+use App\Http\Controllers\Front\BrokerAccountTypeController;
+use App\Http\Controllers\Front\BrokerComparisonController;
+use App\Http\Controllers\Front\AllBrokerController;
+use App\Http\Controllers\Front\ForexCalculatorController;
 
 use App\Http\Controllers\Admin\AdminHomeController;
 use App\Http\Controllers\Admin\AdminLoginController;
@@ -52,7 +55,34 @@ use App\Http\Controllers\Admin\AccountOptionController;
 use App\Http\Controllers\Author\AuthorHomeController;
 use App\Http\Controllers\Author\AuthorProfileController;
 use App\Http\Controllers\Author\AuthorPostController;
+use App\Http\Controllers\Front\BrokerFilterController;  
+use App\Http\Controllers\Front\NewsController;  
 
+
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use App\Models\Broker;
+
+
+use App\Http\Controllers\Front\AwardController;
+
+
+
+Route::get('/broker-live-search', [BrokerController::class, 'liveSearch'])
+    ->name('broker.live.search');
+
+Route::get('/awards', [AwardController::class, 'index'])->name('awards.index');
+
+Route::get('/brokers/award/{award}', [\App\Http\Controllers\Front\BrokerController::class, 'byAward'])->name('brokers.byAward');
+
+
+Route::post('/admin/broker/store', [BrokerController::class, 'store'])->name('admin_broker_store');
+
+
+
+Route::get('/best-brokers/{slug}', 
+    [BrokerController::class, 'bestBrokers']
+)->name('brokers.best');
 
 
 /* Front End */
@@ -60,6 +90,15 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::post('/language/switch', [LanguageController::class, 'switch_language'])->name('front_language');
 Route::get('/subcategory-by-category/{id}', [HomeController::class, 'get_subcategory_by_category'])->name('subcategory-by-category');
 Route::get('/subcategory/{slug}', [SubCategoryController::class, 'index'])->name('category');
+Route::get('/brokers/high-leverage', [BrokerFilterController::class, 'highLeverageBrokers'])->name('brokers.high.leverage');
+Route::get('/brokers/platform/{slug}', [BrokerFilterController::class, 'filterByPlatform'])->name('brokers.by.platform');
+Route::get('/brokers/regulation/{slug}', [BrokerFilterController::class, 'filterByRegulation'])->name('brokers.by.regulation');
+
+
+// View All - Latest News
+Route::get('/news/latest', [NewsController::class, 'latestNews'])->name('news_latest');
+// View All - Popular News
+Route::get('/news/popular', [NewsController::class, 'popularNews'])->name('news_popular');
 
 
 Route::get('/about', [AboutController::class, 'index'])->name('about');
@@ -68,25 +107,21 @@ Route::post('/contact/send-email', [ContactController::class, 'send_email'])->na
 Route::get('/terms-and-conditions', [TermsController::class, 'index'])->name('terms');
 Route::get('/privacy-policy', [PrivacyController::class, 'index'])->name('privacy');
 Route::get('/disclaimer', [DisclaimerController::class, 'index'])->name('disclaimer');
-Route::get('/blog/{subcategory_slug}/{post_slug}', [PostController::class, 'detail'])->name('news_detail');
+Route::get('/insights/{subcategory_slug}/{post_slug}', [PostController::class, 'detail'])->name('news_detail');
+
+Route::get('/broker/search', [BrokerController::class, 'search'])->name('brokers.search');
+
+
+Route::get('/forex-calculator', [ForexCalculatorController::class, 'index'])->name('forex.calculator');
 
 
 // Route for viewing a specific broker's details
-Route::get('/broker-detail/{slug}', [BrokerController::class, 'detail'])->name('broker_detail');
-// Route::get('/category/{id}', [SubCategoryController::class, 'index'])->name('category');
-Route::get('/blog/{slug}', [SubCategoryController::class, 'index'])->name('category');
+Route::get('/insights/{slug}', [SubCategoryController::class, 'index'])->name('category');
+Route::get('/broker-reviews/{slug}', [BrokerController::class, 'detail'])
+    ->name('broker_detail');
 
 // Route::get('/photo-gallery', [PhotoController::class, 'index'])->name('photo_gallery');
 Route::get('/video-gallery', [VideoController::class, 'index'])->name('video_gallery');
-
-// // In web.php
-// Route::post('/subscribe', [SubscriberController::class, 'index'])->name('subscribe');
-// Route::get('/subscriber/verify/{token}/{email}', [SubscriberController::class, 'verify'])->name('subscriber_verify');
-// // In web.php
-// Route::patch('/subscriber/accept/{id}', [SubscriberController::class, 'accept'])->name('subscriber.accept');
-// Route::patch('/subscriber/decline/{id}', [SubscriberController::class, 'decline'])->name('subscriber.decline');
-// Route::post('/poll/submit', [PollController::class, 'submit'])->name('poll_submit');
-// Route::get('/poll/previous', [PollController::class, 'previous'])->name('poll_previous');
 
 Route::post('/archive/show', [ArchiveController::class, 'show'])->name('archive_show');
 Route::get('/archive/{year}/{month}', [ArchiveController::class, 'detail'])->name('archive_detail');
@@ -225,7 +260,9 @@ Route::group(['middleware' => 'admin:admin'], function () {
     Route::get('/admin/post/create', [AdminPostController::class, 'create'])->name('admin_post_create');
     Route::post('/admin/post/store', [AdminPostController::class, 'store'])->name('admin_post_store');
     Route::get('/admin/post/edit/{id}', [AdminPostController::class, 'edit'])->name('admin_post_edit');
-    Route::post('/admin/post/update/{id}', [AdminPostController::class, 'update'])->name('admin_post_update');
+    Route::match(['post', 'put'], '/admin/post/update/{id}', [AdminPostController::class, 'update'])->name('admin_post_update');
+
+
     Route::get('/admin/post/delete/{id}', [AdminPostController::class, 'delete'])->name('admin_post_delete');
     Route::get('/admin/post/tag/delete/{id}/{id1}', [AdminPostController::class, 'delete_tag'])->name('admin_post_delete_tag');
 
@@ -339,21 +376,49 @@ Route::get('/admin/language/update-detail/{id}', [AdminLanguageController::class
 Route::post('/admin/language/update-detail-submit/{id}', [AdminLanguageController::class, 'update_detail_submit'])->name('admin_language_update_detail_submit');
 
 
-Route::get('/brokers/{country}', [HomeController::class, 'showBrokersByCountry'])->name('broker_by_country');
-Route::get('/brokers/account-type/{type}', [HomeController::class, 'showByAccountType'])->name('brokers.byAccountType');
 
-// Route for the form to select brokers
-Route::get('/brokers/compare', [HomeController::class, 'compare'])->name('brokers.compare');
-Route::get('/brokers/compare/{broker1_slug}-vs-{broker2_slug}', [HomeController::class, 'compare'])->name('brokers.compare');
-Route::post('/brokers/compare', [HomeController::class, 'getComparison'])->name('brokers.getComparison');
-Route::get('/compare/{broker1}/{broker2}', [HomeController::class, 'compare'])->name('compare');
-Route::get('/broker-comparison', [HomeController::class, 'showBrokerComparison'])->name('broker.comparison');
+Route::get('/country/{country}', [BrokerCountryController::class, 'showBrokersByCountry'])->name('broker_by_country');
 
-Route::get('/reviews/pending', [ReviewController::class, 'pending'])->name('reviews.pending');
-Route::post('/reviews/{review}/approve', [ReviewController::class, 'approve'])->name('reviews.approve');
-Route::post('/reviews/{review}/decline', [ReviewController::class, 'decline'])->name('reviews.decline');
+Route::get('/account-type/{type}', [BrokerAccountTypeController::class, 'showByAccountType'])->name('brokers.byAccountType');
 
+
+
+// Broker Comparison Routes
+Route::get('/brokers/compare', [BrokerComparisonController::class, 'showBrokerComparison'])->name('broker.comparison');
+Route::post('/brokers/compare', [BrokerComparisonController::class, 'getComparison'])->name('brokers.getComparison');
+
+// Main comparison route with slug support
+Route::get('/brokers/compare/{broker1_slug}-vs-{broker2_slug}', 
+    [BrokerComparisonController::class, 'compare'])
+    ->where([
+        'broker1_slug' => '[a-zA-Z0-9\-]+',
+        'broker2_slug' => '[a-zA-Z0-9\-]+'
+    ])
+    ->name('brokers.compare');
+
+// Alternative simple comparison route
+Route::get('/compare/{broker1_slug}/{broker2_slug}', 
+    [BrokerComparisonController::class, 'compare'])
+    ->where([
+        'broker1_slug' => '[a-zA-Z0-9\-]+',
+        'broker2_slug' => '[a-zA-Z0-9\-]+'
+    ])
+    ->name('compare');
+Route::get('/brokers', [AllBrokerController::class, 'index'])->name('all_brokers');
+Route::get('/brokers/filter', [AllBrokerController::class, 'filterBrokers'])->name('all_brokers_filter');
+
+
+// Admin routes protected by admin middleware
+Route::prefix('admin')->middleware('admin:admin')->group(function () {
+    Route::get('/language/show', [AdminLanguageController::class, 'show'])->name('admin_language_show');
+    Route::get('/reviews/pending', [ReviewController::class, 'pending'])->name('reviews.pending');
+    Route::post('/reviews/{review}/approve', [ReviewController::class, 'approve'])->name('reviews.approve');
+    Route::post('/reviews/{review}/decline', [ReviewController::class, 'decline'])->name('reviews.decline');
+});
+
+// Public route to submit review, no admin middleware
 Route::post('/brokers/{broker}/reviews', [ReviewController::class, 'store'])->name('reviews.store');
+
 
 Route::post('/contact', [ContactController::class, 'submitForm'])->name('contact_form_submit');
 Route::get('/regulated-brokers', [BrokerTypeController::class, 'showRegulatedBrokers'])->name('regulated_brokers');
@@ -363,6 +428,8 @@ Route::get('/non-regulated-brokers', [BrokerTypeController::class, 'showNonRegul
 Route::post('/subscribe', [SubscriberController::class, 'subscribe'])->name('subscribe');
 Route::get('/verify-subscription/{token}/{email}', [SubscriberController::class, 'verify'])->name('subscriber_verify');
 Route::get('/brokers/comparison', [HomeController::class, 'showComparisonDropdown'])->name('brokers.comparison.dropdown');
+
+
 
 
 

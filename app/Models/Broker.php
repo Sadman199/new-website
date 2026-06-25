@@ -4,10 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use GeneaLabs\LaravelModelCaching\Traits\Cachable;
 
 class Broker extends Model
 {
-    use HasFactory;
+    use HasFactory, Cachable;
 
     // The table associated with the model (optional if the table name is 'brokers')
     protected $table = 'brokers';
@@ -22,8 +23,10 @@ class Broker extends Model
         'mobile_trading', 'social_trading', 'account_types', 'capitalization', 'insurance',
         'segregation_of_funds', 'web_trader', 'charting_tools', 'account_managers',
         'news_and_analysis', 'economic_calendar', 'vps_hosting', 'associated_countries',
-        'slug', 'top_feature', 'featured_broker', 'top_broker', 
-        'meta_title', 'meta_keyword', 'meta_description', 'title', 'rating' // Added 'title' and 'rating'
+        'slug', 'top_feature', 'featured_broker', 'top_broker',
+        'meta_title', 'meta_keyword', 'meta_description', 'title', 'rating',
+        'banner_image_1',
+        'banner_image_2',
     ];
 
     // The attributes that should be cast to native types
@@ -33,31 +36,30 @@ class Broker extends Model
         'account_managers' => 'boolean',
         'economic_calendar' => 'boolean',
         'vps_hosting' => 'boolean',
-        'associated_countries' => 'array', // Casts JSON to an array
-        'rating' => 'decimal:2', // Added casting for 'rating'
-         'account_types' => 'array',
+        'associated_countries' => 'array', // Cast JSON to array
+        'rating' => 'decimal:2',
+        'account_types' => 'array',
     ];
 
- 
+    // Relationships
     public function reviews()
-{
-    return $this->hasMany(Review::class);
-}
+    {
+        return $this->hasMany(Review::class);
+    }
 
-public function faqs()
-{
-    return $this->hasMany(Faq::class);
-}
+    public function faqs()
+    {
+        return $this->hasMany(Faq::class);
+    }
 
-public function accountOptions()
-{
-    return $this->hasMany(AccountOption::class);
-}
-public function getAccountTypesAttribute($value)
-{
-    return json_decode($value, true) ?? [];
-}
+    public function accountOptions()
+    {
+        return $this->hasMany(AccountOption::class);
+    }
 
-
-
+    // Accessors
+    public function getAccountTypesAttribute($value)
+    {
+        return json_decode($value, true) ?? [];
+    }
 }

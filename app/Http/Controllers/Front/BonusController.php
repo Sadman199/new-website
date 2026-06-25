@@ -14,21 +14,16 @@ use Illuminate\Support\Str;
 
 class BonusController extends Controller
 {
-    public function showBonusByType($type)
+
+    public function showBonusByType($type, Request $request)
 {
-    Helpers::read_json(); // Optional helper functionality
+    Helpers::read_json();
 
-    // Determine the current language
     $current_short_name = session()->get('session_short_name', Language::where('is_default', 'Yes')->first()->short_name);
-
-    // Get the current language ID
     $current_language_id = Language::where('short_name', $current_short_name)->first()->id;
 
-    // Fetch the page data for the current language
     $page_data = Page::where('language_id', $current_language_id)->first();
-    $allforexBonuses = ForexBonus::all();
 
-    // Map the type parameter to the corresponding promo type
     $promo_types = [
         'deposit-bonuses' => 'Forex Deposit Bonus',
         'no-deposit-bonuses' => 'Forex No Deposit Bonus',
@@ -38,41 +33,52 @@ class BonusController extends Controller
         'crypto-bonuses' => 'Crypto Bonus Promotion',
     ];
 
-    // Validate the type
     if (!array_key_exists($type, $promo_types)) {
-        abort(404); // Throw a 404 error if the type is invalid
+        abort(404);
     }
 
     $promo_type = $promo_types[$type];
-
-    // Set the dynamic title and URL
     $page_title = 'BrokersCourt | ' . $promo_type . ' for Every Trader';
-    $page_url = url()->current();  // Get the current URL
+    $page_url = url()->current();
 
-    // Fetch the bonuses based on the promo type
-    $forexBonuses = ForexBonus::where('promo_type', $promo_type)->paginate(6);
-    $featured_brokers = Broker::where('featured_broker', 1)->latest()->take(5)->get();
-    $home_ad_data = HomeAdvertisement::where('id', 1)->first();
-    $demoContest = ForexBonus::where('promo_type', 'Forex Demo Contest')->latest()->take(6)->get();
-    $liveContest = ForexBonus::where('promo_type', 'Forex Live Contest')->latest()->take(6)->get();
-    $forexCashbackRebate = ForexBonus::where('promo_type', 'Forex Cashback Rebate')->latest()->take(6)->get();
-    $cryptoBonusPromotion = ForexBonus::where('promo_type', 'Crypto Bonus Promotion')->latest()->take(6)->get();
+    $sort = $request->get('sort', 'default');
+    $query = ForexBonus::where('promo_type', $promo_type);
 
-    // Add broker name extraction (without TLD like .com, .net, etc.)
+    // Sorting based on min_deposit
+    if ($sort === 'high-to-low') {
+        $query->orderByDesc('min_deposit');
+    } elseif ($sort === 'low-to-high') {
+        $query->orderBy('min_deposit');
+    } elseif ($sort === 'expiring-soon') {
+        $query->orderBy('expiry_date', 'asc');
+    } elseif ($sort === 'latest-expiry') {
+        $query->orderBy('expiry_date', 'desc');
+    } elseif ($sort === 'recently-published') {
+        $query->orderBy('publish_date', 'desc');
+    } elseif ($sort === 'title-asc') {
+        $query->orderBy('title', 'asc');
+    } elseif ($sort === 'title-desc') {
+        $query->orderBy('title', 'desc');
+    } else {
+        $query->latest();
+    }
+
+    $forexBonuses = $query->paginate(6)->appends(['sort' => $sort]);
+
+    $recommended_brokers = Broker::orderBy('rating', 'desc')->take(5)->get();
+
     foreach ($forexBonuses as $bonus) {
         $url = $bonus->link;
         $parsedUrl = parse_url($url);
         $brokerName = $parsedUrl['host'] ?? 'Unknown Broker';
-
-        // Remove 'www.' and the domain suffix (.com, .net, etc.)
         $brokerName = preg_replace('/\.[a-z]{2,6}$/', '', str_replace('www.', '', $brokerName));
-
-        // Store the broker name in the bonus object
-        $bonus->broker_name = ucfirst($brokerName); // Capitalize the first letter
+        $bonus->broker_name = ucfirst($brokerName);
     }
 
-    // Return the shared view for all bonus types
-    return view('front.bonuses.bonus_type', compact('page_data', 'forexBonuses', 'promo_type', 'featured_brokers', 'home_ad_data', 'type', 'demoContest', 'liveContest', 'forexCashbackRebate', 'cryptoBonusPromotion', 'page_title', 'page_url'));
+    return view('front.bonuses.bonus_type', compact(
+        'page_data', 'forexBonuses', 'promo_type', 'recommended_brokers',
+        'type', 'page_title', 'page_url'
+    ));
 }
 
     
@@ -100,13 +106,14 @@ public function bonusDetail($slug)
         $home_ad_data = HomeAdvertisement::where('id', 1)->first();
 
         // Define route mapping for promo types
-        $routes = [
+          $routes = [
             'Forex No Deposit Bonus' => 'forex_no_deposit_bonus',
             'Forex Deposit Bonus' => 'forex_deposit_bonus',
             'Welcome Bonus' => 'welcome_bonus',
             'Forex Cashback Rebate' => 'forex_cashback_rebate',
             'Crypto Bonus Promotion' => 'crypto_bonus_promotion',
             'Forex Live Contest' => 'forex_live_contest',
+            'Forex Demo Contest' => 'forex_demo_contest', // ✅ Add this
         ];
         $promo_route = route($routes[$promo_type]);
 

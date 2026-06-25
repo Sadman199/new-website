@@ -21,6 +21,6 @@ class TagController extends Controller
             $all_post_ids[] = $row->post_id;
         }
         $all_posts = Post::orderBy('id','desc')->get();
-        return view('front.tag', compact('all_post_ids','all_posts','tag_name'));
+        return view('front.pages.tag', compact('all_post_ids','all_posts','tag_name'));
     }
 }

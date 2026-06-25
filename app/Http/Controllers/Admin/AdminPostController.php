@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Post;
+use Spatie\LaravelImageOptimizer\Facades\ImageOptimizer;
 use App\Models\Category;
 use App\Models\SubCategory;
 use App\Models\Tag;
@@ -27,72 +28,72 @@ class AdminPostController extends Controller
         return view('admin.post_create', compact('sub_categories'));
     }
 
-    public function store(Request $request)
-    {
-        $request->validate([
+public function store(Request $request)
+{
+    $request->validate([
             'post_title' => 'required',
             'post_detail' => 'required',
-            'post_photo' => 'required|image|mimes:jpg,jpeg,png,gif'
-        ]);
+            'post_photo' => 'required|image|mimes:avif|max:18',
+            'meta_title' => 'nullable|string|max:255',
+            'meta_description' => 'nullable|string',
+            'meta_keywords' => 'nullable|string',
+            'author' => 'nullable|string|max:255'
+    ]);
 
-        $q = DB::select("SHOW TABLE STATUS LIKE 'posts'");
-        $ai_id = $q[0]->Auto_increment;
-
-        $now = time();
-        $ext = $request->file('post_photo')->extension();
-        $final_name = 'post_photo_'.$now.'.'.$ext;
-        $request->file('post_photo')->move(public_path('uploads/'),$final_name);
-
-        $post = new Post();
-        $post->sub_category_id = $request->sub_category_id;
-        $post->post_title = $request->post_title;
-        $post->slug = $request->slug;
-        $post->post_detail = $request->post_detail;
-        $post->post_photo = $final_name;
-        $post->visitors = 1;
-        $post->author_id = 0;
-        $post->admin_id = Auth::guard('admin')->user()->id;
-        $post->is_share = $request->is_share;
-        $post->is_comment = $request->is_comment;
-        $post->language_id = $request->language_id;
-        $post->save();
-
-
-        if($request->tags != '') {
-            $tags_array_new = [];
-            $tags_array = explode(',',$request->tags);
-            for($i=0;$i<count($tags_array);$i++)
-            {
-                $tags_array_new[] = trim($tags_array[$i]);
-            }
-            $tags_array_new = array_values(array_unique($tags_array_new));
-            for($i=0;$i<count($tags_array_new);$i++)
-            {
-                $tag = new Tag();
-                $tag->post_id = $ai_id;
-                $tag->tag_name = trim($tags_array_new[$i]);
-                $tag->save();
-            }
-        }
-
-
-        // // Sending this post to subscribers
-        // if($request->subscriber_send_option == 1)
-        // {
-        //     $subject = 'A new post is published';
-        //     $message = 'Hi, A new post is published into our website. Please go to see that post:<br>';
-        //     $message .= '<a target="_blank" href="'.route('news_detail',$ai_id).'">';
-        //     $message .= $request->post_title;
-        //     $message .= '</a>';
-
-        //     $subscribers = Subscriber::where('status','Active')->get();
-        //     foreach($subscribers as $row) {
-        //         \Mail::to($row->email)->send(new Websitemail($subject,$message));
-        //     }
-        // }
-
-        // return redirect()->route('admin_post_show')->with('success', 'Data is added successfully.');
+    // Handle file upload and set $final_name for post_photo
+    if ($request->hasFile('post_photo')) {
+        $now = time(); // Current timestamp for uniqueness
+        $ext = $request->file('post_photo')->extension(); // Get file extension
+        $final_name = 'post_photo_' . $now . '.' . $ext; // Generate a unique file name
+    
+        // Move the uploaded file to the correct directory in production
+        $request->file('post_photo')->move($_SERVER['DOCUMENT_ROOT'].'/uploads/', $final_name);
     }
+
+
+    // Save Post to Database
+    $post = new Post();
+    $post->sub_category_id = $request->sub_category_id;
+    $post->post_title = $request->post_title;
+    $post->slug = $request->slug;
+    $post->post_detail = $request->post_detail;
+    $post->post_photo = $final_name;  // Use $final_name for the image
+    $post->visitors = 1;
+    $post->author_id = 0;
+    $post->admin_id = Auth::guard('admin')->user()->id;
+    $post->is_share = $request->is_share;
+    $post->is_comment = $request->is_comment;
+    $post->language_id = $request->language_id;
+    // Add meta fields
+    $post->meta_title = $request->meta_title;
+    $post->meta_description = $request->meta_description;
+    $post->meta_keywords = $request->meta_keywords;
+    $post->author = $request->author;
+    $post->save();  // Save first to get the post ID
+
+    // Get the ID of the newly created post
+    $ai_id = $post->id;
+
+    // Handle Tags
+    if ($request->tags != '') {
+        $tags_array_new = [];
+        $tags_array = explode(',', $request->tags);
+        for ($i = 0; $i < count($tags_array); $i++) {
+            $tags_array_new[] = trim($tags_array[$i]);
+        }
+        $tags_array_new = array_values(array_unique($tags_array_new));
+
+        foreach ($tags_array_new as $tag_name) {
+            $tag = new Tag();
+            $tag->post_id = $ai_id;  // Use the ID from the saved post
+            $tag->tag_name = trim($tag_name);
+            $tag->save();
+        }
+    }
+
+    return redirect()->route('admin_post_show')->with('success', 'Data is added successfully.');
+}
+
 
     public function edit($id)
     {
@@ -109,56 +110,91 @@ class AdminPostController extends Controller
     }
 
 
-    public function update(Request $request, $id)
-    {
+    
+    
+  public function update(Request $request, $id)
+{
+    // Validate basic post details
+    $request->validate([
+        'post_title' => 'required',
+        'post_detail' => 'required',
+        'meta_title' => 'nullable|string|max:255',
+        'meta_description' => 'nullable|string',
+        'meta_keywords' => 'nullable|string',
+        'author' => 'nullable|string|max:255',
+    ]);
+
+    $post = Post::findOrFail($id); // Ensure the post exists
+
+    // Handle image upload if a new photo is provided
+    if ($request->hasFile('post_photo')) {
+        // Validate the uploaded image
         $request->validate([
-            'post_title' => 'required',
-            'post_detail' => 'required'
+            'post_photo' => 'image|mimes:jpg,jpeg,png,gif'
         ]);
 
-        $post = Post::where('id',$id)->first();
+        // Check if there's an old image and delete it
+        if (!empty($post->post_photo)) {
+            $oldImagePath = $_SERVER['DOCUMENT_ROOT'] . '/uploads/' . $post->post_photo;
 
-        if($request->hasFile('post_photo')) {
-            $request->validate([
-                'post_photo' => 'image|mimes:jpg,jpeg,png,gif'
-            ]);
-
-            unlink(public_path('uploads/'.$post->post_photo));
-
-            $now = time();
-            $ext = $request->file('post_photo')->extension();
-            $final_name = 'post_photo_'.$now.'.'.$ext;
-            $request->file('post_photo')->move(public_path('uploads/'),$final_name);
-
-            $post->post_photo = $final_name;
-        }
-        
-        $post->sub_category_id = $request->sub_category_id;
-        $post->post_title = $request->post_title;
-        $post->slug = $request->slug;
-        $post->post_detail = $request->post_detail;
-        $post->is_share = $request->is_share;
-        $post->is_comment = $request->is_comment;
-        $post->language_id = $request->language_id;
-        $post->update();
-
-        if($request->tags != '') {
-            $tags_array = explode(',',$request->tags);
-            for($i=0;$i<count($tags_array);$i++)
-            {
-                $total = Tag::where('post_id',$id)->where('tag_name',trim($tags_array[$i]))->count();
-                
-                if(!$total) {
-                    $tag = new Tag();
-                    $tag->post_id = $id;
-                    $tag->tag_name = trim($tags_array[$i]);
-                    $tag->save();
-                }
+            if (file_exists($oldImagePath)) {
+                unlink($oldImagePath); // Delete the old image
             }
-        }        
+        }
 
-        return redirect()->route('admin_post_show')->with('success', 'Data is updated successfully.');
+        // Reuse the old filename if it exists, otherwise create a new one
+        $ext = $request->file('post_photo')->extension();
+        $final_name = !empty($post->post_photo) 
+                      ? basename($post->post_photo) 
+                      : 'post_photo_' . time() . '.' . $ext;
+
+        // Upload the new image
+        $request->file('post_photo')->move($_SERVER['DOCUMENT_ROOT'] . '/uploads/', $final_name);
+
+        // Update the post_photo field in the database
+        $post->post_photo = $final_name;
     }
+
+    // Update post details
+    $post->sub_category_id = $request->sub_category_id;
+    $post->post_title = $request->post_title;
+    $post->slug = $request->slug;
+    $post->post_detail = $request->post_detail;
+    $post->is_share = $request->is_share;
+    $post->is_comment = $request->is_comment;
+    $post->language_id = $request->language_id;
+    // Add meta fields
+    $post->meta_title = $request->meta_title;
+    $post->meta_description = $request->meta_description;
+    $post->meta_keywords = $request->meta_keywords;
+    $post->author = $request->author;
+    $post->save(); // Save the post
+
+    // Handle Tags
+    if (!empty($request->tags)) {
+        $tags_array = explode(',', $request->tags);
+
+        // Remove existing tags first (optional but cleaner)
+        Tag::where('post_id', $id)->delete();
+
+        // Add new tags
+        foreach ($tags_array as $tag_name) {
+            $tag_name = trim($tag_name);
+            if (!empty($tag_name)) {
+                $tag = new Tag();
+                $tag->post_id = $id;
+                $tag->tag_name = $tag_name;
+                $tag->save();
+            }
+        }
+    }
+
+    return redirect()->route('admin_post_show')->with('success', 'Data is updated successfully.');
+}
+
+
+
+    
 
     public function delete_tag($id,$id1)
     {
@@ -169,17 +205,26 @@ class AdminPostController extends Controller
 
     public function delete($id)
     {
-        $test = Post::where('id',$id)->where('admin_id',Auth::guard('admin')->user()->id)->count();
+        $test = Post::where('id', $id)->where('admin_id', Auth::guard('admin')->user()->id)->count();
         if(!$test) {
             return redirect()->route('admin_home');
         }
         
-        $post = Post::where('id',$id)->first();
-        unlink(public_path('uploads/'.$post->post_photo));
+        $post = Post::where('id', $id)->first();
+    
+        // Check if the file exists before trying to delete it
+        $filePath = $_SERVER['DOCUMENT_ROOT'].'/uploads/'.$post->post_photo;
+        if (file_exists($filePath)) {
+            unlink($filePath); // Delete the file if it exists
+        }
+    
+        // Delete the post record from the database
         $post->delete();
-
-        Tag::where('post_id',$id)->delete();
-
+    
+        // Delete related tags
+        Tag::where('post_id', $id)->delete();
+    
         return redirect()->route('admin_post_show')->with('success', 'Data is deleted successfully.');
     }
+
 }

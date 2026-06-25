@@ -59,7 +59,7 @@ class PostController extends Controller
         $home_ad_data = HomeAdvertisement::where('id', 1)->first();
 
     
-        return view('front.post_detail', compact('post_detail', 'user_data', 'tag_data', 'related_post_array','subcategory','home_ad_data'));
+        return view('front.pages.post_detail', compact('post_detail', 'user_data', 'tag_data', 'related_post_array','subcategory','home_ad_data'));
     }
     
 }

@@ -68,18 +68,21 @@
                     <div class="col-md-3">
                         <!-- Maximum Leverage -->
                         <div class="form-group">
-                            <label for="max_leverage">Maximum Leverage</label>
-                            <input type="number" step="0.01" class="form-control @error('max_leverage') is-invalid @enderror"
-                                id="max_leverage" name="max_leverage"
-                                value="{{ old('max_leverage', $accountOption->max_leverage) }}" required
-                                placeholder="e.g., 100.00">
-                            @error('max_leverage')
+                          <label for="max_leverage">Maximum Leverage</label>
+                          <input type="text" 
+                                 class="form-control @error('max_leverage') is-invalid @enderror"
+                                 id="max_leverage" 
+                                 name="max_leverage"
+                                 value="{{ old('max_leverage', $accountOption->max_leverage) }}"
+                                 placeholder="e.g., 1:1200">
+                          @error('max_leverage')
                             <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                            <small id="maxLeverageHelp" class="form-text text-muted">
-                                Enter the maximum leverage ratio (e.g., 100.00).
-                            </small>
+                          @enderror
+                          <small id="maxLeverageHelp" class="form-text text-muted">
+                            Enter the maximum leverage ratio, e.g., 1:1200.
+                          </small>
                         </div>
+
 
                     </div>
 
@@ -169,34 +172,44 @@
                         <!-- Minimum Trade Size -->
                         <div class="form-group">
                             <label for="min_trade_size">Minimum Trade Size</label>
-                            <input type="number" step="0.01" class="form-control @error('min_trade_size') is-invalid @enderror"
-                                id="min_trade_size" name="min_trade_size"
-                                value="{{ old('min_trade_size', $accountOption->min_trade_size) }}" required
-                                placeholder="e.g., 0.01">
+                            <input 
+                                type="text"
+                                class="form-control @error('min_trade_size') is-invalid @enderror"
+                                id="min_trade_size" 
+                                name="min_trade_size"
+                                value="{{ old('min_trade_size', $accountOption->min_trade_size) }}"
+                                placeholder="e.g., 0.001"
+                            >
                             @error('min_trade_size')
-                            <div class="invalid-feedback">{{ $message }}</div>
+                                <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                             <small id="minTradeSizeHelp" class="form-text text-muted">
-                                Enter the minimum trade size (e.g., 0.01 lots).
+                                Enter the minimum trade size (e.g., 0.001 lots).
                             </small>
                         </div>
+
                     </div>
 
                     <div class="col-md-3">
-                        <!-- Maximum Trade Size -->
+                      <!-- Maximum Trade Size -->
                         <div class="form-group">
                             <label for="max_trade_size">Maximum Trade Size</label>
-                            <input type="number" step="0.01" class="form-control @error('max_trade_size') is-invalid @enderror"
-                                id="max_trade_size" name="max_trade_size"
-                                value="{{ old('max_trade_size', $accountOption->max_trade_size) }}" required
-                                placeholder="e.g., 100.00">
+                            <input 
+                                type="text" 
+                                class="form-control @error('max_trade_size') is-invalid @enderror"
+                                id="max_trade_size" 
+                                name="max_trade_size"
+                                value="{{ old('max_trade_size', $accountOption->max_trade_size) }}"
+                                placeholder="e.g., 100.00"
+                            >
                             @error('max_trade_size')
-                            <div class="invalid-feedback">{{ $message }}</div>
+                                <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                             <small id="maxTradeSizeHelp" class="form-text text-muted">
                                 Enter the maximum trade size allowed (e.g., 100.00 lots).
                             </small>
                         </div>
+
 
                     </div>
 
@@ -242,7 +255,7 @@
                             <label for="max_open_positions">Maximum Open Positions</label>
                             <input type="number" class="form-control @error('max_open_positions') is-invalid @enderror"
                                 id="max_open_positions" name="max_open_positions"
-                                value="{{ old('max_open_positions', $accountOption->max_open_positions) }}" required
+                                value="{{ old('max_open_positions', $accountOption->max_open_positions) }}" 
                                 placeholder="e.g., 10">
                             @error('max_open_positions')
                             <div class="invalid-feedback">{{ $message }}</div>
@@ -258,7 +271,7 @@
                         <!-- Commission -->
                         <div class="form-group">
                             <label for="commission">Commission</label>
-                            <input type="number" step="0.01" class="form-control @error('commission') is-invalid @enderror"
+                            <input type="text" class="form-control @error('commission') is-invalid @enderror"
                                 id="commission" name="commission" value="{{ old('commission', $accountOption->commission) }}"
                                 placeholder="e.g., 5.00">
                             @error('commission')
@@ -275,7 +288,7 @@
                         <!-- Interest Rate Field -->
                         <div class="form-group">
                             <label for="interest_rate">Interest Rate</label>
-                            <input type="number" step="0.01" class="form-control @error('interest_rate') is-invalid @enderror"
+                            <input type="text"  class="form-control @error('interest_rate') is-invalid @enderror"
                                 id="interest_rate" name="interest_rate" value="{{ old('interest_rate', $accountOption->interest_rate) }}"
                                 placeholder="e.g., 3.50">
                             @error('interest_rate')
@@ -327,9 +340,10 @@
                         <!-- Trading Instruments Field -->
                         <div class="form-group">
                             <label for="trading_instruments">Trading Instruments</label>
-                            <textarea class="form-control @error('trading_instruments') is-invalid @enderror"
+                            <textarea class="form-control snote @error('trading_instruments') is-invalid @enderror"
                                 id="trading_instruments"
-                                name="trading_instruments">{{ old('trading_instruments', $accountOption->trading_instruments) }}</textarea>
+                                name="trading_instruments"
+                                placeholder="e.g., Forex, Stocks, Commodities, Indices, Cryptocurrencies">{{ old('trading_instruments', $accountOption->trading_instruments) }}</textarea>
                             @error('trading_instruments')
                             <div class="invalid-feedback">{{ $message }}</div>
                             @enderror

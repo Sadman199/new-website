@@ -4,10 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use GeneaLabs\LaravelModelCaching\Traits\Cachable;
 
 class ForexBonus extends Model
 {
-    use HasFactory;
+    use HasFactory, Cachable;
 
     protected $fillable = [
         'title',
@@ -34,7 +35,7 @@ class ForexBonus extends Model
     ];
 
     public function broker()
-{
-    return $this->belongsTo(Broker::class);
-}
+    {
+        return $this->belongsTo(Broker::class);
+    }
 }

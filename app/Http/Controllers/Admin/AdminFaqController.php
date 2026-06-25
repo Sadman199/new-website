@@ -76,12 +76,17 @@ class AdminFaqController extends Controller
     return redirect()->route('admin_faq_show')->with('success', 'FAQ updated successfully.');
     }
 
-    public function delete($id)
+    public function delete(Request $request, $id)
     {
-        $faq = Faq::where('id',$id)->first();
+        $faq = Faq::findOrFail($id);
         $faq->delete();
-
-        return redirect()->route('admin_faq_show')->with('success', 'Data is deleted successfully.');
-
+    
+        // Preserve pagination
+        $currentPage = $request->input('page', 1);
+    
+        return redirect()->route('admin_faq_show', ['page' => $currentPage])
+                         ->with('success', 'FAQ deleted successfully.');
     }
+
+
 }

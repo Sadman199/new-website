@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Http\Controllers\Front;
-
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Page;
@@ -22,6 +21,6 @@ class AboutController extends Controller
         $current_language_id = Language::where('short_name',$current_short_name)->first()->id;
         
         $page_data = Page::where('language_id',$current_language_id)->first();
-        return view('front.about', compact('page_data'));
+        return view('front.pages.about', compact('page_data'));
     }
 }

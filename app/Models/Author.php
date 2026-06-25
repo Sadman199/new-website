@@ -8,4 +8,10 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 class Author extends Authenticatable
 {
     use HasFactory;
+
+    public function author()
+{
+    return $this->belongsTo(\App\Models\Author::class, 'author_id');
+}
+
 }

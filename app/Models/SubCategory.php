@@ -4,10 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use GeneaLabs\LaravelModelCaching\Traits\Cachable;
 
 class SubCategory extends Model
 {
-    use HasFactory;
+    use HasFactory, Cachable;
 
     public function rCategory()
     {
@@ -16,7 +17,7 @@ class SubCategory extends Model
 
     public function rPost()
     {
-        return $this->hasMany(Post::class)->orderBy('id','desc');
+        return $this->hasMany(Post::class)->orderBy('id', 'desc');
     }
 
     public function rLanguage()

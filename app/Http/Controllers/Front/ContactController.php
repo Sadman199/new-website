@@ -11,6 +11,11 @@ use App\Models\Language;
 use App\Helper\Helpers;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\ContactFormMail; 
+use Illuminate\Support\Facades\RateLimiter;
+use NoCaptcha\Facades\NoCaptcha;
+use Illuminate\Support\Facades\Http;
+
+
 
 
 class ContactController extends Controller
@@ -27,7 +32,7 @@ class ContactController extends Controller
         $current_language_id = Language::where('short_name',$current_short_name)->first()->id;
         
         $page_data = Page::where('language_id',$current_language_id)->first();
-        return view('front.contact', compact('page_data'));
+        return view('front.pages.contact', compact('page_data'));
     }
 
 
@@ -48,29 +53,69 @@ class ContactController extends Controller
         return view('contact', compact('page_data'));
     }
     
-    public function submitForm(Request $request)
+      public function submitForm(Request $request)
     {
-        // Validate the form inputs
-        $validated = $request->validate([
+        // Rate limiting to prevent spam submissions
+        $key = 'contact_form:' . $request->ip();
+        $maxAttempts = 2;
+        $decaySeconds = 300; // 5 minutes
+    
+        if (RateLimiter::tooManyAttempts($key, $maxAttempts)) {
+            return back()->withErrors([
+                'message' => 'You are submitting too many requests. Please try again later.'
+            ]);
+        }
+    
+        RateLimiter::hit($key, $decaySeconds);
+    
+        // Honeypot check
+        if (!empty($request->extra_field)) {
+            return back()->withErrors([
+                'message' => 'Invalid submission detected.'
+            ]);
+        }
+    
+        // Validate inputs
+        $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email',
             'message' => 'required|string',
+            'g-recaptcha-response' => 'required|string',
         ]);
     
-        // Send the email using the ContactFormMail class
-        Mail::to('info@brokerscourt.com')->send(new ContactFormMail(
-            $validated['name'],
-            $validated['email'],
-            $validated['message']
-        ));
+        // reCAPTCHA verify (safe version)
+        $secret = config('services.recaptcha.secret');
+        $responseToken = $request->input('g-recaptcha-response');
     
-        // Flash success message to session
-        session()->flash('success', 'Your message has been sent successfully!');
+        try {
+            $response = file_get_contents(
+                "https://www.google.com/recaptcha/api/siteverify?secret={$secret}&response={$responseToken}&remoteip={$request->ip()}"
+            );
     
-        // Redirect back to the same page with success message
-        return redirect()->back();
+            $result = json_decode($response, true);
+    
+            if (!isset($result['success']) || $result['success'] !== true) {
+                return back()->withErrors([
+                    'captcha_error' => 'Please complete the reCAPTCHA.'
+                ]);
+            }
+        } catch (\Exception $e) {
+            return back()->withErrors([
+                'captcha_error' => 'reCAPTCHA verification failed. Try again.'
+            ]);
+        }
+    
+        // Send email (IMPORTANT: view must exist)
+        Mail::to('info@brokerscourt.com')->send(
+            new ContactFormMail(
+                $request->name,
+                $request->email,
+                $request->message
+            )
+        );
+    
+        return back()->with('success', 'Your message has been sent successfully!');
     }
-    
-    
+        
 
 }

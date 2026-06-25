@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers\Front;
+
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\HomeAdvertisement;
@@ -15,174 +16,193 @@ use App\Models\AccountOption;
 use App\Models\Broker;
 use App\Helper\Helpers;
 use App\Models\Page; 
-use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Cache;
+use Carbon\Carbon;
 
 class HomeController extends Controller
 {
-
-  public function index()
-  {
-      Helpers::read_json();
-      if (!session()->get('session_short_name')) {
-          $current_short_name = Language::where('is_default', 'Yes')->first()->short_name;
-      } else {
-          $current_short_name = session()->get('session_short_name');
-      }
-  
-      // Fetch the current language and check if it exists
-      $language = Language::where('short_name', $current_short_name)->first();
-  
-      if ($language) {
-          $current_language_id = $language->id;
-      } else {
-          $current_language_id = Language::where('is_default', 'Yes')->first()->id;
-      }
-  
-      // Fetch Forex Bonus and other data
-      $forex_bonus_data = ForexBonus::where('promo_type', 'Forex Deposit Bonus')->latest()->take(4)->get();
-      $noDepositBonuses = ForexBonus::where('promo_type', 'Forex No Deposit Bonus')->latest()->take(4)->get();
-      $demoContest = ForexBonus::where('promo_type', 'Forex Demo Contest')->latest()->take(6)->get();
-      $liveContest = ForexBonus::where('promo_type', 'Forex Live Contest')->latest()->take(6)->get();
-      $forexCashbackRebate = ForexBonus::where('promo_type', 'Forex Cashback Rebate')->latest()->take(6)->get();
-      $cryptoBonusPromotion = ForexBonus::where('promo_type', 'Crypto Bonus Promotion')->latest()->take(6)->get();
-      $brokers = Broker::all();
-      $featured_brokers = Broker::where('featured_broker', 1)->latest() ->take(8)->get();
-      $top_brokers = Broker::orderBy('rating', 'desc')->take(6)->get();
-      $best_leverage_brokers = Broker::orderBy('leverage', 'desc')->latest()->take(8)->get();
-      $video_data = Video::where('language_id', $current_language_id)->get();
-      $home_ad_data = HomeAdvertisement::where('id', 1)->first();
-      $setting_data = Setting::where('id', 1)->first();
-      $post_data = Post::with('rSubCategory')->orderBy('id', 'desc')->where('language_id', $current_language_id)->get();
-      $sub_category_data = SubCategory::with('rPost')->orderBy('sub_category_order', 'asc')->where('show_on_home', 'Show')->where('language_id', $current_language_id)->get();
-      $category_data = Category::orderBy('category_order', 'asc')->where('language_id', $current_language_id)->get();
-      $regulatedBrokers = Broker::whereHas('accountOptions', function($query) {
-          $query->where('is_regulated', 1);
-      })->get();
-      $forex_tips = Post::with('rSubCategory')->whereHas('rSubCategory', function ($query) {
-        $query->where('sub_category_name', 'Forex Tips'); 
-    })->latest()->take(5)->get();
-
-      $non_regulatedBrokers = Broker::whereHas('accountOptions', function($query) {
-          $query->where('is_regulated', false); 
-      })->take(6)->get();
-      $bestForBeginners = Broker::whereHas('accountOptions', function ($query) {
-        $query->where('min_deposit', '<=', 10) // Low deposit, adjust threshold as needed
-              ->where('is_demo_available', 1); // Demo account available
-    })->get();
-
-    $bestBonuses = Broker::whereHas('accountOptions', function ($query) {
-        $query->whereNotNull('exclusive_offers') // Brokers with promotional offers
-              ->orWhere('bonus_eligibility', 1); // Brokers eligible for bonuses
-    })->get();
-    
-    $spreadRankings = Broker::with(['accountOptions' => function($query) {
-        $query->orderBy('spread_value', 'asc'); // Order account options by spread value
-    }])
-    ->whereHas('accountOptions', function($query) {
-        $query->whereNotNull('spread_value')
-              ->where('spread_value', '>', 0); // Only consider brokers with valid spread values
-    })
-    ->get();
-    
-
-    
-    
-
-    
-  
-      // Account types to display on the homepage (the 8 account types)
-      $accountTypes = [
-          'Standard Accounts',
-          'Islamic Account',
-          'ECN Accounts',
-          'Classic Account',
-          'Copy Trading Accounts',
-          'VIP Accounts',
-          'Raw Account',
-          'Micro Accounts'
-      ];
-  
-      // Return the view with all the data
-      return view('front.home', compact(
-          'home_ad_data', 
-          'setting_data', 
-          'post_data', 
-          'sub_category_data', 
-          'video_data', 
-          'category_data', 
-          'forex_bonus_data',
-          'noDepositBonuses',
-          'brokers', 
-          'featured_brokers', 
-          'top_brokers', 
-          'best_leverage_brokers',
-          'accountTypes', 
-          'regulatedBrokers',
-          'demoContest',
-          'liveContest',
-          'forexCashbackRebate',
-          'cryptoBonusPromotion',
-          'non_regulatedBrokers',
-          'forex_tips',
-          'bestForBeginners',
-          'bestBonuses',
-          'spreadRankings'
-      ));
-  }
-
-    public function get_subcategory_by_category($id)
+    public function index()
     {
         Helpers::read_json();
-        $sub_category_data = SubCategory::where('category_id',$id)->get();
-        $response = "<option value=''>".SELECT_SUBCATEGORY."</option>";
-        foreach($sub_category_data as $item) {
-            $response .= '<option value="'.$item->id.'">'.$item->sub_category_name.'</option>';
-        }
 
-        return response()->json(['sub_category_data'=>$response]);
-    }
-    public function search(Request $request)
-    {
-        Helpers::read_json();
+        // Detect current language
+        $current_short_name = session()->get('session_short_name') ??
+            Language::where('is_default', 'Yes')->value('short_name');
+
+        $language = Language::where('short_name', $current_short_name)->first();
+        $current_language_id = $language->id ?? Language::where('is_default', 'Yes')->value('id');
+
+        // ✅ Cache queries for 1 hour (3600 seconds)
+        $forex_bonus_data = Cache::remember('forex_bonus_data', 3600, function () {
+            return ForexBonus::where('promo_type', 'Forex Deposit Bonus')->latest()->take(6)->get();
+        });
+
+        $noDepositBonuses = Cache::remember('noDepositBonuses', 3600, function () {
+            return ForexBonus::where('promo_type', 'Forex No Deposit Bonus')->latest()->take(6)->get();
+        });
+
+        $demoContest = Cache::remember('demoContest', 3600, function () {
+            return ForexBonus::where('promo_type', 'Forex Demo Contest')->latest()->take(6)->get();
+        });
+
+        $liveContest = Cache::remember('liveContest', 3600, function () {
+            return ForexBonus::where('promo_type', 'Forex Live Contest')->latest()->take(6)->get();
+        });
+
+        $forexCashbackRebate = Cache::remember('forexCashbackRebate', 3600, function () {
+            return ForexBonus::where('promo_type', 'Forex Cashback Rebate')->latest()->take(6)->get();
+        });
+
+        $cryptoBonusPromotion = Cache::remember('cryptoBonusPromotion', 3600, function () {
+            return ForexBonus::where('promo_type', 'Crypto Bonus Promotion')->latest()->take(6)->get();
+        });
+
+        // ✅ Limit broker queries
+        $featured_brokers = Cache::remember('featured_brokers', 3600, function () {
+            return Broker::where('featured_broker', 1)->latest()->take(8)->get();
+        });
+
+        $all_brokers = Broker::whereNotNull('rating')
+        ->orderByDesc('rating')
+        ->take(10)
+        ->get();
+
+
+        $top_brokers = Cache::remember('top_brokers_' . rand(), 3600, function () {
+            return Broker::where('featured_broker', 1)
+                ->inRandomOrder()
+                ->take(6)
+                ->get();
+        });
+
+        $best_leverage_brokers = Cache::remember('best_leverage_brokers', 3600, function () {
+            return Broker::orderBy('leverage', 'desc')->take(8)->get();
+        });
+
+           $regulatedBrokers = Cache::remember('regulatedBrokers', 3600, function () {
+            return Broker::with('accountOptions')
+                ->whereHas('accountOptions', function ($query) {
+                    $query->where('is_regulated', 1);
+                })
+                ->orderBy('updated_at', 'desc') // sort by last updated
+                ->take(12)
+                ->get();
+        });
+
+        $non_regulatedBrokers = Cache::remember('non_regulatedBrokers', 3600, function () {
+            return Broker::whereHas('accountOptions', function ($query) {
+                $query->where('is_regulated', false);
+            })->take(6)->get();
+        });
+
+        $bestForBeginners = Cache::remember('bestForBeginners', 3600, function () {
+            return Broker::whereHas('accountOptions', function ($query) {
+                $query->where('min_deposit', '<=', 10)
+                      ->where('is_demo_available', 1);
+            })->take(6)->get();
+        });
+
+        $bestBonuses = Cache::remember('bestBonuses', 3600, function () {
+            return Broker::whereHas('accountOptions', function ($query) {
+                $query->whereNotNull('exclusive_offers')
+                      ->orWhere('bonus_eligibility', 1);
+            })->take(6)->get();
+        });
+
+        // ✅ Optimize spread ranking (SQL instead of PHP sort)
+        $spreadRankings = Cache::remember('spreadRankings', 3600, function () {
+            return Broker::select('brokers.*')
+                ->join('account_options', 'brokers.id', '=', 'account_options.broker_id')
+                ->orderBy('account_options.spread_value', 'asc')
+                ->take(10)
+                ->get();
+        });
+
+        // Top brokers this month
+        $startOfMonth = Carbon::now()->startOfMonth();
+        $endOfMonth = Carbon::now()->endOfMonth();
+
+        $topBrokersThisMonth = Cache::remember('topBrokersThisMonth', 1800, function () use ($startOfMonth, $endOfMonth) {
+            $top = Broker::whereBetween('updated_at', [$startOfMonth, $endOfMonth])
+                ->orderBy('rating', 'desc')
+                ->take(5)
+                ->get();
+
+            return $top->isNotEmpty() ? $top : Broker::orderBy('rating', 'desc')->take(6)->get();
+        });
         
-        $post_data = Post::with('rSubCategory')->orderBy('id','desc');
-        if($request->text_item!=''){
-            $post_data = $post_data->where('post_title', 'like', '%'.$request->text_item.'%');
-        }
-        if($request->sub_category!='') {
-            $post_data = $post_data->where('sub_category_id', $request->sub_category);
-        }
-        $post_data = $post_data->paginate(12);
+        $topRatedBrokers = Broker::orderBy('rating', 'desc')->take(6)->get();
 
-        return view('front.search_result', compact('post_data'));
-    }
-    public function showBrokersByCountry($country)
-    {
-        Helpers::read_json(); 
-        $country = strtolower(urldecode($country));
-        $current_short_name = session()->get('session_short_name', Language::where('is_default', 'Yes')->first()->short_name);
-        $current_language_id = Language::where('short_name', $current_short_name)->first()->id;
-        $page_data = Page::where('language_id', $current_language_id)->first();
-        $brokers = Broker::whereRaw('LOWER(JSON_EXTRACT(associated_countries, "$")) LIKE ?', ['%"' . $country . '"%'])->get();
-        $f_broker_country = Broker::where('featured_broker', 1)->latest() ->take(5)->get();
-        $regulatedBrokers = Broker::whereHas('accountOptions', function($query) {
-            $query->where('is_regulated', 1);
-        })->get();
-        return view('front.brokers_by_country', compact('brokers', 'country','page_data', 'f_broker_country','regulatedBrokers'));
-    }
-    
-    public function showByAccountType($type)
-    {
-        Helpers::read_json();
-        $current_short_name = session()->get('session_short_name', Language::where('is_default', 'Yes')->first()->short_name);
-        $current_language_id = Language::where('short_name', $current_short_name)->first()->id;
-        $page_data = Page::where('language_id', $current_language_id)->first();
-        $home_ad_data = HomeAdvertisement::where('id', 1)->first();
-        $type = str_replace('-', ' ', $type);
-        $brokers = Broker::where('account_types', 'like', '%'.$type.'%')->get();
-        $featured_brokers = Broker::where('featured_broker', 1)->latest()->take(6)->get();
-    
+
+        $topRatedRegulatedBrokers = Cache::remember('topRatedRegulatedBrokers', 3600, function () {
+            return Broker::whereHas('accountOptions', function ($query) {
+                $query->where('is_regulated', 1);
+            })->orderBy('rating', 'desc')->take(5)->get();
+        });
+
+        $demoAvailableBrokers = Cache::remember('demoAvailableBrokers', 3600, function () {
+            return Broker::whereHas('accountOptions', function ($query) {
+                $query->where('is_demo_available', 1);
+            })->take(6)->get();
+        });
+
+        $lowDepositBrokers = Cache::remember('lowDepositBrokers', 3600, function () {
+            return Broker::whereHas('accountOptions', function ($query) {
+                $query->where('min_deposit', '<=', 50);
+            })->take(6)->get();
+        });
+
+        // ✅ News (cache + limit)
+        $recentNewsData = Cache::remember("recentNews_{$current_language_id}", 600, function () use ($current_language_id) {
+            return Post::with('rSubCategory')
+                ->where('language_id', $current_language_id)
+                ->latest()
+                ->take(6)
+                ->get();
+        });
+
+        $popularNewsData = Cache::remember("popularNews_{$current_language_id}", 600, function () use ($current_language_id) {
+            return Post::with('rSubCategory')
+                ->where('language_id', $current_language_id)
+                ->orderBy('visitors', 'desc')
+                ->take(6)
+                ->get();
+        });
+
+        $hasNewsSection = $recentNewsData->isNotEmpty() || $popularNewsData->isNotEmpty();
+        
+        
+   
+
+
+        // ✅ Smaller queries (no cache needed)
+        $video_data = Video::where('language_id', $current_language_id)->take(10)->get();
+        $home_ad_data = HomeAdvertisement::find(1);
+        $setting_data = Setting::find(1);
+
+        $post_data = Post::with('rSubCategory')
+            ->where('language_id', $current_language_id)
+            ->latest()
+            ->paginate(10); // ✅ Use pagination instead of loading all
+
+        $sub_category_data = SubCategory::with('rPost')
+            ->where('show_on_home', 'Show')
+            ->where('language_id', $current_language_id)
+            ->orderBy('sub_category_order', 'asc')
+            ->take(10)
+            ->get();
+
+        $category_data = Category::where('language_id', $current_language_id)
+            ->orderBy('category_order', 'asc')
+            ->take(10)
+            ->get();
+
+        $forex_tips = Cache::remember('forex_tips', 600, function () {
+            return Post::with('rSubCategory')->whereHas('rSubCategory', function ($query) {
+                $query->where('sub_category_name', 'Forex Tips');
+            })->latest()->take(5)->get();
+        });
+
         $accountTypes = [
             'Standard Accounts',
             'Islamic Account',
@@ -193,78 +213,39 @@ class HomeController extends Controller
             'Raw Account',
             'Micro Accounts'
         ];
-        $type = strtolower(trim(str_replace('-', ' ', $type)));
-        return view('front.brokers_by_account_type', compact('brokers', 'type', 'page_data', 'featured_brokers', 'accountTypes', 'home_ad_data'));
+
+        return view('front.homepage.home', compact(
+            'home_ad_data',
+            'setting_data',
+            'post_data',
+            'sub_category_data',
+            'video_data',
+            'category_data',
+            'forex_bonus_data',
+            'noDepositBonuses',
+            'featured_brokers',
+            'top_brokers',
+            'best_leverage_brokers',
+            'accountTypes',
+            'regulatedBrokers',
+            'demoContest',
+            'liveContest',
+            'forexCashbackRebate',
+            'cryptoBonusPromotion',
+            'non_regulatedBrokers',
+            'forex_tips',
+            'bestForBeginners',
+            'bestBonuses',
+            'spreadRankings',
+            'topBrokersThisMonth',
+            'all_brokers',
+            'recentNewsData',
+            'popularNewsData',
+            'hasNewsSection',
+            'topRatedRegulatedBrokers',
+            'demoAvailableBrokers',
+            'lowDepositBrokers',
+            'topRatedBrokers'
+        ));
     }
-
-
-
-
-    public function showComparisonDropdown()
-    {
-        // Fetch all brokers from the database and limit to 10
-        $brokers = Broker::limit(10)->get();
-    
-        return view('front.home', compact('brokers'));
-    }
-    
-    public function compare($broker1_slug, $broker2_slug)
-    {
-        Helpers::read_json(); // Optional helper functionality
-        if (!session()->get('session_short_name')) {
-            $current_short_name = Language::where('is_default', 'Yes')->first()->short_name;
-        } else {
-            $current_short_name = session()->get('session_short_name');
-        }
-        $current_language_id = Language::where('short_name', $current_short_name)->first()->id;
-        $page_data = Page::where('language_id', $current_language_id)->first();
-        $home_ad_data = HomeAdvertisement::where('id', 1)->first();
-        $broker1 = Broker::where('slug', $broker1_slug)->firstOrFail();
-        $broker2 = Broker::where('slug', $broker2_slug)->firstOrFail();
-    
-        return view('front.broker_comparison_result', compact('page_data', 'broker1', 'broker2', 'home_ad_data'));
-    }
-
-
-    
-
-    public function getComparison(Request $request)
-    {
-        return redirect()->route('brokers.compare', [
-            'broker1_slug' => $request->broker1_id,
-            'broker2_slug' => $request->broker2_id
-        ]);
-    }
-
-    public function updateVisitCount(Request $request)
-    {
-        $broker = Broker::findOrFail($request->broker_id);
-        $broker->increment('visit_count', $request->visit_count);
-        return response()->json(['success' => true]);
-    }
-
-
-    public function showBrokerComparison()
-{
-    // Fetch language settings
-    Helpers::read_json(); 
-    if (!session()->get('session_short_name')) {
-        $current_short_name = Language::where('is_default', 'Yes')->first()->short_name;
-    } else {
-        $current_short_name = session()->get('session_short_name');
-    }
-    $current_language_id = Language::where('short_name', $current_short_name)->first()->id;
-
-    // Fetch page data for the current language
-    $page_data = Page::where('language_id', $current_language_id)->first();
-    $featured_brokers = Broker::where('featured_broker', 1)->latest() ->take(6)->get();
-    $home_ad_data = HomeAdvertisement::where('id', 1)->first();
-
-    // Fetch brokers for comparison
-    $brokers = Broker::with('accountOptions')->get(); // Adjust relationships as needed
-
-    return view('front.broker_comparison', compact('brokers', 'page_data','featured_brokers','home_ad_data'));
-}
-
-
 }
