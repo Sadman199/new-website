@@ -18,7 +18,7 @@ use App\Models\Setting;
 use App\Models\Language;
 use App\Models\Broker;
 use App\Models\ForexBonus;
-use App\Models\Review;
+use App\Services\FooterIndexService;
 
 
 class AppServiceProvider extends ServiceProvider
@@ -53,6 +53,26 @@ class AppServiceProvider extends ServiceProvider
                 $view->with('panelBadges', [
                     'brokers' => 0,
                     'pending_reviews' => 0,
+                ]);
+            }
+        });
+
+        View::composer('front.layout.partial.mega-footer', function ($view) {
+            try {
+                $view->with('footer', app(FooterIndexService::class)->build());
+            } catch (\Throwable $e) {
+                $view->with('footer', [
+                    'brand' => ['name' => 'BrokersCourt', 'tagline' => '', 'logo' => 'https://www.brokerscourt.com/uploads/logo.png'],
+                    'cta' => [],
+                    'top_brokers' => ['links' => [], 'view_all' => null],
+                    'comparisons' => [],
+                    'regions' => ['links' => [], 'view_all' => null],
+                    'for_users' => [],
+                    'contact' => ['address' => '', 'email' => 'info@brokerscourt.com', 'phone' => ''],
+                    'legal' => [],
+                    'social' => [],
+                    'disclaimer' => '',
+                    'affiliate' => '',
                 ]);
             }
         });

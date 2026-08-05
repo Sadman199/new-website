@@ -150,7 +150,7 @@
             <div class="bg-red-600 text-white rounded-2xl p-6 shadow-sm">
                 <h3 class="font-bold text-lg flex items-center gap-2"><i class="fas fa-bullhorn"></i> Been scammed by {{ $broker->name }}?</h3>
                 <p class="text-white/90 text-sm mt-2">Share your experience so we can warn other traders and keep this listing accurate.</p>
-                <a href="{{ route('contact.us') }}" class="mt-4 inline-flex items-center gap-2 bg-white text-red-700 font-semibold px-4 py-2 rounded-full hover:bg-red-50 transition text-sm">
+                <a href="{{ route('contact') }}" class="mt-4 inline-flex items-center gap-2 bg-white text-red-700 font-semibold px-4 py-2 rounded-full hover:bg-red-50 transition text-sm">
                     <i class="fas fa-flag"></i> Report this broker
                 </a>
             </div>

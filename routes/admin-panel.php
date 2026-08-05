@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\Panel\PanelAuthorsController;
 use App\Http\Controllers\Admin\Panel\PanelDashboardController;
 use Illuminate\Support\Facades\Route;
 
@@ -69,10 +70,7 @@ Route::middleware(['web', 'admin:admin'])
             'pageTitle' => 'FAQs',
         ])->name('faqs.index');
 
-        Route::view('/authors', 'admin.panel.pages.authors.index', [
-            'title' => 'Authors',
-            'pageTitle' => 'Authors',
-        ])->name('authors.index');
+        Route::get('/authors', [PanelAuthorsController::class, 'index'])->name('authors.index');
 
         Route::view('/pages', 'admin.panel.pages.pages.index', [
             'title' => 'Static Pages',

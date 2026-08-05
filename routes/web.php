@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Front\HomeController;
 use App\Http\Controllers\Front\AboutController;
+use App\Http\Controllers\Front\AuthorsController;
 use App\Http\Controllers\Front\ContactController;
 use App\Http\Controllers\Front\FaqController;
 use App\Http\Controllers\Front\TermsController;
@@ -50,6 +51,7 @@ use App\Http\Controllers\Admin\AdminVideoController;
 use App\Http\Controllers\Admin\AdminPageController;
 use App\Http\Controllers\Admin\AdminFaqController;
 use App\Http\Controllers\Admin\AdminSubscriberController;
+use App\Http\Controllers\Admin\AdminContactInquiryController;
 use App\Http\Controllers\Admin\AdminLiveChannelController;
 use App\Http\Controllers\Admin\AdminOnlinePollController;
 use App\Http\Controllers\Admin\AdminSocialItemController;
@@ -112,10 +114,11 @@ Route::get('/news/popular', [NewsController::class, 'popularNews'])->name('news_
 
 Route::get('/about', [AboutController::class, 'index'])->name('about');
 Route::get('/about-us', [AboutController::class, 'index'])->name('about.us');
+Route::get('/authors', [AuthorsController::class, 'index'])->name('authors');
 Route::get('/contact', [ContactController::class, 'index'])->name('contact');
-Route::get('/contact-us', [ContactController::class, 'index'])->name('contact.us');
+Route::redirect('/contact-us', '/contact', 301);
 Route::get('/our-methodology', [MethodologyController::class, 'index'])->name('methodology');
-Route::post('/contact/send-email', [ContactController::class, 'send_email'])->name('contact_form_submit');
+Route::post('/contact', [ContactController::class, 'submitForm'])->name('contact_form_submit');
 Route::get('/terms-and-conditions', [TermsController::class, 'index'])->name('terms');
 Route::get('/privacy-policy', [PrivacyController::class, 'index'])->name('privacy');
 Route::get('/disclaimer', [DisclaimerController::class, 'index'])->name('disclaimer');
@@ -378,6 +381,13 @@ Route::get('/admin/faq/edit/{id}', [AdminFaqController::class, 'edit'])->name('a
 Route::post('/admin/faq/update/{id}', [AdminFaqController::class, 'update'])->name('admin_faq_update');
 Route::get('/admin/faq/delete/{id}', [AdminFaqController::class, 'delete'])->name('admin_faq_delete')->middleware('admin:admin');
 
+Route::group(['prefix' => 'admin/contact-inquiries', 'middleware' => 'admin:admin'], function () {
+    Route::get('/', [AdminContactInquiryController::class, 'index'])->name('admin_contact_inquiries.index');
+    Route::get('/{inquiry}', [AdminContactInquiryController::class, 'show'])->name('admin_contact_inquiries.show');
+    Route::patch('/{inquiry}/archive', [AdminContactInquiryController::class, 'archive'])->name('admin_contact_inquiries.archive');
+    Route::delete('/{inquiry}', [AdminContactInquiryController::class, 'destroy'])->name('admin_contact_inquiries.destroy');
+});
+
 Route::get('/admin/subscriber/all', [AdminSubscriberController::class, 'show_all'])->name('admin_subscribers')->middleware('admin:admin');
 Route::get('/admin/subscriber/send-email', [AdminSubscriberController::class, 'send_email'])->name('admin_subscriber_send_email')->middleware('admin:admin');
 Route::post('/admin/subscriber/send-email-submit', [AdminSubscriberController::class, 'send_email_submit'])->name('admin_subscriber_send_email_submit');
@@ -408,9 +418,9 @@ Route::get('/admin/social-item/delete/{id}', [AdminSocialItemController::class, 
 
 Route::get('/admin/author/show', [AdminAuthorController::class, 'show'])->name('admin_author_show')->middleware('admin:admin');
 Route::get('/admin/author/create', [AdminAuthorController::class, 'create'])->name('admin_author_create')->middleware('admin:admin');
-Route::post('/admin/author/store', [AdminAuthorController::class, 'store'])->name('admin_author_store');
+Route::post('/admin/author/store', [AdminAuthorController::class, 'store'])->name('admin_author_store')->middleware('admin:admin');
 Route::get('/admin/author/edit/{id}', [AdminAuthorController::class, 'edit'])->name('admin_author_edit')->middleware('admin:admin');
-Route::post('/admin/author/update/{id}', [AdminAuthorController::class, 'update'])->name('admin_author_update');
+Route::match(['post', 'put'], '/admin/author/update/{id}', [AdminAuthorController::class, 'update'])->name('admin_author_update')->middleware('admin:admin');
 Route::get('/admin/author/delete/{id}', [AdminAuthorController::class, 'delete'])->name('admin_author_delete')->middleware('admin:admin');
 
 
@@ -470,7 +480,6 @@ Route::prefix('admin')->middleware('admin:admin')->group(function () {
 Route::post('/brokers/{broker}/reviews', [ReviewController::class, 'store'])->middleware('auth')->name('reviews.store');
 
 
-Route::post('/contact', [ContactController::class, 'submitForm'])->name('contact_form_submit');
 Route::get('/regulated-brokers', [BrokerTypeController::class, 'showRegulatedBrokers'])->name('regulated_brokers');
 Route::get('/non-regulated-brokers', [BrokerTypeController::class, 'showNonRegulatedBrokers'])->name('non_regulated_brokers');
 Route::get('/scam-brokers', [ScamBrokerController::class, 'index'])->name('scam_brokers');

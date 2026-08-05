@@ -142,6 +142,17 @@
                     href="{{ route('admin_faq_show') }}"><i class="fas fa-question-circle"></i> <span>FAQ
                         Section</span></a></li>
 
+            <li class="{{ Request::is('admin/contact-inquiries*') ? 'active' : '' }}">
+                <a class="nav-link" href="{{ route('admin_contact_inquiries.index') }}">
+                    <i class="fas fa-envelope"></i>
+                    <span>Contact Inquiries</span>
+                    @php($newInquiryCount = \App\Models\ContactInquiry::where('status', 'new')->count())
+                    @if($newInquiryCount > 0)
+                        <span class="badge badge-warning ml-1">{{ $newInquiryCount }}</span>
+                    @endif
+                </a>
+            </li>
+
             <li class="nav-item dropdown {{ Request::is('admin/subscriber/*') ? 'active' : '' }}">
                 <a href="#" class="nav-link has-dropdown"><i class="fas fa-users"></i><span>Subscribers</span></a>
                 <ul class="dropdown-menu">

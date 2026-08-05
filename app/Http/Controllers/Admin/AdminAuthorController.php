@@ -5,10 +5,13 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Author;
 use App\Models\Post;
-use Hash;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\Rule;
 use App\Mail\Websitemail;
+use Throwable;
 
 class AdminAuthorController extends Controller
 {
@@ -62,7 +65,14 @@ class AdminAuthorController extends Controller
         $message .= '<br><br>Please see your password here and after login, change that immediately:<br>';
         $message .= e($request->password);
 
-        \Mail::to($request->email)->send(new Websitemail($subject, $message));
+        try {
+            Mail::to($request->email)->send(new Websitemail($subject, $message));
+        } catch (Throwable $e) {
+            Log::warning('Author welcome email failed to send.', [
+                'author_email' => $request->email,
+                'error' => $e->getMessage(),
+            ]);
+        }
 
         return redirect()->route('admin_author_show')->with('success', 'Author account is created successfully.');
     }

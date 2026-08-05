@@ -7,3 +7,4 @@
 <link rel="stylesheet" href="{{ asset('dist-front/css/font_awesome_5_free.min.css') }}">
 <link rel="stylesheet" href="{{ asset('dist-front/css/style.css') }}">
 <link rel="stylesheet" href="{{ asset('dist-front/css/responsive.css') }}"> 
+<link rel="stylesheet" href="{{ asset('css/mega-footer.css') }}?v=3">

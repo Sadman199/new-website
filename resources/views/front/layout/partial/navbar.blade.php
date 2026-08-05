@@ -492,8 +492,9 @@ $brokerReviews = [
                     <div id="companyMenu" class="company-menu hidden absolute left-0 top-full pt-2 w-56">
                         <div class="bg-white border border-gray-200 shadow-xl rounded-xl py-2">
                             <a href="{{ route('about.us') }}" class="bc-mega-link mx-2">About us</a>
+                            <a href="{{ route('authors') }}" class="bc-mega-link mx-2">Our team</a>
                             <a href="{{ route('methodology') }}" class="bc-mega-link mx-2">Our methodology</a>
-                            <a href="{{ route('contact.us') }}" class="bc-mega-link mx-2">Contact us</a>
+                            <a href="{{ route('contact') }}" class="bc-mega-link mx-2">Contact us</a>
                         </div>
                     </div>
                 </div>
@@ -692,8 +693,9 @@ $brokerReviews = [
             <a href="{{ route('blog') }}" class="bc-mega-link">Blog</a>
             <a href="{{ route('scam_brokers') }}" class="bc-mega-link" style="color:#dc2626;font-weight:600;">⚠ Scam brokers</a>
             <a href="{{ route('about.us') }}" class="bc-mega-link">About us</a>
+            <a href="{{ route('authors') }}" class="bc-mega-link">Our team</a>
             <a href="{{ route('methodology') }}" class="bc-mega-link">Our methodology</a>
-            <a href="{{ route('contact.us') }}" class="bc-mega-link">Contact us</a>
+            <a href="{{ route('contact') }}" class="bc-mega-link">Contact us</a>
             <a href="{{ route('find_my_broker') }}" class="bc-btn-primary w-full justify-center mt-3">Find my broker</a>
 
             <button type="button" class="bc-mega-link w-full text-left font-semibold flex items-center gap-2 mt-2" id="mobileCountrySelectorBtn">

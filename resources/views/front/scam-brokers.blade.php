@@ -26,7 +26,7 @@
         <div class="sbi-notice">
             <strong>How we flag brokers:</strong> we rely on public regulator warnings, verified user complaints,
             and evidence of unregulated activity. If you believe a listing is inaccurate,
-            <a href="{{ route('contact.us') }}">contact us</a>.
+            <a href="{{ route('contact') }}">contact us</a>.
         </div>
 
         <div class="sbi-layout">
@@ -63,7 +63,7 @@
                     <a href="{{ route('broker.reviews.index') }}" class="sbi-sidebar__link">
                         Broker reviews
                     </a>
-                    <a href="{{ route('contact.us') }}" class="sbi-sidebar__link">
+                    <a href="{{ route('contact') }}" class="sbi-sidebar__link">
                         Report a broker
                     </a>
                 </div>
