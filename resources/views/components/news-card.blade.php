@@ -39,7 +39,7 @@
                 @endif
             </h3>
             <div class="flex items-center text-xs text-gray-400">
-                <span class="truncate">{{ $userData->name }}</span>
+                <span class="truncate">{{ is_object($userData) ? ($userData->name ?? 'Editor') : (is_string($userData) && $userData !== '' ? $userData : ($item->author_name ?? 'Editor')) }}</span>
                 <span class="mx-1">•</span>
                 <span>{{ $updatedDate }}</span>
             </div>

@@ -8,6 +8,7 @@ use App\Models\Post;
 use App\Models\Admin;
 use App\Models\Author;
 use App\Models\Language;
+use App\Services\BlogIndexService;
 
 class NewsController extends Controller
 {
@@ -64,24 +65,13 @@ class NewsController extends Controller
         ]);
     }
 
-    public function blog()
+    public function blog(BlogIndexService $blogIndexService)
     {
-        if (!session()->get('session_short_name')) {
-            $current_short_name = optional(Language::where('is_default', 'Yes')->first())->short_name ?? 'en';
-        } else {
-            $current_short_name = session()->get('session_short_name');
-        }
+        $languageId = $blogIndexService->resolveLanguageId();
+        $subcategory = request()->query('subcategory');
 
-        $current_language_id = optional(Language::where('short_name', $current_short_name)->first())->id ?? 1;
+        $indexData = $blogIndexService->buildIndex($languageId, $subcategory);
 
-        $posts = Post::with(['rSubCategory', 'author'])
-            ->where('language_id', $current_language_id)
-            ->orderBy('id', 'desc')
-            ->paginate(12);
-
-        return view('front.pages.news_all', [
-            'section_title' => 'Blog',
-            'posts' => $posts,
-        ]);
+        return view('front.blog.index', $indexData);
     }
 }

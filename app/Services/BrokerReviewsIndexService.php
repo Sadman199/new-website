@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Http\Controllers\Front\BrokerController;
 use App\Models\Broker;
+use Illuminate\Support\Str;
 
 class BrokerReviewsIndexService
 {
@@ -27,6 +28,11 @@ class BrokerReviewsIndexService
     {
         $scores = is_array($broker->category_scores) ? $broker->category_scores : [];
         $markets = $this->marketKeysFor($broker);
+        $regulators = $broker->regulationList();
+        $feeScore = $this->scoreOutOfFive($scores['fees'] ?? null);
+        $platformScore = $this->scoreOutOfFive($scores['platforms'] ?? null);
+        $reviewCount = (int) ($broker->approved_review_count ?? 0);
+        $mobileLabel = $this->mobilePlatformLabel($broker);
 
         return [
             'id' => $broker->id,
@@ -36,18 +42,22 @@ class BrokerReviewsIndexService
             'logo' => $broker->logo ? asset($broker->logo) : null,
             'rating' => $broker->rating !== null ? round((float) $broker->rating, 1) : null,
             'fee_level' => ucfirst((string) ($broker->fee_level ?: 'medium')),
-            'fee_score' => $this->scoreOutOfFive($scores['fees'] ?? null, $broker->fee_level),
-            'platform_score' => $this->scoreOutOfFive($scores['platforms'] ?? null, $broker->mobile_trading ? 'yes' : null),
-            'inactivity_fee' => $this->inactivityFeeLabel($broker),
+            'fee_score' => $feeScore,
+            'platform_score' => $platformScore,
+            'withdrawal_fee' => trim((string) ($broker->withdrawal_fee ?: '')) ?: '—',
             'investor_protection' => $broker->investor_protection ? 'Yes' : 'No',
-            'mobile_platform' => ($broker->mobile_trading || $broker->web_trader) ? 'Yes' : 'No',
-            'popularity_count' => $this->popularityCount($broker),
+            'mobile_platform' => $mobileLabel,
+            'mobile_platform_has_apps' => $mobileLabel !== 'No',
+            'review_count' => $reviewCount,
+            'top_feature' => trim((string) ($broker->top_feature ?: '')),
+            'short_description' => Str::limit(trim(strip_tags((string) ($broker->short_description ?: ''))), 140),
+            'regulation_summary' => $this->regulationSummary($regulators),
+            'spreads' => trim((string) ($broker->spreads ?: '')) ?: null,
             'is_award_winner' => (bool) $broker->featured_broker,
-            'award_label' => date('Y') . ' Award Winner',
+            'award_label' => trim((string) ($broker->top_feature ?: '')) ?: 'Featured broker',
             'markets' => $markets,
             'visit_url' => $broker->open_live ?: $broker->visit_site ?: $broker->url,
             'review_url' => route('broker_detail', ['slug' => BrokerController::reviewSlugFor($broker)]),
-            'risk_disclaimer' => $this->riskDisclaimer($broker),
         ];
     }
 
@@ -91,59 +101,43 @@ class BrokerReviewsIndexService
         return array_values(array_unique($keys));
     }
 
-    protected function scoreOutOfFive(?float $tenScale, mixed $fallbackHint = null): float
+    protected function scoreOutOfFive(?float $tenScale): ?float
     {
-        if ($tenScale !== null) {
-            return min(5.0, round($tenScale / 2, 1));
-        }
-
-        if ($fallbackHint === 'low') {
-            return 4.3;
-        }
-
-        if ($fallbackHint === 'high') {
-            return 2.4;
-        }
-
-        if ($fallbackHint === 'yes') {
-            return 4.5;
-        }
-
-        return 3.8;
-    }
-
-    protected function inactivityFeeLabel(Broker $broker): string
-    {
-        if ($broker->fee_level === 'high') {
-            return 'Yes';
-        }
-
-        $withdrawal = strtolower((string) $broker->withdrawal_fee);
-
-        if ($withdrawal === 'free' || $withdrawal === '') {
-            return 'No';
-        }
-
-        return 'Yes';
-    }
-
-    protected function popularityCount(Broker $broker): int
-    {
-        $reviewCount = (int) ($broker->approved_review_count ?? 0);
-
-        $base = max(10000, (int) ($broker->id * 18437 + ((float) $broker->rating * 25000)));
-
-        return $base + ($reviewCount * 1200);
-    }
-
-    protected function riskDisclaimer(Broker $broker): ?string
-    {
-        if (! $broker->isRegulated()) {
+        if ($tenScale === null) {
             return null;
         }
 
-        $loss = min(89, max(58, 60 + ($broker->id % 25) + (int) ((5 - (float) $broker->rating) * 3)));
+        return min(5.0, round($tenScale / 2, 1));
+    }
 
-        return $loss . '% of retail CFD accounts lose money';
+    protected function mobilePlatformLabel(Broker $broker): string
+    {
+        $mobile = trim(strip_tags((string) ($broker->mobile_trading ?: '')));
+
+        if ($mobile !== '') {
+            return $mobile;
+        }
+
+        if ($broker->web_trader) {
+            return trim(strip_tags((string) $broker->web_trader)) ?: 'Web platform';
+        }
+
+        return 'No';
+    }
+
+    /** @param array<int, string> $regulators */
+    protected function regulationSummary(array $regulators): ?string
+    {
+        if ($regulators === []) {
+            return null;
+        }
+
+        $summary = implode(', ', array_slice($regulators, 0, 3));
+
+        if (count($regulators) > 3) {
+            $summary .= ' +' . (count($regulators) - 3);
+        }
+
+        return 'Regulated by ' . $summary;
     }
 }

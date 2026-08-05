@@ -24,9 +24,9 @@ use Illuminate\Support\Str;
 class BrokerController extends Controller
 {
     private const CATEGORY_SLUG_ALIASES = [
-        'micro-accounts-brokers' => 'micro-account-brokers',
-        'copytrading-brokers' => 'copy-trading-brokers',
-        'brokers-for-beginners' => 'beginner-friendly-brokers',
+        'micro-account-brokers' => 'micro-accounts-brokers',
+        'beginner-friendly-brokers' => 'brokers-for-beginners',
+        'copy-trading-brokers' => 'copytrading-brokers',
     ];
 
     private const REVIEW_SLUG_ALIASES = [
@@ -251,22 +251,9 @@ public function liveSearch(Request $request)
 
 public function byAward($award)
 {
-    // Filter brokers by award
-    $brokers = Broker::all()->filter(function ($broker) use ($award) {
-        $types = $broker->account_types;
+    $award = \Illuminate\Support\Str::slug($award);
+    $brokers = \App\Support\AwardTaxonomy::brokersFor($award);
 
-        // Decode JSON string to array if necessary
-        if (is_string($types)) {
-            $types = json_decode($types, true);
-        }
-
-        if (!is_array($types)) return false;
-
-        // Check if the award slug exists in the broker's account_types array
-        return in_array($award, $types);
-    });
-
-    // Paginate filtered brokers
     $paginatedBrokers = new \Illuminate\Pagination\LengthAwarePaginator(
         $brokers->forPage(request()->get('page', 1), 10),
         $brokers->count(),
@@ -275,33 +262,24 @@ public function byAward($award)
         ['path' => request()->url(), 'query' => request()->query()]
     );
 
-    // Featured brokers filtered by award/account type
-    $featured_brokers = $brokers->filter(function ($broker) {
-        return $broker->featured_broker == 1;
-    })->take(6);
-
-    // Top rated brokers filtered by award/account type
+    $featured_brokers = $brokers->filter(fn ($broker) => $broker->featured_broker == 1)->take(6);
     $top_brokers = $brokers->sortByDesc('rating')->take(5);
+    $recommended_brokers = Broker::query()->where('is_scam', false)->orderByDesc('rating')->take(5)->get();
 
-    // Recommended brokers (overall top rated, not award-specific)
-    $recommended_brokers = Broker::orderBy('rating', 'desc')->take(5)->get();
-
-    // Metrics
     $metrics = [
-        ['value' => $paginatedBrokers->count(), 'label' => 'Matching Brokers'],
+        ['value' => $paginatedBrokers->total(), 'label' => 'Matching Brokers'],
         ['value' => $featured_brokers->count(), 'label' => 'Featured Brokers'],
         ['value' => $top_brokers->count(), 'label' => 'Top Rated Brokers'],
     ];
 
-         return view('front.brokers.listing', [
-            'paginatedBrokers' => $paginatedBrokers,
-            'featured_brokers' => $featured_brokers,
-            'top_brokers' => $top_brokers,
-            'recommended_brokers' => $recommended_brokers,
-            'metrics' => $metrics,
-            'awardName' => $award, // rename here to match view
-        ]);
-
+    return view('front.brokers.listing', [
+        'paginatedBrokers' => $paginatedBrokers,
+        'featured_brokers' => $featured_brokers,
+        'top_brokers' => $top_brokers,
+        'recommended_brokers' => $recommended_brokers,
+        'metrics' => $metrics,
+        'awardName' => \App\Support\AwardTaxonomy::labelFor($award),
+    ]);
 }
 
 

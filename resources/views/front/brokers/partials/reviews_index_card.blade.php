@@ -24,34 +24,48 @@
                         <span class="bri-card__rating-value">{{ number_format($broker['rating'], 1) }}</span>
                         <span class="bri-card__rating-max">/5</span>
                     @endif
-                    @if($broker['is_award_winner'])
+                    @if($broker['is_award_winner'] && $broker['award_label'])
                         <a href="{{ route('awards.index') }}" class="bri-card__award">{{ $broker['award_label'] }}</a>
                     @endif
                 </div>
             </div>
         </div>
 
-        <div class="bri-card__social">
-            <svg class="bri-card__social-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/>
-            </svg>
-            <span class="bri-card__social-count">{{ number_format($broker['popularity_count']) }}</span>
-            people chose this broker
-        </div>
+        @if((!$broker['is_award_winner'] && $broker['top_feature']) || $broker['review_count'] > 0)
+            <div class="bri-card__social">
+                <svg class="bri-card__social-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                    <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/>
+                </svg>
+                @if(!$broker['is_award_winner'] && $broker['top_feature'])
+                    <span class="bri-card__social-count">{{ $broker['top_feature'] }}</span>
+                @else
+                    <span class="bri-card__social-count">{{ number_format($broker['review_count']) }}</span>
+                    user {{ Str::plural('review', $broker['review_count']) }}
+                @endif
+            </div>
+        @endif
 
         <div class="bri-card__metrics">
             <div class="bri-metric">
                 <span class="bri-metric__label">Fee level:</span>
                 <span class="bri-metric__value">
                     {{ $broker['fee_level'] }}
-                    <span class="bri-metric__score">{{ number_format($broker['fee_score'], 1) }}</span>
-                    <span class="bri-metric__score-muted">/5</span>
+                    @if($broker['fee_score'] !== null)
+                        <span class="bri-metric__score">{{ number_format($broker['fee_score'], 1) }}</span>
+                        <span class="bri-metric__score-muted">/5</span>
+                    @endif
                 </span>
             </div>
             <div class="bri-metric">
-                <span class="bri-metric__label">Inactivity fee:</span>
-                <span class="bri-metric__value">{{ $broker['inactivity_fee'] }}</span>
+                <span class="bri-metric__label">Withdrawal fee:</span>
+                <span class="bri-metric__value">{{ $broker['withdrawal_fee'] }}</span>
             </div>
+            @if($broker['spreads'])
+                <div class="bri-metric">
+                    <span class="bri-metric__label">Spreads:</span>
+                    <span class="bri-metric__value">{{ $broker['spreads'] }}</span>
+                </div>
+            @endif
             <div class="bri-metric">
                 <span class="bri-metric__label">Investor protection:</span>
                 <span class="bri-metric__value">{{ $broker['investor_protection'] }}</span>
@@ -60,7 +74,7 @@
                 <span class="bri-metric__label">Mobile platform:</span>
                 <span class="bri-metric__value">
                     {{ $broker['mobile_platform'] }}
-                    @if($broker['mobile_platform'] === 'Yes')
+                    @if($broker['mobile_platform_has_apps'] && $broker['platform_score'] !== null)
                         <span class="bri-metric__score">{{ number_format($broker['platform_score'], 1) }}</span>
                         <span class="bri-metric__score-muted">/5</span>
                     @endif
@@ -84,8 +98,10 @@
         <div class="bri-card__links">
             <a href="{{ $broker['review_url'] }}" class="bri-link-review">Read review</a>
         </div>
-        @if($broker['risk_disclaimer'])
-            <p class="bri-card__risk">{{ $broker['risk_disclaimer'] }}</p>
+        @if($broker['regulation_summary'])
+            <p class="bri-card__risk">{{ $broker['regulation_summary'] }}</p>
+        @elseif($broker['short_description'])
+            <p class="bri-card__risk">{{ $broker['short_description'] }}</p>
         @endif
     </div>
 </li>

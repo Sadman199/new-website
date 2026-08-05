@@ -8,11 +8,11 @@ use App\Models\Page;
 use App\Models\HomeAdvertisement;
 use App\Models\Language;
 use App\Helper\Helpers;
-use Illuminate\Http\Request;
+use App\Services\ScamBrokersIndexService;
 
 class ScamBrokerController extends Controller
 {
-    public function index(Request $request)
+    public function index(ScamBrokersIndexService $indexService)
     {
         Helpers::read_json();
 
@@ -26,22 +26,28 @@ class ScamBrokerController extends Controller
         $page_data = Page::where('language_id', $current_language_id)->first();
         $home_ad_data = HomeAdvertisement::where('id', 1)->first();
 
-        $query = Broker::where('is_scam', true);
-
-        $search = trim((string) $request->get('q'));
-        if ($search !== '') {
-            $query->where('name', 'like', '%' . $search . '%');
-        }
-
-        $scamBrokers = $query
+        $brokers = Broker::query()
+            ->where('is_scam', true)
             ->orderByDesc('scam_reported_date')
             ->orderBy('name')
-            ->paginate(12)
-            ->withQueryString();
+            ->get();
+
+        $brokersPayload = $brokers
+            ->map(fn (Broker $broker) => $indexService->serialize($broker))
+            ->values();
 
         $scamCount = Broker::where('is_scam', true)->count();
+        $warningFilters = $indexService->warningFilters();
+        $warningSigns = $indexService->warningSigns();
 
-        return view('front.scam-brokers', compact('scamBrokers', 'scamCount', 'page_data', 'home_ad_data', 'search'));
+        return view('front.scam-brokers', compact(
+            'brokersPayload',
+            'scamCount',
+            'page_data',
+            'home_ad_data',
+            'warningFilters',
+            'warningSigns'
+        ));
     }
 
     public function show($slug)
@@ -58,15 +64,11 @@ class ScamBrokerController extends Controller
         $page_data = Page::where('language_id', $current_language_id)->first();
         $home_ad_data = HomeAdvertisement::where('id', 1)->first();
 
-        // Only flagged brokers have a scam details page. Resolve by the clean,
-        // name-based scam slug (e.g. "neex"), falling back to the broker's own slug
-        // so older links keep working.
         $slug = \Illuminate\Support\Str::slug($slug);
         $broker = Broker::where('is_scam', true)->get()
             ->first(fn ($b) => $b->scam_slug === $slug || \Illuminate\Support\Str::slug((string) $b->slug) === $slug);
         abort_if(!$broker, 404);
 
-        // A few other flagged brokers for the "related" section.
         $relatedScam = Broker::where('is_scam', true)
             ->where('id', '!=', $broker->id)
             ->orderByDesc('scam_reported_date')

@@ -1,0 +1,519 @@
+/* Scam brokers index */
+.sbi-page {
+    background: #f8fafc;
+    color: #0f172a;
+    min-height: 100vh;
+    padding: 5rem 0 3rem;
+}
+
+.sbi-wrap {
+    width: min(100% - 2rem, 68rem);
+    margin: 0 auto;
+}
+
+.sbi-hero {
+    text-align: center;
+    margin-bottom: 1.25rem;
+}
+
+.sbi-hero__badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    margin-bottom: 0.75rem;
+    padding: 0.35rem 0.875rem;
+    border-radius: 999px;
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    color: #b91c1c;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.sbi-hero__title {
+    margin: 0 0 0.5rem;
+    font-size: clamp(1.875rem, 4vw, 2.5rem);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    color: #0f172a;
+}
+
+.sbi-hero__subtitle {
+    margin: 0 auto;
+    max-width: 40rem;
+    font-size: clamp(1rem, 2.2vw, 1.25rem);
+    font-weight: 500;
+    line-height: 1.55;
+    color: #475569;
+}
+
+.sbi-notice {
+    margin-bottom: 2rem;
+    padding: 0.875rem 1rem;
+    border-radius: 0.625rem;
+    background: #fff1f2;
+    border: 1px solid #fecdd3;
+    color: #9f1239;
+    font-size: 0.875rem;
+    line-height: 1.55;
+}
+
+.sbi-notice a {
+    color: #be123c;
+    font-weight: 700;
+    text-decoration: underline;
+}
+
+.sbi-layout {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    align-items: start;
+}
+
+@media (min-width: 1024px) {
+    .sbi-layout {
+        grid-template-columns: 240px 1fr;
+        gap: 2rem;
+    }
+}
+
+.sbi-sidebar {
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.75rem;
+    padding: 1.25rem;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
+}
+
+@media (min-width: 1024px) {
+    .sbi-sidebar {
+        position: sticky;
+        top: 5.5rem;
+    }
+}
+
+.sbi-sidebar__title {
+    margin: 0 0 0.75rem;
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: #0f172a;
+}
+
+.sbi-sidebar__search {
+    width: 100%;
+    height: 2.5rem;
+    padding: 0 0.875rem;
+    border: 1px solid #cbd5e1;
+    border-radius: 0.375rem;
+    font-size: 0.875rem;
+    color: #0f172a;
+    background: #fff;
+    outline: none;
+    transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.sbi-sidebar__search:focus {
+    border-color: #ef4444;
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.12);
+}
+
+.sbi-sidebar__section {
+    margin-top: 1.25rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid #f1f5f9;
+}
+
+.sbi-sidebar__section-title {
+    margin: 0 0 0.75rem;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    color: #475569;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.sbi-filter-option {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    padding: 0.35rem 0;
+    cursor: pointer;
+    font-size: 0.875rem;
+    color: #334155;
+    user-select: none;
+}
+
+.sbi-filter-option input {
+    width: 1rem;
+    height: 1rem;
+    accent-color: #ef4444;
+    cursor: pointer;
+}
+
+.sbi-sidebar__clear {
+    display: block;
+    width: 100%;
+    margin-top: 1rem;
+    padding: 0.55rem 0.875rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.375rem;
+    background: #fff;
+    color: #475569;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+}
+
+.sbi-sidebar__clear:hover {
+    background: #f8fafc;
+    border-color: #cbd5e1;
+}
+
+.sbi-sidebar__link {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.45rem 0;
+    color: #334155;
+    font-size: 0.875rem;
+    font-weight: 500;
+    text-decoration: none;
+}
+
+.sbi-sidebar__link:hover {
+    color: #b91c1c;
+}
+
+.sbi-sidebar__link--safe {
+    color: #047857;
+    font-weight: 600;
+}
+
+.sbi-main__heading {
+    margin: 0 0 0.35rem;
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: #0f172a;
+}
+
+.sbi-results-count {
+    margin: 0 0 1rem;
+    font-size: 0.875rem;
+    color: #64748b;
+}
+
+.sbi-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+@media (min-width: 640px) {
+    .sbi-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (min-width: 1100px) {
+    .sbi-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+.sbi-card {
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+    border: 1px solid #fecaca;
+    border-radius: 0.75rem;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
+    transition: box-shadow 0.15s, transform 0.15s;
+}
+
+.sbi-card:hover {
+    box-shadow: 0 8px 24px rgba(185, 28, 28, 0.08);
+    transform: translateY(-1px);
+}
+
+.sbi-card.is-hidden {
+    display: none;
+}
+
+.sbi-card__head {
+    display: flex;
+    align-items: center;
+    gap: 0.875rem;
+    padding: 1rem 1rem 0.75rem;
+}
+
+.sbi-card__logo {
+    flex-shrink: 0;
+    width: 3rem;
+    height: 3rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.625rem;
+    background: #f8fafc;
+    overflow: hidden;
+}
+
+.sbi-card__logo img {
+    width: 2.25rem;
+    height: 2.25rem;
+    object-fit: contain;
+    filter: grayscale(1);
+    opacity: 0.85;
+}
+
+.sbi-card__logo-fallback {
+    font-size: 1.125rem;
+    font-weight: 800;
+    color: #94a3b8;
+}
+
+.sbi-card__identity {
+    min-width: 0;
+}
+
+.sbi-card__name {
+    display: block;
+    font-size: 1rem;
+    font-weight: 700;
+    color: #0f172a;
+    text-decoration: none;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.sbi-card__name:hover {
+    color: #b91c1c;
+}
+
+.sbi-card__badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    margin-top: 0.25rem;
+    padding: 0.15rem 0.5rem;
+    border-radius: 999px;
+    background: #fef2f2;
+    color: #b91c1c;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+}
+
+.sbi-card__body {
+    padding: 0 1rem 1rem;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.sbi-card__reason {
+    margin: 0 0 0.875rem;
+    font-size: 0.8125rem;
+    line-height: 1.55;
+    color: #475569;
+    flex: 1;
+}
+
+.sbi-card__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.375rem;
+    margin-bottom: 0.875rem;
+}
+
+.sbi-card__tag {
+    padding: 0.15rem 0.45rem;
+    border-radius: 0.25rem;
+    background: #fff1f2;
+    color: #be123c;
+    font-size: 0.6875rem;
+    font-weight: 600;
+}
+
+.sbi-card__meta {
+    display: grid;
+    gap: 0.35rem;
+    margin-bottom: 1rem;
+    font-size: 0.8125rem;
+}
+
+.sbi-card__meta-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 0.75rem;
+}
+
+.sbi-card__meta-label {
+    color: #64748b;
+    flex-shrink: 0;
+}
+
+.sbi-card__meta-value {
+    color: #0f172a;
+    font-weight: 600;
+    text-align: right;
+}
+
+.sbi-card__meta-value--danger {
+    color: #b91c1c;
+}
+
+.sbi-card__actions {
+    margin-top: auto;
+    padding-top: 0.875rem;
+    border-top: 1px solid #f1f5f9;
+}
+
+.sbi-card__cta {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.375rem;
+    width: 100%;
+    padding: 0.65rem 1rem;
+    border-radius: 0.5rem;
+    background: #dc2626;
+    color: #fff;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    text-decoration: none;
+    text-transform: uppercase;
+    transition: background 0.15s;
+}
+
+.sbi-card__cta:hover {
+    background: #b91c1c;
+    color: #fff;
+}
+
+.sbi-empty {
+    padding: 3rem 1.5rem;
+    text-align: center;
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.75rem;
+}
+
+.sbi-empty__icon {
+    width: 3.5rem;
+    height: 3.5rem;
+    margin: 0 auto 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    background: #ecfdf5;
+    color: #059669;
+    font-size: 1.5rem;
+}
+
+.sbi-empty__title {
+    margin: 0 0 0.35rem;
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: #0f172a;
+}
+
+.sbi-empty__text {
+    margin: 0;
+    font-size: 0.875rem;
+    color: #64748b;
+}
+
+.sbi-empty__text a {
+    color: #b91c1c;
+    font-weight: 600;
+}
+
+.sbi-empty.is-hidden {
+    display: none;
+}
+
+.sbi-tips {
+    margin-top: 2rem;
+    padding: 1.5rem;
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.75rem;
+}
+
+.sbi-tips__title {
+    margin: 0 0 1.25rem;
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: #0f172a;
+}
+
+.sbi-tips__grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+}
+
+@media (min-width: 768px) {
+    .sbi-tips__grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+.sbi-tip {
+    padding: 1rem;
+    border-radius: 0.625rem;
+    background: #fff1f2;
+    border: 1px solid #fecdd3;
+}
+
+.sbi-tip__title {
+    margin: 0 0 0.35rem;
+    font-size: 0.9375rem;
+    font-weight: 700;
+    color: #881337;
+}
+
+.sbi-tip__text {
+    margin: 0;
+    font-size: 0.8125rem;
+    line-height: 1.55;
+    color: #9f1239;
+}
+
+.sbi-tips__cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 1.25rem;
+    padding: 0.65rem 1.125rem;
+    border-radius: 999px;
+    background: #059669;
+    color: #fff;
+    font-size: 0.875rem;
+    font-weight: 700;
+    text-decoration: none;
+    transition: background 0.15s;
+}
+
+.sbi-tips__cta:hover {
+    background: #047857;
+    color: #fff;
+}
+
+.is-hidden {
+    display: none !important;
+}

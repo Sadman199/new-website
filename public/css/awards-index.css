@@ -1,0 +1,370 @@
+/* Awards index */
+.awi-page {
+    background: #f4f6f8;
+    color: #0f172a;
+    min-height: 100vh;
+    padding: 5rem 0 3rem;
+}
+
+.awi-wrap {
+    width: min(100% - 2rem, 68rem);
+    margin: 0 auto;
+}
+
+.awi-hero {
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
+.awi-hero__badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    margin-bottom: 0.75rem;
+    padding: 0.35rem 0.875rem;
+    border-radius: 999px;
+    background: linear-gradient(135deg, #fef3c7, #fde68a);
+    border: 1px solid #fcd34d;
+    color: #92400e;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.awi-hero__title {
+    margin: 0 0 0.5rem;
+    font-size: clamp(1.875rem, 4vw, 2.5rem);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    color: #0f172a;
+}
+
+.awi-hero__subtitle {
+    margin: 0 auto;
+    max-width: 42rem;
+    font-size: clamp(1rem, 2.2vw, 1.25rem);
+    font-weight: 500;
+    line-height: 1.55;
+    color: #475569;
+}
+
+.awi-stats {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+    margin-bottom: 2rem;
+}
+
+@media (min-width: 640px) {
+    .awi-stats {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+.awi-stat {
+    padding: 1rem;
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.75rem;
+    text-align: center;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
+}
+
+.awi-stat__value {
+    display: block;
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: #0f172a;
+    line-height: 1.2;
+}
+
+.awi-stat__label {
+    display: block;
+    margin-top: 0.25rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+.awi-layout {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    align-items: start;
+}
+
+@media (min-width: 1024px) {
+    .awi-layout {
+        grid-template-columns: 220px 1fr;
+        gap: 2rem;
+    }
+}
+
+.awi-sidebar {
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.75rem;
+    padding: 1.25rem;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
+}
+
+@media (min-width: 1024px) {
+    .awi-sidebar {
+        position: sticky;
+        top: 5.5rem;
+    }
+}
+
+.awi-sidebar__title {
+    margin: 0 0 0.75rem;
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: #0f172a;
+}
+
+.awi-sidebar__search {
+    width: 100%;
+    height: 2.5rem;
+    padding: 0 0.875rem;
+    border: 1px solid #cbd5e1;
+    border-radius: 0.375rem;
+    font-size: 0.875rem;
+    outline: none;
+}
+
+.awi-sidebar__search:focus {
+    border-color: #d97706;
+    box-shadow: 0 0 0 3px rgba(217, 119, 6, 0.12);
+}
+
+.awi-sidebar__section {
+    margin-top: 1.25rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid #f1f5f9;
+}
+
+.awi-sidebar__link {
+    display: block;
+    padding: 0.4rem 0;
+    color: #334155;
+    font-size: 0.875rem;
+    font-weight: 500;
+    text-decoration: none;
+}
+
+.awi-sidebar__link:hover {
+    color: #b45309;
+}
+
+.awi-main__heading {
+    margin: 0 0 0.35rem;
+    font-size: 1.125rem;
+    font-weight: 700;
+}
+
+.awi-results-count {
+    margin: 0 0 1rem;
+    font-size: 0.875rem;
+    color: #64748b;
+}
+
+.awi-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+@media (min-width: 640px) {
+    .awi-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (min-width: 1100px) {
+    .awi-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+.awi-card {
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.75rem;
+    overflow: hidden;
+    text-decoration: none;
+    color: inherit;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
+    transition: box-shadow 0.15s, transform 0.15s, border-color 0.15s;
+}
+
+.awi-card:hover {
+    border-color: #fcd34d;
+    box-shadow: 0 8px 24px rgba(217, 119, 6, 0.1);
+    transform: translateY(-1px);
+}
+
+.awi-card.is-hidden {
+    display: none;
+}
+
+.awi-card__head {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.875rem;
+    padding: 1rem 1rem 0.75rem;
+}
+
+.awi-card__icon {
+    flex-shrink: 0;
+    width: 2.75rem;
+    height: 2.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.625rem;
+    background: linear-gradient(135deg, #fef3c7, #fde68a);
+    color: #92400e;
+    font-size: 1.25rem;
+}
+
+.awi-card__identity {
+    min-width: 0;
+}
+
+.awi-card__name {
+    margin: 0 0 0.25rem;
+    font-size: 1rem;
+    font-weight: 700;
+    color: #0f172a;
+}
+
+.awi-card__count {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #b45309;
+}
+
+.awi-card__body {
+    padding: 0 1rem 1rem;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.awi-card__desc {
+    margin: 0 0 0.875rem;
+    font-size: 0.8125rem;
+    line-height: 1.55;
+    color: #475569;
+    flex: 1;
+}
+
+.awi-card__logos {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    margin-bottom: 0.875rem;
+}
+
+.awi-card__logo {
+    width: 2rem;
+    height: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.375rem;
+    background: #f8fafc;
+    overflow: hidden;
+}
+
+.awi-card__logo img {
+    width: 1.5rem;
+    height: 1.5rem;
+    object-fit: contain;
+}
+
+.awi-card__logo-fallback {
+    font-size: 0.6875rem;
+    font-weight: 800;
+    color: #94a3b8;
+}
+
+.awi-card__cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    color: #b45309;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+}
+
+.awi-empty {
+    padding: 3rem 1.5rem;
+    text-align: center;
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.75rem;
+}
+
+.awi-empty.is-hidden,
+.is-hidden {
+    display: none !important;
+}
+
+.awi-methodology {
+    margin-top: 2rem;
+    padding: 1.5rem;
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.75rem;
+}
+
+.awi-methodology__title {
+    margin: 0 0 1rem;
+    font-size: 1.25rem;
+    font-weight: 800;
+}
+
+.awi-methodology__grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.875rem;
+}
+
+@media (min-width: 768px) {
+    .awi-methodology__grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+.awi-pillar {
+    padding: 1rem;
+    border-radius: 0.625rem;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+}
+
+.awi-pillar__title {
+    margin: 0 0 0.35rem;
+    font-size: 0.9375rem;
+    font-weight: 700;
+    color: #0f172a;
+}
+
+.awi-pillar__text {
+    margin: 0;
+    font-size: 0.8125rem;
+    line-height: 1.55;
+    color: #64748b;
+}
