@@ -1,0 +1,74 @@
+@extends('admin.layout.app')
+
+@section('heading', 'Edit Author')
+
+@section('button')
+<a href="{{ route('admin_author_show') }}" class="btn btn-primary"><i class="fas fa-eye"></i> View</a>
+@endsection
+
+@section('main_content')
+<div class="section-body py-4">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="card shadow-sm border-0">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0">Update Author</h5>
+                    </div>
+                    <div class="card-body">
+                        <form action="{{ route('admin_author_update', $author_data->id) }}" method="post" enctype="multipart/form-data">
+                            @csrf
+                            @method('PUT')
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="font-weight-bold">Existing Photo</label>
+                                        <div class="mb-3">
+                                            <img src="{{ $author_data->photoUrl() }}" alt="Author Photo" class="img-fluid rounded" style="max-width: 100px; max-height: 100px; object-fit: cover;">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="font-weight-bold">Change Photo</label>
+                                        <div class="custom-file">
+                                            <input type="file" class="custom-file-input" id="photo" name="photo">
+                                            <label class="custom-file-label" for="photo">Choose file</label>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="font-weight-bold">Name <span class="text-danger">*</span></label>
+                                        <input type="text" class="form-control" name="name" value="{{ old('name', $author_data->name) }}" placeholder="Enter author name" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="font-weight-bold">Email <span class="text-danger">*</span></label>
+                                        <input type="email" class="form-control" name="email" value="{{ old('email', $author_data->email) }}" placeholder="Enter email address" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="font-weight-bold">Password</label>
+                                        <input type="password" class="form-control" name="password" placeholder="Enter new password (leave blank to keep current)">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="font-weight-bold">Retype Password</label>
+                                        <input type="password" class="form-control" name="retype_password" placeholder="Retype new password">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="font-weight-bold">Bio</label>
+                                        <textarea class="form-control" name="bio" rows="3" placeholder="Short author bio (optional)">{{ old('bio', $author_data->bio) }}</textarea>
+                                    </div>
+                                </div>
+                            </div>
+
+                            @include('admin.authors._role_fields', ['author' => $author_data])
+                            <!-- Submit Button -->
+                            <div class="form-group text-center mt-4">
+                                <button type="submit" class="btn btn-primary btn-lg px-5">Update Author</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@endsection

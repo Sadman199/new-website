@@ -1,0 +1,575 @@
+/* Best broker guide — BrokerChooser-inspired layout */
+.bbg-page {
+    background: #f4f6f8;
+    padding: 5.5rem 0 3rem;
+}
+
+.bbg-container {
+    width: min(100% - 2rem, 72rem);
+    margin: 0 auto;
+}
+
+.bbg-breadcrumb {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.4rem;
+    margin-bottom: 1.25rem;
+    font-size: 0.8125rem;
+    color: #64748b;
+}
+
+.bbg-breadcrumb a {
+    color: #475569;
+    text-decoration: none;
+}
+
+.bbg-breadcrumb a:hover {
+    color: #0f172a;
+}
+
+.bbg-hero {
+    margin-bottom: 1.75rem;
+}
+
+.bbg-hero__eyebrow {
+    margin: 0 0 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: #64748b;
+}
+
+.bbg-hero__title {
+    margin: 0 0 0.75rem;
+    font-size: clamp(1.75rem, 4vw, 2.375rem);
+    font-weight: 800;
+    line-height: 1.15;
+    letter-spacing: -0.03em;
+    color: #0f172a;
+}
+
+.bbg-hero__lead {
+    max-width: 46rem;
+    margin: 0 0 0.75rem;
+    font-size: 1.0625rem;
+    line-height: 1.65;
+    color: #334155;
+}
+
+.bbg-hero__method-link {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #ea580c;
+    text-decoration: none;
+}
+
+.bbg-hero__method-link:hover {
+    text-decoration: underline;
+}
+
+.bbg-layout {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    align-items: start;
+}
+
+@media (min-width: 1024px) {
+    .bbg-layout {
+        grid-template-columns: 15rem minmax(0, 1fr);
+    }
+}
+
+.bbg-sidebar__inner {
+    position: sticky;
+    top: 5.5rem;
+    padding: 1rem;
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.875rem;
+}
+
+.bbg-sidebar__label {
+    margin: 0 0 0.75rem;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #64748b;
+}
+
+.bbg-toc {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.bbg-toc li + li {
+    margin-top: 0.35rem;
+}
+
+.bbg-toc__link {
+    display: block;
+    padding: 0.35rem 0;
+    font-size: 0.8125rem;
+    line-height: 1.4;
+    color: #475569;
+    text-decoration: none;
+}
+
+.bbg-toc__link:hover,
+.bbg-toc__link.is-active {
+    color: #ea580c;
+}
+
+.bbg-main {
+    min-width: 0;
+}
+
+.bbg-scoreboard {
+    margin-bottom: 1.25rem;
+}
+
+.bbg-scoreboard__grid {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(8.5rem, 1fr);
+    gap: 0.75rem;
+    overflow-x: auto;
+    padding-bottom: 0.25rem;
+}
+
+.bbg-score-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1rem 0.75rem;
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.875rem;
+    text-decoration: none;
+    color: inherit;
+    transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.bbg-score-card:hover {
+    border-color: #fdba74;
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+}
+
+.bbg-score-card__rank {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #94a3b8;
+}
+
+.bbg-score-card__logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 3.5rem;
+    height: 2.5rem;
+    margin: 0.5rem 0;
+}
+
+.bbg-score-card__logo img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+.bbg-score-card__logo span {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 999px;
+    background: #f1f5f9;
+    font-weight: 700;
+    color: #64748b;
+}
+
+.bbg-score-card__name {
+    margin: 0;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    text-align: center;
+}
+
+.bbg-score-card__metric {
+    margin: 0.35rem 0 0;
+    font-size: 0.625rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: #64748b;
+}
+
+.bbg-score-card__score {
+    margin: 0.15rem 0 0;
+    font-size: 1.125rem;
+    font-weight: 800;
+    color: #0f172a;
+}
+
+.bbg-intro,
+.bbg-section,
+.bbg-spotlight,
+.bbg-broker-card,
+.bbg-cta {
+    margin-bottom: 1.25rem;
+    padding: 1.25rem;
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 1rem;
+}
+
+.bbg-intro p,
+.bbg-section__text,
+.bbg-broker-card__summary,
+.bbg-disclaimer {
+    margin: 0 0 1rem;
+    font-size: 0.9375rem;
+    line-height: 1.65;
+    color: #475569;
+}
+
+.bbg-intro__list {
+    margin: 0;
+    padding-left: 1.1rem;
+    color: #334155;
+}
+
+.bbg-intro__list li + li {
+    margin-top: 0.5rem;
+}
+
+.bbg-section__title {
+    margin: 0 0 0.75rem;
+    font-size: 1.375rem;
+    font-weight: 800;
+    line-height: 1.25;
+    letter-spacing: -0.02em;
+    color: #0f172a;
+}
+
+.bbg-table-caption {
+    margin: 0 0 0.75rem;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: #64748b;
+}
+
+.bbg-table-wrap {
+    overflow-x: auto;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.75rem;
+}
+
+.bbg-table {
+    width: 100%;
+    min-width: 42rem;
+    border-collapse: collapse;
+    font-size: 0.8125rem;
+}
+
+.bbg-table th,
+.bbg-table td {
+    padding: 0.75rem 0.875rem;
+    border-bottom: 1px solid #eef2f7;
+    text-align: left;
+    vertical-align: top;
+}
+
+.bbg-table thead th {
+    background: #f8fafc;
+    font-weight: 700;
+    color: #0f172a;
+}
+
+.bbg-table tbody th {
+    min-width: 9rem;
+    font-weight: 600;
+    color: #475569;
+    background: #fcfdfe;
+}
+
+.bbg-table tbody tr:last-child th,
+.bbg-table tbody tr:last-child td {
+    border-bottom: 0;
+}
+
+.bbg-table-broker {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.35rem;
+    min-width: 5.5rem;
+    color: inherit;
+    text-decoration: none;
+}
+
+.bbg-table-broker img {
+    max-width: 4rem;
+    max-height: 1.75rem;
+    object-fit: contain;
+}
+
+.bbg-table-broker span {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-align: center;
+}
+
+.bbg-spotlight {
+    background: linear-gradient(135deg, #fff7ed, #ffffff);
+    border-color: #fed7aa;
+}
+
+.bbg-spotlight__badge {
+    display: inline-flex;
+    margin-bottom: 0.75rem;
+    padding: 0.25rem 0.625rem;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: #9a3412;
+    background: #ffedd5;
+    border-radius: 999px;
+}
+
+.bbg-spotlight__brand {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.bbg-spotlight__brand img {
+    max-width: 5rem;
+    max-height: 2.5rem;
+    object-fit: contain;
+}
+
+.bbg-spotlight__title {
+    margin: 0 0 0.25rem;
+    font-size: 1rem;
+    font-weight: 700;
+    color: #0f172a;
+}
+
+.bbg-spotlight__name {
+    margin: 0;
+    font-size: 1.125rem;
+    font-weight: 800;
+    color: #c2410c;
+}
+
+.bbg-spotlight__points {
+    margin: 0 0 1rem;
+    padding-left: 1.1rem;
+    color: #334155;
+}
+
+.bbg-spotlight__points li + li {
+    margin-top: 0.35rem;
+}
+
+.bbg-spotlight__actions,
+.bbg-broker-card__actions,
+.bbg-cta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+}
+
+.bbg-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 2.75rem;
+    padding: 0 1rem;
+    font-size: 0.875rem;
+    font-weight: 700;
+    border-radius: 0.625rem;
+    text-decoration: none;
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+
+.bbg-btn--primary {
+    color: #fff;
+    background: #ea580c;
+}
+
+.bbg-btn--primary:hover {
+    background: #c2410c;
+}
+
+.bbg-btn--ghost {
+    color: #0f172a;
+    background: #fff;
+    border: 1px solid #cbd5e1;
+}
+
+.bbg-btn--ghost:hover {
+    border-color: #94a3b8;
+}
+
+.bbg-broker-card__head {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 0.75rem;
+}
+
+.bbg-broker-card__rank {
+    flex-shrink: 0;
+    width: 2.5rem;
+    height: 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.875rem;
+    font-weight: 800;
+    color: #fff;
+    background: #0f172a;
+    border-radius: 0.625rem;
+}
+
+.bbg-broker-card__brand {
+    display: flex;
+    align-items: center;
+    gap: 0.875rem;
+    min-width: 0;
+}
+
+.bbg-broker-card__brand img {
+    max-width: 4.5rem;
+    max-height: 2rem;
+    object-fit: contain;
+}
+
+.bbg-broker-card__title {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: #0f172a;
+}
+
+.bbg-broker-card__score {
+    margin: 0.2rem 0 0;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: #64748b;
+}
+
+.bbg-broker-card__recommended {
+    margin: 0 0 0.75rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #334155;
+}
+
+.bbg-broker-card__facts {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem;
+    margin: 0 0 1rem;
+    padding: 0;
+    list-style: none;
+}
+
+.bbg-broker-card__facts li {
+    padding: 0.75rem;
+    background: #f8fafc;
+    border: 1px solid #eef2f7;
+    border-radius: 0.625rem;
+}
+
+.bbg-broker-card__facts span {
+    display: block;
+    margin-bottom: 0.2rem;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: #64748b;
+}
+
+.bbg-broker-card__facts strong {
+    font-size: 0.875rem;
+    color: #0f172a;
+}
+
+.bbg-checklist {
+    margin: 0;
+    padding-left: 1.1rem;
+    color: #334155;
+}
+
+.bbg-checklist li + li {
+    margin-top: 0.45rem;
+}
+
+.bbg-accordion__item {
+    border-top: 1px solid #e2e8f0;
+}
+
+.bbg-accordion__item:first-child {
+    border-top: 0;
+}
+
+.bbg-accordion__item summary {
+    padding: 0.9rem 0;
+    font-size: 0.9375rem;
+    font-weight: 700;
+    color: #0f172a;
+    cursor: pointer;
+    list-style: none;
+}
+
+.bbg-accordion__item summary::-webkit-details-marker {
+    display: none;
+}
+
+.bbg-accordion__item p {
+    margin: 0 0 1rem;
+    font-size: 0.9375rem;
+    line-height: 1.65;
+    color: #475569;
+}
+
+.bbg-disclaimer {
+    margin-bottom: 0;
+    font-size: 0.8125rem;
+}
+
+.bbg-main--full {
+    grid-column: 1 / -1;
+}
+
+.bbg-empty {
+    margin-bottom: 1.25rem;
+    padding: 1.5rem;
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 1rem;
+}
+
+@media (max-width: 767px) {
+    .bbg-page {
+        padding-top: 5rem;
+    }
+
+    .bbg-sidebar {
+        display: none;
+    }
+
+    .bbg-broker-card__facts {
+        grid-template-columns: 1fr;
+    }
+}
