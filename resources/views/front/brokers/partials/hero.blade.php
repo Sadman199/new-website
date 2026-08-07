@@ -16,19 +16,22 @@
     $marketsLabel = $broker->marketList()
         ? implode(', ', array_map('ucfirst', $broker->marketList()))
         : null;
+    $guidePage = $reviewPageMeta ?? ['updated_at' => ''];
 @endphp
 
-<section class="br-hero" id="gettingstarted">
-    <div class="br-container">
-        <nav class="br-hero__breadcrumb" aria-label="Breadcrumb">
+<header class="bbg-hero br-hero" id="gettingstarted">
+    <div class="bbg-container">
+        <nav class="bbg-breadcrumb" aria-label="Breadcrumb">
             <a href="{{ route('home') }}">Home</a>
-            <span>/</span>
+            <span aria-hidden="true">/</span>
             <a href="{{ route('broker.reviews.index') }}">Broker Reviews</a>
-            <span>/</span>
+            <span aria-hidden="true">/</span>
             <span>{{ $broker->name }}</span>
         </nav>
 
-        <div class="br-hero__top">
+        <p class="bbg-hero__eyebrow">Independent broker review</p>
+
+        <div class="br-hero__head">
             <div class="br-hero__identity">
                 <div class="br-hero__logo">
                     @if($broker->logo)
@@ -37,11 +40,14 @@
                         <span class="br-hero__logo-fallback">{{ strtoupper(substr($broker->name, 0, 2)) }}</span>
                     @endif
                 </div>
-                <div>
-                    <h1 class="br-hero__title">{{ $broker->title ?: $broker->name . ' Review' }}</h1>
+
+                <div class="br-hero__intro">
+                    <h1 class="bbg-hero__title">{{ $broker->title ?: $broker->name . ' Review' }}</h1>
+
                     @if($broker->short_description)
                         <p class="br-hero__subtitle">{!! Str::limit(strip_tags($broker->short_description), 220) !!}</p>
                     @endif
+
                     <div class="br-hero__badges">
                         @if($broker->is_scam)
                             <span class="br-badge br-badge--danger">High Risk</span>
@@ -58,7 +64,7 @@
             </div>
 
             <div class="br-hero__score-wrap">
-                <div class="br-hero__score-ring">
+                <div class="br-hero__score-ring" aria-label="Overall score {{ number_format($rating, 1) }} out of 10">
                     <span class="br-hero__score-value">{{ number_format($rating, 1) }}</span>
                     <span class="br-hero__score-label">Score</span>
                 </div>
@@ -67,6 +73,11 @@
                 @endif
             </div>
         </div>
+
+        @include('front.brokers.partials.best_guide_hero_author', [
+            'editorialTeam' => $editorialTeam ?? [],
+            'guidePage' => $guidePage,
+        ])
 
         <div class="br-hero__meta">
             @if($broker->year_founded)
@@ -108,7 +119,7 @@
                 Try demo
             </a>
             @endif
-            <a href="#compare" class="br-btn br-btn--secondary">Compare brokers</a>
+            <a href="#compare" class="br-btn br-btn--ghost">Compare brokers</a>
         </div>
 
         @if(!empty($categoryScores))
@@ -128,4 +139,4 @@
         </div>
         @endif
     </div>
-</section>
+</header>

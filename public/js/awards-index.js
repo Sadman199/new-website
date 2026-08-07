@@ -34,7 +34,7 @@
         }
 
         if (resultsCount) {
-            resultsCount.textContent = visible + ' award categor' + (visible === 1 ? 'y' : 'ies') + ' shown';
+            resultsCount.textContent = visible + ' ' + (visible === 1 ? 'category' : 'categories') + ' shown';
         }
     }
 

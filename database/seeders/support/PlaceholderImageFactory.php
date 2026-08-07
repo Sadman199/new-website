@@ -6,7 +6,7 @@ class PlaceholderImageFactory
 {
     public static function ensureDirectories(): void
     {
-        foreach (['uploads/placeholders', 'uploads/logos', 'uploads/forex_bonuses', 'uploads/authors'] as $dir) {
+        foreach (['uploads/placeholders', 'uploads/logos', 'uploads/forex_bonuses', 'uploads/authors', 'uploads/prop-firms'] as $dir) {
             $path = public_path($dir);
             if (! is_dir($path)) {
                 mkdir($path, 0755, true);
@@ -65,6 +65,32 @@ class PlaceholderImageFactory
         }
 
         return 'authors/' . $filename;
+    }
+
+    public static function propFirmLogo(string $slug, string $label, string $color = '#007AAD'): string
+    {
+        self::ensureDirectories();
+        $relative = 'uploads/prop-firms/logo-' . $slug . '.svg';
+        $path = public_path($relative);
+
+        if (! file_exists($path)) {
+            file_put_contents($path, self::svg(self::initials($label), $color, 120, 120));
+        }
+
+        return $relative;
+    }
+
+    public static function propFirmCover(string $slug, string $label, string $color = '#1e3a5f'): string
+    {
+        self::ensureDirectories();
+        $relative = 'uploads/prop-firms/cover-' . $slug . '.svg';
+        $path = public_path($relative);
+
+        if (! file_exists($path)) {
+            file_put_contents($path, self::svg($label, $color, 1200, 400, 28));
+        }
+
+        return $relative;
     }
 
     public static function brokerBanner(string $slug, string $label, int $variant = 1): string

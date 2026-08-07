@@ -68,19 +68,15 @@ function initScrollToTop() {
         initScrollToTop();
     });
 
- $(document).ready(function () {
-        $('.faq-question').on('click', function () {
-            const $answer = $(this).next('.faq-answer');
-            const $icon = $(this).find('.rotate-icon');
+ $(document).on('click', '.faq-question', function () {
+        const $answer = $(this).next('.faq-answer');
+        const $icon = $(this).find('.rotate-icon');
 
-            // Toggle the selected answer
-            $answer.slideToggle(200);
-            $icon.toggleClass('rotate-180');
+        $answer.slideToggle(200);
+        $icon.toggleClass('rotate-180');
 
-            // Optionally close others
-            $('.faq-answer').not($answer).slideUp(200);
-            $('.rotate-icon').not($icon).removeClass('rotate-180');
-        });
+        $('.faq-answer').not($answer).slideUp(200);
+        $('.rotate-icon').not($icon).removeClass('rotate-180');
     });
     
     // FAQ for broker details

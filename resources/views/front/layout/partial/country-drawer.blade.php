@@ -232,13 +232,12 @@
     }
     .bc-country-nav-label {
         display: none;
-        font-size: 13px;
-        font-weight: 600;
+        font-size: 12px;
+        font-weight: 700;
         color: #374151;
-        max-width: 88px;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
+        letter-spacing: 0.02em;
+        min-width: 1.75rem;
+        text-align: center;
     }
     @media (min-width: 1280px) {
         .bc-country-nav-label {
@@ -301,6 +300,7 @@
                         data-country="{{ $slug }}"
                         data-name="{{ $country['name'] }}"
                         data-code="{{ $country['code'] ?? '' }}"
+                        data-shortcode="{{ \App\Support\BrokerTaxonomy::countryShortcode($slug, $country['code'] ?? null) }}"
                         role="option"
                         aria-selected="{{ ($preferredCountry['slug'] ?? 'global') === $slug ? 'true' : 'false' }}">
                     <span class="bc-country-option-flag" aria-hidden="true">
@@ -379,7 +379,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if (navFlag) {
             navFlag.innerHTML = flagMarkup(match.dataset.code || '', 20);
         }
-        if (navLabel) navLabel.textContent = match.dataset.name || 'Global';
+        if (navLabel) navLabel.textContent = match.dataset.shortcode || match.dataset.code?.toUpperCase() || 'GL';
         if (openBtn) {
             openBtn.setAttribute('aria-label', 'Select country: ' + (match.dataset.name || 'Global'));
             openBtn.setAttribute('title', match.dataset.name || 'Global');

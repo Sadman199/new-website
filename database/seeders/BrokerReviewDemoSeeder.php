@@ -62,6 +62,8 @@ class BrokerReviewDemoSeeder extends Seeder
                 'can_edit' => false,
                 'can_fact_check' => false,
                 'bio' => 'Senior forex analyst with 12+ years covering global brokers, regulation, and trading costs.',
+                'twitter_url' => 'https://twitter.com/brokerscourt',
+                'linkedin_url' => 'https://www.linkedin.com/company/brokerscourt',
             ]
         );
 
@@ -76,6 +78,7 @@ class BrokerReviewDemoSeeder extends Seeder
                 'can_edit' => true,
                 'can_fact_check' => false,
                 'bio' => 'Markets editor focused on platform usability, account structures, and broker comparisons.',
+                'linkedin_url' => 'https://www.linkedin.com/company/brokerscourt',
             ]
         );
 
@@ -90,6 +93,8 @@ class BrokerReviewDemoSeeder extends Seeder
                 'can_edit' => false,
                 'can_fact_check' => true,
                 'bio' => 'Compliance researcher who verifies regulatory claims, fee tables, and safety disclosures.',
+                'linkedin_url' => 'https://www.linkedin.com/company/brokerscourt',
+                'twitter_url' => 'https://twitter.com/brokerscourt',
             ]
         );
 

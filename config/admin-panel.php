@@ -24,6 +24,7 @@ return [
                 ['route' => 'admin.panel.brokers.edit', 'icon' => 'fas fa-edit', 'label' => 'Broker Details', 'params' => ['broker' => 'latest'], 'hidden' => true],
                 ['route' => 'admin.panel.account-options.index', 'icon' => 'fas fa-layer-group', 'label' => 'Account Options'],
                 ['route' => 'admin.panel.scam-brokers.index', 'icon' => 'fas fa-exclamation-triangle', 'label' => 'Scam Brokers'],
+                ['route' => 'admin.panel.broker-reports.index', 'icon' => 'fas fa-shield-alt', 'label' => 'Safety Reports'],
             ],
         ],
         [

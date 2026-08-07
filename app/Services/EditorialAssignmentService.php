@@ -158,19 +158,10 @@ class EditorialAssignmentService
             $adminId = $model->{$role . '_by_admin_id'} ?? null;
 
             if ($authorId) {
-                $relation = self::authorRelationName($role);
-                $author = ($relation && $model->relationLoaded($relation) && $model->{$relation})
-                    ? $model->{$relation}
-                    : Author::query()->find($authorId);
+                $author = self::authorWithCounts((int) $authorId);
 
                 if ($author) {
-                    $team[] = [
-                        'role' => $role,
-                        'label' => $label,
-                        'name' => $author->name,
-                        'bio' => $author->bio,
-                        'photo' => $author->photoUrl(),
-                    ];
+                    $team[] = self::serializeGuideAuthor($author, $role, $label);
                     continue;
                 }
             }
@@ -188,6 +179,12 @@ class EditorialAssignmentService
                         'name' => $admin->name,
                         'bio' => null,
                         'photo' => null,
+                        'contributions' => [
+                            'written' => 0,
+                            'edited' => 0,
+                            'fact_checked' => 0,
+                        ],
+                        'social' => [],
                     ];
                 }
             }
@@ -234,6 +231,132 @@ class EditorialAssignmentService
     public static function primaryWriterName(Model $model): ?string
     {
         return self::resolveName($model, self::ROLE_WRITTEN);
+    }
+
+    /** @return array<int, array{role: string, label: string, name: string, bio: ?string, photo: ?string}> */
+    public static function guideTeamFor(?Model $broker = null): array
+    {
+        if ($broker instanceof Model) {
+            $team = self::teamFor($broker);
+
+            if ($team !== []) {
+                return $team;
+            }
+        }
+
+        return self::defaultGuideTeam();
+    }
+
+    /** @return array<int, array{role: string, label: string, name: string}> */
+    public static function guideCreditsFor(?Model $broker = null): array
+    {
+        if ($broker instanceof Model) {
+            $credits = self::creditsFor($broker);
+
+            if ($credits !== []) {
+                return $credits;
+            }
+        }
+
+        return self::defaultGuideCredits();
+    }
+
+    /** @return array{role: string, label: string, name: string, bio: ?string, photo: ?string}|null */
+    public static function primaryGuideAuthor(?Model $broker = null): ?array
+    {
+        $team = self::guideTeamFor($broker);
+
+        foreach ($team as $member) {
+            if (($member['role'] ?? '') === self::ROLE_WRITTEN) {
+                return $member;
+            }
+        }
+
+        return $team[0] ?? null;
+    }
+
+    /** @return array<int, array{role: string, label: string, name: string, bio: ?string, photo: ?string}> */
+    public static function defaultGuideTeam(): array
+    {
+        $team = [];
+
+        foreach (self::roleLabels() as $role => $label) {
+            $author = self::defaultAuthorForRole($role);
+
+            if ($author) {
+                $team[] = self::serializeGuideAuthor($author, $role, $label);
+            }
+        }
+
+        return $team;
+    }
+
+    /** @return array<int, array{role: string, label: string, name: string}> */
+    public static function defaultGuideCredits(): array
+    {
+        $credits = [];
+
+        foreach (self::roleLabels() as $role => $label) {
+            $author = self::defaultAuthorForRole($role);
+
+            if ($author) {
+                $credits[] = [
+                    'role' => $role,
+                    'label' => $label,
+                    'name' => $author->name,
+                ];
+            }
+        }
+
+        return $credits;
+    }
+
+    protected static function defaultAuthorForRole(string $role): ?Author
+    {
+        $query = Author::query()->orderBy('name');
+
+        if ($role === self::ROLE_WRITTEN) {
+            $query->writers();
+        } elseif ($role === self::ROLE_EDITED) {
+            $query->editors();
+        } else {
+            $query->factCheckers();
+        }
+
+        return $query->withCount([
+            'postsWritten as written_posts_count',
+            'postsEdited as edited_posts_count',
+            'postsFactChecked as fact_checked_posts_count',
+        ])->first();
+    }
+
+    protected static function authorWithCounts(int $authorId): ?Author
+    {
+        return Author::query()
+            ->withCount([
+                'postsWritten as written_posts_count',
+                'postsEdited as edited_posts_count',
+                'postsFactChecked as fact_checked_posts_count',
+            ])
+            ->find($authorId);
+    }
+
+    /** @return array{role: string, label: string, name: string, bio: ?string, photo: ?string, contributions: array{written: int, edited: int, fact_checked: int}} */
+    protected static function serializeGuideAuthor(Author $author, string $role, string $label): array
+    {
+        return [
+            'role' => $role,
+            'label' => $label,
+            'name' => $author->name,
+            'bio' => $author->bio,
+            'photo' => $author->photoUrl(),
+            'contributions' => [
+                'written' => (int) ($author->written_posts_count ?? 0),
+                'edited' => (int) ($author->edited_posts_count ?? 0),
+                'fact_checked' => (int) ($author->fact_checked_posts_count ?? 0),
+            ],
+            'social' => $author->socialLinks(),
+        ];
     }
 
     protected static function authorRelationName(string $role): ?string

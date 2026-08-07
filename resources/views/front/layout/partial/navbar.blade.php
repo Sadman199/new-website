@@ -3,6 +3,10 @@ use App\Http\Controllers\Front\BrokerController;
 use App\Support\BrokerTaxonomy;
 
 $brokerCategories = BrokerTaxonomy::categories();
+$countryShortcode = $preferredCountry['shortcode'] ?? BrokerTaxonomy::countryShortcode(
+    $preferredCountry['slug'] ?? 'global',
+    $preferredCountry['code'] ?? null
+);
 
 $brokerReviews = [
     'db-investing-review' => 'DB Investing Review',
@@ -19,13 +23,25 @@ $brokerReviews = [
 @endphp
 
 <style>
-    /* BrokerChooser-inspired navigation */
+    /* Dark navy navigation — matches hero palette */
     #navbar {
+        --nav-ocean: var(--bc-primary, #007AAD);
+        --nav-ice: var(--bc-light, #D9E2E9);
+        --nav-off-white: #FFFBFC;
+        --nav-midnight: var(--bc-dark, #0C1D32);
+        --nav-panel: #132843;
+        --nav-border: rgba(217, 226, 233, 0.14);
+
         z-index: 1050;
-        background: #ffffff;
-        border-bottom: 1px solid #e5e7eb;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+        background: var(--nav-midnight);
+        box-shadow: none;
         overflow: visible;
+        border-bottom: none;
+    }
+    .bc-nav-bar {
+        border-bottom: 1px solid var(--nav-border);
+        box-shadow: 0 8px 24px -16px rgba(0, 0, 0, 0.45);
+        background: var(--nav-midnight);
     }
     .web_menu { overflow: visible; }
     .bc-site-logo {
@@ -35,32 +51,45 @@ $brokerReviews = [
         max-width: 160px;
         object-fit: contain;
     }
-    #mobileMenu { background: #ffffff; z-index: 1040; }
+    #mobileMenu {
+        background: var(--nav-midnight);
+        border-color: var(--nav-border);
+        z-index: 1040;
+    }
+    #mobileMenu .bc-mega-link {
+        color: var(--nav-ice);
+    }
+    #mobileMenu .bc-mega-link:hover {
+        color: var(--nav-off-white);
+        background: rgba(0, 122, 173, 0.16);
+    }
     #companyMenu { z-index: 1055; }
+    #toolsMenu { z-index: 1055; }
     #reviewsMegaMenu { z-index: 1045; }
     #navSearchResults, #navSearchResultsMobile { z-index: 1060; }
 
-    /* Full-width mega dropdown — frosted glass */
-    #brokersMegaMenu {
+    /* Full-width mega dropdown */
+    #brokersMegaMenu,
+    #propFirmsMegaMenu {
         position: absolute;
         left: 0;
         right: 0;
         top: 100%;
         z-index: 1045;
-        background: linear-gradient(180deg, rgba(255, 255, 255, 0.92) 0%, rgba(248, 250, 252, 0.88) 100%);
-        backdrop-filter: blur(22px) saturate(180%);
-        -webkit-backdrop-filter: blur(22px) saturate(180%);
-        border-top: 1px solid rgba(255, 255, 255, 0.65);
-        box-shadow: 0 24px 64px rgba(15, 23, 42, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+        background: linear-gradient(180deg, #0f2744 0%, var(--nav-midnight) 100%);
+        border-top: 1px solid var(--nav-border);
+        box-shadow: 0 24px 48px -16px rgba(0, 0, 0, 0.55);
         opacity: 0;
         visibility: hidden;
         transform: translateY(-8px);
-        transition: opacity 0.28s cubic-bezier(0.4, 0, 0.2, 1),
-                    transform 0.28s cubic-bezier(0.4, 0, 0.2, 1),
-                    visibility 0.28s;
+        transition: opacity 0.34s cubic-bezier(0.22, 1, 0.36, 1),
+                    transform 0.34s cubic-bezier(0.22, 1, 0.36, 1),
+                    visibility 0.34s cubic-bezier(0.22, 1, 0.36, 1);
         pointer-events: none;
+        will-change: opacity, transform;
     }
-    #brokersMegaMenu::before {
+    #brokersMegaMenu::before,
+    #propFirmsMegaMenu::before {
         content: '';
         position: absolute;
         left: 0;
@@ -68,105 +97,145 @@ $brokerReviews = [
         top: -12px;
         height: 12px;
     }
-    #brokersMegaMenu.is-open {
+    #brokersMegaMenu.is-open,
+    #propFirmsMegaMenu.is-open {
         opacity: 1;
         visibility: visible;
         transform: translateY(0);
         pointer-events: auto;
     }
-    #brokersMegaMenu .bc-mega-inner {
+    #brokersMegaMenu .bc-mega-inner,
+    #propFirmsMegaMenu .bc-mega-inner {
         max-width: 80rem;
         margin: 0 auto;
         padding: 20px 24px 18px;
     }
-    #brokersMegaMenu .bc-mega-grid {
+    #brokersMegaMenu .bc-mega-grid,
+    #propFirmsMegaMenu .bc-mega-grid {
         display: grid;
         grid-template-columns: 1.2fr 1fr 0.85fr 0.9fr;
         gap: 14px;
     }
-    #brokersMegaMenu .bc-glass-card {
-        background: rgba(255, 255, 255, 0.55);
+    #brokersMegaMenu .bc-glass-card,
+    #propFirmsMegaMenu .bc-glass-card {
+        background: rgba(19, 40, 67, 0.72);
         backdrop-filter: blur(12px);
         -webkit-backdrop-filter: blur(12px);
-        border: 1px solid rgba(255, 255, 255, 0.85);
+        border: 1px solid var(--nav-border);
         border-radius: 16px;
         padding: 18px 16px;
-        box-shadow: 0 4px 24px rgba(15, 23, 42, 0.04), inset 0 1px 0 rgba(255, 255, 255, 1);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.22);
         min-width: 0;
     }
-    #brokersMegaMenu .bc-mega-head {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        margin-bottom: 14px;
-    }
-    #brokersMegaMenu .bc-mega-icon {
+    #brokersMegaMenu .bc-mega-icon,
+    #propFirmsMegaMenu .bc-mega-icon {
         display: inline-flex;
         align-items: center;
         justify-content: center;
         width: 32px;
         height: 32px;
         border-radius: 10px;
-        background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
-        border: 1px solid rgba(191, 219, 254, 0.6);
-        color: #2563eb;
+        background: rgba(0, 122, 173, 0.18);
+        border: 1px solid rgba(0, 122, 173, 0.35);
+        color: var(--nav-ocean);
         flex-shrink: 0;
     }
-    #brokersMegaMenu .bc-mega-icon svg {
+    #brokersMegaMenu .bc-mega-icon svg,
+    #propFirmsMegaMenu .bc-mega-icon svg {
         width: 16px;
         height: 16px;
     }
-    #brokersMegaMenu .bc-mega-title {
+    #brokersMegaMenu .bc-mega-head,
+    #propFirmsMegaMenu .bc-mega-head {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 14px;
+    }
+    #brokersMegaMenu .bc-mega-title,
+    #propFirmsMegaMenu .bc-mega-title {
         margin: 0;
         font-size: 11px;
         font-weight: 700;
         letter-spacing: 0.08em;
         text-transform: uppercase;
-        color: #64748b;
+        color: rgba(217, 226, 233, 0.72);
     }
-    #brokersMegaMenu .bc-chip-wrap {
+    #brokersMegaMenu .bc-chip-wrap,
+    #propFirmsMegaMenu .bc-chip-wrap {
         display: flex;
         flex-wrap: wrap;
         gap: 7px;
     }
-    #brokersMegaMenu .bc-chip-link {
+    #brokersMegaMenu .bc-chip-link,
+    #propFirmsMegaMenu .bc-chip-link {
         display: inline-flex;
         align-items: center;
-        gap: 5px;
+        gap: 6px;
         padding: 6px 11px;
         font-size: 12.5px;
         font-weight: 500;
-        color: #334155;
-        background: rgba(255, 255, 255, 0.72);
-        border: 1px solid rgba(226, 232, 240, 0.9);
+        color: var(--nav-ice);
+        background: rgba(12, 29, 50, 0.55);
+        border: 1px solid var(--nav-border);
         border-radius: 999px;
         text-decoration: none;
         transition: all 0.2s ease;
         white-space: nowrap;
     }
-    #brokersMegaMenu .bc-chip-link:hover {
-        color: #1d4ed8;
-        background: rgba(239, 246, 255, 0.95);
-        border-color: #bfdbfe;
-        box-shadow: 0 4px 14px rgba(37, 99, 235, 0.12);
+    #brokersMegaMenu .bc-chip-flag {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 18px;
+        height: 13px;
+        border-radius: 2px;
+        overflow: hidden;
+        flex-shrink: 0;
+        box-shadow: 0 0 0 1px rgba(15, 23, 42, 0.08);
+    }
+    #brokersMegaMenu .bc-chip-flag .bc-flag-img,
+    #brokersMegaMenu .bc-chip-flag img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    #brokersMegaMenu .bc-chip-flag .bc-flag-globe {
+        width: 14px;
+        height: 14px;
+        color: #64748b;
+    }
+    #brokersMegaMenu .bc-chip-link:hover,
+    #propFirmsMegaMenu .bc-chip-link:hover {
+        color: var(--nav-off-white);
+        background: rgba(0, 122, 173, 0.22);
+        border-color: rgba(0, 122, 173, 0.45);
+        box-shadow: 0 4px 14px rgba(0, 122, 173, 0.18);
         transform: translateY(-1px);
     }
-    #brokersMegaMenu .bc-link-list {
+    #brokersMegaMenu .bc-link-list,
+    #propFirmsMegaMenu .bc-link-list {
         display: grid;
         grid-template-columns: 1fr 1fr;
         gap: 4px 10px;
     }
-    #brokersMegaMenu .bc-link-list .bc-mega-link {
+    #brokersMegaMenu .bc-link-list .bc-mega-link,
+    #propFirmsMegaMenu .bc-link-list .bc-mega-link {
         padding: 6px 8px;
         margin: 0;
         font-size: 13px;
         border-radius: 8px;
         background: transparent;
+        color: var(--nav-ice);
     }
-    #brokersMegaMenu .bc-link-list .bc-mega-link:hover {
-        background: rgba(239, 246, 255, 0.7);
+    #brokersMegaMenu .bc-link-list .bc-mega-link:hover,
+    #propFirmsMegaMenu .bc-link-list .bc-mega-link:hover {
+        background: rgba(0, 122, 173, 0.16);
+        color: var(--nav-off-white);
     }
-    #brokersMegaMenu .bc-broker-row {
+    #brokersMegaMenu .bc-broker-row,
+    #propFirmsMegaMenu .bc-broker-row {
         display: flex;
         align-items: center;
         gap: 10px;
@@ -175,16 +244,18 @@ $brokerReviews = [
         padding: 9px 10px;
         margin: 0 0 6px;
         border-radius: 12px;
-        background: rgba(255, 255, 255, 0.5);
-        border: 1px solid rgba(241, 245, 249, 0.9);
+        background: rgba(12, 29, 50, 0.45);
+        border: 1px solid var(--nav-border);
     }
-    #brokersMegaMenu .bc-broker-row:hover {
-        background: rgba(255, 255, 255, 0.92);
-        border-color: #dbeafe;
-        box-shadow: 0 6px 20px rgba(37, 99, 235, 0.08);
+    #brokersMegaMenu .bc-broker-row:hover,
+    #propFirmsMegaMenu .bc-broker-row:hover {
+        background: rgba(0, 122, 173, 0.16);
+        border-color: rgba(0, 122, 173, 0.35);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.22);
         transform: translateY(-1px);
     }
-    #brokersMegaMenu .bc-broker-rank {
+    #brokersMegaMenu .bc-broker-rank,
+    #propFirmsMegaMenu .bc-broker-rank {
         display: inline-flex;
         align-items: center;
         justify-content: center;
@@ -192,12 +263,13 @@ $brokerReviews = [
         height: 22px;
         font-size: 11px;
         font-weight: 700;
-        color: #2563eb;
-        background: linear-gradient(135deg, #eff6ff, #dbeafe);
+        color: var(--nav-ocean);
+        background: rgba(0, 122, 173, 0.18);
         border-radius: 7px;
         flex-shrink: 0;
     }
-    #brokersMegaMenu .bc-mega-bottom {
+    #brokersMegaMenu .bc-mega-bottom,
+    #propFirmsMegaMenu .bc-mega-bottom {
         display: flex;
         align-items: center;
         justify-content: space-between;
@@ -205,28 +277,32 @@ $brokerReviews = [
         margin-top: 14px;
         padding: 14px 18px;
         border-radius: 14px;
-        background: rgba(255, 255, 255, 0.45);
-        border: 1px solid rgba(255, 255, 255, 0.8);
-        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9);
+        background: rgba(12, 29, 50, 0.55);
+        border: 1px solid var(--nav-border);
     }
-    #brokersMegaMenu .bc-mega-bottom p {
+    #brokersMegaMenu .bc-mega-bottom p,
+    #propFirmsMegaMenu .bc-mega-bottom p {
         margin: 0;
         font-size: 13px;
-        color: #64748b;
+        color: rgba(217, 226, 233, 0.78);
     }
-    #brokersMegaMenu .bc-mega-bottom .bc-btn-primary {
+    #brokersMegaMenu .bc-mega-bottom .bc-btn-primary,
+    #propFirmsMegaMenu .bc-mega-bottom .bc-btn-primary {
         border-radius: 999px;
         padding: 9px 18px;
-        box-shadow: 0 8px 24px rgba(245, 158, 11, 0.3);
+        box-shadow: 0 8px 24px rgba(0, 122, 173, 0.35);
     }
     @media (max-width: 1023px) {
-        #brokersMegaMenu { display: none !important; }
+        #brokersMegaMenu,
+        #propFirmsMegaMenu { display: none !important; }
     }
     @media (max-width: 1279px) {
-        #brokersMegaMenu .bc-mega-grid {
+        #brokersMegaMenu .bc-mega-grid,
+        #propFirmsMegaMenu .bc-mega-grid {
             grid-template-columns: 1fr 1fr;
         }
-        #brokersMegaMenu .bc-glass-card:first-child {
+        #brokersMegaMenu .bc-glass-card:first-child,
+        #propFirmsMegaMenu .bc-glass-card:first-child {
             grid-column: 1 / -1;
         }
     }
@@ -236,25 +312,87 @@ $brokerReviews = [
         align-items: center;
         gap: 3px;
         padding: 6px 8px;
+        min-height: 36px;
         font-size: 14px;
         font-weight: 500;
-        color: #1f2937;
+        color: var(--nav-ice);
         border-radius: 6px;
         transition: color 0.15s, background 0.15s;
         white-space: nowrap;
         text-decoration: none;
+        flex-shrink: 0;
+        line-height: 1.2;
     }
     .bc-nav-link:hover,
     .bc-nav-link.bc-nav-active {
-        color: #2563eb;
-        background: #eff6ff;
+        color: var(--nav-off-white);
+        background: rgba(0, 122, 173, 0.18);
     }
     .bc-nav-link-danger {
-        color: #dc2626;
+        color: #f87171;
     }
     .bc-nav-link-danger:hover {
-        color: #b91c1c !important;
-        background: #fef2f2 !important;
+        color: #fecaca !important;
+        background: rgba(248, 113, 113, 0.14) !important;
+    }
+    .bc-nav-login {
+        gap: 6px;
+    }
+    .bc-nav-login svg {
+        flex-shrink: 0;
+        width: 18px;
+        height: 18px;
+    }
+    .bc-nav-dropdown {
+        position: absolute;
+        left: 0;
+        top: 100%;
+        padding-top: 0.5rem;
+        min-width: 13rem;
+    }
+    .bc-nav-dropdown-panel {
+        background: var(--nav-panel);
+        border: 1px solid var(--nav-border);
+        box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45);
+        border-radius: 0.75rem;
+        padding: 0.375rem 0;
+        overflow: hidden;
+    }
+    .bc-nav-dropdown-link {
+        display: block;
+        padding: 0.625rem 1rem;
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: var(--nav-ice);
+        text-decoration: none;
+        transition: color 0.15s, background 0.15s;
+    }
+    .bc-nav-dropdown-link:hover {
+        color: var(--nav-off-white);
+        background: rgba(0, 122, 173, 0.18);
+    }
+    .bc-nav-dropdown-link--danger {
+        color: #f87171;
+    }
+    .bc-nav-dropdown-link--danger:hover {
+        color: #fecaca;
+        background: rgba(248, 113, 113, 0.14);
+    }
+    #reviewsMegaMenu > div,
+    #companyMenu > div {
+        background: var(--nav-panel) !important;
+        border-color: var(--nav-border) !important;
+        box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45) !important;
+    }
+    #reviewsMegaMenu {
+        transform: translateX(-12%);
+    }
+    .bc-nav-desktop {
+        overflow: visible;
+    }
+    .bc-nav-desktop > .relative,
+    .bc-nav-desktop > a.bc-nav-link {
+        flex-shrink: 0;
     }
     .bc-nav-icon-btn {
         display: inline-flex !important;
@@ -267,7 +405,7 @@ $brokerReviews = [
         padding: 0 !important;
         margin: 0 !important;
         border-radius: 10px;
-        color: #4b5563;
+        color: var(--nav-ice);
         background: transparent !important;
         border: none !important;
         box-shadow: none !important;
@@ -296,8 +434,8 @@ $brokerReviews = [
     }
     .bc-nav-icon-btn:hover,
     .bc-nav-icon-btn.is-active {
-        color: rgba(245, 158, 11, 1);
-        background: rgba(245, 158, 11, 0.1) !important;
+        color: var(--nav-off-white);
+        background: rgba(0, 122, 173, 0.18) !important;
     }
     .bc-nav-actions {
         display: flex !important;
@@ -325,10 +463,10 @@ $brokerReviews = [
         right: 0;
         width: min(340px, calc(100vw - 2rem));
         padding: 12px;
-        background: #fff;
-        border: 1px solid #e5e7eb;
+        background: var(--nav-panel);
+        border: 1px solid var(--nav-border);
         border-radius: 14px;
-        box-shadow: 0 16px 40px rgba(15, 23, 42, 0.12);
+        box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45);
         z-index: 1060;
     }
     .bc-nav-actions .bc-btn-primary {
@@ -354,7 +492,7 @@ $brokerReviews = [
         font-weight: 700;
         letter-spacing: 0.06em;
         text-transform: uppercase;
-        color: #6b7280;
+        color: rgba(217, 226, 233, 0.72);
         margin-bottom: 12px;
     }
     .bc-mega-link {
@@ -362,14 +500,14 @@ $brokerReviews = [
         padding: 7px 10px;
         margin: 0 -10px;
         font-size: 14px;
-        color: #374151;
+        color: var(--nav-ice);
         border-radius: 6px;
         transition: color 0.15s, background 0.15s;
         text-decoration: none;
     }
     .bc-mega-link:hover {
-        color: #2563eb;
-        background: #eff6ff;
+        color: var(--nav-off-white);
+        background: rgba(0, 122, 173, 0.16);
     }
     .bc-mega-footer {
         display: inline-flex;
@@ -377,45 +515,45 @@ $brokerReviews = [
         gap: 6px;
         margin-top: 16px;
         padding-top: 12px;
-        border-top: 1px solid #f3f4f6;
+        border-top: 1px solid var(--nav-border);
         font-size: 14px;
         font-weight: 600;
-        color: #2563eb;
+        color: var(--nav-ocean);
         text-decoration: none;
     }
-    .bc-mega-footer:hover { color: #1d4ed8; }
+    .bc-mega-footer:hover { color: #33a3d4; }
     .bc-btn-primary {
         display: inline-flex;
         align-items: center;
         padding: 8px 16px;
         font-size: 14px;
         font-weight: 600;
-        color: #fff;
-        background: rgba(245, 158, 11, 1);
+        color: var(--nav-off-white);
+        background: var(--nav-ocean);
         border-radius: 8px;
         transition: background 0.15s;
         text-decoration: none;
         white-space: nowrap;
     }
-    .bc-btn-primary:hover { background: rgba(217, 119, 6, 1); color: #fff; }
+    .bc-btn-primary:hover { background: var(--bc-primary-dark, #006694); color: var(--nav-off-white); }
     .bc-search-input {
         width: 100%;
         height: 38px;
         padding: 0 14px 0 38px;
         font-size: 14px;
-        color: #1f2937;
-        background: #f3f4f6;
-        border: 1px solid transparent;
+        color: var(--nav-off-white);
+        background: rgba(12, 29, 50, 0.65);
+        border: 1px solid var(--nav-border);
         border-radius: 9999px;
         outline: none;
         transition: border-color 0.15s, background 0.15s, box-shadow 0.15s;
     }
     .bc-search-input:focus {
-        background: #fff;
-        border-color: #93c5fd;
-        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+        background: rgba(12, 29, 50, 0.9);
+        border-color: rgba(0, 122, 173, 0.55);
+        box-shadow: 0 0 0 3px rgba(0, 122, 173, 0.18);
     }
-    .bc-search-input::placeholder { color: #9ca3af; }
+    .bc-search-input::placeholder { color: rgba(217, 226, 233, 0.55); }
     .bc-broker-row {
         display: flex;
         align-items: center;
@@ -426,7 +564,17 @@ $brokerReviews = [
         text-decoration: none;
         transition: background 0.15s;
     }
-    .bc-broker-row:hover { background: #f9fafb; }
+    .bc-broker-row:hover { background: rgba(0, 122, 173, 0.12); }
+    #brokersMegaMenu .bc-broker-row span.flex-1,
+    #propFirmsMegaMenu .bc-broker-row span.flex-1 {
+        color: var(--nav-off-white);
+    }
+    #mobileMenu.border-t {
+        border-color: var(--nav-border) !important;
+    }
+    .bc-country-nav-label {
+        color: var(--nav-ice) !important;
+    }
     .bc-score {
         display: inline-flex;
         align-items: center;
@@ -442,6 +590,7 @@ $brokerReviews = [
 </style>
 
 <nav class="fixed top-0 inset-x-0" id="navbar">
+    <div class="bc-nav-bar">
     <div class="max-w-7xl mx-auto px-4 lg:px-6">
         <div class="flex items-center gap-2 h-16 min-w-0">
 
@@ -450,7 +599,7 @@ $brokerReviews = [
             </a>
 
             {{-- Desktop nav --}}
-            <div class="hidden lg:flex items-center gap-0.5 flex-1 min-w-0 justify-center">
+            <div class="hidden lg:flex items-center gap-0.5 flex-1 min-w-0 justify-center bc-nav-desktop">
                 <a href="{{ route('home') }}" class="bc-nav-link">Home</a>
 
                 {{-- Best brokers trigger --}}
@@ -461,9 +610,17 @@ $brokerReviews = [
                     </button>
                 </div>
 
+                {{-- Prop firms mega menu --}}
+                <div class="relative" id="propFirmsNavGroup">
+                    <button type="button" id="propFirmsButton" class="bc-nav-link @if(Request::is('prop-firms*')) bc-nav-active @endif" aria-expanded="false" aria-controls="propFirmsMegaMenu">
+                        Prop firms
+                        <svg class="w-4 h-4 pf-chevron transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                    </button>
+                </div>
+
                 {{-- Broker reviews mega (hover) --}}
                 <div class="relative" id="reviewsNavGroup">
-                    <a href="{{ route('broker.reviews.index') }}" id="reviewsNavLink" class="bc-nav-link reviews-trigger">
+                    <a href="{{ route('broker.reviews.index') }}" id="reviewsNavLink" class="bc-nav-link reviews-trigger" data-bc-nav-warm>
                         Broker reviews
                         <svg class="w-4 h-4 reviews-chevron transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
                     </a>
@@ -478,11 +635,24 @@ $brokerReviews = [
                     </div>
                 </div>
 
-                <a href="{{ route('broker.comparison') }}" class="bc-nav-link">Compare</a>
-                <a href="{{ route('trading.tools') }}" class="bc-nav-link">Tools</a>
-                <a href="{{ route('awards.index') }}" class="bc-nav-link">Awards</a>
+                <div class="relative" id="toolsNavGroup">
+                    <button type="button" id="toolsButton" class="bc-nav-link tools-trigger" aria-expanded="false" aria-controls="toolsMenu">
+                        Tools
+                        <svg class="w-4 h-4 tools-chevron transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                    </button>
+                    <div id="toolsMenu" class="bc-nav-dropdown hidden" aria-labelledby="toolsButton">
+                        <div class="bc-nav-dropdown-panel">
+                            <a href="{{ route('promotions.index') }}" class="bc-nav-dropdown-link">Broker Promos</a>
+                            <a href="{{ route('prop_firms.index') }}" class="bc-nav-dropdown-link">Prop Firms</a>
+                            <a href="{{ route('broker.comparison') }}" class="bc-nav-dropdown-link">Compare Brokers</a>
+                            <a href="{{ route('broker.scam_checker') }}" class="bc-nav-dropdown-link bc-nav-dropdown-link--danger">Scam Checker</a>
+                            <a href="{{ route('trading.tools') }}" class="bc-nav-dropdown-link" data-bc-nav-warm>Trading Tools</a>
+                        </div>
+                    </div>
+                </div>
+
+                <a href="{{ route('awards.index') }}" class="bc-nav-link" data-bc-nav-warm>Awards</a>
                 <a href="{{ route('blog') }}" class="bc-nav-link">Blog</a>
-                <a href="{{ route('scam_brokers') }}" class="bc-nav-link bc-nav-link-danger">Scam brokers</a>
 
                 <div class="relative" id="companyNavGroup">
                     <button type="button" id="companyButton" class="bc-nav-link company-trigger" aria-expanded="false">
@@ -511,7 +681,7 @@ $brokerReviews = [
                     <span class="bc-country-nav-flag" id="countryNavFlag">
                         @include('front.layout.partial.country-flag', ['country' => $preferredCountry, 'width' => 20, 'height' => 15])
                     </span>
-                    <span class="bc-country-nav-label" id="countryNavLabel">{{ $preferredCountry['name'] ?? 'Global' }}</span>
+                    <span class="bc-country-nav-label" id="countryNavLabel">{{ $countryShortcode }}</span>
                 </button>
 
                 <div class="bc-search-wrap">
@@ -552,7 +722,9 @@ $brokerReviews = [
                         </div>
                     </div>
                 @else
-                    <a href="{{ route('user.login') }}" class="hidden lg:inline-flex bc-nav-link font-semibold">Log in</a>
+                    <a href="{{ route('user.login') }}" class="hidden lg:inline-flex bc-nav-icon-btn" aria-label="Log in" title="Log in">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                    </a>
                 @endauth
 
                 <button type="button" id="mobileMenuButton" class="lg:hidden bc-nav-icon-btn" aria-label="Menu">
@@ -562,6 +734,9 @@ $brokerReviews = [
             </div>
         </div>
     </div>
+    </div>
+
+    @include('front.layout.partial.prop-firms-mega-menu')
 
     {{-- Best brokers full-width mega menu --}}
     <div id="brokersMegaMenu" aria-labelledby="brokersButton" aria-hidden="true">
@@ -612,7 +787,12 @@ $brokerReviews = [
                             @if($slug === 'global')
                                 @continue
                             @endif
-                            <a href="{{ route('brokers.best', ['slug' => $slug]) }}" class="bc-chip-link">{{ $country['flag'] }} {{ $country['name'] }}</a>
+                            <a href="{{ route('brokers.best', ['slug' => $slug]) }}" class="bc-chip-link">
+                                <span class="bc-chip-flag">
+                                    @include('front.layout.partial.country-flag', ['country' => array_merge($country, ['slug' => $slug]), 'width' => 18, 'height' => 13])
+                                </span>
+                                {{ $country['name'] }}
+                            </a>
                         @endforeach
                     </div>
                 </div>
@@ -645,6 +825,21 @@ $brokerReviews = [
     <div id="mobileMenu" class="lg:hidden hidden border-t border-gray-200 shadow-lg">
         <div class="max-w-7xl mx-auto px-4 py-3 space-y-1 max-h-[calc(100vh-4rem)] overflow-y-auto">
             <a href="{{ route('home') }}" class="bc-mega-link">Home</a>
+
+            <div class="mobile-accordion">
+                <button type="button" class="mobile-accordion-btn w-full flex items-center justify-between bc-mega-link font-semibold" data-target="mob-prop-firms">
+                    <span>Prop firms</span>
+                    <svg class="w-4 h-4 accordion-chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                </button>
+                <div id="mob-prop-firms" class="hidden pl-3 pb-2">
+                    <a href="{{ route('prop_firms.index') }}" class="bc-mega-link text-sm font-semibold">All prop firms</a>
+                    @foreach(($propFirmNav['categories'] ?? collect()) as $cat)
+                        <a href="{{ route('prop_firms.category', $cat->slug) }}" class="bc-mega-link text-sm">{{ $cat->name }}</a>
+                    @endforeach
+                    <a href="{{ route('prop_firms.index', ['attribute' => 'instant-funding']) }}" class="bc-mega-link text-sm">Instant funding</a>
+                    <a href="{{ route('prop_firms.index', ['featured' => 1]) }}" class="bc-mega-link text-sm">Featured firms</a>
+                </div>
+            </div>
 
             <div class="mobile-accordion">
                 <button type="button" class="mobile-accordion-btn w-full flex items-center justify-between bc-mega-link font-semibold" data-target="mob-best-categories">
@@ -687,11 +882,21 @@ $brokerReviews = [
                 </div>
             </div>
 
-            <a href="{{ route('broker.comparison') }}" class="bc-mega-link font-semibold">Compare brokers</a>
-            <a href="{{ route('trading.tools') }}" class="bc-mega-link">Tools</a>
+            <div class="mobile-accordion">
+                <button type="button" class="mobile-accordion-btn w-full flex items-center justify-between bc-mega-link font-semibold" data-target="mob-tools">
+                    <span>Tools</span>
+                    <svg class="w-4 h-4 accordion-chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                </button>
+                <div id="mob-tools" class="hidden pl-3 pb-2">
+                    <a href="{{ route('promotions.index') }}" class="bc-mega-link text-sm">Broker Promos</a>
+                    <a href="{{ route('broker.comparison') }}" class="bc-mega-link text-sm">Compare Brokers</a>
+                    <a href="{{ route('broker.scam_checker') }}" class="bc-mega-link text-sm" style="color:#dc2626;">Scam Checker</a>
+                    <a href="{{ route('trading.tools') }}" class="bc-mega-link text-sm">Trading Tools</a>
+                </div>
+            </div>
+
             <a href="{{ route('awards.index') }}" class="bc-mega-link">Awards</a>
             <a href="{{ route('blog') }}" class="bc-mega-link">Blog</a>
-            <a href="{{ route('scam_brokers') }}" class="bc-mega-link" style="color:#dc2626;font-weight:600;">⚠ Scam brokers</a>
             <a href="{{ route('about.us') }}" class="bc-mega-link">About us</a>
             <a href="{{ route('authors') }}" class="bc-mega-link">Our team</a>
             <a href="{{ route('methodology') }}" class="bc-mega-link">Our methodology</a>
@@ -702,7 +907,7 @@ $brokerReviews = [
                 <span class="bc-country-nav-flag bc-country-nav-flag--sm">
                     @include('front.layout.partial.country-flag', ['country' => $preferredCountry, 'width' => 20, 'height' => 15])
                 </span>
-                <span>Country: {{ $preferredCountry['name'] ?? 'Global' }}</span>
+                <span>Country: {{ $countryShortcode }}</span>
             </button>
 
             <div class="border-t border-gray-200 mt-3 pt-3">
@@ -723,7 +928,10 @@ $brokerReviews = [
                         <button type="submit" class="bc-mega-link w-full text-left text-red-600">Log out</button>
                     </form>
                 @else
-                    <a href="{{ route('user.login') }}" class="bc-mega-link font-semibold">Log in</a>
+                    <a href="{{ route('user.login') }}" class="bc-mega-link font-semibold flex items-center gap-2" aria-label="Log in">
+                        <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                        Log in
+                    </a>
                     <a href="{{ route('user.register') }}" class="bc-mega-link">Create account</a>
                 @endauth
             </div>
@@ -738,12 +946,18 @@ document.addEventListener('DOMContentLoaded', function () {
     const brokersBtn = document.getElementById('brokersButton');
     const brokersMenu = document.getElementById('brokersMegaMenu');
     const brokersGroup = document.getElementById('brokersNavGroup');
+    const propFirmsBtn = document.getElementById('propFirmsButton');
+    const propFirmsMenu = document.getElementById('propFirmsMegaMenu');
+    const propFirmsGroup = document.getElementById('propFirmsNavGroup');
     const reviewsGroup = document.getElementById('reviewsNavGroup');
     const reviewsMenu = document.getElementById('reviewsMegaMenu');
     const reviewsLink = document.getElementById('reviewsNavLink');
     const companyBtn = document.getElementById('companyButton');
     const companyMenu = document.getElementById('companyMenu');
     const companyGroup = document.getElementById('companyNavGroup');
+    const toolsBtn = document.getElementById('toolsButton');
+    const toolsMenu = document.getElementById('toolsMenu');
+    const toolsGroup = document.getElementById('toolsNavGroup');
     const mobileBtn = document.getElementById('mobileMenuButton');
     const mobileMenu = document.getElementById('mobileMenu');
     const desktopSearchToggle = document.getElementById('desktopSearchToggle');
@@ -751,12 +965,13 @@ document.addEventListener('DOMContentLoaded', function () {
     const menuIconOpen = document.getElementById('menuIconOpen');
     const menuIconClose = document.getElementById('menuIconClose');
 
-    let brokersTimer, reviewsTimer, companyTimer;
+    let brokersTimer, propFirmsTimer, reviewsTimer, companyTimer, toolsTimer;
 
     function setActive(el, on) {
         if (!el) return;
         el.classList.toggle('bc-nav-active', on);
-        el.querySelector('.chevron-icon, .reviews-chevron, .company-chevron')?.classList.toggle('rotate-180', on);
+        el.classList.toggle('is-active', on);
+        el.querySelector('.chevron-icon, .reviews-chevron, .company-chevron, .tools-chevron, .pf-chevron')?.classList.toggle('rotate-180', on);
     }
 
     function closeBrokersMenu() {
@@ -767,14 +982,36 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function openBrokersMenu() {
+        closePropFirmsMenu();
         closeReviewsMenu();
         closeCompanyMenu();
+        closeToolsMenu();
         closeSearchPanel();
         closeCountryDrawer();
         brokersMenu?.classList.add('is-open');
         brokersMenu?.setAttribute('aria-hidden', 'false');
         setActive(brokersBtn, true);
         brokersBtn?.setAttribute('aria-expanded', 'true');
+    }
+
+    function closePropFirmsMenu() {
+        propFirmsMenu?.classList.remove('is-open');
+        propFirmsMenu?.setAttribute('aria-hidden', 'true');
+        setActive(propFirmsBtn, false);
+        propFirmsBtn?.setAttribute('aria-expanded', 'false');
+    }
+
+    function openPropFirmsMenu() {
+        closeBrokersMenu();
+        closeReviewsMenu();
+        closeCompanyMenu();
+        closeToolsMenu();
+        closeSearchPanel();
+        closeCountryDrawer();
+        propFirmsMenu?.classList.add('is-open');
+        propFirmsMenu?.setAttribute('aria-hidden', 'false');
+        setActive(propFirmsBtn, true);
+        propFirmsBtn?.setAttribute('aria-expanded', 'true');
     }
 
     function closeReviewsMenu() {
@@ -784,7 +1021,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function openReviewsMenu() {
         closeBrokersMenu();
+        closePropFirmsMenu();
         closeCompanyMenu();
+        closeToolsMenu();
         closeSearchPanel();
         closeCountryDrawer();
         reviewsMenu?.classList.remove('hidden');
@@ -797,9 +1036,29 @@ document.addEventListener('DOMContentLoaded', function () {
         companyBtn?.setAttribute('aria-expanded', 'false');
     }
 
+    function closeToolsMenu() {
+        toolsMenu?.classList.add('hidden');
+        setActive(toolsBtn, false);
+        toolsBtn?.setAttribute('aria-expanded', 'false');
+    }
+
+    function openToolsMenu() {
+        closeBrokersMenu();
+        closePropFirmsMenu();
+        closeReviewsMenu();
+        closeCompanyMenu();
+        closeSearchPanel();
+        closeCountryDrawer();
+        toolsMenu?.classList.remove('hidden');
+        setActive(toolsBtn, true);
+        toolsBtn?.setAttribute('aria-expanded', 'true');
+    }
+
     function openCompanyMenu() {
         closeBrokersMenu();
+        closePropFirmsMenu();
         closeReviewsMenu();
+        closeToolsMenu();
         closeSearchPanel();
         closeCountryDrawer();
         companyMenu?.classList.remove('hidden');
@@ -837,8 +1096,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function openSearchPanel() {
         closeBrokersMenu();
+        closePropFirmsMenu();
         closeReviewsMenu();
         closeCompanyMenu();
+        closeToolsMenu();
         closeMobileMenu();
         closeCountryDrawer();
         desktopSearchPanel?.classList.remove('hidden');
@@ -853,30 +1114,48 @@ document.addEventListener('DOMContentLoaded', function () {
         if (!group) return;
         group.addEventListener('mouseenter', function () {
             if (timerKey === 'brokers') clearTimeout(brokersTimer);
+            if (timerKey === 'propFirms') clearTimeout(propFirmsTimer);
             if (timerKey === 'reviews') clearTimeout(reviewsTimer);
             if (timerKey === 'company') clearTimeout(companyTimer);
+            if (timerKey === 'tools') clearTimeout(toolsTimer);
             openFn();
         });
         group.addEventListener('mouseleave', function () {
-            if (timerKey === 'brokers') brokersTimer = setTimeout(closeFn, 200);
-            if (timerKey === 'reviews') reviewsTimer = setTimeout(closeFn, 200);
-            if (timerKey === 'company') companyTimer = setTimeout(closeFn, 200);
+            if (timerKey === 'brokers') brokersTimer = setTimeout(closeFn, 280);
+            if (timerKey === 'propFirms') propFirmsTimer = setTimeout(closeFn, 280);
+            if (timerKey === 'reviews') reviewsTimer = setTimeout(closeFn, 220);
+            if (timerKey === 'company') companyTimer = setTimeout(closeFn, 220);
+            if (timerKey === 'tools') toolsTimer = setTimeout(closeFn, 220);
         });
     }
 
     bindHover(brokersGroup, openBrokersMenu, closeBrokersMenu, 'brokers');
     bindHover(brokersMenu, openBrokersMenu, closeBrokersMenu, 'brokers');
+    bindHover(propFirmsGroup, openPropFirmsMenu, closePropFirmsMenu, 'propFirms');
+    bindHover(propFirmsMenu, openPropFirmsMenu, closePropFirmsMenu, 'propFirms');
     bindHover(reviewsGroup, openReviewsMenu, closeReviewsMenu, 'reviews');
     bindHover(companyGroup, openCompanyMenu, closeCompanyMenu, 'company');
+    bindHover(toolsGroup, openToolsMenu, closeToolsMenu, 'tools');
+    bindHover(toolsMenu, openToolsMenu, closeToolsMenu, 'tools');
 
     brokersBtn?.addEventListener('click', function (e) {
         e.preventDefault();
         brokersMenu?.classList.contains('is-open') ? closeBrokersMenu() : openBrokersMenu();
     });
 
+    propFirmsBtn?.addEventListener('click', function (e) {
+        e.preventDefault();
+        propFirmsMenu?.classList.contains('is-open') ? closePropFirmsMenu() : openPropFirmsMenu();
+    });
+
     companyBtn?.addEventListener('click', function (e) {
         e.preventDefault();
         companyMenu?.classList.contains('hidden') ? openCompanyMenu() : closeCompanyMenu();
+    });
+
+    toolsBtn?.addEventListener('click', function (e) {
+        e.preventDefault();
+        toolsMenu?.classList.contains('hidden') ? openToolsMenu() : closeToolsMenu();
     });
 
     reviewsLink?.addEventListener('click', function (e) {
@@ -888,7 +1167,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     mobileBtn?.addEventListener('click', function () {
         const open = mobileMenu?.classList.contains('hidden');
-        closeBrokersMenu(); closeReviewsMenu(); closeCompanyMenu(); closeSearchPanel(); closeCountryDrawer();
+        closeBrokersMenu(); closePropFirmsMenu(); closeReviewsMenu(); closeCompanyMenu(); closeToolsMenu(); closeSearchPanel(); closeCountryDrawer();
         if (open) {
             mobileMenu?.classList.remove('hidden');
             if (menuIconOpen) {
@@ -915,24 +1194,26 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     document.getElementById('navBrokerSearch')?.addEventListener('focus', function () {
-        closeBrokersMenu(); closeReviewsMenu(); closeCompanyMenu();
+        closeBrokersMenu(); closePropFirmsMenu(); closeReviewsMenu(); closeCompanyMenu(); closeToolsMenu();
     });
 
     document.addEventListener('click', function (e) {
         if (!e.target.closest('#brokersNavGroup') && !e.target.closest('#brokersMegaMenu')) closeBrokersMenu();
+        if (!e.target.closest('#propFirmsNavGroup') && !e.target.closest('#propFirmsMegaMenu')) closePropFirmsMenu();
         if (!e.target.closest('#reviewsNavGroup')) closeReviewsMenu();
         if (!e.target.closest('#companyNavGroup')) closeCompanyMenu();
+        if (!e.target.closest('#toolsNavGroup')) closeToolsMenu();
         if (!e.target.closest('#navActions')) closeSearchPanel();
     });
 
     document.addEventListener('keydown', function (e) {
         if (e.key === 'Escape') {
-            closeBrokersMenu(); closeReviewsMenu(); closeCompanyMenu(); closeMobileMenu(); closeSearchPanel(); closeCountryDrawer();
+            closeBrokersMenu(); closePropFirmsMenu(); closeReviewsMenu(); closeCompanyMenu(); closeToolsMenu(); closeMobileMenu(); closeSearchPanel(); closeCountryDrawer();
         }
     });
 
     window.addEventListener('bc:country-drawer-open', function () {
-        closeBrokersMenu(); closeReviewsMenu(); closeCompanyMenu(); closeSearchPanel(); closeMobileMenu();
+        closeBrokersMenu(); closePropFirmsMenu(); closeReviewsMenu(); closeCompanyMenu(); closeToolsMenu(); closeSearchPanel(); closeMobileMenu();
     });
 
     document.getElementById('mobileCountrySelectorBtn')?.addEventListener('click', function () {

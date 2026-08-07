@@ -9,48 +9,71 @@
 @section('meta_description', $metaDescription)
 
 @push('head')
-    <link rel="stylesheet" href="{{ asset('css/best-broker-guide.css') }}?v=2">
+    <link rel="stylesheet" href="{{ asset('css/best-broker-guide.css') }}?v=6">
+    <link rel="stylesheet" href="{{ asset('css/insight-cards.css') }}?v=1">
 @endpush
 
 @section('main_content')
 <div class="bbg-page">
-    <div class="bbg-container">
-        <nav class="bbg-breadcrumb" aria-label="Breadcrumb">
-            <a href="{{ route('home') }}">Home</a>
-            <span aria-hidden="true">/</span>
-            <a href="{{ route('brokers.best.index') }}">Best brokers</a>
-            <span aria-hidden="true">/</span>
-            <span>{{ $guidePage['guide']['breadcrumb'] ?? $guidePage['label'] }}</span>
-        </nav>
+    <header class="bbg-hero">
+        <div class="bbg-container">
+            <nav class="bbg-breadcrumb" aria-label="Breadcrumb">
+                <a href="{{ route('home') }}">Home</a>
+                <span aria-hidden="true">/</span>
+                <a href="{{ route('brokers.best.index') }}">Best brokers</a>
+                <span aria-hidden="true">/</span>
+                <span>{{ $guidePage['guide']['breadcrumb'] ?? $guidePage['label'] }}</span>
+            </nav>
 
-        <header class="bbg-hero">
-            <p class="bbg-hero__eyebrow">Independent broker research · Updated {{ $guidePage['updated_at'] }}</p>
+            <p class="bbg-hero__eyebrow">Independent broker research</p>
             <h1 class="bbg-hero__title">{{ $guidePage['guide']['title'] }}</h1>
-            @if($guidePage['is_empty'])
-                <p class="bbg-hero__lead">We are updating broker matches for {{ $guidePage['label'] }}. Use our broker finder to compare regulated platforms by fees, regulation, and platform.</p>
-            @else
-                <p class="bbg-hero__lead">{{ $guidePage['guide']['winner_intro'] }}</p>
-            @endif
-            <a href="{{ route('methodology') }}" class="bbg-hero__method-link">Learn about our methodology</a>
-        </header>
 
+            @include('front.brokers.partials.best_guide_hero_author', [
+                'editorialTeam' => $guidePage['editorial_team'] ?? [],
+                'guidePage' => $guidePage,
+            ])
+
+            @if($guidePage['is_empty'])
+                <p class="bbg-hero__note">We are updating broker matches for {{ $guidePage['label'] }}. Use our broker finder to compare regulated platforms by fees, regulation, and platform.</p>
+            @endif
+
+            <div class="bbg-hero__actions">
+                <a href="{{ route('methodology') }}" class="bbg-hero__method-link">Our methodology</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="bbg-container">
         <div class="bbg-layout">
             @if(! $guidePage['is_empty'])
                 <aside class="bbg-sidebar" aria-label="Page sections">
                     <div class="bbg-sidebar__inner">
                         <p class="bbg-sidebar__label">On this page</p>
-                        <ul class="bbg-toc">
-                            @foreach($guidePage['toc'] as $item)
-                                <li>
-                                    <a href="#{{ $item['id'] }}" class="bbg-toc__link">{{ $item['label'] }}</a>
-                                </li>
-                            @endforeach
-                        </ul>
+                        <nav class="bbg-toc" aria-label="Table of contents">
+                            <ul class="bbg-toc__list">
+                                @foreach($guidePage['toc'] as $item)
+                                    <li>
+                                        <a href="#{{ $item['id'] }}" class="bbg-toc__link">{{ $item['label'] }}</a>
+                                    </li>
+                                @endforeach
+                            </ul>
+                        </nav>
                     </div>
                 </aside>
             @endif
 
             <main class="bbg-main @if($guidePage['is_empty']) bbg-main--full @endif">
+                @if(! $guidePage['is_empty'])
+                    <div class="bbg-mobile-toc" aria-label="Jump to section">
+                        <label for="bbg-mobile-toc-select" class="bbg-sr-only">Jump to section</label>
+                        <select id="bbg-mobile-toc-select" class="bbg-mobile-toc__select">
+                            @foreach($guidePage['toc'] as $item)
+                                <option value="{{ $item['id'] }}">{{ $item['label'] }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                @endif
+
                 @if($guidePage['is_empty'])
                     <section class="bbg-empty">
                         <h2 class="bbg-section__title">No matching brokers yet</h2>
@@ -64,15 +87,7 @@
                     @include('front.brokers.partials.best_guide_content')
                 @endif
 
-                <section class="bbg-section" id="methodology">
-                    <h2 class="bbg-section__title">{{ $guidePage['guide']['methodology']['title'] }}</h2>
-                    <p class="bbg-section__text">{{ $guidePage['guide']['methodology']['intro'] }}</p>
-                    <ul class="bbg-checklist">
-                        @foreach($guidePage['guide']['methodology']['points'] as $point)
-                            <li>{{ $point }}</li>
-                        @endforeach
-                    </ul>
-                </section>
+                @include('front.brokers.partials.best_guide_methodology', ['guidePage' => $guidePage])
 
                 <section class="bbg-section bbg-faq" id="faq">
                     <h2 class="bbg-section__title">FAQ</h2>
@@ -89,10 +104,35 @@
                 <p class="bbg-disclaimer">Everything on BrokersCourt is based on verified broker data and independent research. We may receive compensation from brokers we feature. Trading forex and CFDs involves significant risk.</p>
             </main>
         </div>
+
+        @if(!empty($latestPosts))
+            <section class="bbg-blog" id="latest-blog">
+                <div class="bli-section__head">
+                    <h2 class="bli-section__title">Latest blog</h2>
+                    <a href="{{ route('blog') }}" class="bbg-blog__link">View all articles</a>
+                </div>
+                <div class="bc-insights__grid">
+                    @foreach($latestPosts as $index => $post)
+                        @include('front.partials.insight_card', [
+                            'index' => $index,
+                            'url' => $post['url'],
+                            'title' => $post['title'],
+                            'photo' => $post['photo'],
+                            'category' => $post['category'],
+                            'date' => $post['date'],
+                            'dateIso' => $post['date_iso'],
+                            'readMinutes' => $post['read_time'],
+                            'authorName' => $post['author'],
+                            'authorPhoto' => $post['author_photo'],
+                        ])
+                    @endforeach
+                </div>
+            </section>
+        @endif
     </div>
 </div>
 @endsection
 
 @push('scripts')
-<script src="{{ asset('js/best-broker-guide.js') }}?v=2" defer></script>
+<script src="{{ asset('js/best-broker-guide.js') }}?v=6" defer></script>
 @endpush

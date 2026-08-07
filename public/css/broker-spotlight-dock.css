@@ -1,0 +1,466 @@
+/* ── Floating broker spotlight dock ── */
+.bc-spotlight-dock {
+    --bsd-ocean: #007AAD;
+    --bsd-midnight: #0C1D32;
+    --bsd-ice: #D9E2E9;
+
+    position: fixed;
+    left: 50%;
+    bottom: 1.125rem;
+    z-index: 1205;
+    width: min(calc(100vw - 2rem), 26rem);
+    transform: translateX(-50%);
+    pointer-events: none;
+    transition: opacity 0.32s ease, transform 0.32s ease;
+}
+
+.bc-spotlight-dock.is-hidden {
+    opacity: 0;
+    transform: translateX(-50%) translateY(1rem);
+    pointer-events: none;
+}
+
+.bc-spotlight-dock__shell {
+    position: relative;
+    pointer-events: auto;
+}
+
+.bc-spotlight-dock__peek {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    width: 100%;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid rgba(217, 226, 233, 0.9);
+    border-radius: 999px;
+    background: rgba(255, 251, 252, 0.92);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow:
+        0 10px 28px rgba(12, 29, 50, 0.12),
+        0 0 0 1px rgba(255, 255, 255, 0.65) inset;
+    color: var(--bsd-midnight);
+    cursor: pointer;
+    transition:
+        border-color 0.28s ease,
+        box-shadow 0.28s ease,
+        transform 0.28s ease,
+        opacity 0.28s ease;
+}
+
+.bc-spotlight-dock__peek:hover,
+.bc-spotlight-dock__peek:focus-visible {
+    border-color: rgba(0, 122, 173, 0.28);
+    box-shadow:
+        0 14px 34px rgba(0, 122, 173, 0.14),
+        0 0 0 1px rgba(255, 255, 255, 0.75) inset;
+    outline: none;
+}
+
+.bc-spotlight-dock.is-expanded .bc-spotlight-dock__peek {
+    opacity: 0;
+    transform: translateY(0.75rem) scale(0.98);
+    pointer-events: none;
+}
+
+.bc-spotlight-dock__peek-logo,
+.bc-spotlight-dock__logo {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 0.5rem;
+    border: 1px solid var(--bsd-ice);
+    background: #fff;
+    overflow: hidden;
+}
+
+.bc-spotlight-dock__peek-logo img,
+.bc-spotlight-dock__logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.bc-spotlight-dock__peek-body {
+    flex: 1;
+    min-width: 0;
+    text-align: left;
+}
+
+.bc-spotlight-dock__peek-body strong {
+    display: block;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    line-height: 1.25;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.bc-spotlight-dock__peek-body small {
+    display: block;
+    margin-top: 0.0625rem;
+    font-size: 0.6875rem;
+    color: #64748b;
+    line-height: 1.3;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.bc-spotlight-dock__peek-rating {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.2rem;
+    padding: 0.2rem 0.45rem;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    color: var(--bsd-ocean);
+    background: rgba(0, 122, 173, 0.08);
+    border-radius: 999px;
+}
+
+.bc-spotlight-dock__peek-rating::before {
+    content: "★";
+    font-size: 0.625rem;
+}
+
+.bc-spotlight-dock__peek-chevron {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.625rem;
+    height: 1.625rem;
+    border-radius: 999px;
+    background: rgba(12, 29, 50, 0.05);
+    color: #64748b;
+    transition: transform 0.28s ease, background 0.28s ease, color 0.28s ease;
+}
+
+.bc-spotlight-dock__peek-chevron svg {
+    width: 0.875rem;
+    height: 0.875rem;
+}
+
+.bc-spotlight-dock__peek:hover .bc-spotlight-dock__peek-chevron {
+    color: var(--bsd-ocean);
+    background: rgba(0, 122, 173, 0.1);
+}
+
+.bc-spotlight-dock__panel {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transform: translateY(1rem);
+    transition:
+        max-height 0.42s cubic-bezier(0.4, 0, 0.2, 1),
+        opacity 0.32s ease,
+        transform 0.42s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.bc-spotlight-dock.is-expanded .bc-spotlight-dock__panel {
+    max-height: 22rem;
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.bc-spotlight-dock__panel-inner {
+    border: 1px solid rgba(217, 226, 233, 0.95);
+    border-radius: 1.125rem;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.98) 0%, rgba(255, 251, 252, 0.98) 100%);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    box-shadow:
+        0 18px 42px rgba(12, 29, 50, 0.16),
+        0 0 0 1px rgba(255, 255, 255, 0.7) inset;
+    overflow: hidden;
+}
+
+.bc-spotlight-dock__head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 0.875rem 0.875rem 0.625rem;
+    border-bottom: 1px solid rgba(217, 226, 233, 0.75);
+}
+
+.bc-spotlight-dock__brand {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    min-width: 0;
+}
+
+.bc-spotlight-dock__logo {
+    width: 2.5rem;
+    height: 2.5rem;
+}
+
+.bc-spotlight-dock__eyebrow {
+    margin: 0 0 0.15rem;
+    font-size: 0.5625rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--bsd-ocean);
+}
+
+.bc-spotlight-dock__name {
+    margin: 0;
+    font-size: 0.9375rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: var(--bsd-midnight);
+    line-height: 1.2;
+}
+
+.bc-spotlight-dock__tagline {
+    margin: 0.2rem 0 0;
+    font-size: 0.6875rem;
+    line-height: 1.35;
+    color: #64748b;
+}
+
+.bc-spotlight-dock__head-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    flex-shrink: 0;
+}
+
+.bc-spotlight-dock__score {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 800;
+    color: var(--bsd-ocean);
+    background: rgba(0, 122, 173, 0.08);
+    border: 1px solid rgba(0, 122, 173, 0.14);
+    border-radius: 999px;
+}
+
+.bc-spotlight-dock__score::before {
+    content: "★";
+    font-size: 0.625rem;
+}
+
+.bc-spotlight-dock__collapse {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.875rem;
+    height: 1.875rem;
+    border: 1px solid var(--bsd-ice);
+    border-radius: 0.5rem;
+    background: #fff;
+    color: #64748b;
+    cursor: pointer;
+    transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.bc-spotlight-dock__collapse:hover {
+    color: var(--bsd-ocean);
+    border-color: rgba(0, 122, 173, 0.24);
+    background: rgba(0, 122, 173, 0.05);
+}
+
+.bc-spotlight-dock__collapse svg {
+    width: 0.875rem;
+    height: 0.875rem;
+}
+
+.bc-spotlight-dock__features {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.375rem;
+    padding: 0.75rem 0.875rem;
+    min-height: 4.5rem;
+}
+
+.bc-spotlight-dock__chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.35rem 0.55rem;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    color: var(--bsd-midnight);
+    background: #fff;
+    border: 1px solid rgba(217, 226, 233, 0.95);
+    border-radius: 999px;
+    line-height: 1.2;
+    animation: bcSpotlightChipIn 0.34s ease both;
+}
+
+.bc-spotlight-dock__chip i {
+    color: var(--bsd-ocean);
+    font-size: 0.625rem;
+}
+
+.bc-spotlight-dock__chip:nth-child(2) { animation-delay: 0.04s; }
+.bc-spotlight-dock__chip:nth-child(3) { animation-delay: 0.08s; }
+.bc-spotlight-dock__chip:nth-child(4) { animation-delay: 0.12s; }
+.bc-spotlight-dock__chip:nth-child(5) { animation-delay: 0.16s; }
+.bc-spotlight-dock__chip:nth-child(6) { animation-delay: 0.2s; }
+
+@keyframes bcSpotlightChipIn {
+    from {
+        opacity: 0;
+        transform: translateY(0.35rem);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.bc-spotlight-dock__foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    padding: 0.625rem 0.875rem 0.875rem;
+    border-top: 1px solid rgba(217, 226, 233, 0.75);
+}
+
+.bc-spotlight-dock__dots {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+.bc-spotlight-dock__dot {
+    width: 0.375rem;
+    height: 0.375rem;
+    padding: 0;
+    border: none;
+    border-radius: 999px;
+    background: rgba(12, 29, 50, 0.14);
+    cursor: pointer;
+    transition: width 0.24s ease, background 0.24s ease;
+}
+
+.bc-spotlight-dock__dot.is-active {
+    width: 1rem;
+    background: var(--bsd-ocean);
+}
+
+.bc-spotlight-dock__actions {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+}
+
+.bc-spotlight-dock__nav {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.875rem;
+    height: 1.875rem;
+    border: 1px solid var(--bsd-ice);
+    border-radius: 999px;
+    background: #fff;
+    color: #64748b;
+    cursor: pointer;
+    transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.bc-spotlight-dock__nav:hover {
+    color: var(--bsd-ocean);
+    border-color: rgba(0, 122, 173, 0.24);
+    background: rgba(0, 122, 173, 0.05);
+}
+
+.bc-spotlight-dock__nav svg {
+    width: 0.75rem;
+    height: 0.75rem;
+}
+
+.bc-spotlight-dock__btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 4.25rem;
+    padding: 0.4375rem 0.75rem;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    text-decoration: none;
+    border-radius: 999px;
+    transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+
+.bc-spotlight-dock__btn--ghost {
+    color: var(--bsd-midnight);
+    background: #fff;
+    border: 1px solid var(--bsd-ice);
+}
+
+.bc-spotlight-dock__btn--ghost:hover {
+    color: var(--bsd-ocean);
+    border-color: rgba(0, 122, 173, 0.24);
+    background: rgba(0, 122, 173, 0.04);
+}
+
+.bc-spotlight-dock__btn--primary {
+    color: #fff;
+    background: var(--bsd-midnight);
+    border: 1px solid var(--bsd-midnight);
+}
+
+.bc-spotlight-dock__btn--primary:hover {
+    color: #fff;
+    background: var(--bsd-ocean);
+    border-color: var(--bsd-ocean);
+    transform: translateY(-1px);
+}
+
+.bc-spotlight-dock__btn[hidden],
+.bc-spotlight-dock__btn.is-hidden {
+    display: none;
+}
+
+@media (max-width: 767px) {
+    .bc-spotlight-dock {
+        bottom: 0.75rem;
+        width: min(calc(100vw - 1rem), 24rem);
+    }
+
+    .bc-spotlight-dock__peek-rating {
+        display: none;
+    }
+
+    .bc-spotlight-dock__foot {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .bc-spotlight-dock__actions {
+        justify-content: space-between;
+    }
+
+    .bc-spotlight-dock__btn {
+        flex: 1;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .bc-spotlight-dock,
+    .bc-spotlight-dock__peek,
+    .bc-spotlight-dock__panel,
+    .bc-spotlight-dock__chip,
+    .bc-spotlight-dock__btn {
+        transition: none;
+        animation: none;
+    }
+}

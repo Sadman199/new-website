@@ -39,6 +39,7 @@ class Kernel extends HttpKernel
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
             \App\Http\Middleware\SharePreferredCountry::class,
             \App\Http\Middleware\EnsureAdminForAdminPrefix::class,
+            \App\Http\Middleware\CheckSiteMaintenance::class,
         ],
 
         'api' => [

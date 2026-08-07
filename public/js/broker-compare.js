@@ -388,9 +388,60 @@
         return escapeHtml(str).replace(/'/g, '&#39;');
     }
 
+    function initResultPage() {
+        var tocLinks = document.querySelectorAll('[data-result-toc]');
+        var sections = document.querySelectorAll('[data-result-section]');
+
+        if (!tocLinks.length || !sections.length) {
+            return;
+        }
+
+        tocLinks.forEach(function (link) {
+            link.addEventListener('click', function (e) {
+                var target = document.getElementById('bc-result-' + link.getAttribute('data-result-toc'));
+                if (target) {
+                    e.preventDefault();
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+
+        if (!('IntersectionObserver' in window)) {
+            return;
+        }
+
+        var observer = new IntersectionObserver(function (entries) {
+            entries.forEach(function (entry) {
+                if (!entry.isIntersecting) {
+                    return;
+                }
+
+                var id = entry.target.getAttribute('data-result-section');
+                tocLinks.forEach(function (link) {
+                    link.classList.toggle('is-active', link.getAttribute('data-result-toc') === id);
+                });
+            });
+        }, {
+            rootMargin: '-20% 0px -60% 0px',
+            threshold: 0
+        });
+
+        sections.forEach(function (section) {
+            observer.observe(section);
+        });
+    }
+
     if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', init);
+        document.addEventListener('DOMContentLoaded', function () {
+            init();
+            if (document.querySelector('.bc-result-page')) {
+                initResultPage();
+            }
+        });
     } else {
         init();
+        if (document.querySelector('.bc-result-page')) {
+            initResultPage();
+        }
     }
 })();

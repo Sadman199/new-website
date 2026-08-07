@@ -70,5 +70,6 @@
             </script>
         @endforeach
     @endif
+    @stack('scripts')
 </body>
 </html>

@@ -44,6 +44,21 @@
                 </a>
             </li>
 
+            <li class="nav-item dropdown {{ Request::is('admin/prop-firms*') ? 'active' : '' }}">
+                <a href="#" class="nav-link has-dropdown"><i class="fas fa-chart-line"></i><span>Prop Firms</span></a>
+                <ul class="dropdown-menu">
+                    <li class="{{ Request::is('admin/prop-firms/dashboard') ? 'active' : '' }}"><a class="nav-link" href="{{ route('admin_prop_firms_dashboard') }}"><i class="fas fa-angle-right"></i> Dashboard</a></li>
+                    <li class="{{ Request::is('admin/prop-firms/show') || Request::is('admin/prop-firms/edit/*') ? 'active' : '' }}"><a class="nav-link" href="{{ route('admin_prop_firms_show') }}"><i class="fas fa-angle-right"></i> All Prop Firms</a></li>
+                    <li class="{{ Request::is('admin/prop-firms/create') ? 'active' : '' }}"><a class="nav-link" href="{{ route('admin_prop_firms_create') }}"><i class="fas fa-angle-right"></i> Add New</a></li>
+                    <li class="{{ Request::is('admin/prop-firms/categories*') ? 'active' : '' }}"><a class="nav-link" href="{{ route('admin_prop_firm_categories_show') }}"><i class="fas fa-angle-right"></i> Categories</a></li>
+                    <li class="{{ Request::is('admin/prop-firms/programs*') ? 'active' : '' }}"><a class="nav-link" href="{{ route('admin_prop_firm_programs_show') }}"><i class="fas fa-angle-right"></i> Programs</a></li>
+                    <li class="{{ Request::is('admin/prop-firms/reviews*') ? 'active' : '' }}"><a class="nav-link" href="{{ route('admin_prop_firm_reviews_show') }}"><i class="fas fa-angle-right"></i> Reviews</a></li>
+                    <li class="{{ Request::is('admin/prop-firms/faqs*') ? 'active' : '' }}"><a class="nav-link" href="{{ route('admin_prop_firm_faqs_show') }}"><i class="fas fa-angle-right"></i> FAQs</a></li>
+                    <li class="{{ Request::is('admin/prop-firms/attributes*') ? 'active' : '' }}"><a class="nav-link" href="{{ route('admin_prop_firm_attributes_show') }}"><i class="fas fa-angle-right"></i> Attributes</a></li>
+                    <li class="{{ Request::is('admin/prop-firms/settings*') ? 'active' : '' }}"><a class="nav-link" href="{{ route('admin_prop_firm_settings_edit') }}"><i class="fas fa-angle-right"></i> Settings</a></li>
+                </ul>
+            </li>
+
             <li class="{{ Request::is('admin/account-options*') ? 'active' : '' }}">
                 <a class="nav-link" href="{{ route('admin_account_options_all') }}">
                     <i class="fas fa-layer-group"></i> <span>Account Options</span>

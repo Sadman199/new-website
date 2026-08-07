@@ -9,16 +9,25 @@ use Illuminate\Http\Request;
 
 class BrokerFilterService
 {
+    public function __construct(
+        protected BrokerReviewsIndexService $reviewsIndexService,
+        protected BrokerAssessmentService $assessmentService,
+    ) {}
+
     public function filter(Request $request): array
     {
         $catalogs = FindMyBrokerFilters::catalogs();
         $filters = $this->extractFilters($request);
-        $query = Broker::query()->with(['accountOptions']);
+        $query = Broker::query()
+            ->where('is_scam', false)
+            ->with(['accountOptions'])
+            ->withCount(['reviews as approved_review_count' => fn ($q) => $q->where('status', 1)]);
 
         $this->applyFilters($query, $filters);
         $this->applySort($query, $filters['sort'] ?? 'highest_rated');
 
         $brokers = $query->paginate(20)->withQueryString();
+        $brokers->getCollection()->transform(fn (Broker $broker) => $this->serializeCard($broker));
 
         $activeChips = $this->buildActiveChips($filters, $catalogs);
         $activeLabels = array_column($activeChips, 'label');
@@ -36,6 +45,52 @@ class BrokerFilterService
             'seoTitle' => FindMyBrokerFilters::seoTitle($activeLabels),
             'seoDescription' => FindMyBrokerFilters::seoDescription($activeLabels, $brokers->total()),
             'total' => $brokers->total(),
+            'pageStats' => $this->pageStats(),
+            'quickPresets' => $this->quickPresets(),
+        ];
+    }
+
+    /** @return array<string, mixed> */
+    protected function serializeCard(Broker $broker): array
+    {
+        $data = $this->reviewsIndexService->serialize($broker);
+        $data['performance'] = $this->assessmentService->cardMetrics($broker);
+        $data['minimum_deposit'] = $broker->minimum_deposit !== null
+            ? '$' . number_format((float) $broker->minimum_deposit, 0)
+            : '—';
+        $data['leverage'] = $broker->leverage ?: '—';
+        $data['platforms'] = implode(', ', array_slice($broker->platformList(), 0, 3)) ?: '—';
+        $data['regulatory_tier'] = $broker->regulatory_tier ? 'Tier ' . $broker->regulatory_tier : null;
+        $data['is_featured'] = (bool) $broker->featured_broker;
+
+        return $data;
+    }
+
+    /** @return array<string, int|float|string> */
+    protected function pageStats(): array
+    {
+        $base = Broker::query()->where('is_scam', false);
+
+        return [
+            'total' => (clone $base)->count(),
+            'regulated' => (clone $base)->whereNotNull('regulation')->where('regulation', '!=', '')->count(),
+            'with_demo' => (clone $base)->where('demo_account_available', true)->count(),
+            'avg_rating' => round((float) (clone $base)->whereNotNull('rating')->avg('rating'), 1) ?: '—',
+        ];
+    }
+
+    /** @return array<int, array<string, string>> */
+    protected function quickPresets(): array
+    {
+        return [
+            ['label' => 'Low deposit ($10)', 'url' => route('find_my_broker', ['min_deposit' => 10])],
+            ['label' => 'CySEC regulated', 'url' => route('find_my_broker', ['regulation' => 'cysec'])],
+            ['label' => 'MetaTrader 5', 'url' => route('find_my_broker', ['platform' => 'mt5'])],
+            ['label' => 'High leverage', 'url' => route('find_my_broker', ['leverage' => 1000])],
+            ['label' => 'Low spreads', 'url' => route('find_my_broker', ['spread' => 'low'])],
+            ['label' => 'Copy trading', 'url' => route('find_my_broker', ['features' => 'copy_trading'])],
+            ['label' => 'Zero commission', 'url' => route('find_my_broker', ['commission' => 'zero'])],
+            ['label' => '4+ star rating', 'url' => route('find_my_broker', ['rating' => 4])],
         ];
     }
 

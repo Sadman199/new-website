@@ -43,10 +43,13 @@ class AdminAuthorController extends Controller
             'retype_password' => 'required|same:password',
             'photo' => 'nullable|image|mimes:jpg,jpeg,png,gif,webp',
             'bio' => 'nullable|string|max:2000',
+            'twitter_url' => 'nullable|url|max:255',
+            'linkedin_url' => 'nullable|url|max:255',
+            'facebook_url' => 'nullable|url|max:255',
         ]);
 
         $author = new Author();
-        $author->fill($request->only(['name', 'email', 'bio']));
+        $author->fill($request->only(['name', 'email', 'bio', 'twitter_url', 'linkedin_url', 'facebook_url']));
         $author->can_write = $request->boolean('can_write', true);
         $author->can_edit = $request->boolean('can_edit');
         $author->can_fact_check = $request->boolean('can_fact_check');
@@ -97,6 +100,9 @@ class AdminAuthorController extends Controller
             ],
             'photo' => 'nullable|image|mimes:jpg,jpeg,png,gif,webp',
             'bio' => 'nullable|string|max:2000',
+            'twitter_url' => 'nullable|url|max:255',
+            'linkedin_url' => 'nullable|url|max:255',
+            'facebook_url' => 'nullable|url|max:255',
         ]);
 
         if ($request->filled('password')) {
@@ -112,7 +118,7 @@ class AdminAuthorController extends Controller
             $author->photo = $this->storePhoto($request);
         }
 
-        $author->fill($request->only(['name', 'email', 'bio']));
+        $author->fill($request->only(['name', 'email', 'bio', 'twitter_url', 'linkedin_url', 'facebook_url']));
         $author->can_write = $request->boolean('can_write');
         $author->can_edit = $request->boolean('can_edit');
         $author->can_fact_check = $request->boolean('can_fact_check');

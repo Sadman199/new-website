@@ -4,9 +4,45 @@ namespace App\Support;
 
 use App\Models\Broker;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 
 class AwardTaxonomy
 {
+    /** @return array<string, string> internal key => public URL slug */
+    public static function routeSlugs(): array
+    {
+        $year = (int) date('Y');
+
+        return [
+            'most-trusted' => 'best-broker-' . $year,
+            'fast-execution' => 'best-fast-execution-brokers',
+            'ecn-raw' => 'best-ecn-raw-spread-brokers',
+            'top-trusted' => 'top-trusted-brokers',
+            'beginner-friendly' => 'best-brokers-for-beginners',
+            'low-spread' => 'best-low-spread-brokers',
+            'social-trading' => 'best-social-trading-brokers',
+            'mobile-trading' => 'best-mobile-trading-brokers',
+        ];
+    }
+
+    public static function routeSlugFor(string $key): string
+    {
+        return self::routeSlugs()[$key] ?? Str::slug($key);
+    }
+
+    public static function keyForRouteSlug(string $slug): ?string
+    {
+        $slug = Str::slug($slug);
+
+        foreach (self::routeSlugs() as $key => $routeSlug) {
+            if ($routeSlug === $slug) {
+                return $key;
+            }
+        }
+
+        return isset(self::definitions()[$slug]) ? $slug : null;
+    }
+
     /** @return array<string, array{name: string, description: string, color: string, category: ?string, filter: ?string}> */
     public static function definitions(): array
     {

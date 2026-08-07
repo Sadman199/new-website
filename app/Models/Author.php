@@ -20,6 +20,9 @@ class Author extends Authenticatable
         'can_edit',
         'can_fact_check',
         'bio',
+        'twitter_url',
+        'linkedin_url',
+        'facebook_url',
     ];
 
     protected $hidden = [
@@ -93,5 +96,41 @@ class Author extends Authenticatable
         }
 
         return asset('uploads/default.png');
+    }
+
+    /** @return array<int, array{platform: string, url: string, icon: string}> */
+    public function socialLinks(): array
+    {
+        if (! \Illuminate\Support\Facades\Schema::hasColumn($this->getTable(), 'twitter_url')) {
+            return [];
+        }
+
+        $links = [];
+
+        if (! empty($this->twitter_url)) {
+            $links[] = [
+                'platform' => 'Twitter',
+                'url' => $this->twitter_url,
+                'icon' => 'fab fa-twitter',
+            ];
+        }
+
+        if (! empty($this->linkedin_url)) {
+            $links[] = [
+                'platform' => 'LinkedIn',
+                'url' => $this->linkedin_url,
+                'icon' => 'fab fa-linkedin-in',
+            ];
+        }
+
+        if (! empty($this->facebook_url)) {
+            $links[] = [
+                'platform' => 'Facebook',
+                'url' => $this->facebook_url,
+                'icon' => 'fab fa-facebook-f',
+            ];
+        }
+
+        return $links;
     }
 }

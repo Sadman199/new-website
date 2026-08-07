@@ -1,4 +1,5 @@
-<section class="br-section" id="faqs">
+<section class="br-faqs" id="faqs">
+    <div class="br-section br-section--faqs">
     <div class="br-section__head">
         <h2 class="br-section__title">Frequently Asked Questions</h2>
         <p class="br-section__desc">Common questions about {{ $broker->name ?? 'this broker' }}</p>
@@ -17,5 +18,6 @@
         @else
             <p class="br-empty">No FAQs available for this broker.</p>
         @endif
+    </div>
     </div>
 </section>

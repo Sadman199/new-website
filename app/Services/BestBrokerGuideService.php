@@ -79,6 +79,8 @@ class BestBrokerGuideService
             ];
         }
 
+        $winnerBroker = $ranked->first();
+
         return [
             'slug' => $slug,
             'type' => $guide['type'],
@@ -89,20 +91,33 @@ class BestBrokerGuideService
             'entries' => $entries,
             'winner' => $entries->first(),
             'tables' => $tables,
-            'toc' => $this->tableOfContents($guide, $entries),
+            'toc' => $this->tableOfContents($guide, $entries, $entries->isNotEmpty()),
             'is_empty' => $entries->isEmpty(),
+            'editorial_team' => EditorialAssignmentService::guideTeamFor($winnerBroker),
+            'editorial_credits' => EditorialAssignmentService::guideCreditsFor($winnerBroker),
+            'primary_author' => EditorialAssignmentService::primaryGuideAuthor($winnerBroker),
         ];
     }
 
     /** @param  array<string, mixed>  $guide */
-    private function tableOfContents(array $guide, Collection $entries): array
+    private function tableOfContents(array $guide, Collection $entries, bool $hasContent): array
     {
-        $toc = collect($guide['sections'] ?? [])
-            ->map(fn (array $section) => [
-                'id' => $section['id'],
-                'label' => $section['title'],
-            ])
-            ->all();
+        $toc = [];
+
+        if ($hasContent) {
+            $toc[] = ['id' => 'broker-scores', 'label' => 'Broker scores'];
+            $toc[] = ['id' => 'top-pick', 'label' => 'Top pick'];
+        }
+
+        $toc = array_merge(
+            $toc,
+            collect($guide['sections'] ?? [])
+                ->map(fn (array $section) => [
+                    'id' => $section['id'],
+                    'label' => $section['title'],
+                ])
+                ->all()
+        );
 
         foreach ($entries as $entry) {
             $toc[] = [
@@ -111,8 +126,14 @@ class BestBrokerGuideService
             ];
         }
 
+        if ($hasContent) {
+            $toc[] = ['id' => 'find-match', 'label' => $guide['cta_title'] ?? 'Find my match'];
+        }
+
+        $toc[] = ['id' => 'page-author', 'label' => 'Author'];
         $toc[] = ['id' => 'methodology', 'label' => $guide['methodology']['title'] ?? 'Methodology'];
         $toc[] = ['id' => 'faq', 'label' => 'FAQ'];
+        $toc[] = ['id' => 'latest-blog', 'label' => 'Latest blog'];
 
         return $toc;
     }

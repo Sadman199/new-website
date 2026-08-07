@@ -150,7 +150,7 @@
     {{-- Bottom bar --}}
     <div class="mf-bottom">
         <div class="mf-wrap mf-bottom__inner">
-            <p class="mf-bottom__copy">© {{ date('Y') }} {{ $footer['brand']['name'] }}. All rights reserved.</p>
+            <p class="mf-bottom__copy">{{ \App\Support\SiteTheme::footerCopyright() ?? ('© ' . date('Y') . ' ' . $footer['brand']['name'] . '. All rights reserved.') }}</p>
             <nav class="mf-bottom__legal" aria-label="Legal">
                 @foreach($footer['legal'] as $link)
                     <a href="{{ $link['url'] }}">{{ $link['label'] }}</a>

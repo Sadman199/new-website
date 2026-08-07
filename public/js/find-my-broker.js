@@ -6,10 +6,12 @@
 
     var endpoint = app.getAttribute('data-endpoint') || '/find-my-broker';
     var resultsEl = document.getElementById('fmb-results');
+    var heroMatchEl = document.getElementById('fmb-hero-match');
     var drawer = document.getElementById('fmb-drawer');
     var debounceTimer = null;
     var abortController = null;
     var MULTI_KEYS = ['account_type', 'regulation', 'platform', 'markets', 'payment', 'features', 'country'];
+    var SAVED_KEY = 'savedBrokers';
 
     function qs(sel, root) {
         return (root || document).querySelector(sel);
@@ -20,8 +22,20 @@
     }
 
     function primaryForm() {
-        return qs('.fmb-filter-form[data-fmb-form]', document.querySelector('aside')) ||
+        return qs('.fmb-filters--desktop .fmb-filter-form[data-fmb-form]') ||
             qs('.fmb-filter-form[data-fmb-form]');
+    }
+
+    function savedBrokers() {
+        try {
+            return JSON.parse(localStorage.getItem(SAVED_KEY)) || [];
+        } catch (e) {
+            return [];
+        }
+    }
+
+    function setSavedBrokers(list) {
+        localStorage.setItem(SAVED_KEY, JSON.stringify(list));
     }
 
     function collectParams(form) {
@@ -52,7 +66,6 @@
             }
         });
 
-        // Prefer toolbar sort if present
         var sortSelect = qs('[data-fmb-sort-select]');
         if (sortSelect && sortSelect.value) {
             params.set('sort', sortSelect.value);
@@ -100,6 +113,45 @@
         resultsEl.classList.toggle('is-loading', !!on);
     }
 
+    function formatCount(n) {
+        return Number(n || 0).toLocaleString();
+    }
+
+    function updateCountsFromHtml() {
+        var countEl = qs('#fmb-count', resultsEl);
+        if (countEl && heroMatchEl) {
+            heroMatchEl.textContent = countEl.textContent.trim();
+        }
+    }
+
+    function bindSaveButtons() {
+        var saved = savedBrokers().map(String);
+
+        qsa('[data-fmb-save]', resultsEl).forEach(function (btn) {
+            var card = btn.closest('[data-fmb-card]');
+            if (!card) return;
+
+            var id = String(card.getAttribute('data-broker-id'));
+            updateSaveButton(btn, saved.indexOf(id) !== -1);
+
+            btn.onclick = function () {
+                var list = savedBrokers().map(String);
+                var isSaved = list.indexOf(id) !== -1;
+                list = isSaved ? list.filter(function (i) { return i !== id; }) : list.concat(id);
+                setSavedBrokers(list);
+                updateSaveButton(btn, !isSaved);
+            };
+        });
+    }
+
+    function updateSaveButton(btn, isSaved) {
+        btn.classList.toggle('is-saved', isSaved);
+        btn.setAttribute('aria-pressed', isSaved ? 'true' : 'false');
+        btn.innerHTML = isSaved
+            ? '<svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/></svg>Saved'
+            : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/></svg>Save';
+    }
+
     function fetchResults(params, pushState) {
         if (abortController) {
             try { abortController.abort(); } catch (e) {}
@@ -132,6 +184,8 @@
                     history.pushState({ fmb: true }, '', url);
                 }
                 bindResultsEvents();
+                bindSaveButtons();
+                updateCountsFromHtml();
                 updateMobileBadge(params);
             })
             .catch(function (err) {
@@ -143,6 +197,7 @@
     function updateMobileBadge(params) {
         var btn = document.getElementById('fmb-open-filters');
         if (!btn) return;
+
         var count = 0;
         params.forEach(function (v, k) {
             if (k === 'sort' || k === 'page' || k === 'partial') return;
@@ -153,11 +208,13 @@
                 count += 1;
             }
         });
-        var existing = btn.querySelector('span');
+
+        var existing = btn.querySelector('.fmb-mobile-badge');
         if (existing) existing.remove();
+
         if (count > 0) {
             var badge = document.createElement('span');
-            badge.className = 'bg-blue-600 text-white text-xs rounded-full px-2 py-0.5';
+            badge.className = 'fmb-mobile-badge';
             badge.textContent = String(count);
             btn.appendChild(badge);
         }
@@ -168,7 +225,6 @@
         if (!form) return;
         var params = collectParams(form);
 
-        // Keep both forms in sync
         syncFormsFromParams(params);
 
         clearTimeout(debounceTimer);
@@ -245,15 +301,6 @@
 
     function bindResultsEvents() {
         var sortSelect = qs('[data-fmb-sort-select]');
-        if (sortSelect && !sortSelect._fmbBound) {
-            sortSelect._fmbBound = true;
-            sortSelect.addEventListener('change', function () {
-                syncHiddenSort(sortSelect.value);
-                applyFromForm(0);
-            });
-        }
-
-        // Re-bind sort after AJAX replace (clone loses _fmbBound on new node)
         if (sortSelect) {
             sortSelect.onchange = function () {
                 syncHiddenSort(sortSelect.value);
@@ -276,7 +323,6 @@
             });
         });
 
-        // Intercept pagination links for AJAX
         qsa('.fmb-pagination a', resultsEl).forEach(function (a) {
             a.addEventListener('click', function (e) {
                 e.preventDefault();
@@ -309,12 +355,10 @@
         qsa('.fmb-filter-form[data-fmb-form]').forEach(bindFormEvents);
 
         document.addEventListener('click', function (e) {
-            var resetBtn = e.target.closest('.fmb-reset');
-            if (resetBtn) {
+            if (e.target.closest('.fmb-reset')) {
                 e.preventDefault();
                 resetAll();
                 closeDrawer();
-                return;
             }
         });
 
@@ -326,8 +370,8 @@
         if (closeBtn2) closeBtn2.addEventListener('click', closeDrawer);
 
         bindResultsEvents();
+        bindSaveButtons();
 
-        // Sync filter forms from URL on first load (e.g. homepage search redirect)
         var initialParams = new URLSearchParams(window.location.search);
         if ([...initialParams.keys()].length) {
             syncFormsFromParams(initialParams);

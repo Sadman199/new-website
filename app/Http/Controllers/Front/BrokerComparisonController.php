@@ -7,6 +7,7 @@ use App\Models\Page;
 use App\Models\Broker;
 use App\Models\HomeAdvertisement;
 use App\Services\BrokerComparisonService;
+use App\Services\FooterIndexService;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -35,11 +36,16 @@ class BrokerComparisonController extends Controller
         $broker1 = Broker::where('slug', $broker1_slug)->firstOrFail();
         $broker2 = Broker::where('slug', $broker2_slug)->firstOrFail();
 
+        $comparison = $this->comparisonService->buildPairComparison($broker1, $broker2);
+        $popularComparisons = app(FooterIndexService::class)->popularComparisons();
+
         return view('front.comparison.broker_comparison_result', compact(
-            'page_data', 
-            'broker1', 
-            'broker2', 
-            'home_ad_data'
+            'page_data',
+            'broker1',
+            'broker2',
+            'home_ad_data',
+            'comparison',
+            'popularComparisons',
         ));
     }
 
@@ -74,13 +80,15 @@ class BrokerComparisonController extends Controller
         $brokersPayload = $allBrokers->map(fn (Broker $broker) => $this->comparisonService->serializeBroker($broker))->values();
         $suggestedBrokers = $this->comparisonService->suggestedBrokers(6);
         $tabGroups = $this->comparisonService->tabGroups();
+        $popularComparisons = app(FooterIndexService::class)->popularComparisons();
 
         return view('front.comparison.broker_comparison', compact(
             'page_data',
             'home_ad_data',
             'brokersPayload',
             'suggestedBrokers',
-            'tabGroups'
+            'tabGroups',
+            'popularComparisons'
         ));
     }
 }

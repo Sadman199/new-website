@@ -191,6 +191,39 @@ class BrokerReviewPresenter
         return array_values(array_filter($sections, fn ($s) => ! empty($s['preview']) || ! empty($s['more'])));
     }
 
+    /** @return array<int, array{id: string, label: string}> */
+    public static function tableOfContents(Broker $broker, iterable $accountOptions): array
+    {
+        $toc = [
+            ['id' => 'gettingstarted', 'label' => 'Overview'],
+            ['id' => 'key-stats', 'label' => 'Pros & Cons'],
+        ];
+
+        if (strip_tags($broker->description ?? '')) {
+            $toc[] = ['id' => 'review-body', 'label' => 'Full Review'];
+        }
+
+        foreach (self::brokerSections($broker) as $section) {
+            $toc[] = ['id' => $section['id'], 'label' => $section['title']];
+        }
+
+        $accountOptions = collect($accountOptions);
+
+        if ($accountOptions->isNotEmpty()) {
+            $toc[] = ['id' => 'account-types', 'label' => 'Account Types'];
+        }
+
+        if ($broker->relationLoaded('forexBonuses') && $broker->forexBonuses->isNotEmpty()) {
+            $toc[] = ['id' => 'broker-promotions', 'label' => 'Promotions'];
+        }
+
+        $toc[] = ['id' => 'faqs', 'label' => 'FAQs'];
+        $toc[] = ['id' => 'voices', 'label' => 'Comments'];
+        $toc[] = ['id' => 'compare', 'label' => 'Compare'];
+
+        return $toc;
+    }
+
     /** @return array<int, array<string, mixed>> */
     public static function accountExpandRows(AccountOption $option): array
     {

@@ -196,7 +196,7 @@
                                 CLAIM OFFER
                             </a>
                 
-                            <a href="{{ route('deposit-bonuses.detail',$bonus->slug) }}"
+                            <a href="{{ $bonus->cardUrl() }}"
                                class="w-10 h-10 flex items-center justify-center
                                       bg-gray-100 border border-gray-200
                                       hover:bg-gray-200 rounded-lg">

@@ -27,6 +27,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'google_id',
         'country',
         'avatar',
         'bio',
@@ -76,11 +77,13 @@ class User extends Authenticatable
     public function getAvatarUrlAttribute(): string
     {
         if ($this->avatar) {
-            return asset($this->avatar);
+            return str_starts_with($this->avatar, 'http')
+                ? $this->avatar
+                : asset($this->avatar);
         }
 
         return 'https://ui-avatars.com/api/?name=' . urlencode($this->name)
-            . '&background=F59E0B&color=fff&bold=true';
+            . '&background=007AAD&color=fff&bold=true';
     }
 
     /**

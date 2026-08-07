@@ -3,180 +3,211 @@
 @section('title', $user->name . ' | My Profile | BrokersCourt')
 @section('meta_description', 'Manage your BrokersCourt profile, reviews and account activity.')
 
+@push('page-styles')
+    <link rel="stylesheet" href="{{ asset('css/user-account.css') }}?v=1">
+@endpush
+
 @section('main_content')
-<section class="bg-gray-50 min-h-[80vh] pt-24 pb-16 px-4" x-data="{ tab: 'overview' }">
-    <div class="max-w-5xl mx-auto">
+<div class="ua-root" x-data="{ tab: 'reviews' }">
+    <div class="ua-wrap ua-wrap--profile">
 
-        @if(session('success'))
-            <div class="mb-6 bg-green-50 border border-green-200 text-green-700 text-sm rounded-lg px-4 py-3">
-                <i class="fas fa-check-circle mr-1"></i> {{ session('success') }}
-            </div>
-        @endif
-        @if(session('error'))
-            <div class="mb-6 bg-red-50 border border-red-200 text-red-700 text-sm rounded-lg px-4 py-3">
-                <i class="fas fa-exclamation-circle mr-1"></i> {{ session('error') }}
-            </div>
-        @endif
+        @include('front.account._alerts')
 
-        <!-- Header card -->
-        <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden mb-6">
-            <div class="h-24 bg-gradient-to-r from-yellow-400 to-amber-500"></div>
-            <div class="px-6 pb-6">
-                <div class="flex flex-col sm:flex-row sm:items-end gap-4 -mt-10">
-                    <img src="{{ $user->avatar_url }}" alt="{{ $user->name }}"
-                        class="w-24 h-24 rounded-2xl border-4 border-white shadow object-cover bg-white">
-                    <div class="flex-1">
-                        <div class="flex items-center gap-2 flex-wrap">
-                            <h1 class="text-2xl font-bold text-gray-900">{{ $user->name }}</h1>
-                            @if($user->is_verified)
-                                <span class="inline-flex items-center gap-1 bg-blue-100 text-blue-700 text-xs font-semibold px-2.5 py-1 rounded-full">
-                                    <i class="fas fa-check-circle"></i> Verified
-                                </span>
-                            @else
-                                <span class="inline-flex items-center gap-1 bg-amber-100 text-amber-700 text-xs font-semibold px-2.5 py-1 rounded-full">
-                                    <i class="fas fa-clock"></i> Pending verification
-                                </span>
-                            @endif
-                        </div>
-                        <p class="text-gray-500 text-sm mt-1">
-                            <i class="fas fa-envelope mr-1"></i> {{ $user->email }}
-                            @if($user->country)<span class="mx-2 text-gray-300">|</span><i class="fas fa-map-marker-alt mr-1"></i> {{ $user->country }}@endif
-                        </p>
+        <div class="ua-stats" aria-label="Account statistics">
+            <div class="ua-stat">
+                <span class="ua-stat__value">{{ $stats['reviews_total'] }}</span>
+                <span class="ua-stat__label">Total reviews</span>
+            </div>
+            <div class="ua-stat">
+                <span class="ua-stat__value ua-stat__value--success">{{ $stats['reviews_approved'] }}</span>
+                <span class="ua-stat__label">Approved</span>
+            </div>
+            <div class="ua-stat">
+                <span class="ua-stat__value ua-stat__value--warning">{{ $stats['reviews_pending'] }}</span>
+                <span class="ua-stat__label">Pending</span>
+            </div>
+            <div class="ua-stat">
+                <span class="ua-stat__value" style="font-size:0.9375rem;">{{ $user->created_at->format('M Y') }}</span>
+                <span class="ua-stat__label">Member since</span>
+            </div>
+        </div>
+
+        <div class="ua-tabs-mobile" role="tablist" aria-label="Profile sections">
+            <button type="button" class="ua-tabs-mobile__btn" :class="{ 'is-active': tab === 'reviews' }" @click="tab = 'reviews'">Reviews</button>
+            <button type="button" class="ua-tabs-mobile__btn" :class="{ 'is-active': tab === 'activity' }" @click="tab = 'activity'">Activity</button>
+            <button type="button" class="ua-tabs-mobile__btn" :class="{ 'is-active': tab === 'security' }" @click="tab = 'security'">Security</button>
+            <button type="button" class="ua-tabs-mobile__btn" :class="{ 'is-active': tab === 'settings' }" @click="tab = 'settings'">Settings</button>
+        </div>
+
+        <div class="ua-profile-grid">
+            <aside class="ua-profile-sidebar">
+                <div class="ua-profile-card">
+                    <div class="ua-profile-hero"></div>
+                    <div class="ua-profile-user">
+                        <img src="{{ $user->avatar_url }}" alt="{{ $user->name }}" class="ua-profile-avatar">
+                        <h1 class="ua-profile-name">{{ $user->name }}</h1>
+                        <p class="ua-profile-email">{{ $user->email }}</p>
+                        @if($user->country)
+                            <p class="ua-profile-email"><i class="fas fa-map-marker-alt"></i> {{ $user->country }}</p>
+                        @endif
+                        @if($user->is_verified)
+                            <span class="ua-badge ua-badge--verified"><i class="fas fa-check-circle"></i> Verified</span>
+                        @else
+                            <span class="ua-badge ua-badge--pending"><i class="fas fa-clock"></i> Pending verification</span>
+                        @endif
+                        @if($user->bio)
+                            <p class="ua-bio">{{ $user->bio }}</p>
+                        @endif
                     </div>
-                    <div class="flex gap-2">
-                        <a href="{{ route('user.profile.edit') }}" class="inline-flex items-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-semibold px-4 py-2 rounded-lg transition">
-                            <i class="fas fa-pen"></i> Edit profile
-                        </a>
+
+                    <nav class="ua-nav ua-nav--desktop" aria-label="Profile navigation">
+                        <button type="button" class="ua-nav__link" :class="{ 'is-active': tab === 'reviews' }" @click="tab = 'reviews'">
+                            <i class="fas fa-star"></i> My reviews
+                        </button>
+                        <button type="button" class="ua-nav__link" :class="{ 'is-active': tab === 'activity' }" @click="tab = 'activity'">
+                            <i class="fas fa-history"></i> Activity
+                        </button>
+                        <button type="button" class="ua-nav__link" :class="{ 'is-active': tab === 'security' }" @click="tab = 'security'">
+                            <i class="fas fa-lock"></i> Security
+                        </button>
+                        <button type="button" class="ua-nav__link" :class="{ 'is-active': tab === 'settings' }" @click="tab = 'settings'">
+                            <i class="fas fa-user-cog"></i> Account settings
+                        </button>
+                    </nav>
+
+                    <div class="ua-sidebar-actions">
+                        <a href="{{ route('user.profile.edit') }}" class="ua-btn ua-btn--ghost"><i class="fas fa-pen"></i> Edit profile</a>
                         <form action="{{ route('user.logout') }}" method="POST">
                             @csrf
-                            <button type="submit" class="inline-flex items-center gap-2 bg-red-50 hover:bg-red-100 text-red-600 text-sm font-semibold px-4 py-2 rounded-lg transition">
-                                <i class="fas fa-sign-out-alt"></i> Log out
+                            <button type="submit" class="ua-btn ua-btn--danger"><i class="fas fa-sign-out-alt"></i> Log out</button>
+                        </form>
+                    </div>
+                </div>
+            </aside>
+
+            <div class="ua-profile-main">
+                <div class="ua-toolbar">
+                    <a href="{{ route('user.profile.edit') }}" class="ua-btn ua-btn--ghost"><i class="fas fa-pen"></i> Edit profile</a>
+                    <form action="{{ route('user.logout') }}" method="POST">
+                        @csrf
+                        <button type="submit" class="ua-btn ua-btn--danger"><i class="fas fa-sign-out-alt"></i> Log out</button>
+                    </form>
+                </div>
+
+                {{-- Reviews --}}
+                <div class="ua-panel" x-show="tab === 'reviews'" x-cloak>
+                    <div class="ua-panel__head">
+                        <h2 class="ua-panel__title">My reviews</h2>
+                        <p class="ua-panel__sub">Broker reviews you've submitted on BrokersCourt.</p>
+                    </div>
+                    <div class="ua-panel__body ua-panel__body--flush">
+                        @forelse($reviews as $review)
+                            <article class="ua-review-item">
+                                <div class="ua-review-icon"><i class="fas fa-building"></i></div>
+                                <div class="flex-1 min-w-0">
+                                    <div class="ua-review-head">
+                                        <h3 class="ua-review-title">{{ $review->broker->name ?? 'Broker' }}</h3>
+                                        @if($review->status == 1)
+                                            <span class="ua-status ua-status--approved">Approved</span>
+                                        @elseif($review->status == 0)
+                                            <span class="ua-status ua-status--pending">Pending</span>
+                                        @else
+                                            <span class="ua-status ua-status--declined">Declined</span>
+                                        @endif
+                                    </div>
+                                    <p class="ua-review-meta">
+                                        <span class="ua-stars">@for($i = 1; $i <= 5; $i++)<i class="fas fa-star{{ $i <= $review->rating ? '' : ' is-dim' }}"></i>@endfor</span>
+                                        {{ $review->created_at->format('M d, Y') }}
+                                    </p>
+                                    <p class="ua-review-body">{{ $review->description }}</p>
+                                </div>
+                            </article>
+                        @empty
+                            <div class="ua-empty">
+                                <i class="fas fa-comment-slash"></i>
+                                <p>You haven't written any reviews yet.</p>
+                                <a href="{{ route('all_brokers') }}" class="ua-link">Browse brokers to review →</a>
+                            </div>
+                        @endforelse
+                    </div>
+                </div>
+
+                {{-- Activity --}}
+                <div class="ua-panel" x-show="tab === 'activity'" x-cloak>
+                    <div class="ua-panel__head">
+                        <h2 class="ua-panel__title">Recent activity</h2>
+                        <p class="ua-panel__sub">Your latest account actions and review submissions.</p>
+                    </div>
+                    <div class="ua-panel__body ua-panel__body--flush">
+                        @forelse($activities as $activity)
+                            <div class="ua-activity-item">
+                                <span class="ua-activity-dot" aria-hidden="true"></span>
+                                <div>
+                                    <p class="ua-activity-label">{{ $activity->label }}</p>
+                                    @if($activity->description)<p class="ua-activity-desc">{{ $activity->description }}</p>@endif
+                                    <p class="ua-activity-time">
+                                        {{ $activity->created_at->diffForHumans() }}
+                                        @if($activity->ip_address)<span> · {{ $activity->ip_address }}</span>@endif
+                                    </p>
+                                </div>
+                            </div>
+                        @empty
+                            <div class="ua-empty">
+                                <i class="fas fa-history"></i>
+                                <p>No activity recorded yet.</p>
+                            </div>
+                        @endforelse
+                    </div>
+                </div>
+
+                {{-- Security --}}
+                <div class="ua-panel" x-show="tab === 'security'" x-cloak>
+                    <div class="ua-panel__head">
+                        <h2 class="ua-panel__title">Security</h2>
+                        <p class="ua-panel__sub">Update your password to keep your account secure.</p>
+                    </div>
+                    <div class="ua-panel__body">
+                        <form action="{{ route('user.profile.password') }}" method="POST" class="ua-form">
+                            @csrf
+                            @method('PUT')
+                            <div class="ua-field">
+                                <label for="current_password">Current password</label>
+                                <input type="password" name="current_password" id="current_password" required autocomplete="current-password"
+                                    class="ua-input @error('current_password') is-error @enderror">
+                                @error('current_password')<p class="ua-error"><i class="fas fa-exclamation-circle"></i> {{ $message }}</p>@enderror
+                            </div>
+                            <div class="ua-field">
+                                <label for="password">New password</label>
+                                <input type="password" name="password" id="password" required autocomplete="new-password"
+                                    class="ua-input @error('password') is-error @enderror">
+                                @error('password')<p class="ua-error"><i class="fas fa-exclamation-circle"></i> {{ $message }}</p>@enderror
+                            </div>
+                            <div class="ua-field">
+                                <label for="password_confirmation">Confirm new password</label>
+                                <input type="password" name="password_confirmation" id="password_confirmation" required autocomplete="new-password" class="ua-input">
+                            </div>
+                            <button type="submit" class="ua-btn ua-btn--primary">
+                                <i class="fas fa-key"></i> Update password
                             </button>
                         </form>
                     </div>
                 </div>
 
-                @if($user->bio)
-                    <p class="text-gray-600 text-sm mt-4 max-w-2xl">{{ $user->bio }}</p>
-                @endif
-            </div>
-        </div>
-
-        <!-- Stats -->
-        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
-            <div class="bg-white rounded-xl border border-gray-200 p-4 text-center">
-                <p class="text-2xl font-bold text-gray-900">{{ $stats['reviews_total'] }}</p>
-                <p class="text-xs text-gray-500 mt-1">Total reviews</p>
-            </div>
-            <div class="bg-white rounded-xl border border-gray-200 p-4 text-center">
-                <p class="text-2xl font-bold text-green-600">{{ $stats['reviews_approved'] }}</p>
-                <p class="text-xs text-gray-500 mt-1">Approved</p>
-            </div>
-            <div class="bg-white rounded-xl border border-gray-200 p-4 text-center">
-                <p class="text-2xl font-bold text-amber-500">{{ $stats['reviews_pending'] }}</p>
-                <p class="text-xs text-gray-500 mt-1">Pending</p>
-            </div>
-            <div class="bg-white rounded-xl border border-gray-200 p-4 text-center">
-                <p class="text-sm font-bold text-gray-900 mt-1">{{ $user->created_at->format('M Y') }}</p>
-                <p class="text-xs text-gray-500 mt-1">Member since</p>
-            </div>
-        </div>
-
-        <!-- Tabs -->
-        <div class="bg-white rounded-2xl border border-gray-200 shadow-sm">
-            <div class="flex border-b border-gray-200 overflow-x-auto">
-                <button @click="tab = 'overview'" :class="tab === 'overview' ? 'text-yellow-600 border-yellow-500' : 'text-gray-500 border-transparent'" class="px-5 py-3 text-sm font-semibold border-b-2 transition whitespace-nowrap">
-                    <i class="fas fa-star mr-1"></i> My Reviews
-                </button>
-                <button @click="tab = 'activity'" :class="tab === 'activity' ? 'text-yellow-600 border-yellow-500' : 'text-gray-500 border-transparent'" class="px-5 py-3 text-sm font-semibold border-b-2 transition whitespace-nowrap">
-                    <i class="fas fa-history mr-1"></i> Activity
-                </button>
-                <button @click="tab = 'security'" :class="tab === 'security' ? 'text-yellow-600 border-yellow-500' : 'text-gray-500 border-transparent'" class="px-5 py-3 text-sm font-semibold border-b-2 transition whitespace-nowrap">
-                    <i class="fas fa-lock mr-1"></i> Security
-                </button>
-            </div>
-
-            <!-- My Reviews -->
-            <div x-show="tab === 'overview'" class="p-6">
-                @forelse($reviews as $review)
-                    <div class="flex items-start gap-4 py-4 {{ !$loop->last ? 'border-b border-gray-100' : '' }}">
-                        <div class="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center flex-shrink-0">
-                            <i class="fas fa-building text-gray-400"></i>
-                        </div>
-                        <div class="flex-1 min-w-0">
-                            <div class="flex items-center justify-between gap-2">
-                                <h3 class="font-semibold text-gray-800 truncate">{{ $review->broker->name ?? 'Broker' }}</h3>
-                                @if($review->status == 1)
-                                    <span class="bg-green-100 text-green-700 text-xs font-semibold px-2 py-0.5 rounded-full">Approved</span>
-                                @elseif($review->status == 0)
-                                    <span class="bg-amber-100 text-amber-700 text-xs font-semibold px-2 py-0.5 rounded-full">Pending</span>
-                                @else
-                                    <span class="bg-red-100 text-red-700 text-xs font-semibold px-2 py-0.5 rounded-full">Declined</span>
-                                @endif
-                            </div>
-                            <div class="text-xs text-yellow-500 my-1">
-                                @for($i = 1; $i <= 5; $i++)<i class="fas fa-star {{ $i <= $review->rating ? '' : 'text-gray-200' }}"></i>@endfor
-                                <span class="text-gray-400 ml-1">{{ $review->created_at->format('M d, Y') }}</span>
-                            </div>
-                            <p class="text-sm text-gray-600">{{ $review->description }}</p>
-                        </div>
+                {{-- Settings shortcut --}}
+                <div class="ua-panel" x-show="tab === 'settings'" x-cloak>
+                    <div class="ua-panel__head">
+                        <h2 class="ua-panel__title">Account settings</h2>
+                        <p class="ua-panel__sub">Manage your profile photo, bio, and personal details.</p>
                     </div>
-                @empty
-                    <div class="text-center py-10">
-                        <i class="fas fa-comment-slash text-3xl text-gray-300 mb-3"></i>
-                        <p class="text-gray-500 text-sm">You haven't written any reviews yet.</p>
-                        <a href="{{ route('all_brokers') }}" class="inline-block mt-3 text-yellow-600 font-semibold text-sm">Browse brokers to review →</a>
+                    <div class="ua-panel__body">
+                        <p style="margin:0 0 1rem;color:var(--ua-muted);font-size:0.9375rem;">Update your display name, country, bio, and avatar from the profile editor.</p>
+                        <a href="{{ route('user.profile.edit') }}" class="ua-btn ua-btn--primary">
+                            <i class="fas fa-user-edit"></i> Edit profile
+                        </a>
                     </div>
-                @endforelse
-            </div>
-
-            <!-- Activity -->
-            <div x-show="tab === 'activity'" class="p-6" style="display:none;">
-                @forelse($activities as $activity)
-                    <div class="flex items-start gap-3 py-3 {{ !$loop->last ? 'border-b border-gray-100' : '' }}">
-                        <div class="w-8 h-8 rounded-full bg-yellow-50 flex items-center justify-center flex-shrink-0">
-                            <i class="fas fa-circle text-[6px] text-yellow-500"></i>
-                        </div>
-                        <div class="flex-1">
-                            <p class="text-sm text-gray-700 font-medium">{{ $activity->label }}</p>
-                            @if($activity->description)<p class="text-xs text-gray-500">{{ $activity->description }}</p>@endif
-                            <p class="text-xs text-gray-400 mt-0.5">
-                                {{ $activity->created_at->diffForHumans() }}
-                                @if($activity->ip_address)<span class="mx-1">·</span>{{ $activity->ip_address }}@endif
-                            </p>
-                        </div>
-                    </div>
-                @empty
-                    <p class="text-center text-gray-500 text-sm py-10">No activity recorded yet.</p>
-                @endforelse
-            </div>
-
-            <!-- Security -->
-            <div x-show="tab === 'security'" class="p-6 max-w-md" style="display:none;">
-                <h3 class="font-semibold text-gray-800 mb-4">Change password</h3>
-                <form action="{{ route('user.profile.password') }}" method="POST" class="space-y-4">
-                    @csrf
-                    @method('PUT')
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Current password</label>
-                        <input type="password" name="current_password" required class="w-full bg-gray-50 border border-gray-300 rounded-lg py-2.5 px-3 focus:outline-none focus:ring-2 focus:ring-yellow-400">
-                        @error('current_password')<div class="text-sm text-red-500 mt-1">{{ $message }}</div>@enderror
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">New password</label>
-                        <input type="password" name="password" required class="w-full bg-gray-50 border border-gray-300 rounded-lg py-2.5 px-3 focus:outline-none focus:ring-2 focus:ring-yellow-400">
-                        @error('password')<div class="text-sm text-red-500 mt-1">{{ $message }}</div>@enderror
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Confirm new password</label>
-                        <input type="password" name="password_confirmation" required class="w-full bg-gray-50 border border-gray-300 rounded-lg py-2.5 px-3 focus:outline-none focus:ring-2 focus:ring-yellow-400">
-                    </div>
-                    <button type="submit" class="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold px-5 py-2.5 rounded-lg transition">
-                        <i class="fas fa-key mr-1"></i> Update password
-                    </button>
-                </form>
+                </div>
             </div>
         </div>
     </div>
-</section>
+</div>
 @endsection

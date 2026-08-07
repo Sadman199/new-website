@@ -8,7 +8,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <!-- SEO Meta Tags -->
-    <meta name="description" content="@yield('meta_description', 'BrokersCourt helps you compare and find top forex brokers, read expert reviews, and grab exclusive deals on trading accounts.')">
+    <meta name="description" content="@yield('meta_description', \App\Support\SiteTheme::defaultMetaDescription())">
     <meta name="keywords" content="@yield('meta_keywords', 'Forex Brokers, Forex Broker Comparison, Broker Reviews, Forex Deals, Top Forex Brokers')">
     <meta name="author" content="BrokersCourt">
     <meta name="robots" content="index, follow">
@@ -38,10 +38,10 @@
     <link rel="icon" type="image/png" href="{{ asset('uploads/'.$global_setting_data->favicon) }}">
 
     <!-- Optimized CSS -->
-    <link href="{{ mix('css/app.css') }}" rel="stylesheet">
+    <link href="{{ mix('css/app.css') }}" rel="stylesheet" data-bc-global>
 
     <!-- Asynchronous JS (Optional for non-blocking) -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" data-bc-global>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11" async></script>
     <script src="https://cdn.jsdelivr.net/npm/alpinejs@2.x.x/dist/alpine.min.js" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/smooth-scrollbar@8.7.4/dist/smooth-scrollbar.js"></script>
@@ -50,15 +50,19 @@
 
 
     <!-- Additional Includes -->
+    @include('front.layout.partials.site-theme')
     @include('front.layout.styles')
     @include('front.layout.scripts')
     @include('front.layout.responsive')
+    <link rel="stylesheet" href="{{ asset('css/bc-nav-optimizer.css') }}?v=2" data-bc-global>
     @stack('page-styles')
+    <script src="{{ asset('js/bc-nav-optimizer.js') }}?v=2" defer></script>
 </head>
 
 
-<body>
-    
+<body data-bc-nav="prefetch">
+    <div id="bc-nav-progress" aria-hidden="true"><div id="bc-nav-progress__bar"></div></div>
+    <div id="bc-nav-veil" aria-hidden="true"></div>
      <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-BTKXSHQ638"></script>
     <script>
@@ -72,7 +76,20 @@
 
     @include('front.layout.nav')
 
-    @yield('main_content')
+    @if(\App\Support\SiteTheme::showQuickAccessDrawer())
+        <div data-bc-persist="quick-access">
+            @include('front.layout.partial.quick-access-drawers')
+        </div>
+    @endif
+    @if(\App\Support\SiteTheme::showBrokerSpotlight())
+        <div data-bc-persist="broker-spotlight">
+            @include('front.layout.partial.broker-spotlight-dock')
+        </div>
+    @endif
+
+    <main id="bc-page-root" tabindex="-1">
+        @yield('main_content')
+    </main>
 
     @include('front.layout.scripts_footer')
     @stack('scripts')
@@ -81,7 +98,7 @@
     
 
    <!-- Scroll to Top Button -->
-    <button id="scrollToTopBtn" class="fixed bottom-6 right-6 bg-yellow-500 text-white rounded-full shadow-lg hover:bg-yellow-600 focus:outline-none transition-all duration-300 w-16 h-16 flex items-center justify-center" style="opacity: 0; pointer-events: none;">
+    <button id="scrollToTopBtn" data-bc-persist="scroll-top" class="fixed bottom-6 right-6 bg-yellow-500 text-white rounded-full shadow-lg hover:bg-yellow-600 focus:outline-none transition-all duration-300 w-16 h-16 flex items-center justify-center" style="opacity: 0; pointer-events: none;">
         <span id="scrollPercentage" class="absolute text-sm font-medium">0%</span>
         <svg class="absolute w-full h-full top-0 left-0 -rotate-90" viewBox="0 0 100 100">
             <circle cx="50" cy="50" r="45" stroke="" stroke-width="8" fill="none" />
@@ -89,7 +106,16 @@
         </svg>
     </button>
 
-    @include('front.layout.partial.mega-footer')
+    <div data-bc-persist="site-footer">
+        @include('front.layout.partial.mega-footer')
+    </div>
+
+    @if(\App\Support\SiteTheme::showQuickAccessDrawer())
+        <script src="{{ asset('js/quick-access-drawers.js') }}?v=4"></script>
+    @endif
+    @if(\App\Support\SiteTheme::showBrokerSpotlight())
+        <script src="{{ asset('js/broker-spotlight-dock.js') }}?v=1"></script>
+    @endif
 
 
     <!-- SweetAlert for success and error -->

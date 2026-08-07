@@ -3,8 +3,8 @@
 @section('title', 'Best brokers for every need in ' . date('Y') . ' | BrokersCourt')
 @section('meta_description', 'Explore editor-picked best broker rankings by trading style, platform, asset class, and country. Find the ideal broker for your goals.')
 
-@push('page-styles')
-    <link rel="stylesheet" href="{{ asset('css/best-brokers-index.css') }}?v=4">
+@push('head')
+    <link rel="stylesheet" href="{{ asset('css/best-brokers-index.css') }}?v=5">
 @endpush
 
 @section('main_content')
@@ -23,10 +23,18 @@
     ];
 @endphp
 <div class="bbh-page">
-    <div class="bbh-wrap">
-        <header class="bbh-hero">
+    <header class="bbh-hero">
+        <div class="bbh-wrap">
+            <nav class="bbh-breadcrumb" aria-label="Breadcrumb">
+                <a href="{{ route('home') }}">Home</a>
+                <span aria-hidden="true">/</span>
+                <span>Best brokers</span>
+            </nav>
+
+            <p class="bbh-hero__eyebrow">Independent broker research</p>
             <h1 class="bbh-hero__title">Explore the <span class="bbh-hero__accent">top brokers</span> for every need</h1>
             <p class="bbh-hero__subtitle">Browse our editor-picked rankings to find the ideal broker for your goals</p>
+
             <div class="bbh-hero__search-wrap">
                 <svg class="bbh-hero__search-icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                     <path fill-rule="evenodd" d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z" clip-rule="evenodd"/>
@@ -38,8 +46,10 @@
                        autocomplete="off"
                        aria-label="Search broker lists">
             </div>
-        </header>
+        </div>
+    </header>
 
+    <div class="bbh-wrap">
         <div class="bbh-layout">
             <aside class="bbh-filters" aria-label="Filter broker lists">
                 <h2 class="bbh-filters__title">Filters</h2>
@@ -141,5 +151,5 @@
 @endsection
 
 @push('scripts')
-<script src="{{ asset('js/best-brokers-index.js') }}?v=4"></script>
+<script src="{{ asset('js/best-brokers-index.js') }}?v=5" defer></script>
 @endpush

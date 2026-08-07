@@ -4,130 +4,88 @@
 @section('meta_description', $seoDescription)
 
 @push('head')
-<link rel="canonical" href="{{ $canonicalUrl }}">
-<meta property="og:url" content="{{ $canonicalUrl }}">
+    <link rel="canonical" href="{{ $canonicalUrl }}">
+    <meta property="og:url" content="{{ $canonicalUrl }}">
+    <link rel="stylesheet" href="{{ asset('css/find-my-broker.css') }}?v=1">
 @endpush
 
 @section('main_content')
-
-<style>
-    .fmb-page { background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%); min-height: 70vh; }
-    .fmb-panel {
-        background: rgba(255,255,255,0.82);
-        backdrop-filter: blur(16px);
-        -webkit-backdrop-filter: blur(16px);
-        border: 1px solid rgba(255,255,255,0.9);
-        border-radius: 16px;
-        box-shadow: 0 8px 32px rgba(15,23,42,0.06);
-    }
-    .fmb-group-title {
-        font-size: 11px;
-        font-weight: 700;
-        letter-spacing: 0.06em;
-        text-transform: uppercase;
-        color: #64748b;
-        margin-bottom: 10px;
-    }
-    .fmb-check {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        padding: 6px 8px;
-        border-radius: 8px;
-        font-size: 13px;
-        color: #334155;
-        cursor: pointer;
-        transition: background .15s;
-    }
-    .fmb-check:hover { background: #eff6ff; }
-    .fmb-check input { accent-color: #2563eb; }
-    .fmb-chip {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        padding: 5px 10px;
-        font-size: 12px;
-        font-weight: 500;
-        color: #1d4ed8;
-        background: #eff6ff;
-        border: 1px solid #bfdbfe;
-        border-radius: 999px;
-    }
-    .fmb-chip button {
-        background: none;
-        border: none;
-        padding: 0;
-        line-height: 1;
-        color: #64748b;
-        cursor: pointer;
-    }
-    .fmb-chip button:hover { color: #1e293b; }
-    .fmb-results.is-loading { opacity: 0.45; pointer-events: none; }
-    .fmb-drawer {
-        position: fixed;
-        inset: 0;
-        z-index: 1100;
-        display: none;
-    }
-    .fmb-drawer.is-open { display: block; }
-    .fmb-drawer-backdrop {
-        position: absolute;
-        inset: 0;
-        background: rgba(15,23,42,0.45);
-    }
-    .fmb-drawer-panel {
-        position: absolute;
-        top: 0;
-        left: 0;
-        bottom: 0;
-        width: min(92vw, 360px);
-        overflow-y: auto;
-        background: #fff;
-        padding: 16px;
-        box-shadow: 12px 0 40px rgba(15,23,42,0.18);
-    }
-    @media (min-width: 1024px) {
-        .fmb-drawer { display: none !important; }
-    }
-</style>
-
 <div class="fmb-page">
-    <div class="border-b border-gray-200/80 bg-white/70 backdrop-blur">
-        <div class="container max-w-7xl mx-auto w-full px-4 mt-20 py-8">
-            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                <div>
-                    <h1 class="text-2xl md:text-3xl font-bold text-gray-900">
-                        Find My <span style="color: rgba(245, 158, 11, 1);">Broker</span>
-                    </h1>
-                    <p class="text-sm text-gray-500 mt-1">Filter by deposit, regulation, platform, markets, and more — instantly.</p>
+    <header class="fmb-hero">
+        <div class="fmb-wrap">
+            <nav class="fmb-breadcrumb" aria-label="Breadcrumb">
+                <a href="{{ route('home') }}">Home</a>
+                <span aria-hidden="true">/</span>
+                <span>Find my broker</span>
+            </nav>
+
+            <p class="fmb-hero__eyebrow">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                </svg>
+                Smart broker matching
+            </p>
+            <h1 class="fmb-hero__title">Find my <span class="fmb-hero__accent">broker</span></h1>
+            <p class="fmb-hero__subtitle">Filter {{ number_format($pageStats['total']) }}+ reviewed brokers by deposit, regulation, platform, costs, and features — updated live from our database.</p>
+
+            <div class="fmb-hero__stats">
+                <div class="fmb-hero__stat">
+                    <span class="fmb-hero__stat-label">In database</span>
+                    <strong class="fmb-hero__stat-value">{{ number_format($pageStats['total']) }}</strong>
                 </div>
-                <nav class="text-sm bg-gray-100 rounded-full px-4 py-2 inline-flex items-center">
-                    <a href="{{ route('home') }}" class="text-gray-600 hover:text-gray-900">Home</a>
-                    <span class="mx-2 text-gray-400">/</span>
-                    <span class="font-medium text-gray-800">Find My Broker</span>
-                </nav>
+                <div class="fmb-hero__stat">
+                    <span class="fmb-hero__stat-label">Matching now</span>
+                    <strong class="fmb-hero__stat-value fmb-hero__stat-value--match" id="fmb-hero-match">{{ number_format($total ?? $brokers->total()) }}</strong>
+                </div>
+                <div class="fmb-hero__stat">
+                    <span class="fmb-hero__stat-label">Regulated</span>
+                    <strong class="fmb-hero__stat-value">{{ number_format($pageStats['regulated']) }}</strong>
+                </div>
+                <div class="fmb-hero__stat">
+                    <span class="fmb-hero__stat-label">Avg. rating</span>
+                    <strong class="fmb-hero__stat-value">{{ $pageStats['avg_rating'] }}</strong>
+                </div>
             </div>
         </div>
-    </div>
+    </header>
 
-    <div class="container max-w-7xl mx-auto w-full px-4 py-8" id="fmb-app" data-endpoint="{{ route('find_my_broker') }}">
-        <div class="flex flex-col lg:flex-row gap-6">
-            {{-- Desktop filters --}}
-            <aside class="hidden lg:block w-72 flex-shrink-0">
-                <div class="fmb-panel p-4 sticky top-24 max-h-[calc(100vh-7rem)] overflow-y-auto">
-                    @include('front.brokers.partials.find_my_broker_filters', ['idPrefix' => 'desk'])
+    <div class="fmb-wrap" id="fmb-app" data-endpoint="{{ route('find_my_broker') }}">
+        @if(!empty($quickPresets))
+            <section class="fmb-presets" aria-label="Popular searches">
+                <p class="fmb-presets__label">Popular searches</p>
+                <div class="fmb-presets__grid">
+                    @foreach($quickPresets as $preset)
+                        <a href="{{ $preset['url'] }}" class="fmb-preset">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                            </svg>
+                            {{ $preset['label'] }}
+                        </a>
+                    @endforeach
+                </div>
+            </section>
+        @endif
+
+        <div class="fmb-layout">
+            <aside class="fmb-filters fmb-filters--desktop" aria-label="Filter brokers">
+                <div class="fmb-filters__shell">
+                    <div class="fmb-filters__head">
+                        <h2 class="fmb-filters__title">Refine results</h2>
+                        <button type="button" class="fmb-filters__reset fmb-reset">Reset</button>
+                    </div>
+                    <div class="fmb-filters__body">
+                        @include('front.brokers.partials.find_my_broker_filters', ['idPrefix' => 'desk'])
+                    </div>
                 </div>
             </aside>
 
-            {{-- Results --}}
-            <div class="flex-1 min-w-0">
-                <div class="flex items-center justify-between gap-3 mb-4 lg:hidden">
-                    <button type="button" id="fmb-open-filters" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white border border-gray-200 text-sm font-semibold text-gray-800 shadow-sm">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4h18M6 12h12M10 20h4"/></svg>
+            <div class="fmb-main">
+                <div class="fmb-mobile-bar">
+                    <button type="button" class="fmb-mobile-filter-btn" id="fmb-open-filters">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M3 4h18M6 12h12M10 20h4"/>
+                        </svg>
                         Filters
-                        @if(count($activeChips))
-                            <span class="bg-blue-600 text-white text-xs rounded-full px-2 py-0.5">{{ count($activeChips) }}</span>
-                        @endif
                     </button>
                 </div>
 
@@ -136,22 +94,40 @@
                 </div>
             </div>
         </div>
+
+        <section class="fmb-cta" aria-label="More tools">
+            <div class="fmb-cta__inner">
+                <div>
+                    <h2 class="fmb-cta__title">Need a second opinion?</h2>
+                    <p class="fmb-cta__text">Compare brokers side by side, read in-depth reviews, or run a safety check before you deposit.</p>
+                </div>
+                <div class="fmb-cta__actions">
+                    <a href="{{ route('broker.comparison') }}" class="fmb-btn fmb-btn--ghost">Compare brokers</a>
+                    <a href="{{ route('broker.scam_checker') }}" class="fmb-btn fmb-btn--primary">Scam checker</a>
+                </div>
+            </div>
+        </section>
     </div>
 </div>
 
-{{-- Mobile filter drawer --}}
 <div class="fmb-drawer" id="fmb-drawer" aria-hidden="true">
-    <div class="fmb-drawer-backdrop" id="fmb-close-filters"></div>
-    <div class="fmb-drawer-panel">
-        <div class="flex items-center justify-between mb-4">
-            <h2 class="text-lg font-bold text-gray-900">Filters</h2>
-            <button type="button" class="p-2 text-gray-500" id="fmb-close-filters-btn" aria-label="Close filters">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+    <div class="fmb-drawer__backdrop" id="fmb-close-filters"></div>
+    <div class="fmb-drawer__panel">
+        <div class="fmb-drawer__head">
+            <h2 class="fmb-drawer__title">Filters</h2>
+            <button type="button" class="fmb-drawer__close" id="fmb-close-filters-btn" aria-label="Close filters">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12"/>
+                </svg>
             </button>
         </div>
-        @include('front.brokers.partials.find_my_broker_filters', ['idPrefix' => 'mob'])
+        <div class="fmb-drawer__body">
+            @include('front.brokers.partials.find_my_broker_filters', ['idPrefix' => 'mob'])
+        </div>
     </div>
 </div>
-
-<script src="{{ asset('js/find-my-broker.js') }}?v={{ @filemtime(public_path('js/find-my-broker.js')) ?: time() }}" defer></script>
 @endsection
+
+@push('scripts')
+<script src="{{ asset('js/find-my-broker.js') }}?v=2" defer></script>
+@endpush

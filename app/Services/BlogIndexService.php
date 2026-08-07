@@ -14,6 +14,16 @@ class BlogIndexService
     public const CARDS_PER_TAB = 20;
 
     /** @var array<int, string> */
+    public const INSIGHT_GRADIENTS = [
+        'linear-gradient(135deg, #007AAD 0%, #0C1D32 100%)',
+        'linear-gradient(135deg, #1e5f8a 0%, #007AAD 100%)',
+        'linear-gradient(135deg, #0C1D32 0%, #334155 100%)',
+        'linear-gradient(135deg, #007AAD 0%, #33a3d1 100%)',
+        'linear-gradient(135deg, #475569 0%, #0C1D32 100%)',
+        'linear-gradient(135deg, #D9E2E9 0%, #007AAD 100%)',
+    ];
+
+    /** @var array<int, string> */
     private const BADGE_COLORS = [
         'markets' => '#16a34a',
         'broker' => '#2563eb',
@@ -38,7 +48,7 @@ class BlogIndexService
         $activeTab = $subcategorySlug ?: 'all';
 
         $query = Post::query()
-            ->with(['rSubCategory'])
+            ->with(['rSubCategory', 'writtenByAuthor'])
             ->where('language_id', $languageId);
 
         if ($subcategorySlug) {
@@ -113,17 +123,23 @@ class BlogIndexService
         ];
     }
 
+    public static function insightGradient(int $index): string
+    {
+        return self::INSIGHT_GRADIENTS[$index % count(self::INSIGHT_GRADIENTS)];
+    }
+
     /** @return array<string, mixed> */
     public function serializePost(Post $post): array
     {
         $sub = $post->rSubCategory;
+        $author = $this->authorFor($post);
 
         return [
             'id' => $post->id,
             'title' => $post->post_title,
             'slug' => $post->slug,
             'excerpt' => $this->excerpt($post),
-            'photo' => $post->post_photo ? asset('uploads/' . $post->post_photo) : asset('uploads/default.png'),
+            'photo' => $post->post_photo ? asset('uploads/' . $post->post_photo) : null,
             'url' => $sub
                 ? route('news_detail', ['subcategory_slug' => $sub->slug, 'post_slug' => $post->slug])
                 : '#',
@@ -132,8 +148,11 @@ class BlogIndexService
                 'slug' => $sub?->slug,
                 'color' => $this->badgeColor($sub?->sub_category_name ?? ''),
             ],
-            'author' => $this->authorName($post),
+            'category' => $sub?->sub_category_name ?? 'Insights',
+            'author' => $author['name'],
+            'author_photo' => $author['photo'] ? asset('uploads/' . $author['photo']) : null,
             'date' => $post->updated_at->format('M j, Y'),
+            'date_iso' => $post->updated_at->toDateString(),
             'date_short' => $post->updated_at->format('M j'),
             'read_time' => $this->readTimeMinutes($post),
             'views' => (int) $post->visitors,
@@ -162,8 +181,18 @@ class BlogIndexService
 
     private function authorName(Post $post): string
     {
+        if ($post->relationLoaded('writtenByAuthor') && $post->writtenByAuthor) {
+            return $post->writtenByAuthor->name;
+        }
+
+        if ($post->written_by_author_id) {
+            $author = Author::find($post->written_by_author_id);
+
+            return $author?->name ?? 'Editor';
+        }
+
         if ($post->author_id && (int) $post->author_id !== 0) {
-            $author = Author::find($post->author_id);
+            $author = $post->relationLoaded('author') ? $post->author : Author::find($post->author_id);
 
             return $author?->name ?? (string) ($post->getAttributes()['author'] ?? 'Editor');
         }
@@ -177,6 +206,42 @@ class BlogIndexService
         $legacyAuthor = $post->getAttributes()['author'] ?? null;
 
         return is_string($legacyAuthor) && $legacyAuthor !== '' ? $legacyAuthor : 'BrokersCourt Editorial';
+    }
+
+    /** @return array{name: string, photo: string|null} */
+    public function authorFor(Post $post): array
+    {
+        $photo = null;
+
+        if ($post->relationLoaded('writtenByAuthor') && $post->writtenByAuthor?->photo) {
+            $photo = $post->writtenByAuthor->photo;
+        } elseif ($post->written_by_author_id) {
+            $photo = ($post->writtenByAuthor ?? Author::find($post->written_by_author_id))?->photo;
+        } elseif ($post->author_id && (int) $post->author_id !== 0) {
+            $photo = ($post->relationLoaded('author') ? $post->author : Author::find($post->author_id))?->photo;
+        } elseif ($post->admin_id) {
+            $photo = Admin::find($post->admin_id)?->photo;
+        }
+
+        return [
+            'name' => $this->authorName($post),
+            'photo' => $photo,
+        ];
+    }
+
+    /** @return array<int, array<string, mixed>> */
+    public function latestPosts(?int $languageId = null, int $limit = 3): array
+    {
+        $languageId = $languageId ?? $this->resolveLanguageId();
+
+        return Post::query()
+            ->with(['rSubCategory', 'writtenByAuthor'])
+            ->where('language_id', $languageId)
+            ->orderByDesc('id')
+            ->limit($limit)
+            ->get()
+            ->map(fn (Post $post) => $this->serializePost($post))
+            ->all();
     }
 
     private function badgeColor(string $name): string

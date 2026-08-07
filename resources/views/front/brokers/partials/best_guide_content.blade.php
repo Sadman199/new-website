@@ -1,11 +1,30 @@
-<section class="bbg-scoreboard" aria-label="Top broker scores">
-    <div class="bbg-scoreboard__grid">
+<section class="bbg-scoreboard" id="broker-scores" aria-label="Top broker scores">
+    <div class="bbg-scoreboard__head">
+        <div>
+            <h2 class="bbg-scoreboard__title">Top broker scores</h2>
+            <p class="bbg-scoreboard__meta">{{ count($guidePage['entries']) }} brokers ranked · {{ $guidePage['updated_at'] }}</p>
+        </div>
+        <div class="bbg-scoreboard__nav">
+            <button type="button" class="bbg-scoreboard__btn" data-bbg-carousel-prev aria-label="Previous brokers">
+                <i class="fas fa-chevron-left" aria-hidden="true"></i>
+            </button>
+            <button type="button" class="bbg-scoreboard__btn" data-bbg-carousel-next aria-label="Next brokers">
+                <i class="fas fa-chevron-right" aria-hidden="true"></i>
+            </button>
+        </div>
+    </div>
+
+    <div class="bbg-scoreboard__track" data-bbg-carousel-track>
         @foreach($guidePage['entries'] as $entry)
-            <a href="#broker-{{ $entry['rank'] }}" class="bbg-score-card">
-                <span class="bbg-score-card__rank">{{ $entry['rank'] }}</span>
+            <a href="#broker-{{ $entry['rank'] }}"
+               class="bbg-score-card @if($entry['rank'] === 1) bbg-score-card--featured @endif">
+                @if($entry['rank'] === 1)
+                    <span class="bbg-score-card__badge">Top pick</span>
+                @endif
+                <span class="bbg-score-card__rank">#{{ $entry['rank'] }}</span>
                 <div class="bbg-score-card__logo">
                     @if($entry['logo_url'])
-                        <img src="{{ $entry['logo_url'] }}" alt="" loading="lazy" decoding="async">
+                        <img src="{{ $entry['logo_url'] }}" alt="{{ $entry['broker']->name }}" loading="lazy" decoding="async">
                     @else
                         <span>{{ Str::substr($entry['broker']->name, 0, 1) }}</span>
                     @endif
@@ -13,21 +32,10 @@
                 <p class="bbg-score-card__name">{{ $entry['broker']->name }}</p>
                 <p class="bbg-score-card__metric">{{ $entry['score_label'] }}</p>
                 <p class="bbg-score-card__score">{{ number_format($entry['score'], 1) }}</p>
+                <p class="bbg-score-card__hint">{{ $entry['one_liner'] ?: $entry['recommended_for'] }}</p>
             </a>
         @endforeach
     </div>
-</section>
-
-<section class="bbg-intro">
-    <p>{{ $guidePage['guide']['strengths_intro'] }}</p>
-    <ul class="bbg-intro__list">
-        @foreach($guidePage['entries'] as $entry)
-            <li>
-                <strong>{{ $entry['broker']->name }}</strong>
-                — {{ $entry['one_liner'] ?: $entry['recommended_for'] }}
-            </li>
-        @endforeach
-    </ul>
 </section>
 
 @if($guidePage['winner'])

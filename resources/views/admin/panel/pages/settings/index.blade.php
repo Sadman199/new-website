@@ -28,17 +28,6 @@
                     <input class="form-control-bc" type="text" name="theme_color_2" id="theme_color_2" value="{{ old('theme_color_2', $setting->theme_color_2 ?? '') }}">
                 </div>
                 <div class="form-group">
-                    <label for="news_ticker_total">news_ticker_total</label>
-                    <input class="form-control-bc" type="text" name="news_ticker_total" id="news_ticker_total" value="{{ old('news_ticker_total', $setting->news_ticker_total ?? '') }}">
-                </div>
-                <div class="form-group">
-                    <label for="news_ticker_status">news_ticker_status</label>
-                    <select class="form-control-bc" name="news_ticker_status" id="news_ticker_status">
-                        <option value="Show" @selected(old('news_ticker_status', $setting->news_ticker_status ?? '') === 'Show')>Show</option>
-                        <option value="Hide" @selected(old('news_ticker_status', $setting->news_ticker_status ?? '') === 'Hide')>Hide</option>
-                    </select>
-                </div>
-                <div class="form-group">
                     <label for="video_total">video_total</label>
                     <input class="form-control-bc" type="text" name="video_total" id="video_total" value="{{ old('video_total', $setting->video_total ?? '') }}">
                 </div>

@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Front\HomeController;
 use App\Http\Controllers\Front\AboutController;
 use App\Http\Controllers\Front\AuthorsController;
+use App\Http\Controllers\Front\PromotionsController;
 use App\Http\Controllers\Front\ContactController;
 use App\Http\Controllers\Front\FaqController;
 use App\Http\Controllers\Front\TermsController;
@@ -20,6 +21,7 @@ use App\Http\Controllers\Front\ArchiveController;
 use App\Http\Controllers\Front\TagController;
 use App\Http\Controllers\Front\LanguageController;
 use App\Http\Controllers\Front\CountryController;
+use App\Http\Controllers\Front\BrokerScamCheckerController;
 use App\Http\Controllers\Front\BrokerController;
 use App\Http\Controllers\Front\BonusController;
 use App\Http\Controllers\Front\BrokerTypeController;
@@ -31,10 +33,11 @@ use App\Http\Controllers\Front\FindMyBrokerController;
 use App\Http\Controllers\Front\ScamBrokerController;
 use App\Http\Controllers\Front\Auth\LoginController as UserLoginController;
 use App\Http\Controllers\Front\Auth\RegisterController as UserRegisterController;
+use App\Http\Controllers\Front\Auth\GoogleAuthController;
 use App\Http\Controllers\Front\ProfileController;
 use App\Http\Controllers\Front\ForexCalculatorController;
 use App\Http\Controllers\Front\TradingToolsController;
-use App\Http\Controllers\Front\MethodologyController;
+use App\Http\Controllers\Front\PropFirmController;
 
 use App\Http\Controllers\Admin\AdminHomeController;
 use App\Http\Controllers\Admin\AdminLoginController;
@@ -59,6 +62,13 @@ use App\Http\Controllers\Admin\AdminAuthorController;
 use App\Http\Controllers\Admin\AdminLanguageController;
 use App\Http\Controllers\Admin\AdminForexBonusController;
 use App\Http\Controllers\Admin\AdminBrokerController;
+use App\Http\Controllers\Admin\AdminPropFirmController;
+use App\Http\Controllers\Admin\AdminPropFirmCategoryController;
+use App\Http\Controllers\Admin\AdminPropFirmAttributeController;
+use App\Http\Controllers\Admin\AdminPropFirmProgramController;
+use App\Http\Controllers\Admin\AdminPropFirmReviewController;
+use App\Http\Controllers\Admin\AdminPropFirmFaqController;
+use App\Http\Controllers\Admin\AdminPropFirmSettingController;
 use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\Admin\ReviewController;
 use App\Http\Controllers\Admin\AccountOptionController;
@@ -85,6 +95,7 @@ Route::get('/broker-live-search', [BrokerController::class, 'liveSearch'])
     ->name('broker.live.search');
 
 Route::get('/awards', [AwardController::class, 'index'])->name('awards.index');
+Route::get('/awards/{award}', [AwardController::class, 'show'])->name('awards.show');
 
 Route::get('/brokers/award/{award}', [\App\Http\Controllers\Front\BrokerController::class, 'byAward'])->name('brokers.byAward');
 
@@ -101,8 +112,8 @@ Route::post('/language/switch', [LanguageController::class, 'switch_language'])-
 Route::post('/country/switch', [CountryController::class, 'switch_country'])->name('front_country');
 Route::get('/subcategory-by-category/{id}', [HomeController::class, 'get_subcategory_by_category'])->name('subcategory-by-category');
 Route::get('/subcategory/{slug}', [SubCategoryController::class, 'index'])->name('subcategory');
-Route::get('/brokers/high-leverage', [BrokerFilterController::class, 'highLeverageBrokers'])->name('brokers.high.leverage');
-Route::get('/brokers/platform/{slug}', [BrokerFilterController::class, 'filterByPlatform'])->name('brokers.by.platform');
+Route::redirect('/brokers/high-leverage', '/best-brokers/high-leverage', 301)->name('brokers.high.leverage');
+Route::get('/brokers/platform/{slug}', [BrokerController::class, 'legacyPlatformRedirect'])->name('brokers.by.platform');
 Route::get('/brokers/regulation/{slug}', [BrokerFilterController::class, 'filterByRegulation'])->name('brokers.by.regulation');
 
 
@@ -115,6 +126,11 @@ Route::get('/news/popular', [NewsController::class, 'popularNews'])->name('news_
 Route::get('/about', [AboutController::class, 'index'])->name('about');
 Route::get('/about-us', [AboutController::class, 'index'])->name('about.us');
 Route::get('/authors', [AuthorsController::class, 'index'])->name('authors');
+Route::get('/broker-promos', [PromotionsController::class, 'index'])->name('promotions.index');
+Route::get('/broker-promos/load-more', [PromotionsController::class, 'loadMore'])->name('promotions.load_more');
+Route::get('/broker-promos/{type}', [PromotionsController::class, 'index'])->name('promotions.tab');
+Route::redirect('/active-promotions', '/broker-promos', 301);
+Route::redirect('/active-promotions/{type}', '/broker-promos/{type}', 301);
 Route::get('/contact', [ContactController::class, 'index'])->name('contact');
 Route::redirect('/contact-us', '/contact', 301);
 Route::get('/our-methodology', [MethodologyController::class, 'index'])->name('methodology');
@@ -271,6 +287,57 @@ Route::group(['prefix' => 'admin/broker', 'middleware' => 'admin:admin'], functi
 
 });
 // ==== Broker Management End ====
+
+// ==== Prop Firms Management Start ====
+Route::group(['prefix' => 'admin/prop-firms', 'middleware' => 'admin:admin'], function () {
+    Route::get('/dashboard', [AdminPropFirmController::class, 'dashboard'])->name('admin_prop_firms_dashboard');
+    Route::get('/show', [AdminPropFirmController::class, 'show'])->name('admin_prop_firms_show');
+    Route::get('/create', [AdminPropFirmController::class, 'create'])->name('admin_prop_firms_create');
+    Route::post('/store', [AdminPropFirmController::class, 'store'])->name('admin_prop_firms_store');
+    Route::get('/edit/{id}', [AdminPropFirmController::class, 'edit'])->name('admin_prop_firms_edit');
+    Route::put('/update/{id}', [AdminPropFirmController::class, 'update'])->name('admin_prop_firms_update');
+    Route::delete('/delete/{id}', [AdminPropFirmController::class, 'delete'])->name('admin_prop_firms_delete');
+    Route::post('/bulk', [AdminPropFirmController::class, 'bulk'])->name('admin_prop_firms_bulk');
+
+    Route::get('/categories/show', [AdminPropFirmCategoryController::class, 'show'])->name('admin_prop_firm_categories_show');
+    Route::get('/categories/create', [AdminPropFirmCategoryController::class, 'create'])->name('admin_prop_firm_categories_create');
+    Route::post('/categories/store', [AdminPropFirmCategoryController::class, 'store'])->name('admin_prop_firm_categories_store');
+    Route::get('/categories/edit/{id}', [AdminPropFirmCategoryController::class, 'edit'])->name('admin_prop_firm_categories_edit');
+    Route::put('/categories/update/{id}', [AdminPropFirmCategoryController::class, 'update'])->name('admin_prop_firm_categories_update');
+    Route::delete('/categories/delete/{id}', [AdminPropFirmCategoryController::class, 'delete'])->name('admin_prop_firm_categories_delete');
+
+    Route::get('/attributes/show', [AdminPropFirmAttributeController::class, 'show'])->name('admin_prop_firm_attributes_show');
+    Route::get('/attributes/create', [AdminPropFirmAttributeController::class, 'create'])->name('admin_prop_firm_attributes_create');
+    Route::post('/attributes/store', [AdminPropFirmAttributeController::class, 'store'])->name('admin_prop_firm_attributes_store');
+    Route::get('/attributes/edit/{id}', [AdminPropFirmAttributeController::class, 'edit'])->name('admin_prop_firm_attributes_edit');
+    Route::put('/attributes/update/{id}', [AdminPropFirmAttributeController::class, 'update'])->name('admin_prop_firm_attributes_update');
+    Route::delete('/attributes/delete/{id}', [AdminPropFirmAttributeController::class, 'delete'])->name('admin_prop_firm_attributes_delete');
+
+    Route::get('/programs/show', [AdminPropFirmProgramController::class, 'show'])->name('admin_prop_firm_programs_show');
+    Route::get('/programs/create', [AdminPropFirmProgramController::class, 'create'])->name('admin_prop_firm_programs_create');
+    Route::post('/programs/store', [AdminPropFirmProgramController::class, 'store'])->name('admin_prop_firm_programs_store');
+    Route::get('/programs/edit/{id}', [AdminPropFirmProgramController::class, 'edit'])->name('admin_prop_firm_programs_edit');
+    Route::put('/programs/update/{id}', [AdminPropFirmProgramController::class, 'update'])->name('admin_prop_firm_programs_update');
+    Route::delete('/programs/delete/{id}', [AdminPropFirmProgramController::class, 'delete'])->name('admin_prop_firm_programs_delete');
+
+    Route::get('/reviews/show', [AdminPropFirmReviewController::class, 'show'])->name('admin_prop_firm_reviews_show');
+    Route::get('/reviews/create', [AdminPropFirmReviewController::class, 'create'])->name('admin_prop_firm_reviews_create');
+    Route::post('/reviews/store', [AdminPropFirmReviewController::class, 'store'])->name('admin_prop_firm_reviews_store');
+    Route::get('/reviews/edit/{id}', [AdminPropFirmReviewController::class, 'edit'])->name('admin_prop_firm_reviews_edit');
+    Route::put('/reviews/update/{id}', [AdminPropFirmReviewController::class, 'update'])->name('admin_prop_firm_reviews_update');
+    Route::delete('/reviews/delete/{id}', [AdminPropFirmReviewController::class, 'delete'])->name('admin_prop_firm_reviews_delete');
+
+    Route::get('/faqs/show', [AdminPropFirmFaqController::class, 'show'])->name('admin_prop_firm_faqs_show');
+    Route::get('/faqs/create', [AdminPropFirmFaqController::class, 'create'])->name('admin_prop_firm_faqs_create');
+    Route::post('/faqs/store', [AdminPropFirmFaqController::class, 'store'])->name('admin_prop_firm_faqs_store');
+    Route::get('/faqs/edit/{id}', [AdminPropFirmFaqController::class, 'edit'])->name('admin_prop_firm_faqs_edit');
+    Route::put('/faqs/update/{id}', [AdminPropFirmFaqController::class, 'update'])->name('admin_prop_firm_faqs_update');
+    Route::delete('/faqs/delete/{id}', [AdminPropFirmFaqController::class, 'delete'])->name('admin_prop_firm_faqs_delete');
+
+    Route::get('/settings/edit', [AdminPropFirmSettingController::class, 'edit'])->name('admin_prop_firm_settings_edit');
+    Route::put('/settings/update', [AdminPropFirmSettingController::class, 'update'])->name('admin_prop_firm_settings_update');
+});
+// ==== Prop Firms Management End ====
 
 // ==== User Management (admin) ====
 Route::group(['prefix' => 'admin/users', 'middleware' => 'admin:admin'], function () {
@@ -467,6 +534,21 @@ Route::get('/brokers', [AllBrokerController::class, 'index'])->name('all_brokers
 Route::get('/brokers/filter', [AllBrokerController::class, 'filterBrokers'])->name('all_brokers_filter');
 Route::get('/find-my-broker', [FindMyBrokerController::class, 'index'])->name('find_my_broker');
 
+// ==== Prop Firms (frontend) ====
+Route::get('/prop-firms', [PropFirmController::class, 'index'])->name('prop_firms.index');
+Route::get('/prop-firms/category/{slug}', [PropFirmController::class, 'category'])->name('prop_firms.category');
+Route::get('/prop-firms/{slug}', [PropFirmController::class, 'show'])->name('prop_firms.show');
+
+Route::get('/broker-scam-checker', [BrokerScamCheckerController::class, 'index'])->name('broker.scam_checker');
+Route::get('/broker-scam-checker/search', [BrokerScamCheckerController::class, 'search'])->name('broker.scam_checker.search');
+Route::post('/broker-scam-checker/compare', [BrokerScamCheckerController::class, 'compare'])->name('broker.scam_checker.compare');
+Route::post('/broker-scam-checker/request-review', [BrokerScamCheckerController::class, 'requestReview'])->name('broker.scam_checker.request_review');
+Route::get('/broker-scam-checker/{slug}', [BrokerScamCheckerController::class, 'show'])->name('broker.scam_checker.show');
+
+Route::middleware(['auth', 'throttle:10,1'])->group(function () {
+    Route::post('/broker-scam-checker/report', [BrokerScamCheckerController::class, 'storeReport'])->name('broker.scam_checker.report');
+});
+
 
 // Admin routes protected by admin middleware
 Route::prefix('admin')->middleware('admin:admin')->group(function () {
@@ -490,6 +572,9 @@ Route::get('/login', [UserLoginController::class, 'showForm'])->name('user.login
 Route::post('/login', [UserLoginController::class, 'login'])->middleware('throttle:20,1')->name('user.login.submit');
 Route::get('/register', [UserRegisterController::class, 'showForm'])->name('user.register');
 Route::post('/register', [UserRegisterController::class, 'register'])->middleware('throttle:10,1')->name('user.register.submit');
+Route::get('/auth/google', [GoogleAuthController::class, 'redirect'])->name('user.google.redirect');
+Route::post('/auth/google/credential', [GoogleAuthController::class, 'credential'])->middleware('throttle:20,1')->name('user.google.credential');
+Route::get('/auth/google/callback', [GoogleAuthController::class, 'callback'])->name('user.google.callback');
 Route::post('/logout', [UserLoginController::class, 'logout'])->name('user.logout');
 
 Route::middleware('auth')->group(function () {
@@ -505,7 +590,7 @@ Route::post('/subscribe', [SubscriberController::class, 'subscribe'])->name('sub
 Route::get('/verify-subscription/{token}/{email}', [SubscriberController::class, 'verify'])->name('subscriber_verify');
 Route::get('/brokers/comparison', [HomeController::class, 'showComparisonDropdown'])->name('brokers.comparison.dropdown');
 
-
-
-
+Route::get('/brokers/{slug}', [BrokerController::class, 'legacyBestBrokerRedirect'])
+    ->where('slug', '[a-z0-9\-]+')
+    ->name('brokers.legacy.category');
 

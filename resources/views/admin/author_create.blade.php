@@ -49,6 +49,18 @@
                                         <label class="font-weight-bold">Bio</label>
                                         <textarea class="form-control" name="bio" rows="3" placeholder="Short author bio (optional)">{{ old('bio') }}</textarea>
                                     </div>
+                                    <div class="form-group">
+                                        <label class="font-weight-bold">Twitter URL</label>
+                                        <input type="url" class="form-control" name="twitter_url" value="{{ old('twitter_url') }}" placeholder="https://twitter.com/username">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="font-weight-bold">LinkedIn URL</label>
+                                        <input type="url" class="form-control" name="linkedin_url" value="{{ old('linkedin_url') }}" placeholder="https://linkedin.com/in/username">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="font-weight-bold">Facebook URL</label>
+                                        <input type="url" class="form-control" name="facebook_url" value="{{ old('facebook_url') }}" placeholder="https://facebook.com/username">
+                                    </div>
                                 </div>
                             </div>
 

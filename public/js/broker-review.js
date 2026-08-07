@@ -81,66 +81,66 @@
         }
     }
 
-    /* Sticky scroll nav */
+    /* Sticky scroll nav (legacy — optional) */
     var nav = document.getElementById('bc-scroll-nav');
-    if (!nav) return;
+    if (nav) {
+        var links = nav.querySelectorAll('.br-nav__link');
+        var scrollBox = nav.querySelector('.br-nav__scroll');
+        var leftBtn = document.getElementById('bc-nav-left');
+        var rightBtn = document.getElementById('bc-nav-right');
+        var sections = [];
 
-    var links = nav.querySelectorAll('.br-nav__link');
-    var scrollBox = nav.querySelector('.br-nav__scroll');
-    var leftBtn = document.getElementById('bc-nav-left');
-    var rightBtn = document.getElementById('bc-nav-right');
-    var sections = [];
-
-    links.forEach(function (link) {
-        var id = link.getAttribute('href').replace('#', '');
-        var el = document.getElementById(id);
-        if (el) sections.push({ id: id, el: el, link: link });
-    });
-
-    function setActive(id) {
-        links.forEach(function (l) {
-            l.classList.toggle('active', l.getAttribute('href') === '#' + id);
-        });
-
-        var active = nav.querySelector('.br-nav__link.active');
-        if (active && scrollBox) {
-            var left = active.offsetLeft - scrollBox.offsetWidth / 2 + active.offsetWidth / 2;
-            scrollBox.scrollTo({ left: left, behavior: 'smooth' });
-        }
-    }
-
-    links.forEach(function (link) {
-        link.addEventListener('click', function (e) {
-            e.preventDefault();
+        links.forEach(function (link) {
             var id = link.getAttribute('href').replace('#', '');
-            var target = document.getElementById(id);
-            if (target) {
-                var top = target.getBoundingClientRect().top + window.pageYOffset - 120;
-                window.scrollTo({ top: top, behavior: 'smooth' });
-                setActive(id);
+            var el = document.getElementById(id);
+            if (el) sections.push({ id: id, el: el, link: link });
+        });
+
+        function setActive(id) {
+            links.forEach(function (l) {
+                l.classList.toggle('active', l.getAttribute('href') === '#' + id);
+            });
+
+            var active = nav.querySelector('.br-nav__link.active');
+            if (active && scrollBox) {
+                var left = active.offsetLeft - scrollBox.offsetWidth / 2 + active.offsetWidth / 2;
+                scrollBox.scrollTo({ left: left, behavior: 'smooth' });
             }
-        });
-    });
+        }
 
-    window.addEventListener('scroll', function () {
-        var pos = window.pageYOffset + 140;
-        var current = sections.length ? sections[0].id : '';
-
-        sections.forEach(function (section) {
-            if (pos >= section.el.offsetTop) {
-                current = section.id;
-            }
+        links.forEach(function (link) {
+            link.addEventListener('click', function (e) {
+                e.preventDefault();
+                var id = link.getAttribute('href').replace('#', '');
+                var target = document.getElementById(id);
+                if (target) {
+                    var top = target.getBoundingClientRect().top + window.pageYOffset - 120;
+                    window.scrollTo({ top: top, behavior: 'smooth' });
+                    setActive(id);
+                }
+            });
         });
 
-        if (current) setActive(current);
-    }, { passive: true });
+        window.addEventListener('scroll', function () {
+            var pos = window.pageYOffset + 140;
+            var current = sections.length ? sections[0].id : '';
 
-    if (scrollBox && leftBtn && rightBtn) {
-        leftBtn.addEventListener('click', function () {
-            scrollBox.scrollBy({ left: -200, behavior: 'smooth' });
-        });
-        rightBtn.addEventListener('click', function () {
-            scrollBox.scrollBy({ left: 200, behavior: 'smooth' });
-        });
+            sections.forEach(function (section) {
+                if (pos >= section.el.offsetTop) {
+                    current = section.id;
+                }
+            });
+
+            if (current) setActive(current);
+        }, { passive: true });
+
+        if (scrollBox && leftBtn && rightBtn) {
+            leftBtn.addEventListener('click', function () {
+                scrollBox.scrollBy({ left: -200, behavior: 'smooth' });
+            });
+            rightBtn.addEventListener('click', function () {
+                scrollBox.scrollBy({ left: 200, behavior: 'smooth' });
+            });
+        }
     }
 })();

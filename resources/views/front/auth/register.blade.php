@@ -3,72 +3,75 @@
 @section('title', 'Create Account | BrokersCourt')
 @section('meta_description', 'Create a free BrokersCourt account to write verified broker reviews, track your activity and build your trader profile.')
 
+@push('page-styles')
+    <link rel="stylesheet" href="{{ asset('css/user-account.css') }}?v=3">
+@endpush
+
 @section('main_content')
-<section class="min-h-[80vh] flex items-center justify-center bg-gradient-to-br from-gray-50 via-white to-gray-50 px-4 py-16 mt-16">
-    <div class="w-full max-w-md">
-        <div class="bg-white border border-gray-200 rounded-2xl shadow-sm p-8">
-            <div class="text-center mb-8">
-                <div class="w-14 h-14 mx-auto rounded-2xl bg-yellow-100 flex items-center justify-center mb-4">
-                    <i class="fas fa-user-plus text-2xl text-yellow-500"></i>
-                </div>
-                <h1 class="text-2xl font-bold text-gray-900">Create your account</h1>
-                <p class="text-gray-500 text-sm mt-1">Join BrokersCourt to review brokers and track your activity.</p>
+<div class="ua-root">
+    <div class="ua-wrap ua-wrap--narrow">
+        <div class="ua-auth-card">
+            <div class="ua-auth-head">
+                <div class="ua-auth-icon"><i class="fas fa-user-plus" aria-hidden="true"></i></div>
+                <h1 class="ua-auth-title">Create your account</h1>
+                <p class="ua-auth-sub">Join BrokersCourt to review brokers and track your activity.</p>
             </div>
 
-            @if(session('error'))
-                <div class="mb-5 bg-red-50 border border-red-200 text-red-700 text-sm rounded-lg px-4 py-3">
-                    <i class="fas fa-exclamation-circle mr-1"></i> {{ session('error') }}
-                </div>
-            @endif
+            @include('front.account._alerts')
 
-            <form action="{{ route('user.register.submit') }}" method="POST" class="space-y-5">
+            @include('front.auth.partials.google_button', ['label' => 'Sign up with Google'])
+
+            @include('front.auth.partials.auth_divider')
+
+            <form action="{{ route('user.register.submit') }}" method="POST" class="ua-form" novalidate>
                 @csrf
-                <div>
-                    <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Full name</label>
-                    <input type="text" name="name" id="name" value="{{ old('name') }}" required autofocus
-                        class="w-full bg-gray-50 border border-gray-300 rounded-lg py-2.5 px-3 text-gray-800 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent">
-                    @error('name')<div class="text-sm text-red-500 mt-1">{{ $message }}</div>@enderror
+
+                <div class="ua-field">
+                    <label for="name">Full name</label>
+                    <input type="text" name="name" id="name" value="{{ old('name') }}" required autofocus autocomplete="name"
+                        class="ua-input @error('name') is-error @enderror" placeholder="Your name">
+                    @error('name')<p class="ua-error"><i class="fas fa-exclamation-circle"></i> {{ $message }}</p>@enderror
                 </div>
 
-                <div>
-                    <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email address</label>
-                    <input type="email" name="email" id="email" value="{{ old('email') }}" required
-                        class="w-full bg-gray-50 border border-gray-300 rounded-lg py-2.5 px-3 text-gray-800 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent">
-                    @error('email')<div class="text-sm text-red-500 mt-1">{{ $message }}</div>@enderror
+                <div class="ua-field">
+                    <label for="email">Email address</label>
+                    <input type="email" name="email" id="email" value="{{ old('email') }}" required autocomplete="email"
+                        class="ua-input @error('email') is-error @enderror" placeholder="you@example.com">
+                    @error('email')<p class="ua-error"><i class="fas fa-exclamation-circle"></i> {{ $message }}</p>@enderror
                 </div>
 
-                <div>
-                    <label for="country" class="block text-sm font-medium text-gray-700 mb-1">Country <span class="text-gray-400 font-normal">(optional)</span></label>
-                    <input type="text" name="country" id="country" value="{{ old('country') }}"
-                        class="w-full bg-gray-50 border border-gray-300 rounded-lg py-2.5 px-3 text-gray-800 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent">
-                    @error('country')<div class="text-sm text-red-500 mt-1">{{ $message }}</div>@enderror
+                <div class="ua-field">
+                    <label for="country">Country <span class="ua-optional">(optional)</span></label>
+                    <input type="text" name="country" id="country" value="{{ old('country') }}" autocomplete="country-name"
+                        class="ua-input @error('country') is-error @enderror" placeholder="e.g. United States">
+                    @error('country')<p class="ua-error"><i class="fas fa-exclamation-circle"></i> {{ $message }}</p>@enderror
                 </div>
 
-                <div>
-                    <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
-                    <input type="password" name="password" id="password" required
-                        class="w-full bg-gray-50 border border-gray-300 rounded-lg py-2.5 px-3 text-gray-800 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent">
-                    @error('password')<div class="text-sm text-red-500 mt-1">{{ $message }}</div>@enderror
-                    <p class="text-xs text-gray-400 mt-1">At least 8 characters.</p>
+                <div class="ua-field">
+                    <label for="password">Password</label>
+                    <input type="password" name="password" id="password" required autocomplete="new-password"
+                        class="ua-input @error('password') is-error @enderror" placeholder="At least 8 characters">
+                    @error('password')<p class="ua-error"><i class="fas fa-exclamation-circle"></i> {{ $message }}</p>@enderror
+                    <p class="ua-hint">Use at least 8 characters with a mix of letters and numbers.</p>
                 </div>
 
-                <div>
-                    <label for="password_confirmation" class="block text-sm font-medium text-gray-700 mb-1">Confirm password</label>
-                    <input type="password" name="password_confirmation" id="password_confirmation" required
-                        class="w-full bg-gray-50 border border-gray-300 rounded-lg py-2.5 px-3 text-gray-800 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent">
+                <div class="ua-field">
+                    <label for="password_confirmation">Confirm password</label>
+                    <input type="password" name="password_confirmation" id="password_confirmation" required autocomplete="new-password"
+                        class="ua-input" placeholder="Repeat your password">
                 </div>
 
-                <button type="submit"
-                    class="w-full bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-2.5 rounded-lg transition flex items-center justify-center">
-                    <i class="fas fa-user-plus mr-2"></i> Create account
+                <button type="submit" class="ua-btn ua-btn--primary ua-btn--block">
+                    <i class="fas fa-user-plus" aria-hidden="true"></i> Create account
                 </button>
             </form>
 
-            <p class="text-center text-sm text-gray-500 mt-6">
+            <p class="ua-footnote">
                 Already have an account?
-                <a href="{{ route('user.login') }}" class="text-yellow-600 font-semibold hover:text-yellow-700">Log in</a>
+                <a href="{{ route('user.login') }}" class="ua-link">Log in</a>
             </p>
         </div>
     </div>
-</section>
+</div>
+@include('front.auth.partials.google_scripts')
 @endsection

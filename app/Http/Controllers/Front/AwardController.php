@@ -6,7 +6,13 @@ use App\Http\Controllers\Controller;
 use App\Models\Page;
 use App\Models\Language;
 use App\Helper\Helpers;
+use App\Models\Broker;
 use App\Services\AwardsIndexService;
+use App\Services\BrokerAssessmentService;
+use App\Services\BrokerReviewsIndexService;
+use App\Support\AwardTaxonomy;
+use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class AwardController extends Controller
 {
@@ -36,5 +42,66 @@ class AwardController extends Controller
             'current_language_id',
             'current_short_name'
         ));
+    }
+
+    public function show(
+        string $award,
+        AwardsIndexService $awardsIndexService,
+        BrokerReviewsIndexService $reviewsIndexService,
+        BrokerAssessmentService $assessmentService,
+        Request $request
+    ) {
+        $awardKey = AwardTaxonomy::keyForRouteSlug($award);
+        abort_if($awardKey === null, 404);
+
+        $definition = AwardTaxonomy::definitions()[$awardKey];
+        $matchedIds = AwardTaxonomy::brokersFor($awardKey)->pluck('id');
+
+        $brokers = Broker::query()
+            ->whereIn('id', $matchedIds)
+            ->with(['accountOptions' => fn ($query) => $query->ordered()])
+            ->withCount(['reviews as approved_review_count' => fn ($query) => $query->where('status', 1)])
+            ->orderByDesc('rating')
+            ->orderBy('name')
+            ->get();
+
+        $perPage = 12;
+        $page = max(1, (int) $request->get('page', 1));
+
+        $paginatedBrokers = new LengthAwarePaginator(
+            $brokers->forPage($page, $perPage)->values(),
+            $brokers->count(),
+            $perPage,
+            $page,
+            ['path' => route('awards.show', ['award' => AwardTaxonomy::routeSlugFor($awardKey)]), 'query' => $request->query()]
+        );
+
+        $brokersPayload = $paginatedBrokers->getCollection()
+            ->map(function (Broker $broker) use ($reviewsIndexService, $assessmentService) {
+                $payload = $reviewsIndexService->serialize($broker);
+                $payload['performance'] = $assessmentService->cardMetrics($broker);
+
+                return $payload;
+            })
+            ->values()
+            ->all();
+
+        $allAwardCards = collect($awardsIndexService->awardCards())
+            ->reject(fn (array $card) => $card['slug'] === $awardKey)
+            ->take(4)
+            ->values()
+            ->all();
+
+        return view('front.awards.show', [
+            'awardKey' => $awardKey,
+            'awardName' => $definition['name'],
+            'awardDescription' => $definition['description'],
+            'awardColor' => $definition['color'],
+            'routeSlug' => AwardTaxonomy::routeSlugFor($awardKey),
+            'brokersPayload' => $brokersPayload,
+            'paginatedBrokers' => $paginatedBrokers,
+            'totalBrokers' => $brokers->count(),
+            'relatedAwards' => $allAwardCards,
+        ]);
     }
 }

@@ -57,6 +57,18 @@ class BestBrokerGuideMetrics
             if ($slug === 'brokers-for-beginners' && (float) $broker->minimum_deposit <= 10) {
                 $score += 0.1;
             }
+
+            if ($slug === 'high-leverage') {
+                $maxLeverage = BrokerListingFilter::maxLeverageFor($broker);
+
+                if ($maxLeverage >= 2000) {
+                    $score += 0.25;
+                } elseif ($maxLeverage >= 1000) {
+                    $score += 0.15;
+                } elseif ($maxLeverage >= 500) {
+                    $score += 0.1;
+                }
+            }
         }
 
         if ($broker->fee_level === 'low') {

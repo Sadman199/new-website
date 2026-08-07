@@ -1,0 +1,37 @@
+/* Global theme bridge — uses CSS variables from admin Brand Colors */
+.bc-btn-primary,
+.btn-primary,
+.ua-btn--primary,
+.mf-cta__card.is-primary,
+#scrollToTopBtn {
+    background: var(--bc-primary, #007AAD) !important;
+    border-color: var(--bc-primary, #007AAD) !important;
+}
+
+.bc-btn-primary:hover,
+.btn-primary:hover,
+.ua-btn--primary:hover {
+    background: var(--bc-primary-dark, #006694) !important;
+    border-color: var(--bc-primary-dark, #006694) !important;
+}
+
+a.ua-link,
+.mf-cta__card.is-primary .mf-cta__arrow,
+.text-primary {
+    color: var(--bc-primary, #007AAD) !important;
+}
+
+.ua-root,
+.pf-root {
+    --ua-ocean: var(--bc-primary, #007AAD);
+    --ua-ocean-dark: var(--bc-primary-dark, #006694);
+    --ua-ocean-light: var(--bc-primary-light, #33a3d4);
+    --ua-midnight: var(--bc-dark, #0C1D32);
+    --ua-ice: var(--bc-light, #D9E2E9);
+    --pf-ocean: var(--bc-primary, #007AAD);
+    --pf-ocean-dark: var(--bc-primary-dark, #006694);
+    --pf-ocean-light: var(--bc-primary-light, #33a3d4);
+    --pf-midnight: var(--bc-dark, #0C1D32);
+    --pf-ice: var(--bc-light, #D9E2E9);
+    --pf-bg: var(--bc-dark, #0C1D32);
+}

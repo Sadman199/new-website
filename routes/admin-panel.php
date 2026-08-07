@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\Panel\PanelAuthorsController;
+use App\Http\Controllers\Admin\Panel\PanelBrokerReportsController;
 use App\Http\Controllers\Admin\Panel\PanelDashboardController;
 use Illuminate\Support\Facades\Route;
 
@@ -27,6 +28,9 @@ Route::middleware(['web', 'admin:admin'])
             'title' => 'Scam Brokers',
             'pageTitle' => 'Scam Brokers',
         ])->name('scam-brokers.index');
+
+        Route::get('/broker-reports', [PanelBrokerReportsController::class, 'index'])->name('broker-reports.index');
+        Route::put('/broker-reports/{report}', [PanelBrokerReportsController::class, 'update'])->name('broker-reports.update');
 
         Route::view('/comparison', 'admin.panel.pages.comparison.index', [
             'title' => 'Compare',

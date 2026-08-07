@@ -1,5 +1,5 @@
-<section class="br-container br-reviews" id="voices">
-    <div class="br-section">
+<section class="br-reviews" id="voices">
+    <div class="br-section br-section--reviews">
         <div class="br-section__head">
             <h2 class="br-section__title">Community Comments</h2>
             <p class="br-section__desc">Real trader feedback about {{ $broker->name }}</p>

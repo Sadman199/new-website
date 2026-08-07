@@ -116,11 +116,107 @@ class ForexBonus extends Model
         };
     }
 
+    public function detailSlug(): string
+    {
+        $broker = $this->broker;
+
+        if ($broker) {
+            return $broker->listingSlug();
+        }
+
+        $name = $this->brokerDisplayName();
+
+        if ($name) {
+            return Str::slug($name);
+        }
+
+        $legacy = (string) $this->slug;
+
+        if ($legacy !== '') {
+            $parts = explode('-', $legacy);
+
+            return Str::slug($parts[0] !== '' ? $parts[0] : $legacy);
+        }
+
+        return 'promo-'.$this->id;
+    }
+
     public function detailUrl(): ?string
     {
         $route = $this->detailRouteName();
 
-        return $route ? route($route, $this->slug) : null;
+        return $route ? route($route, $this->detailSlug()) : null;
+    }
+
+    public static function promoTypeForDetailRoute(?string $routeName): ?string
+    {
+        return match ($routeName) {
+            'deposit-bonuses.detail' => 'Forex Deposit Bonus',
+            'no-deposit-bonuses.detail' => 'Forex No Deposit Bonus',
+            'live-contests.detail' => 'Forex Live Contest',
+            'demo-contests.detail' => 'Forex Demo Contest',
+            'cashback-rebates.detail' => 'Forex Cashback Rebate',
+            'crypto-bonuses.detail' => 'Crypto Bonus Promotion',
+            default => null,
+        };
+    }
+
+    public static function findForDetailRoute(string $routeName, string $slug): self
+    {
+        $promoType = self::promoTypeForDetailRoute($routeName);
+
+        if (! $promoType) {
+            abort(404);
+        }
+
+        $normalized = Str::slug($slug);
+
+        $bonus = static::query()
+            ->with([
+                'broker',
+                'writtenByAuthor',
+                'editedByAuthor',
+                'factCheckedByAuthor',
+                'writtenByAdmin',
+                'editedByAdmin',
+                'factCheckedByAdmin',
+            ])
+            ->where('promo_type', $promoType)
+            ->where(function ($query) use ($slug, $normalized) {
+                $query->where('slug', $slug)
+                    ->orWhere('slug', $normalized)
+                    ->orWhereHas('broker', function ($brokerQuery) use ($normalized) {
+                        $brokerQuery->where('slug', $normalized)
+                            ->orWhereRaw('LOWER(slug) = ?', [strtolower($normalized)]);
+                    });
+            })
+            ->orderByDesc('is_featured')
+            ->orderByDesc('publish_date')
+            ->first();
+
+        if (! $bonus) {
+            $bonus = static::query()
+                ->with([
+                    'broker',
+                    'writtenByAuthor',
+                    'editedByAuthor',
+                    'factCheckedByAuthor',
+                    'writtenByAdmin',
+                    'editedByAdmin',
+                    'factCheckedByAdmin',
+                ])
+                ->where('promo_type', $promoType)
+                ->orderByDesc('is_featured')
+                ->orderByDesc('publish_date')
+                ->get()
+                ->first(fn (self $candidate) => $candidate->detailSlug() === $normalized);
+        }
+
+        if (! $bonus) {
+            abort(404);
+        }
+
+        return $bonus;
     }
 
     public function cardUrl(): string

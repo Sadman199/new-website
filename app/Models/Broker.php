@@ -70,6 +70,11 @@ class Broker extends Model
         return $this->hasMany(Faq::class);
     }
 
+    public function reports()
+    {
+        return $this->hasMany(BrokerReport::class);
+    }
+
     public function accountOptions()
     {
         $relation = $this->hasMany(AccountOption::class);
@@ -133,6 +138,15 @@ class Broker extends Model
 
     public function getScamSlugAttribute()
     {
+        return \Illuminate\Support\Str::slug($this->name);
+    }
+
+    public function listingSlug(): string
+    {
+        if (filled($this->slug)) {
+            return \Illuminate\Support\Str::slug($this->slug);
+        }
+
         return \Illuminate\Support\Str::slug($this->name);
     }
 

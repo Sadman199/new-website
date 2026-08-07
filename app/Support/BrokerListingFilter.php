@@ -58,7 +58,15 @@ class BrokerListingFilter
     /** @return Collection<int, Broker> */
     public static function brokersFor(string $slug, ?Collection $brokers = null): Collection
     {
-        $brokers = $brokers ?? Broker::all();
+        if ($brokers === null) {
+            $query = Broker::query()->where('is_scam', false);
+
+            if ($slug === 'high-leverage') {
+                $query->with('accountOptions');
+            }
+
+            $brokers = $query->get();
+        }
 
         return $brokers
             ->filter(fn (Broker $broker) => self::matches($broker, $slug))
@@ -67,6 +75,14 @@ class BrokerListingFilter
 
     public static function matches(Broker $broker, string $slug): bool
     {
+        if ($slug === 'high-leverage') {
+            return self::hasHighLeverage($broker);
+        }
+
+        if (in_array($slug, ['mt4-brokers', 'mt5-brokers'], true)) {
+            return self::hasPlatform($broker, $slug);
+        }
+
         $categories = $broker->brokerCategoryList();
         $regions = $broker->regionList();
         $countries = self::normalizeList($broker->associated_countries);
@@ -80,6 +96,77 @@ class BrokerListingFilter
         }
 
         return false;
+    }
+
+    private static function hasHighLeverage(Broker $broker): bool
+    {
+        if (in_array('high-leverage', $broker->brokerCategoryList(), true)) {
+            return true;
+        }
+
+        if ($broker->relationLoaded('accountOptions')) {
+            $maxOptionLeverage = $broker->accountOptions
+                ->pluck('max_leverage')
+                ->filter()
+                ->max();
+
+            if ($maxOptionLeverage !== null && (int) $maxOptionLeverage >= 500) {
+                return true;
+            }
+        }
+
+        return self::parseLeverageRatio((string) $broker->leverage) >= 500;
+    }
+
+    private static function hasPlatform(Broker $broker, string $slug): bool
+    {
+        if (in_array($slug, $broker->brokerCategoryList(), true)) {
+            return true;
+        }
+
+        $needles = $slug === 'mt4-brokers'
+            ? ['mt4', 'metatrader 4']
+            : ['mt5', 'metatrader 5'];
+
+        foreach ($broker->platformList() as $platform) {
+            $platform = strtolower($platform);
+            foreach ($needles as $needle) {
+                if (str_contains($platform, $needle)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    private static function parseLeverageRatio(string $value): int
+    {
+        if (preg_match('/1\s*:\s*(\d+)/i', $value, $matches)) {
+            return (int) $matches[1];
+        }
+
+        if (preg_match('/(\d+)/', $value, $matches)) {
+            return (int) $matches[1];
+        }
+
+        return 0;
+    }
+
+    public static function maxLeverageFor(Broker $broker): int
+    {
+        $fromField = self::parseLeverageRatio((string) $broker->leverage);
+
+        if ($broker->relationLoaded('accountOptions')) {
+            $fromOptions = (int) ($broker->accountOptions
+                ->pluck('max_leverage')
+                ->filter()
+                ->max() ?? 0);
+
+            return max($fromField, $fromOptions);
+        }
+
+        return $fromField;
     }
 
     /** @param  array<int, string>|null  $associatedCountries */

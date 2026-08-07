@@ -7,10 +7,8 @@
                     <!-- Trading Platforms Section -->
                     @php
                     $platformSlugs = [
-                        'MetaTrader 4' => 'mt4',
-                        'MetaTrader 5' => 'mt5',
-                        'cTrader' => 'ctrader',
-                        'WebTrader' => 'webtrader',
+                        'MetaTrader 4' => 'mt4-brokers',
+                        'MetaTrader 5' => 'mt5-brokers',
                     ];
                     @endphp
                     
@@ -24,13 +22,13 @@
                         
                         <div class="grid grid-cols-2 md:grid-cols-4 gap-2">
                             @foreach ($platformSlugs as $platform => $slug)
-                                <a href="{{ route('brokers.by.platform', $slug) }}" 
+                                <a href="{{ route('brokers.best', ['slug' => $slug]) }}" 
                                    class="bg-gray-50 dark:bg-gray-750 hover:bg-blue-50 dark:hover:bg-blue-900/30 text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 text-sm px-3 py-2 rounded-md transition-all duration-150 border border-gray-200 dark:border-gray-600 hover:border-blue-200 dark:hover:border-blue-700 flex items-center justify-center">
-                                    @if($slug === 'mt4')
+                                    @if(str_contains($slug, 'mt4'))
                                         <svg class="w-4 h-4 mr-1.5 text-blue-500" viewBox="0 0 24 24" fill="currentColor">
                                             <path d="M12 2L2 7v10l10 5 10-5V7L12 2zm0 2.8L20 9v6l-8 4-8-4V9l8-4.2z"/>
                                         </svg>
-                                    @elseif($slug === 'mt5')
+                                    @elseif(str_contains($slug, 'mt5'))
                                         <svg class="w-4 h-4 mr-1.5 text-blue-500" viewBox="0 0 24 24" fill="currentColor">
                                             <path d="M12 2L2 7v10l10 5 10-5V7L12 2zm0 2.8L20 9v6l-8 4-8-4V9l8-4.2zM12 12l-5-2.5V15l5 2.5 5-2.5V9.5L12 12z"/>
                                         </svg>
@@ -81,7 +79,7 @@
                         </div>
                         
                         <div>
-                            <a href="{{ route('brokers.high.leverage') }}" 
+                            <a href="{{ route('brokers.best', ['slug' => 'high-leverage']) }}" 
                                class="inline-flex items-center px-4 py-2 border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-750 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-md text-sm font-medium transition-colors duration-150">
                                 View High Leverage Brokers (1:500+)
                                 <svg class="ml-1.5 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

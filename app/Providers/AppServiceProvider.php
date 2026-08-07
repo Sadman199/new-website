@@ -19,6 +19,8 @@ use App\Models\Language;
 use App\Models\Broker;
 use App\Models\ForexBonus;
 use App\Services\FooterIndexService;
+use App\Services\PropFirmNavService;
+use Illuminate\Support\Facades\Cache;
 
 
 class AppServiceProvider extends ServiceProvider
@@ -57,6 +59,23 @@ class AppServiceProvider extends ServiceProvider
             }
         });
 
+        View::composer('front.layout.partial.broker-spotlight-dock', function ($view) {
+            try {
+                $spotlightBrokers = Cache::remember('spotlight_dock_brokers', 3600, function () {
+                    return Broker::query()
+                        ->where('is_scam', false)
+                        ->whereNotNull('rating')
+                        ->orderByDesc('rating')
+                        ->take(5)
+                        ->get();
+                });
+
+                $view->with('spotlightBrokers', $spotlightBrokers);
+            } catch (\Throwable $e) {
+                $view->with('spotlightBrokers', collect());
+            }
+        });
+
         View::composer('front.layout.partial.mega-footer', function ($view) {
             try {
                 $view->with('footer', app(FooterIndexService::class)->build());
@@ -73,6 +92,19 @@ class AppServiceProvider extends ServiceProvider
                     'social' => [],
                     'disclaimer' => '',
                     'affiliate' => '',
+                ]);
+            }
+        });
+
+        View::composer(['front.layout.partial.navbar', 'front.layout.partial.prop-firms-mega-menu'], function ($view) {
+            try {
+                $view->with('propFirmNav', app(PropFirmNavService::class)->forNavbar());
+            } catch (\Throwable $e) {
+                $view->with('propFirmNav', [
+                    'categories' => collect(),
+                    'featured' => collect(),
+                    'topRated' => collect(),
+                    'attributes' => collect(),
                 ]);
             }
         });

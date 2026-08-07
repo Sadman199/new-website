@@ -4,7 +4,7 @@
 @section('meta_description', 'Browse independent forex broker reviews. Compare fees, regulation, platforms, and safety scores to find the right broker for your trading style.')
 
 @push('head')
-    <link rel="stylesheet" href="{{ asset('css/broker-reviews-index.css') }}?v=1">
+    <link rel="stylesheet" href="{{ asset('css/broker-reviews-index.css') }}?v=6">
 @endpush
 
 @section('main_content')
@@ -14,44 +14,75 @@
         : ($preferredCountry['name'] ?? 'your country');
 @endphp
 <div class="bri-page">
+    <header class="bri-hero">
+        <div class="bri-wrap">
+            <nav class="bri-breadcrumb" aria-label="Breadcrumb">
+                <a href="{{ route('home') }}">Home</a>
+                <span aria-hidden="true">/</span>
+                <span>Broker reviews</span>
+            </nav>
+
+            <p class="bri-hero__eyebrow">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z"/></svg>
+                Independent research
+            </p>
+            <h1 class="bri-hero__title">Broker <span class="bri-hero__accent">reviews</span></h1>
+            <p class="bri-hero__subtitle">Find the right broker and invest on your own — compare regulation, fees, and platforms before you open an account.</p>
+        </div>
+    </header>
+
     <div class="bri-wrap">
-        <header class="bri-hero">
-            <h1 class="bri-hero__title">Broker reviews</h1>
-            <p class="bri-hero__subtitle">Find the right broker and invest on your own</p>
-        </header>
-
         <div class="bri-layout">
-            <aside class="bri-filters" aria-label="Filter brokers">
-                <h2 class="bri-filters__title">Filter by name</h2>
-                <input type="search"
-                       id="briSearchInput"
-                       class="bri-filters__search"
-                       placeholder="Type broker name"
-                       autocomplete="off"
-                       aria-label="Search brokers by name">
+            <aside class="bri-filters" id="briFiltersPanel" aria-label="Filter brokers">
+                <div class="bri-filters__inner">
+                    <div class="bri-filters__head">
+                        <h2 class="bri-filters__title">Filters</h2>
+                        <button type="button" class="bri-filters__close" id="briFiltersClose" aria-label="Close filters">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12"/></svg>
+                        </button>
+                    </div>
 
-                <div class="bri-filters__markets">
-                    <h3 class="bri-filters__markets-title">Asset types</h3>
-                    @foreach($marketFilters as $key => $label)
-                        <label class="bri-filter-option">
-                            <input type="checkbox"
-                                   value="{{ $key }}"
-                                   data-bri-market-filter>
-                            <span>{{ $label }}</span>
-                        </label>
-                    @endforeach
+                    <label class="bri-filters__label" for="briSearchInput">Search by name</label>
+                    <input type="search"
+                           id="briSearchInput"
+                           class="bri-filters__search"
+                           placeholder="Type broker name"
+                           autocomplete="off"
+                           aria-label="Search brokers by name">
+
+                    <div class="bri-filters__markets">
+                        <h3 class="bri-filters__markets-title">Asset types</h3>
+                        <div class="bri-filters__options">
+                            @foreach($marketFilters as $key => $label)
+                                <label class="bri-filter-option">
+                                    <input type="checkbox"
+                                           value="{{ $key }}"
+                                           data-bri-market-filter>
+                                    <span>{{ $label }}</span>
+                                </label>
+                            @endforeach
+                        </div>
+                    </div>
+
+                    <button type="button" class="bri-filters__clear" id="briClearFilters">
+                        Clear filters
+                    </button>
                 </div>
-
-                <button type="button" class="bri-filters__clear" id="briClearFilters">
-                    Clear filters
-                </button>
             </aside>
 
             <div class="bri-main">
-                <h2 class="bri-main__heading">
-                    Brokers available in {{ $countryName }} in {{ date('Y') }}
-                </h2>
-                <p class="bri-results-count" id="briResultsCount"></p>
+                <div class="bri-main__toolbar">
+                    <div class="bri-main__toolbar-text">
+                        <h2 class="bri-main__heading">
+                            Brokers available in {{ $countryName }} in {{ date('Y') }}
+                        </h2>
+                        <p class="bri-results-count" id="briResultsCount"></p>
+                    </div>
+                    <button type="button" class="bri-main__filter-toggle" id="briFiltersToggle" aria-expanded="false" aria-controls="briFiltersPanel">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6h9.75M10.5 12h9.75M10.5 18h9.75M3.75 6h.008v.008H3.75V6zm0 6h.008v.008H3.75V12zm0 6h.008v.008H3.75V18z"/></svg>
+                        Filters
+                    </button>
+                </div>
 
                 <ul class="bri-grid" id="briBrokerGrid">
                     @foreach($brokersPayload as $broker)
@@ -65,9 +96,11 @@
             </div>
         </div>
     </div>
+
+    <div class="bri-filters-backdrop is-hidden" id="briFiltersBackdrop" aria-hidden="true"></div>
 </div>
 @endsection
 
 @push('scripts')
-<script src="{{ asset('js/broker-reviews-index.js') }}?v=1"></script>
+<script src="{{ asset('js/broker-reviews-index.js') }}?v=6"></script>
 @endpush

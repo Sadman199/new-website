@@ -179,6 +179,12 @@ class BestBrokersIndexService
                 'description' => 'Find brokers with micro and cent accounts, low minimum deposits, and flexible sizing.',
                 'filters' => ['forex', 'beginners', 'micro-account'],
             ],
+            'high-leverage' => [
+                'title' => "Best High Leverage Brokers in {$year}",
+                'description' => 'Compare brokers offering the highest leverage limits with transparent margin requirements and platform support.',
+                'popular' => true,
+                'filters' => ['forex', 'cfd', 'professionals'],
+            ],
         ];
     }
 }

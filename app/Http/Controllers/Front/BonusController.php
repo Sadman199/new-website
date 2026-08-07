@@ -83,32 +83,23 @@ class BonusController extends Controller
 
 public function bonusDetail($slug)
     {
-        // Optional helper functionality
-        Helpers::read_json(); 
+        Helpers::read_json();
 
-        // Determine the current language
+        $routeName = request()->route()?->getName();
+        $bonus = ForexBonus::findForDetailRoute((string) $routeName, $slug);
+
+        if ($bonus->detailSlug() !== Str::slug($slug)) {
+            $detailRoute = $bonus->detailRouteName();
+
+            if ($detailRoute) {
+                return redirect()->route($detailRoute, $bonus->detailSlug(), 301);
+            }
+        }
+
         $current_short_name = session()->get('session_short_name', optional(Language::where('is_default', 'Yes')->first())->short_name ?? 'en');
-
-        // Get the current language ID
         $current_language_id = optional(Language::where('short_name', $current_short_name)->first())->id ?? 1;
-
-        // Fetch the page data for the current language
         $page_data = Page::where('language_id', $current_language_id)->first();
-
-        // Fetch the bonus by slug
-        $bonus = ForexBonus::with([
-            'broker',
-            'writtenByAuthor',
-            'editedByAuthor',
-            'factCheckedByAuthor',
-            'writtenByAdmin',
-            'editedByAdmin',
-            'factCheckedByAdmin',
-        ])->where('slug', $slug)->firstOrFail();
-
         $editorialCredits = EditorialAssignmentService::creditsFor($bonus);
-
-        // Fetch the promo type dynamically
         $promo_type = $bonus->promo_type;
         $home_ad_data = HomeAdvertisement::where('id', 1)->first();
 

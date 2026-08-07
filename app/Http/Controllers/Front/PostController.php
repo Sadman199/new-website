@@ -11,11 +11,13 @@ use App\Models\Admin;
 use App\Models\Author;
 use App\Models\SubCategory;
 use App\Helper\Helpers;
+use App\Services\BlogIndexService;
+use App\Services\BlogPostDetailService;
 use App\Services\EditorialAssignmentService;
 
 class PostController extends Controller
 {
-    public function detail($subcategory_slug, $post_slug)
+    public function detail($subcategory_slug, $post_slug, BlogIndexService $blogIndexService, BlogPostDetailService $blogPostDetailService)
     {
         Helpers::read_json();
         
@@ -59,7 +61,18 @@ class PostController extends Controller
         }
 
         $editorialCredits = EditorialAssignmentService::creditsForPost($post_detail);
-    
+        $editorialTeam = EditorialAssignmentService::teamFor($post_detail);
+
+        if ($editorialTeam === []) {
+            $editorialTeam = EditorialAssignmentService::defaultGuideTeam();
+        }
+
+        if ($editorialCredits === []) {
+            $editorialCredits = EditorialAssignmentService::defaultGuideCredits();
+        }
+
+        $postMeta = $blogIndexService->serializePost($post_detail);
+
         // Fetch tags related to this post
         $tag_data = Tag::where('post_id', $post_detail->id)->get();
     
@@ -68,10 +81,38 @@ class PostController extends Controller
             ->where('sub_category_id', $post_detail->sub_category_id)
             ->orderBy('id', 'desc')
             ->get();
+
+        $relatedCards = $related_post_array
+            ->filter(fn (Post $post) => $post->id !== $post_detail->id)
+            ->take(3)
+            ->map(fn (Post $post) => $blogIndexService->serializePost($post))
+            ->values();
+
+        $recommendedBrokers = $blogPostDetailService->recommendedBrokers();
+        $depositBonuses = $blogPostDetailService->latestDepositBonuses();
+
+        $guidePageMeta = [
+            'updated_at' => $post_detail->updated_at->format('M j, Y'),
+        ];
+
         $home_ad_data = HomeAdvertisement::where('id', 1)->first();
 
     
-        return view('front.pages.post_detail', compact('post_detail', 'user_data', 'tag_data', 'related_post_array','subcategory','home_ad_data', 'editorialCredits'));
+        return view('front.pages.post_detail', compact(
+            'post_detail',
+            'user_data',
+            'tag_data',
+            'related_post_array',
+            'subcategory',
+            'home_ad_data',
+            'editorialCredits',
+            'editorialTeam',
+            'postMeta',
+            'relatedCards',
+            'recommendedBrokers',
+            'depositBonuses',
+            'guidePageMeta',
+        ));
     }
     
 }

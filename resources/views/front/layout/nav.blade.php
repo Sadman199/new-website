@@ -12,6 +12,6 @@ $lang = \App\Models\Language::where('short_name',$current_short_name)->first();
 $current_language_id = $lang ? $lang->id : 1;
 @endphp
 
-<div class="web_menu relative z-50">
+<div class="web_menu relative z-50" data-bc-persist="site-nav">
   @include('front.layout.partial.navbar')
 </div>

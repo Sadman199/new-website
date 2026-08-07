@@ -14,6 +14,7 @@ use App\Models\Language;
 use App\Models\ForexBonus;
 use App\Models\AccountOption;
 use App\Models\Broker;
+use App\Services\BrokerPopularityService;
 use App\Support\FindMyBrokerFilters;
 use App\Helper\Helpers;
 use App\Models\Page; 
@@ -109,7 +110,7 @@ class HomeController extends Controller
                     $query->where('minimum_deposit', '<=', 10)
                         ->orWhereHas('accountOptions', fn ($ao) => $ao->where('min_deposit', '<=', 10));
                 })
-                ->take(6)
+                ->take(8)
                 ->get();
         });
 
@@ -117,7 +118,7 @@ class HomeController extends Controller
             return Broker::whereHas('accountOptions', function ($query) {
                 $query->whereNotNull('exclusive_offers')
                       ->orWhere('bonus_eligibility', 1);
-            })->take(6)->get();
+            })->take(8)->get();
         });
 
         // ✅ Optimize spread ranking (SQL instead of PHP sort)
@@ -142,7 +143,7 @@ class HomeController extends Controller
             return $top->isNotEmpty() ? $top : Broker::orderBy('rating', 'desc')->take(6)->get();
         });
         
-        $topRatedBrokers = Broker::orderBy('rating', 'desc')->take(6)->get();
+        $topRatedBrokers = Broker::orderBy('rating', 'desc')->take(8)->get();
 
 
         $topRatedRegulatedBrokers = Cache::remember('topRatedRegulatedBrokers', 3600, function () {
@@ -168,7 +169,7 @@ class HomeController extends Controller
 
         // ✅ News (cache + limit)
         $recentNewsData = Cache::remember("recentNews_{$current_language_id}", 600, function () use ($current_language_id) {
-            return Post::with('rSubCategory')
+            return Post::with(['rSubCategory', 'author', 'writtenByAuthor'])
                 ->where('language_id', $current_language_id)
                 ->latest()
                 ->take(6)
@@ -176,7 +177,7 @@ class HomeController extends Controller
         });
 
         $popularNewsData = Cache::remember("popularNews_{$current_language_id}", 600, function () use ($current_language_id) {
-            return Post::with('rSubCategory')
+            return Post::with(['rSubCategory', 'author', 'writtenByAuthor'])
                 ->where('language_id', $current_language_id)
                 ->orderBy('visitors', 'desc')
                 ->take(6)
@@ -257,33 +258,6 @@ class HomeController extends Controller
             ? $topRatedRegulatedBrokers
             : $all_brokers->take(6);
 
-        $homepagePromotions = Cache::remember('homepage_promotions_v2', 3600, function () {
-            return ForexBonus::query()
-                ->with('broker')
-                ->where(function ($query) {
-                    $query->whereNull('expiry_date')
-                        ->orWhereDate('expiry_date', '>=', now());
-                })
-                ->where(function ($query) {
-                    $query->whereNull('promotion_status')
-                        ->orWhereIn('promotion_status', ['ongoing', 'limited-time']);
-                })
-                ->orderByDesc('is_featured')
-                ->orderByDesc('publish_date')
-                ->take(7)
-                ->get()
-                ->filter(fn (ForexBonus $bonus) => $bonus->isActivePromotion())
-                ->values();
-        });
-
-        $featuredPromotion = $homepagePromotions->firstWhere('is_featured', true) ?? $homepagePromotions->first();
-        $promotionCards = $featuredPromotion
-            ? $homepagePromotions->where('id', '!=', $featuredPromotion->id)->take(6)->values()
-            : $homepagePromotions->take(6);
-        $promotionCategories = ForexBonus::homepageCategoryLinks();
-
-        $latestBonuses = $homepagePromotions->take(6);
-
         $quickFilterLinks = [
             ['label' => 'Low deposit ($10)', 'url' => route('find_my_broker', ['min_deposit' => 10])],
             ['label' => 'CySEC regulated', 'url' => route('find_my_broker', ['regulation' => 'cysec'])],
@@ -292,6 +266,14 @@ class HomeController extends Controller
             ['label' => 'Low spreads', 'url' => route('find_my_broker', ['spread' => 'low'])],
             ['label' => 'Copy trading', 'url' => route('find_my_broker', ['features' => 'copy_trading'])],
         ];
+
+        $brokerSentiment = Cache::remember('homepage_broker_sentiment', 3600, function () {
+            return app(BrokerPopularityService::class)->forHomepage();
+        });
+
+        $sentimentRecommended = $brokerSentiment['recommended'];
+        $sentimentScam = $brokerSentiment['scam'];
+        $sentimentRanking = $brokerSentiment['ranking'];
 
         return view('front.homepage.home', compact(
             'home_ad_data',
@@ -330,12 +312,10 @@ class HomeController extends Controller
             'regulatoryRankings',
             'homeStats',
             'advancedCatalogs',
-            'latestBonuses',
-            'homepagePromotions',
-            'featuredPromotion',
-            'promotionCards',
-            'promotionCategories',
-            'quickFilterLinks'
+            'quickFilterLinks',
+            'sentimentRecommended',
+            'sentimentScam',
+            'sentimentRanking',
         ));
     }
 }

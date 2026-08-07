@@ -1,5 +1,5 @@
-<section class="br-container br-compare" id="compare">
-    <div class="br-section">
+<section class="br-compare" id="compare">
+    <div class="br-section br-section--compare">
         <div class="br-section__head br-section__head--center">
             <h2 class="br-section__title">Compare {{ $broker->name }}</h2>
             <p class="br-section__desc">See how this broker stacks up against alternatives</p>

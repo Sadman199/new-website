@@ -18,6 +18,7 @@ class BrokerTaxonomy
             'scalping-brokers' => 'Scalping',
             'trading-apps-brokers' => 'Brokers with Trading Apps',
             'brokers-for-beginners' => 'Forex Brokers for Beginners',
+            'high-leverage' => 'High Leverage',
         ];
     }
 
@@ -116,10 +117,32 @@ class BrokerTaxonomy
         return array_keys(self::countriesWithFlags());
     }
 
+    public static function countryShortcode(string $slug, ?string $code = null): string
+    {
+        if ($slug === 'global') {
+            return 'GL';
+        }
+
+        $overrides = [
+            'united-kingdom' => 'UK',
+            'uae' => 'UAE',
+        ];
+
+        if (isset($overrides[$slug])) {
+            return $overrides[$slug];
+        }
+
+        if ($code) {
+            return strtoupper($code);
+        }
+
+        return strtoupper(substr(str_replace('-', '', $slug), 0, 2));
+    }
+
     /**
      * Resolve preferred country from session/cookie.
      *
-     * @return array{slug: string, name: string, flag: string, code: ?string}
+     * @return array{slug: string, name: string, flag: string, code: ?string, shortcode: string}
      */
     public static function resolvePreferredCountry(?string $slug = null): array
     {
@@ -127,15 +150,24 @@ class BrokerTaxonomy
         $slug = $slug ?? session('preferred_country') ?? request()->cookie('preferred_country');
 
         if ($slug && isset($countries[$slug])) {
+            $code = $countries[$slug]['code'];
+
             return [
                 'slug' => $slug,
                 'name' => $countries[$slug]['name'],
                 'flag' => $countries[$slug]['flag'],
-                'code' => $countries[$slug]['code'],
+                'code' => $code,
+                'shortcode' => self::countryShortcode($slug, $code),
             ];
         }
 
-        return ['slug' => 'global', 'name' => 'Global', 'flag' => '🌍', 'code' => null];
+        return [
+            'slug' => 'global',
+            'name' => 'Global',
+            'flag' => '🌍',
+            'code' => null,
+            'shortcode' => 'GL',
+        ];
     }
 
     /**

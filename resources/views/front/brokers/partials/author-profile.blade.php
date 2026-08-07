@@ -2,8 +2,8 @@
 <section class="br-author" id="author-profile">
     <div class="br-author__inner">
         <div class="br-author__head">
-            <h2 class="br-author__title">About the author</h2>
-            <p class="br-author__desc">This review was researched, written, and verified by the BrokersCourt editorial team.</p>
+            <h2 class="br-author__title">{{ $authorTitle ?? 'About the author' }}</h2>
+            <p class="br-author__desc">{{ $authorDesc ?? 'This review was researched, written, and verified by the BrokersCourt editorial team.' }}</p>
         </div>
         <div class="br-author__grid">
             @foreach($editorialTeam as $member)

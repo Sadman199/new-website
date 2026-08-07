@@ -12,9 +12,12 @@ use App\Models\AccountOption;
 use App\Models\Language;
 use App\Helper\Helpers;
 use App\Services\BestBrokerGuideService;
+use App\Services\BlogIndexService;
 use App\Services\BestBrokersIndexService;
 use App\Services\BrokerReviewsIndexService;
+use App\Services\BrokerAssessmentService;
 use App\Services\EditorialAssignmentService;
+use App\Support\BrokerListingFilter;
 use App\Support\BrokerTaxonomy;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -27,6 +30,22 @@ class BrokerController extends Controller
         'micro-account-brokers' => 'micro-accounts-brokers',
         'beginner-friendly-brokers' => 'brokers-for-beginners',
         'copy-trading-brokers' => 'copytrading-brokers',
+    ];
+
+    /** @var array<string, string> */
+    private const PLATFORM_GUIDE_SLUGS = [
+        'mt4' => 'mt4-brokers',
+        'mt5' => 'mt5-brokers',
+    ];
+
+    /** @var string[] */
+    private const LEGACY_BROKER_PATH_RESERVED = [
+        'compare',
+        'comparison',
+        'filter',
+        'award',
+        'platform',
+        'regulation',
     ];
 
     private const REVIEW_SLUG_ALIASES = [
@@ -52,12 +71,15 @@ class BrokerController extends Controller
         return view('front.brokers.best_brokers_index', compact('toplists', 'filterGroups'));
     }
 
-    public function reviewsIndex(BrokerReviewsIndexService $reviewsIndexService)
-    {
+    public function reviewsIndex(
+        BrokerReviewsIndexService $reviewsIndexService,
+        BrokerAssessmentService $assessmentService
+    ) {
         Helpers::read_json();
 
         $brokers = Broker::query()
             ->where('is_scam', false)
+            ->with(['accountOptions' => fn ($query) => $query->ordered()])
             ->withCount(['reviews as approved_review_count' => function ($query) {
                 $query->where('status', 1);
             }])
@@ -66,7 +88,12 @@ class BrokerController extends Controller
             ->get();
 
         $brokersPayload = $brokers
-            ->map(fn (Broker $broker) => $reviewsIndexService->serialize($broker))
+            ->map(function (Broker $broker) use ($reviewsIndexService, $assessmentService) {
+                $payload = $reviewsIndexService->serialize($broker);
+                $payload['performance'] = $assessmentService->cardMetrics($broker);
+
+                return $payload;
+            })
             ->values();
 
         $marketFilters = $reviewsIndexService->marketFilters();
@@ -196,6 +223,14 @@ class BrokerController extends Controller
             return ($option->is_active ?? true) !== false;
         });
 
+        $reviewPageMeta = [
+            'updated_at' => $broker->updated_at
+                ? $broker->updated_at->format('M j, Y')
+                : now()->format('M j, Y'),
+        ];
+
+        $reviewToc = \App\Support\BrokerReviewPresenter::tableOfContents($broker, $account_options);
+
         // Return the view and pass all necessary data
         return view('front.brokers.broker_detail', compact(
             'broker',
@@ -210,6 +245,8 @@ class BrokerController extends Controller
             'editorialCredits',
             'editorialTeam',
             'reviewStats',
+            'reviewPageMeta',
+            'reviewToc',
         ));
     }
     
@@ -251,48 +288,53 @@ public function liveSearch(Request $request)
 
 public function byAward($award)
 {
-    $award = \Illuminate\Support\Str::slug($award);
-    $brokers = \App\Support\AwardTaxonomy::brokersFor($award);
+    $awardKey = \App\Support\AwardTaxonomy::keyForRouteSlug($award);
+    abort_if($awardKey === null, 404);
 
-    $paginatedBrokers = new \Illuminate\Pagination\LengthAwarePaginator(
-        $brokers->forPage(request()->get('page', 1), 10),
-        $brokers->count(),
-        10,
-        request()->get('page', 1),
-        ['path' => request()->url(), 'query' => request()->query()]
-    );
-
-    $featured_brokers = $brokers->filter(fn ($broker) => $broker->featured_broker == 1)->take(6);
-    $top_brokers = $brokers->sortByDesc('rating')->take(5);
-    $recommended_brokers = Broker::query()->where('is_scam', false)->orderByDesc('rating')->take(5)->get();
-
-    $metrics = [
-        ['value' => $paginatedBrokers->total(), 'label' => 'Matching Brokers'],
-        ['value' => $featured_brokers->count(), 'label' => 'Featured Brokers'],
-        ['value' => $top_brokers->count(), 'label' => 'Top Rated Brokers'],
-    ];
-
-    return view('front.brokers.listing', [
-        'paginatedBrokers' => $paginatedBrokers,
-        'featured_brokers' => $featured_brokers,
-        'top_brokers' => $top_brokers,
-        'recommended_brokers' => $recommended_brokers,
-        'metrics' => $metrics,
-        'awardName' => \App\Support\AwardTaxonomy::labelFor($award),
-    ]);
+    return redirect()->route('awards.show', [
+        'award' => \App\Support\AwardTaxonomy::routeSlugFor($awardKey),
+    ], 301);
 }
 
 
 
 
-    public function bestBrokers($slug, BestBrokerGuideService $guideService)
+    public function bestBrokers($slug, BestBrokerGuideService $guideService, BlogIndexService $blogIndexService)
     {
         $slug = $this->resolveCategorySlug($slug);
         $guidePage = $guideService->build($slug);
 
         abort_if($guidePage === null, 404);
 
-        return view('front.brokers.best_broker_guide', compact('guidePage'));
+        $latestPosts = $blogIndexService->latestPosts($blogIndexService->resolveLanguageId(), 3);
+
+        return view('front.brokers.best_broker_guide', compact('guidePage', 'latestPosts'));
+    }
+
+    public function legacyBestBrokerRedirect(string $slug)
+    {
+        if (in_array($slug, self::LEGACY_BROKER_PATH_RESERVED, true)) {
+            abort(404);
+        }
+
+        $resolved = $this->resolveCategorySlug($slug);
+
+        if (BrokerListingFilter::slugType($resolved) === null) {
+            abort(404);
+        }
+
+        return redirect()->route('brokers.best', ['slug' => $resolved], 301);
+    }
+
+    public function legacyPlatformRedirect(string $slug)
+    {
+        $guideSlug = self::PLATFORM_GUIDE_SLUGS[$slug] ?? null;
+
+        if ($guideSlug !== null && BrokerListingFilter::slugType($guideSlug) !== null) {
+            return redirect()->route('brokers.best', ['slug' => $guideSlug], 301);
+        }
+
+        abort(404);
     }
 
 }

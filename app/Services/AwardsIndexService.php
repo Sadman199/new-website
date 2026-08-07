@@ -33,7 +33,7 @@ class AwardsIndexService
                 'description' => $definition['description'],
                 'color' => $definition['color'],
                 'broker_count' => $matches->count(),
-                'url' => route('brokers.byAward', ['award' => $slug]),
+                'url' => route('awards.show', ['award' => AwardTaxonomy::routeSlugFor($slug)]),
                 'broker_logos' => $topBrokers->map(fn (Broker $broker) => [
                     'name' => $broker->name,
                     'logo' => $broker->logo ? asset($broker->logo) : null,
