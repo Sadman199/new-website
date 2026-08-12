@@ -46,6 +46,8 @@ class BrokerReviewDemoSeeder extends Seeder
             $this->seedBroker($definition, $index);
         }
 
+        $this->seedScamBrokers();
+
         $this->command?->info('Seeded 10 brokers with account options, FAQs, reviews, and editorial credits.');
     }
 
@@ -229,6 +231,8 @@ class BrokerReviewDemoSeeder extends Seeder
             'capitalization' => $def['capitalization'],
             'insurance' => 'Client funds held in segregated accounts with tier-1 banking partners.',
             'featured_broker' => $index < 3,
+            'top_broker' => $index < 9 ? $index + 1 : 0,
+            'is_scam' => false,
             'meta_title' => $def['name'] . ' Review — Fees, Regulation & Verdict',
             'meta_description' => Str::limit(strip_tags($def['short_description']), 155),
             'meta_keyword' => $def['name'] . ', forex broker review, regulation, spreads',
@@ -325,5 +329,63 @@ class BrokerReviewDemoSeeder extends Seeder
 
             return $b;
         }, $brokers);
+    }
+
+    protected function seedScamBrokers(): void
+    {
+        $scams = [
+            [
+                'name' => 'TradeMax FX',
+                'slug' => 'trademax-fx-scam',
+                'country' => 'Marshall Islands',
+                'rating' => 2.1,
+                'scam_reason' => 'Multiple withdrawal complaints and unverified regulation claims reported by traders.',
+            ],
+            [
+                'name' => 'Global Capital Markets',
+                'slug' => 'global-capital-markets-scam',
+                'country' => 'St. Vincent',
+                'rating' => 1.8,
+                'scam_reason' => 'Flagged for aggressive bonus traps and blocked client withdrawals.',
+            ],
+            [
+                'name' => 'PrimeFX Hub',
+                'slug' => 'primefx-hub-scam',
+                'country' => 'Belize',
+                'rating' => 2.4,
+                'scam_reason' => 'Editorial review found misleading license references and poor fund segregation disclosures.',
+            ],
+        ];
+
+        foreach ($scams as $index => $scam) {
+            Broker::create([
+                'name' => $scam['name'],
+                'slug' => $scam['slug'],
+                'title' => $scam['name'] . ' Scam Warning',
+                'url' => 'https://example.invalid/' . $scam['slug'],
+                'country' => $scam['country'],
+                'year_founded' => 2019 + $index,
+                'rating' => $scam['rating'],
+                'trust_score' => 15,
+                'regulatory_tier' => 4,
+                'short_description' => $scam['scam_reason'],
+                'description' => '<p>' . e($scam['scam_reason']) . '</p>',
+                'minimum_deposit' => 250,
+                'spreads' => 'Unknown',
+                'leverage' => '1:1000',
+                'commission' => 'Unknown',
+                'fee_level' => 'high',
+                'regulation' => [],
+                'platforms' => ['Web platform'],
+                'markets' => ['forex'],
+                'is_scam' => true,
+                'scam_reason' => $scam['scam_reason'],
+                'scam_reported_date' => now()->subDays(20 - ($index * 5)),
+                'top_broker' => 0,
+                'featured_broker' => false,
+                'meta_title' => $scam['name'] . ' Scam Warning',
+                'meta_description' => Str::limit($scam['scam_reason'], 155),
+            ]);
+        }
     }
 }
