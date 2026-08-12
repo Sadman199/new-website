@@ -1,0 +1,909 @@
+    /* Dark navy navigation ? matches hero palette */
+    #navbar {
+        --nav-ocean: var(--bc-primary, #007AAD);
+        --nav-ice: var(--bc-light, #D9E2E9);
+        --nav-off-white: #FFFBFC;
+        --nav-midnight: var(--bc-dark, #0C1D32);
+        --nav-panel: #132843;
+        --nav-border: rgba(217, 226, 233, 0.14);
+        --bc-nav-height: 4rem;
+
+        z-index: 1050;
+        background: var(--nav-midnight);
+        box-shadow: none;
+        overflow: visible;
+        border-bottom: none;
+    }
+    :root {
+        --bc-nav-height: 4rem;
+    }
+    .bc-nav-bar {
+        border-bottom: 1px solid var(--nav-border);
+        box-shadow: 0 8px 24px -16px rgba(0, 0, 0, 0.45);
+        background: var(--nav-midnight);
+    }
+    .web_menu { overflow: visible; }
+    .bc-site-logo {
+        display: block;
+        height: 40px;
+        width: auto;
+        max-width: 160px;
+        object-fit: contain;
+    }
+    #mobileMenu {
+        background: var(--nav-midnight);
+        border-color: var(--nav-border);
+        z-index: 1040;
+    }
+    #mobileMenu .bc-mobile-nav-inner {
+        max-width: 80rem;
+        margin: 0 auto;
+        padding: 0.75rem 1rem 1.25rem;
+    }
+    #mobileMenu .bc-mega-link {
+        color: var(--nav-ice);
+        text-align: left;
+    }
+    #mobileMenu .bc-mega-link:hover {
+        color: var(--nav-off-white);
+        background: rgba(0, 122, 173, 0.16);
+    }
+    #mobileMenu .mobile-accordion-btn {
+        display: flex !important;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.75rem;
+        width: 100%;
+        min-height: 44px;
+        padding: 0.625rem 0.75rem;
+        margin: 0;
+        border: none;
+        background: transparent;
+        cursor: pointer;
+        text-align: left;
+        font: inherit;
+        color: var(--nav-ice);
+        border-radius: 8px;
+        transition: color 0.15s, background 0.15s;
+    }
+    #mobileMenu .mobile-accordion-btn:hover,
+    #mobileMenu .mobile-accordion-btn:focus-visible {
+        color: var(--nav-off-white);
+        background: rgba(0, 122, 173, 0.16);
+        outline: none;
+    }
+    #mobileMenu .mobile-accordion-btn .accordion-chevron {
+        flex-shrink: 0;
+        color: rgba(217, 226, 233, 0.55);
+        transition: transform 0.2s ease;
+    }
+    #mobileMenu .mobile-accordion-btn .accordion-chevron.rotate-180 {
+        transform: rotate(180deg);
+    }
+    #mobileMenu .bc-mobile-nav-link {
+        display: block;
+        min-height: 44px;
+        padding: 0.625rem 0.75rem;
+        margin: 0;
+        font-size: 0.9375rem;
+        font-weight: 500;
+        color: var(--nav-ice);
+        border-radius: 8px;
+        text-decoration: none;
+        transition: color 0.15s, background 0.15s;
+    }
+    #mobileMenu .bc-mobile-nav-link:hover {
+        color: var(--nav-off-white);
+        background: rgba(0, 122, 173, 0.16);
+    }
+    #mobileMenu .bc-mobile-nav-link--child {
+        min-height: 40px;
+        padding: 0.5rem 0.75rem 0.5rem 1rem;
+        font-size: 0.875rem;
+        font-weight: 400;
+        color: rgba(217, 226, 233, 0.88);
+    }
+    #mobileMenu .bc-mobile-nav-link--child:hover {
+        color: var(--nav-off-white);
+    }
+    #mobileMenu .bc-mobile-subpanel {
+        padding: 0.25rem 0 0.5rem 0.5rem;
+        border-left: 2px solid rgba(0, 122, 173, 0.28);
+        margin: 0.15rem 0 0.35rem 0.75rem;
+    }
+    #mobileMenu .bc-mobile-subtitle {
+        margin: 0.5rem 0 0.35rem;
+        padding: 0 0.75rem;
+        font-size: 0.6875rem;
+        font-weight: 700;
+        letter-spacing: 0.07em;
+        text-transform: uppercase;
+        color: rgba(217, 226, 233, 0.5);
+    }
+    #mobileMenu .bc-mobile-reviews-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 0.35rem 1rem;
+    }
+    #mobileMenu .bc-mobile-region-link {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        min-height: 40px;
+        padding: 0.5rem 0.75rem;
+        font-size: 0.875rem;
+        color: rgba(217, 226, 233, 0.88);
+        border-radius: 8px;
+        text-decoration: none;
+        transition: color 0.15s, background 0.15s;
+    }
+    #mobileMenu .bc-mobile-region-link:hover {
+        color: var(--nav-off-white);
+        background: rgba(0, 122, 173, 0.16);
+    }
+    #mobileMenu .bc-chip-flag {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 18px;
+        height: 13px;
+        flex-shrink: 0;
+    }
+    #mobileMenu .bc-mobile-auth a.flex {
+        display: flex !important;
+        align-items: center;
+    }
+    #mobileMenu .bc-mobile-footer-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        margin: 0.5rem 0.75rem 0;
+        padding: 0.35rem 0;
+        font-size: 0.8125rem;
+        font-weight: 600;
+        color: var(--nav-ocean);
+        text-decoration: none;
+    }
+    #mobileMenu .bc-mobile-footer-link:hover {
+        color: #33a3d4;
+    }
+    #mobileMenu .bc-mobile-divider {
+        height: 1px;
+        margin: 0.65rem 0;
+        background: var(--nav-border);
+    }
+    #mobileMenu .bc-mobile-cta {
+        display: flex;
+        width: 100%;
+        min-height: 44px;
+        align-items: center;
+        justify-content: center;
+        margin-top: 0.75rem;
+        padding: 0 1rem;
+    }
+    #mobileMenu .bc-mobile-country-btn {
+        display: flex !important;
+        align-items: center;
+        gap: 0.625rem;
+        width: 100%;
+        min-height: 44px;
+        padding: 0.625rem 0.75rem;
+        margin: 0.35rem 0 0;
+        border: none;
+        background: transparent;
+        cursor: pointer;
+        text-align: left;
+        font: inherit;
+        font-weight: 600;
+        color: var(--nav-ice);
+        border-radius: 8px;
+    }
+    #mobileMenu .bc-mobile-country-btn:hover {
+        color: var(--nav-off-white);
+        background: rgba(0, 122, 173, 0.16);
+    }
+    #mobileMenu .bc-mobile-auth {
+        margin-top: 0.75rem;
+        padding-top: 0.75rem;
+        border-top: 1px solid var(--nav-border);
+    }
+    #mobileMenu .bc-mobile-auth .bc-mega-link,
+    #mobileMenu .bc-mobile-auth a,
+    #mobileMenu .bc-mobile-auth button {
+        color: var(--nav-ice);
+    }
+    #mobileMenu .bc-mobile-auth .text-gray-800,
+    #mobileMenu .bc-mobile-auth .text-gray-400 {
+        color: var(--nav-ice) !important;
+    }
+    #mobileMenu .bc-mobile-auth .text-gray-400 {
+        color: rgba(217, 226, 233, 0.55) !important;
+    }
+    #mobileMenu .bc-mobile-auth .text-red-600 {
+        color: #f87171 !important;
+    }
+    .bc-nav-bar--menu-open .bc-mobile-search-row {
+        display: none !important;
+    }
+    #companyMenu { z-index: 1055; }
+    #companyMenu .bc-mega-link {
+        margin: 0;
+    }
+    #toolsMenu { z-index: 1055; }
+    #reviewsMegaMenu { z-index: 1045; }
+    #navSearchResults, #navSearchResultsMobile { display: none !important; }
+
+    /* Full-width mega dropdown */
+    #brokersMegaMenu,
+    #propFirmsMegaMenu {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 100%;
+        z-index: 1045;
+        background: linear-gradient(180deg, #0f2744 0%, var(--nav-midnight) 100%);
+        border-top: 1px solid var(--nav-border);
+        box-shadow: 0 24px 48px -16px rgba(0, 0, 0, 0.55);
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-8px);
+        transition: opacity 0.34s cubic-bezier(0.22, 1, 0.36, 1),
+                    transform 0.34s cubic-bezier(0.22, 1, 0.36, 1),
+                    visibility 0.34s cubic-bezier(0.22, 1, 0.36, 1);
+        pointer-events: none;
+        will-change: opacity, transform;
+    }
+    #brokersMegaMenu::before,
+    #propFirmsMegaMenu::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: -12px;
+        height: 12px;
+    }
+    #brokersMegaMenu.is-open,
+    #propFirmsMegaMenu.is-open {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+        pointer-events: auto;
+    }
+    #brokersMegaMenu .bc-mega-inner,
+    #propFirmsMegaMenu .bc-mega-inner {
+        max-width: 80rem;
+        margin: 0 auto;
+        padding: 20px 24px 18px;
+    }
+    #brokersMegaMenu .bc-mega-grid,
+    #propFirmsMegaMenu .bc-mega-grid {
+        display: grid;
+        grid-template-columns: 1.2fr 1fr 0.85fr 0.9fr;
+        gap: 14px;
+    }
+    #brokersMegaMenu .bc-glass-card,
+    #propFirmsMegaMenu .bc-glass-card {
+        background: rgba(19, 40, 67, 0.72);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid var(--nav-border);
+        border-radius: 16px;
+        padding: 18px 16px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.22);
+        min-width: 0;
+    }
+    #brokersMegaMenu .bc-mega-icon,
+    #propFirmsMegaMenu .bc-mega-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 32px;
+        height: 32px;
+        border-radius: 10px;
+        background: rgba(0, 122, 173, 0.18);
+        border: 1px solid rgba(0, 122, 173, 0.35);
+        color: var(--nav-ocean);
+        flex-shrink: 0;
+    }
+    #brokersMegaMenu .bc-mega-icon svg,
+    #propFirmsMegaMenu .bc-mega-icon svg {
+        width: 16px;
+        height: 16px;
+    }
+    #brokersMegaMenu .bc-mega-head,
+    #propFirmsMegaMenu .bc-mega-head {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 14px;
+    }
+    #brokersMegaMenu .bc-mega-title,
+    #propFirmsMegaMenu .bc-mega-title {
+        margin: 0;
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: rgba(217, 226, 233, 0.72);
+    }
+    #brokersMegaMenu .bc-chip-wrap,
+    #propFirmsMegaMenu .bc-chip-wrap {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 7px;
+    }
+    #brokersMegaMenu .bc-chip-link,
+    #propFirmsMegaMenu .bc-chip-link,
+    #reviewsMegaMenu .bc-chip-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 11px;
+        font-size: 12.5px;
+        font-weight: 500;
+        color: var(--nav-ice);
+        background: rgba(12, 29, 50, 0.55);
+        border: 1px solid var(--nav-border);
+        border-radius: 999px;
+        text-decoration: none;
+        transition: all 0.2s ease;
+        white-space: nowrap;
+    }
+    #brokersMegaMenu .bc-chip-flag,
+    #reviewsMegaMenu .bc-chip-flag {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 18px;
+        height: 13px;
+        border-radius: 2px;
+        overflow: hidden;
+        flex-shrink: 0;
+        box-shadow: 0 0 0 1px rgba(15, 23, 42, 0.08);
+    }
+    #brokersMegaMenu .bc-chip-flag .bc-flag-img,
+    #brokersMegaMenu .bc-chip-flag img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    #brokersMegaMenu .bc-chip-flag .bc-flag-globe {
+        width: 14px;
+        height: 14px;
+        color: #64748b;
+    }
+    #brokersMegaMenu .bc-chip-link:hover,
+    #propFirmsMegaMenu .bc-chip-link:hover {
+        color: var(--nav-off-white);
+        background: rgba(0, 122, 173, 0.22);
+        border-color: rgba(0, 122, 173, 0.45);
+        box-shadow: 0 4px 14px rgba(0, 122, 173, 0.18);
+        transform: translateY(-1px);
+    }
+    #brokersMegaMenu .bc-link-list,
+    #propFirmsMegaMenu .bc-link-list {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 4px 10px;
+    }
+    #brokersMegaMenu .bc-link-list .bc-mega-link,
+    #propFirmsMegaMenu .bc-link-list .bc-mega-link {
+        padding: 6px 8px;
+        margin: 0;
+        font-size: 13px;
+        border-radius: 8px;
+        background: transparent;
+        color: var(--nav-ice);
+    }
+    #brokersMegaMenu .bc-link-list .bc-mega-link:hover,
+    #propFirmsMegaMenu .bc-link-list .bc-mega-link:hover {
+        background: rgba(0, 122, 173, 0.16);
+        color: var(--nav-off-white);
+    }
+    #brokersMegaMenu .bc-broker-row,
+    #propFirmsMegaMenu .bc-broker-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        text-decoration: none;
+        transition: all 0.2s ease;
+        padding: 9px 10px;
+        margin: 0 0 6px;
+        border-radius: 12px;
+        background: rgba(12, 29, 50, 0.45);
+        border: 1px solid var(--nav-border);
+    }
+    #brokersMegaMenu .bc-broker-row:hover,
+    #propFirmsMegaMenu .bc-broker-row:hover {
+        background: rgba(0, 122, 173, 0.16);
+        border-color: rgba(0, 122, 173, 0.35);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.22);
+        transform: translateY(-1px);
+    }
+    #brokersMegaMenu .bc-broker-rank,
+    #propFirmsMegaMenu .bc-broker-rank {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 22px;
+        height: 22px;
+        font-size: 11px;
+        font-weight: 700;
+        color: var(--nav-ocean);
+        background: rgba(0, 122, 173, 0.18);
+        border-radius: 7px;
+        flex-shrink: 0;
+    }
+    #brokersMegaMenu .bc-mega-bottom,
+    #propFirmsMegaMenu .bc-mega-bottom {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        margin-top: 14px;
+        padding: 14px 18px;
+        border-radius: 14px;
+        background: rgba(12, 29, 50, 0.55);
+        border: 1px solid var(--nav-border);
+    }
+    #brokersMegaMenu .bc-mega-bottom p,
+    #propFirmsMegaMenu .bc-mega-bottom p {
+        margin: 0;
+        font-size: 13px;
+        color: rgba(217, 226, 233, 0.78);
+    }
+    #brokersMegaMenu .bc-mega-bottom .bc-btn-primary,
+    #propFirmsMegaMenu .bc-mega-bottom .bc-btn-primary {
+        border-radius: 999px;
+        padding: 9px 18px;
+        box-shadow: 0 8px 24px rgba(0, 122, 173, 0.35);
+    }
+    @media (max-width: 1023px) {
+        #brokersMegaMenu,
+        #propFirmsMegaMenu { display: none !important; }
+    }
+    @media (max-width: 1279px) {
+        #brokersMegaMenu .bc-mega-grid,
+        #propFirmsMegaMenu .bc-mega-grid {
+            grid-template-columns: 1fr 1fr;
+        }
+        #brokersMegaMenu .bc-glass-card:first-child,
+        #propFirmsMegaMenu .bc-glass-card:first-child {
+            grid-column: 1 / -1;
+        }
+    }
+
+    .bc-nav-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 3px;
+        padding: 6px 8px;
+        min-height: 36px;
+        font-size: 14px;
+        font-weight: 500;
+        color: var(--nav-ice);
+        border-radius: 6px;
+        transition: color 0.15s, background 0.15s;
+        white-space: nowrap;
+        text-decoration: none;
+        flex-shrink: 0;
+        line-height: 1.2;
+    }
+    .bc-nav-link:hover,
+    .bc-nav-link.bc-nav-active {
+        color: var(--nav-off-white);
+        background: rgba(0, 122, 173, 0.18);
+    }
+    .bc-nav-link-danger {
+        color: #f87171;
+    }
+    .bc-nav-link-danger:hover {
+        color: #fecaca !important;
+        background: rgba(248, 113, 113, 0.14) !important;
+    }
+    .bc-nav-login {
+        gap: 6px;
+    }
+    .bc-nav-login svg {
+        flex-shrink: 0;
+        width: 18px;
+        height: 18px;
+    }
+    .bc-nav-dropdown {
+        position: absolute;
+        left: 0;
+        top: 100%;
+        padding-top: 0.5rem;
+        min-width: 13rem;
+    }
+    .bc-nav-dropdown-panel {
+        background: var(--nav-panel);
+        border: 1px solid var(--nav-border);
+        box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45);
+        border-radius: 0.75rem;
+        padding: 0.375rem 0;
+        overflow: hidden;
+    }
+    .bc-nav-dropdown-link {
+        display: block;
+        padding: 0.625rem 1rem;
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: var(--nav-ice);
+        text-decoration: none;
+        transition: color 0.15s, background 0.15s;
+    }
+    .bc-nav-dropdown-link:hover {
+        color: var(--nav-off-white);
+        background: rgba(0, 122, 173, 0.18);
+    }
+    .bc-nav-dropdown-link--danger {
+        color: #f87171;
+    }
+    .bc-nav-dropdown-link--danger:hover {
+        color: #fecaca;
+        background: rgba(248, 113, 113, 0.14);
+    }
+    #companyMenu > div {
+        background: var(--nav-panel) !important;
+        border-color: var(--nav-border) !important;
+        box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45) !important;
+        padding: 12px;
+    }
+    .bc-nav-desktop {
+        overflow: visible;
+    }
+    .bc-nav-desktop > .relative,
+    .bc-nav-desktop > a.bc-nav-link {
+        flex-shrink: 0;
+    }
+    .bc-nav-icon-btn {
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        width: 40px !important;
+        height: 40px !important;
+        min-width: 40px;
+        min-height: 40px;
+        padding: 0 !important;
+        margin: 0 !important;
+        border-radius: 10px;
+        color: var(--nav-ice);
+        background: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+        cursor: pointer;
+        transition: color 0.15s, background 0.15s;
+        flex-shrink: 0;
+        line-height: 0 !important;
+        vertical-align: middle;
+        position: relative;
+    }
+    .bc-nav-icon-btn svg {
+        display: block !important;
+        width: 20px !important;
+        height: 20px !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        flex-shrink: 0;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+    .bc-nav-icon-btn svg.hidden,
+    .bc-nav-icon-btn svg.is-hidden {
+        display: none !important;
+    }
+    .bc-nav-icon-btn:hover,
+    .bc-nav-icon-btn.is-active {
+        color: var(--nav-off-white);
+        background: rgba(0, 122, 173, 0.18) !important;
+    }
+    .bc-nav-actions {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: flex-end;
+        gap: 8px;
+        margin-left: auto;
+        flex-shrink: 0;
+        height: 40px;
+        align-self: center;
+    }
+    #navBarRow {
+        position: relative;
+    }
+    .bc-search-wrap {
+        position: relative;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: flex-end;
+        height: 40px;
+        width: 40px;
+        flex-shrink: 0;
+        align-self: center;
+        transition: width 0.22s ease, opacity 0.18s ease;
+        z-index: 1060;
+    }
+    .bc-search-wrap.is-expanded {
+        position: absolute;
+        inset: 0;
+        width: 100% !important;
+        height: 100%;
+        padding: 0;
+        background: var(--nav-bg, #0b1f33);
+    }
+    .bc-nav-row--search-open > *:not(#navActions) {
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.18s ease;
+    }
+    .bc-nav-row--search-open #navActions > *:not(.bc-search-wrap) {
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.18s ease;
+    }
+    .bc-search-dropdown {
+        position: absolute;
+        top: 50%;
+        right: 0;
+        transform: translateY(-50%) scaleX(0.92);
+        transform-origin: right center;
+        width: 0;
+        opacity: 0;
+        overflow: hidden;
+        padding: 0;
+        background: var(--nav-panel);
+        border: 1px solid transparent;
+        border-radius: 12px;
+        box-shadow: none;
+        z-index: 1061;
+        pointer-events: none;
+        transition: width 0.22s ease, opacity 0.18s ease, transform 0.22s ease, padding 0.22s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+    }
+    .bc-search-wrap.is-expanded .bc-search-dropdown {
+        left: 48px;
+        right: 0;
+        width: auto;
+        opacity: 1;
+        transform: translateY(-50%) scaleX(1);
+        padding: 8px 12px;
+        border-color: var(--nav-border);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.28);
+        pointer-events: auto;
+    }
+    .bc-search-wrap.is-expanded #desktopSearchToggle {
+        position: absolute;
+        left: 0;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+    .bc-nav-actions .bc-btn-primary {
+        height: 40px !important;
+        padding: 0 16px !important;
+        display: none;
+        align-items: center !important;
+        justify-content: center;
+        box-sizing: border-box;
+        line-height: 1 !important;
+        align-self: center;
+    }
+    @media (min-width: 1024px) {
+        .bc-nav-actions .bc-btn-primary {
+            display: inline-flex !important;
+        }
+        .bc-nav-actions #mobileMenuButton {
+            display: none !important;
+        }
+    }
+    .bc-mega-title {
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: rgba(217, 226, 233, 0.72);
+        margin-bottom: 12px;
+    }
+    .bc-mega-link {
+        display: block;
+        padding: 7px 10px;
+        margin: 0 -10px;
+        font-size: 14px;
+        color: var(--nav-ice);
+        border-radius: 6px;
+        transition: color 0.15s, background 0.15s;
+        text-decoration: none;
+    }
+    .bc-mega-link:hover {
+        color: var(--nav-off-white);
+        background: rgba(0, 122, 173, 0.16);
+    }
+    .bc-mega-footer {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        margin-top: 16px;
+        padding-top: 12px;
+        border-top: 1px solid var(--nav-border);
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--nav-ocean);
+        text-decoration: none;
+    }
+    .bc-mega-footer:hover { color: #33a3d4; }
+    .bc-btn-primary {
+        display: inline-flex;
+        align-items: center;
+        padding: 8px 16px;
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--nav-off-white);
+        background: var(--nav-ocean);
+        border-radius: 8px;
+        transition: background 0.15s;
+        text-decoration: none;
+        white-space: nowrap;
+    }
+    .bc-btn-primary:hover { background: var(--bc-primary-dark, #006694); color: var(--nav-off-white); }
+    .bc-search-input {
+        width: 100%;
+        height: 40px;
+        padding: 0 16px;
+        font-size: 14px;
+        line-height: 40px;
+        color: var(--nav-off-white);
+        background: rgba(12, 29, 50, 0.65);
+        border: 1px solid var(--nav-border);
+        border-radius: 9999px;
+        outline: none;
+        transition: border-color 0.15s, background 0.15s, box-shadow 0.15s;
+        box-sizing: border-box;
+    }
+    .bc-search-field {
+        position: relative;
+        width: 100%;
+    }
+    .bc-search-form {
+        width: 100%;
+        margin: 0;
+    }
+    .bc-mobile-search-row {
+        padding-top: 0;
+        padding-bottom: 10px;
+    }
+    #reviewsMegaMenu {
+        transform: translateX(-18%);
+    }
+    #reviewsMegaMenu .bc-reviews-mega-panel {
+        background: var(--nav-panel);
+        border: 1px solid var(--nav-border);
+        box-shadow: 0 24px 48px -16px rgba(0, 0, 0, 0.55);
+        border-radius: 14px;
+        padding: 18px 18px 14px;
+        min-width: 42rem;
+        width: max-content;
+        max-width: min(46rem, calc(100vw - 2rem));
+    }
+    #reviewsMegaMenu .bc-reviews-mega-grid {
+        display: grid;
+        grid-template-columns: minmax(13rem, 1fr) minmax(16rem, 1.15fr);
+        gap: 1.25rem;
+        align-items: start;
+    }
+    #reviewsMegaMenu .bc-reviews-mega-col {
+        min-width: 0;
+    }
+    #reviewsMegaMenu .bc-reviews-mega-col + .bc-reviews-mega-col {
+        border-left: 1px solid var(--nav-border);
+        padding-left: 1.25rem;
+    }
+    #reviewsMegaMenu .bc-mega-title {
+        margin-bottom: 10px;
+    }
+    #reviewsMegaMenu .bc-link-list {
+        display: flex;
+        flex-direction: column;
+        gap: 1px;
+    }
+    #reviewsMegaMenu .bc-mega-link {
+        margin: 0;
+        padding: 7px 10px;
+    }
+    #reviewsMegaMenu .bc-chip-wrap {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 7px;
+    }
+    #reviewsMegaMenu .bc-mega-footer {
+        margin-top: 14px;
+        padding-top: 12px;
+        border-top: 1px solid var(--nav-border);
+        width: 100%;
+    }
+    @media (max-width: 1023px) {
+        :root {
+            --bc-nav-height: 7.75rem;
+        }
+        #navbar {
+            --bc-nav-height: 7.75rem;
+        }
+        #navBarRow {
+            gap: 6px;
+        }
+        .bc-site-logo {
+            height: 34px;
+            max-width: 130px;
+        }
+        .bc-nav-actions {
+            gap: 4px;
+        }
+        .bc-country-nav-label {
+            display: none;
+        }
+        .bc-country-nav-btn {
+            padding: 0 8px !important;
+        }
+        .bc-mobile-search-row {
+            display: block;
+            padding-bottom: 12px;
+        }
+        #mobileMenu {
+            max-height: calc(100dvh - var(--bc-nav-height, 7.75rem));
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        #mobileMenu .bc-mobile-reviews-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+    @media (min-width: 480px) and (max-width: 1023px) {
+        #mobileMenu .bc-mobile-reviews-grid {
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem 1rem;
+        }
+    }
+    @media (min-width: 1024px) {
+        .bc-mobile-search-row {
+            display: none !important;
+        }
+    }
+    .bc-search-input:focus {
+        background: rgba(12, 29, 50, 0.9);
+        border-color: rgba(0, 122, 173, 0.55);
+        box-shadow: 0 0 0 3px rgba(0, 122, 173, 0.18);
+    }
+    .bc-search-input::placeholder { color: rgba(217, 226, 233, 0.55); }
+    .bc-broker-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 8px 10px;
+        margin: 0 -10px;
+        border-radius: 8px;
+        text-decoration: none;
+        transition: background 0.15s;
+    }
+    .bc-broker-row:hover { background: rgba(0, 122, 173, 0.12); }
+    #brokersMegaMenu .bc-broker-row span.flex-1,
+    #propFirmsMegaMenu .bc-broker-row span.flex-1 {
+        color: var(--nav-off-white);
+    }
+    #mobileMenu.border-t {
+        border-color: var(--nav-border) !important;
+    }
+    .bc-country-nav-label {
+        color: var(--nav-ice) !important;
+    }
+    .bc-score {
+        display: inline-flex;
+        align-items: center;
+        gap: 2px;
+        padding: 2px 8px;
+        font-size: 12px;
+        font-weight: 700;
+        color: #047857;
+        background: #ecfdf5;
+        border-radius: 6px;
+        flex-shrink: 0;
+    }

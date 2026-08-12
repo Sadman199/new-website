@@ -272,30 +272,38 @@
                     @endforeach
                 </div>
                 
-                {{-- jQuery Tab Switch --}}
                 <script>
-                    $(function() {
-                
-                        const $tabs = $('.tab-btn');
-                        const $contents = $('.tab-content');
-                
+                    (function () {
+                        var tabs = Array.prototype.slice.call(document.querySelectorAll('.tab-btn'));
+                        var contents = Array.prototype.slice.call(document.querySelectorAll('.tab-content'));
+                        if (!tabs.length) {
+                            return;
+                        }
+
                         function activateTab(id) {
-                            $contents.addClass('hidden');
-                            $('#' + id).removeClass('hidden');
-                
-                            $tabs.removeClass('border-yellow-500 text-yellow-600');
-                            $('.tab-btn[data-tab="' + id + '"]').addClass('border-yellow-500 text-yellow-600');
+                            contents.forEach(function (el) {
+                                el.classList.add('hidden');
+                            });
+                            var panel = document.getElementById(id);
+                            if (panel) {
+                                panel.classList.remove('hidden');
+                            }
+
+                            tabs.forEach(function (btn) {
+                                var active = btn.getAttribute('data-tab') === id;
+                                btn.classList.toggle('border-yellow-500', active);
+                                btn.classList.toggle('text-yellow-600', active);
+                            });
                         }
-                
-                        $tabs.on('click', function() {
-                            activateTab($(this).data('tab'));
+
+                        tabs.forEach(function (btn) {
+                            btn.addEventListener('click', function () {
+                                activateTab(btn.getAttribute('data-tab'));
+                            });
                         });
-                
-                        // Activate first tab initially
-                        if ($tabs.length) {
-                            activateTab($tabs.first().data('tab'));
-                        }
-                    });
+
+                        activateTab(tabs[0].getAttribute('data-tab'));
+                    })();
                 </script>
             </div>
            <div class="lg:col-span-4">

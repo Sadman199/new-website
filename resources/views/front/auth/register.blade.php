@@ -2,9 +2,11 @@
 
 @section('title', 'Create Account | BrokersCourt')
 @section('meta_description', 'Create a free BrokersCourt account to write verified broker reviews, track your activity and build your trader profile.')
+@section('robots', 'noindex, nofollow')
+@section('canonical', route('user.register'))
 
 @push('page-styles')
-    <link rel="stylesheet" href="{{ asset('css/user-account.css') }}?v=3">
+    <link rel="stylesheet" href="{{ asset('css/user-account.css') }}?v=4">
 @endpush
 
 @section('main_content')

@@ -2,77 +2,57 @@
     <div class="bc-hero__bg" aria-hidden="true"></div>
 
     <div class="bc-container bc-hero__container">
-        <div class="bc-hero__stack">
-            {{-- Hero content (top) --}}
-            <header class="bc-hero__head">
+        <div class="bc-hero__inner">
+            <header class="bc-hero__intro">
                 <p class="bc-hero__eyebrow">
-                    <span class="bc-hero__eyebrow-dot"></span>
+                    <span class="bc-hero__eyebrow-dot" aria-hidden="true"></span>
                     Independent broker research
                 </p>
 
-                <h1 class="bc-hero__title">Find the right forex broker for you</h1>
+                <h1 class="bc-hero__title">Compare forex brokers with confidence</h1>
 
                 <p class="bc-hero__lead">
-                    Compare <strong>{{ $homeStats['total'] ?? $brokerCount }}+ brokers</strong> by regulation, trading costs, and safety — backed by expert reviews and transparent ratings.
+                    Expert reviews, regulation checks, and side-by-side tools for
+                    {{ number_format($homeStats['total'] ?? $brokerCount ?? 0) }}+ brokers — free and unbiased.
                 </p>
-
-                @if(!empty($preferredCountry) && ($preferredCountry['slug'] ?? 'global') !== 'global')
-                    <p class="bc-hero__location">
-                        <span class="bc-hero__location-flag" aria-hidden="true">
-                            @include('front.layout.partial.country-flag', ['country' => $preferredCountry, 'width' => 20, 'height' => 15])
-                        </span>
-                        Showing recommendations for <strong>{{ $preferredCountry['name'] }}</strong>
-                    </p>
-                @endif
-
-                <div class="bc-hero__metrics">
-                    <div class="bc-hero__metric">
-                        <span class="bc-hero__metric-label">Brokers reviewed</span>
-                        <strong class="bc-hero__metric-value">{{ $homeStats['total'] ?? $brokerCount }}</strong>
-                    </div>
-                    <div class="bc-hero__metric">
-                        <span class="bc-hero__metric-label">Regulated</span>
-                        <strong class="bc-hero__metric-value">{{ $homeStats['regulated'] ?? 0 }}</strong>
-                    </div>
-                    <div class="bc-hero__metric">
-                        <span class="bc-hero__metric-label">Demo accounts</span>
-                        <strong class="bc-hero__metric-value">{{ $homeStats['with_demo'] ?? 0 }}</strong>
-                    </div>
-                    <div class="bc-hero__metric">
-                        <span class="bc-hero__metric-label">Avg. score</span>
-                        <strong class="bc-hero__metric-value">{{ $homeStats['avg_rating'] ?? '—' }}</strong>
-                    </div>
-                </div>
             </header>
 
-            {{-- Search (below hero content) --}}
-            <div class="bc-finder" id="bcHomeSearch">
-                <form class="bc-finder__form" action="{{ route('find_my_broker') }}" method="GET" id="bcHomeSearchForm">
-                    <div class="bc-finder__modes" role="tablist" aria-label="Search mode">
-                        <button type="button" class="bc-finder__mode is-active" data-bc-tab="name" role="tab" aria-selected="true">
-                            Search by name
-                        </button>
-                        <button type="button" class="bc-finder__mode" data-bc-tab="filter" role="tab" aria-selected="false">
-                            Filter by criteria
-                        </button>
-                    </div>
-
-                    <div class="bc-finder__panel" data-bc-panel="name">
-                        <label class="bc-finder__search" for="bcHeroBrokerName">
-                            <span class="bc-finder__search-icon" aria-hidden="true">
-                                <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+            <div class="bc-hero__panel" id="bcHomeSearch">
+                <form class="bc-hero__form" action="{{ route('find_my_broker') }}" method="GET" id="bcHomeSearchForm">
+                    <div class="bc-hero__search-row">
+                        <label class="bc-hero__search-field" for="bcHeroBrokerName">
+                            <span class="bc-hero__search-icon" aria-hidden="true">
+                                <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
                             </span>
                             <input type="search"
                                    id="bcHeroBrokerName"
                                    name="q"
-                                   class="bc-finder__input"
+                                   class="bc-hero__search-input"
                                    placeholder="Search broker name, e.g. Exness, IC Markets…"
                                    autocomplete="off">
-                            <button type="submit" class="bc-finder__submit">Search</button>
                         </label>
+                        <button type="submit" class="bc-hero__search-btn">Search</button>
                     </div>
 
-                    <div class="bc-finder__panel is-hidden" data-bc-panel="filter">
+                    @if(!empty($quickFilterLinks))
+                        <div class="bc-hero__chips">
+                            <span class="bc-hero__chips-label">Popular:</span>
+                            @foreach($quickFilterLinks as $chip)
+                                <a href="{{ $chip['url'] }}" class="bc-hero__chip">{{ $chip['label'] }}</a>
+                            @endforeach
+                        </div>
+                    @endif
+
+                    <button type="button"
+                            class="bc-hero__filters-toggle"
+                            id="bcHeroFiltersToggle"
+                            aria-expanded="false"
+                            aria-controls="bcHeroFilters">
+                        <span>Filter by regulation, cost &amp; leverage</span>
+                        <svg class="bc-hero__filters-chevron" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                    </button>
+
+                    <div class="bc-hero__filters" id="bcHeroFilters" hidden>
                         <div class="bc-finder__filters">
                             <div class="bc-finder__field" data-bc-dropdown>
                                 <span class="bc-finder__select-label">Regulation</span>
@@ -119,20 +99,19 @@
                                 </div>
                             </div>
 
-                            <button type="submit" class="bc-finder__submit bc-finder__submit--filter">Find brokers</button>
+                            <button type="submit" class="bc-hero__search-btn bc-hero__search-btn--filter">Apply filters</button>
                         </div>
                     </div>
-
-                    @if(!empty($quickFilterLinks))
-                        <div class="bc-finder__quick">
-                            <span class="bc-finder__quick-label">Popular:</span>
-                            @foreach($quickFilterLinks as $chip)
-                                <a href="{{ $chip['url'] }}" class="bc-finder__quick-link">{{ $chip['label'] }}</a>
-                            @endforeach
-                        </div>
-                    @endif
                 </form>
             </div>
+
+            <nav class="bc-hero__links" aria-label="Quick actions">
+                <a href="{{ route('find_my_broker') }}" class="bc-hero__link">Browse all brokers</a>
+                <span class="bc-hero__link-divider" aria-hidden="true">·</span>
+                <a href="{{ route('broker.comparison') }}" class="bc-hero__link">Compare side by side</a>
+                <span class="bc-hero__link-divider" aria-hidden="true">·</span>
+                <a href="{{ route('find_my_broker') }}" class="bc-hero__link">Find my match</a>
+            </nav>
         </div>
     </div>
 </section>

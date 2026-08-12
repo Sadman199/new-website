@@ -116,5 +116,12 @@
                 <p><strong>{{ $winner['name'] }}</strong> leads this comparison based on {{ strtolower($winner['reason']) }}</p>
             </div>
         @endif
+
+        <div class="bc-result-share">
+            <button type="button" class="bc-compare-btn bc-compare-btn--ghost bc-result-share__btn" id="bcCompareShare" data-share-url="{{ $shareUrl ?? request()->url() }}">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                Copy comparison link
+            </button>
+        </div>
     </div>
 </header>

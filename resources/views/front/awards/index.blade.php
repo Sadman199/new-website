@@ -2,6 +2,7 @@
 
 @section('title', 'Broker Awards ' . date('Y') . ' | BrokersCourt')
 @section('meta_description', 'Explore BrokersCourt award categories and discover top-rated forex brokers recognized for trust, execution, spreads, and platform quality.')
+@section('canonical', route('awards.index'))
 
 @push('page-styles')
     <link rel="stylesheet" href="{{ asset('css/awards-index.css') }}?v=4">
@@ -43,24 +44,14 @@
                 </div>
             </div>
 
-            <div class="awd-hero__stats awd-hero__stats--compact awd-hero__stats--cols-4">
-                <div class="awd-stat">
-                    <span class="awd-stat__label">Brokers reviewed</span>
-                    <span class="awd-stat__value">{{ number_format($stats['total_brokers']) }}</span>
-                </div>
-                <div class="awd-stat">
-                    <span class="awd-stat__label">Featured picks</span>
-                    <span class="awd-stat__value">{{ number_format($stats['featured_brokers']) }}</span>
-                </div>
-                <div class="awd-stat awd-stat--highlight">
-                    <span class="awd-stat__label">Award categories</span>
-                    <span class="awd-stat__value">{{ $stats['award_categories'] }}</span>
-                </div>
-                <div class="awd-stat">
-                    <span class="awd-stat__label">Avg. rating /5</span>
-                    <span class="awd-stat__value">{{ number_format($stats['average_rating'], 1) }}</span>
-                </div>
-            </div>
+            @include('front.partials.hero_metrics', [
+                'stats' => [
+                    ['label' => 'Brokers reviewed', 'value' => number_format($stats['total_brokers'])],
+                    ['label' => 'Featured picks', 'value' => number_format($stats['featured_brokers'])],
+                    ['label' => 'Award categories', 'value' => $stats['award_categories'], 'tone' => 'highlight'],
+                    ['label' => 'Avg. rating /5', 'value' => number_format($stats['average_rating'], 1)],
+                ],
+            ])
         </div>
     </header>
 

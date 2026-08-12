@@ -29,6 +29,7 @@ class User extends Authenticatable
         'password',
         'google_id',
         'country',
+        'preferred_country_slug',
         'avatar',
         'bio',
     ];
@@ -69,6 +70,29 @@ class User extends Authenticatable
     public function activities()
     {
         return $this->hasMany(ActivityLog::class)->latest();
+    }
+
+    /**
+     * In-app notifications for this user.
+     */
+    public function notifications()
+    {
+        return $this->hasMany(UserNotification::class)->latest();
+    }
+
+    public function savedBrokers()
+    {
+        return $this->belongsToMany(Broker::class, 'user_saved_brokers')->withTimestamps();
+    }
+
+    public function brokerReports()
+    {
+        return $this->hasMany(BrokerReport::class)->latest();
+    }
+
+    public function hasPassword(): bool
+    {
+        return filled($this->password);
     }
 
     /**

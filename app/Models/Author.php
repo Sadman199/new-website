@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Support\Str;
 
 class Author extends Authenticatable
 {
@@ -96,6 +97,25 @@ class Author extends Authenticatable
         }
 
         return asset('uploads/default.png');
+    }
+
+    public function publicSlug(): string
+    {
+        return Str::slug($this->name);
+    }
+
+    public static function findByPublicSlug(string $slug): ?self
+    {
+        $slug = Str::slug($slug);
+
+        return static::query()
+            ->get()
+            ->first(fn (self $author) => $author->publicSlug() === $slug);
+    }
+
+    public function profileUrl(): string
+    {
+        return route('authors.show', ['slug' => $this->publicSlug()]);
     }
 
     /** @return array<int, array{platform: string, url: string, icon: string}> */

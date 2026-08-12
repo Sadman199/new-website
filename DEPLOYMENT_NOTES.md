@@ -141,6 +141,88 @@ On a 500 error, check:
 tail -50 storage/logs/laravel.log
 ```
 
+Also hit the health endpoint after deploy:
+```bash
+curl -s https://staging.brokerscourt.com/health
+php artisan db:health --strict
+```
+
+---
+
+## 9. Database hardening (local + production)
+
+### Why the local error happened
+On **Windows/XAMPP**, MariaDB stores accounts in `mysql.global_priv`. If that table gets
+corrupted (improper shutdown, copying data folders, disk issues), you see:
+
+`Host 'localhost' is not allowed to connect to this MariaDB server`
+
+This is a **local dev machine issue** — production on Linux/cPanel uses separate MySQL
+users created in the hosting panel and is not affected the same way.
+
+### Local development (XAMPP)
+| Rule | Why |
+|------|-----|
+| `DB_HOST=127.0.0.1` | Avoids Windows localhost/socket quirks |
+| `APP_ENV=local` | Never run production env locally |
+| Dedicated user, not `root` | Limits blast radius if credentials leak |
+| Run `scripts/setup-local-db.ps1` once | Creates `brokerscourt_local` user |
+| Don't copy `C:\xampp\mysql\data` blindly | Can corrupt `global_priv` / InnoDB logs |
+
+**One-time local setup:**
+```powershell
+# XAMPP MySQL must be running
+.\scripts\setup-local-db.ps1
+copy .env.local.example .env   # or update existing .env
+php artisan config:clear
+php artisan db:health
+```
+
+**If MariaDB breaks again locally:**
+```powershell
+Get-Process mysqld -ErrorAction SilentlyContinue | Stop-Process -Force
+C:\xampp\mysql\bin\aria_chk.exe -r C:\xampp\mysql\data\mysql\global_priv
+# Start MySQL from XAMPP Control Panel
+```
+
+### Production (cPanel MySQL)
+| Rule | Why |
+|------|-----|
+| Create DB + user in cPanel → MySQL Databases | Hosting-managed credentials |
+| `DB_USERNAME` ≠ `root` | Root must never be in the web app |
+| Strong `DB_PASSWORD` | Required — empty password fails deploy check |
+| `DB_STRICT_PRODUCTION=true` | Blocks boot/deploy with unsafe DB config |
+| `APP_DEBUG=false` | No stack traces on live site |
+| Use `.env.production.example` as template | Keeps secrets out of git |
+
+**Production `.env` (MySQL on same server):**
+```env
+DB_CONNECTION=mysql
+DB_HOST=localhost
+DB_DATABASE=brokerscourt_data
+DB_USERNAME=brokerscourt_app
+DB_PASSWORD=<strong-password-from-cpanel>
+DB_STRICT_PRODUCTION=true
+```
+
+### Pre-deploy check (always run on server)
+```bash
+php artisan config:clear
+php artisan db:health --strict
+php artisan migrate --force
+php artisan config:cache
+```
+
+Or use the helper script:
+```bash
+bash scripts/verify-deploy.sh
+```
+
+### Monitoring
+- **Health URL:** `GET /health` → JSON `{ "status": "ok", "database": "ok" }`
+- Use this in uptime monitors (Pingdom, UptimeRobot, etc.)
+- Schedule cPanel **JetBackup** or manual mysqldump for `brokerscourt_data`
+
 ---
 
 ## 7. Common gotchas (already hit during setup)
@@ -176,3 +258,50 @@ php artisan config:cache
 php artisan route:cache
 php artisan view:cache
 ```
+
+---
+
+## 10. Performance (page speed)
+
+Every front-end page was running **15+ uncached database queries** on boot
+(`AppServiceProvider`), plus footer/nav queries, plus page-specific work. That
+is now cached.
+
+### What changed
+| Layer | Before | After |
+|-------|--------|-------|
+| Global boot (ads, settings, languages) | ~15 queries / request | 1 cache read (or 1 DB round-trip on miss) |
+| Footer mega-menu | 4+ queries / request | Cached 1 hour |
+| Navbar top brokers | Uncached every page | Cached 1 hour |
+| Homepage | ~45 queries, broken `rand()` cache key | ~8 queries on cache miss; ~2 on hit |
+| Broker promos | ~19 promo queries | 1 catalog query (cached 15 min) |
+| Nav prefetch JS | Hover prefetched full Laravel pages | Removed progress/overlay; idle prefetch on 3 key nav links only |
+
+### Progress bar / overlay
+Removed. Navigation uses normal full page loads — speed comes from server-side
+caching (see table above), not client-side loading chrome.
+```env
+CACHE_DRIVER=redis          # or file if Redis unavailable
+SESSION_DRIVER=redis        # optional but helps under load
+APP_DEBUG=false
+```
+
+After deploy always run:
+```bash
+php artisan config:cache
+php artisan route:cache
+php artisan view:cache
+```
+
+### Clear front-end caches after content changes
+```bash
+php artisan cache:forget global_view_data_v2
+php artisan cache:forget footer_index_v2
+php artisan cache:forget promotions_active_catalog_v3
+php artisan cache:clear   # nuclear option
+```
+
+Or call `App\Services\GlobalViewDataService::flush()` from admin save hooks when
+settings/ads/social items change.
+
+### Production `.env` recommendations

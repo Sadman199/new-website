@@ -54,6 +54,7 @@ class AdminBrokerController extends Controller
     public function store(BrokerRequest $request)
     {
         $broker = $this->brokerAdmin->save(new Broker(), $request);
+        app(\App\Services\BrokerGuideService::class)->ensureGuidesForBroker($broker);
 
         return redirect()
             ->route('admin_broker_edit', $broker->id)

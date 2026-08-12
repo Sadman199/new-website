@@ -2,14 +2,11 @@
 
 namespace App\Http\Controllers\Front;
 
-use App\Http\Controllers\Controller;
-use App\Helper\Helpers;
-
-class MethodologyController extends Controller
+class MethodologyController extends FrontController
 {
     public function index()
     {
-        Helpers::read_json();
+        $this->bootFront();
 
         return view('front.pages.methodology');
     }

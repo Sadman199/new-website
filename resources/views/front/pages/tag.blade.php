@@ -87,6 +87,9 @@
                 </div>
               @endforeach
             </div>
+            @if($all_posts->hasPages())
+                <div class="mt-8">{{ $all_posts->links() }}</div>
+            @endif
           @else
             <span class="text-red-500 font-medium">{{ NO_POST_FOUND }}</span>
           @endif

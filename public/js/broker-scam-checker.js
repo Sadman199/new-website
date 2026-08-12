@@ -1,4 +1,4 @@
-(function ($) {
+(function () {
     'use strict';
 
     var app = document.getElementById('bscApp');
@@ -14,21 +14,85 @@
     var csrf = document.querySelector('meta[name="csrf-token"]');
     var csrfToken = csrf ? csrf.getAttribute('content') : '';
 
-    var $input = $('#bscSearchInput');
-    var $dropdown = $('#bscSearchDropdown');
+    var input = document.getElementById('bscSearchInput');
+    var dropdown = document.getElementById('bscSearchDropdown');
     var searchTimer = null;
 
-    function animateScoreRing() {
-        $('.bsc-score-ring[data-score]').each(function () {
-            var $ring = $(this);
-            var score = parseInt($ring.data('score'), 10) || 0;
-            var $fill = $ring.find('.bsc-ring-fill');
-            var circumference = 326.7;
-            var offset = circumference - (circumference * score / 100);
-            $fill.css('stroke-dashoffset', offset);
+    function qs(sel, root) {
+        return (root || document).querySelector(sel);
+    }
 
-            var $value = $ring.find('#bscScoreValue');
-            if ($value.length) {
+    function qsa(sel, root) {
+        return Array.prototype.slice.call((root || document).querySelectorAll(sel));
+    }
+
+    function hide(el) {
+        if (el) {
+            el.classList.add('bsc-hidden');
+        }
+    }
+
+    function show(el) {
+        if (el) {
+            el.classList.remove('bsc-hidden');
+        }
+    }
+
+    function openModal(el) {
+        if (!el) {
+            return;
+        }
+        el.hidden = false;
+        el.classList.add('is-open');
+        el.setAttribute('aria-hidden', 'false');
+        document.body.classList.add('bsc-modal-open');
+    }
+
+    function closeModal(el) {
+        if (!el) {
+            return;
+        }
+        el.hidden = true;
+        el.classList.remove('is-open');
+        el.setAttribute('aria-hidden', 'true');
+        if (!document.querySelector('.bsc-modal.is-open')) {
+            document.body.classList.remove('bsc-modal-open');
+        }
+    }
+
+    function closeAllModals() {
+        qsa('.bsc-modal.is-open').forEach(closeModal);
+    }
+
+    qsa('[data-bsc-open]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            openModal(qs(btn.getAttribute('data-bsc-open')));
+        });
+    });
+
+    qsa('[data-bsc-close]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            closeModal(btn.closest('.bsc-modal'));
+        });
+    });
+
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') {
+            closeAllModals();
+        }
+    });
+
+    function animateScoreRing() {
+        qsa('.bsc-score-ring[data-score]').forEach(function (ring) {
+            var score = parseInt(ring.getAttribute('data-score'), 10) || 0;
+            var fill = qs('.bsc-ring-fill', ring);
+            if (fill) {
+                var circumference = 326.7;
+                fill.style.strokeDashoffset = String(circumference - (circumference * score / 100));
+            }
+
+            var value = qs('#bscScoreValue', ring) || qs('#bscScoreValue');
+            if (value && ring.contains(value)) {
                 var current = 0;
                 var step = Math.max(1, Math.round(score / 40));
                 var interval = setInterval(function () {
@@ -37,111 +101,154 @@
                         current = score;
                         clearInterval(interval);
                     }
-                    $value.text(current);
+                    value.textContent = String(current);
                 }, 20);
             }
         });
     }
 
     function animateMeters() {
-        $('[data-meter]').each(function () {
-            var value = parseInt($(this).data('meter'), 10) || 0;
-            $(this).css('width', value + '%');
+        qsa('[data-meter]').forEach(function (el) {
+            var value = parseInt(el.getAttribute('data-meter'), 10) || 0;
+            el.style.width = value + '%';
         });
     }
 
     function renderDropdown(items) {
+        if (!dropdown) {
+            return;
+        }
         if (!items.length) {
-            $dropdown.addClass('d-none').empty();
+            hide(dropdown);
+            dropdown.innerHTML = '';
             return;
         }
 
-        var html = items.map(function (item) {
-            return '<button type="button" class="bsc-search-item" data-slug="' + item.slug + '" data-url="' + item.url + '">' +
-                '<img src="' + item.logo_url + '" alt="">' +
+        dropdown.innerHTML = items.map(function (item) {
+            return '<button type="button" class="bsc-search-item" data-url="' + item.url + '">' +
+                '<img src="' + item.logo_url + '" alt="" loading="lazy" decoding="async" width="32" height="32">' +
                 '<span><strong>' + item.name + '</strong><br><small class="bsc-muted">' + item.risk_label + ' · ' + item.overall_score + '/100</small></span>' +
                 '</button>';
         }).join('');
-
-        $dropdown.html(html).removeClass('d-none');
+        show(dropdown);
     }
 
-    $input.on('input', function () {
-        var q = $.trim($input.val());
-        clearTimeout(searchTimer);
+    if (input) {
+        input.addEventListener('input', function () {
+            var q = input.value.trim();
+            clearTimeout(searchTimer);
 
-        if (q.length < 2) {
-            $dropdown.addClass('d-none').empty();
-            return;
-        }
-
-        searchTimer = setTimeout(function () {
-            $.getJSON(searchUrl, { q: q })
-                .done(function (response) {
-                    renderDropdown(response.results || []);
-                });
-        }, 250);
-    });
-
-    $dropdown.on('click', '.bsc-search-item', function () {
-        window.location.href = $(this).data('url');
-    });
-
-    $(document).on('click', function (event) {
-        if (!$(event.target).closest('.bsc-search__wrap').length) {
-            $dropdown.addClass('d-none');
-        }
-    });
-
-    $('[data-bsc-example]').on('click', function () {
-        $input.val($(this).data('bscExample'));
-        $('#bscSearchForm').trigger('submit');
-    });
-
-    $('#bscCompareToggle').on('click', function () {
-        if (currentSlug) {
-            $('#bscCompare1').val($('.bsc-broker-ident__name').first().text().trim());
-        }
-        var modal = new bootstrap.Modal(document.getElementById('bscCompareModal'));
-        modal.show();
-    });
-
-    $('#bscRunCompare').on('click', function () {
-        var brokers = ['#bscCompare1', '#bscCompare2', '#bscCompare3']
-            .map(function (selector) {
-                return $.trim($(selector).val());
-            })
-            .filter(function (value) {
-                return value.length > 0;
-            });
-
-        if (brokers.length < 2) {
-            alert('Please enter at least two broker names.');
-            return;
-        }
-
-        $.ajax({
-            url: compareUrl,
-            method: 'POST',
-            data: JSON.stringify({ brokers: brokers }),
-            contentType: 'application/json',
-            headers: {
-                'X-CSRF-TOKEN': csrfToken,
-                'Accept': 'application/json'
+            if (q.length < 2) {
+                hide(dropdown);
+                if (dropdown) {
+                    dropdown.innerHTML = '';
+                }
+                return;
             }
-        }).done(function (response) {
-            renderCompareTable(response.brokers || []);
-        }).fail(function (xhr) {
-            var message = xhr.responseJSON && xhr.responseJSON.message
-                ? xhr.responseJSON.message
-                : 'Comparison failed. Please check broker names.';
-            $('#bscCompareResults').html('<p class="text-danger">' + message + '</p>');
+
+            searchTimer = setTimeout(function () {
+                fetch(searchUrl + '?q=' + encodeURIComponent(q), {
+                    headers: { Accept: 'application/json' }
+                })
+                    .then(function (res) { return res.json(); })
+                    .then(function (response) {
+                        renderDropdown(response.results || []);
+                    })
+                    .catch(function () {});
+            }, 250);
+        });
+    }
+
+    if (dropdown) {
+        dropdown.addEventListener('click', function (e) {
+            var item = e.target.closest('.bsc-search-item');
+            if (item) {
+                window.location.href = item.getAttribute('data-url');
+            }
+        });
+    }
+
+    document.addEventListener('click', function (event) {
+        if (!event.target.closest('.bsc-search__wrap')) {
+            hide(dropdown);
+        }
+    });
+
+    qsa('[data-bsc-example]').forEach(function (chip) {
+        chip.addEventListener('click', function () {
+            if (input) {
+                input.value = chip.getAttribute('data-bsc-example');
+            }
+            qs('#bscSearchForm')?.submit();
         });
     });
 
+    var compareToggle = qs('#bscCompareToggle');
+    if (compareToggle) {
+        compareToggle.addEventListener('click', function () {
+            if (currentSlug) {
+                var nameEl = qs('.bsc-broker-ident__name');
+                var compare1 = qs('#bscCompare1');
+                if (nameEl && compare1) {
+                    compare1.value = nameEl.textContent.trim();
+                }
+            }
+            openModal(qs('#bscCompareModal'));
+        });
+    }
+
+    var runCompare = qs('#bscRunCompare');
+    if (runCompare) {
+        runCompare.addEventListener('click', function () {
+            var brokers = ['#bscCompare1', '#bscCompare2', '#bscCompare3']
+                .map(function (selector) {
+                    var el = qs(selector);
+                    return el ? el.value.trim() : '';
+                })
+                .filter(Boolean);
+
+            if (brokers.length < 2) {
+                alert('Please enter at least two broker names.');
+                return;
+            }
+
+            fetch(compareUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken,
+                    Accept: 'application/json'
+                },
+                body: JSON.stringify({ brokers: brokers })
+            })
+                .then(function (res) {
+                    return res.json().then(function (data) {
+                        return { ok: res.ok, data: data };
+                    });
+                })
+                .then(function (result) {
+                    if (!result.ok) {
+                        var message = result.data && result.data.message
+                            ? result.data.message
+                            : 'Comparison failed. Please check broker names.';
+                        qs('#bscCompareResults').innerHTML = '<p class="bsc-form-alert bsc-form-alert--error">' + message + '</p>';
+                        return;
+                    }
+                    renderCompareTable(result.data.brokers || []);
+                })
+                .catch(function () {
+                    qs('#bscCompareResults').innerHTML = '<p class="bsc-form-alert bsc-form-alert--error">Comparison failed. Please check broker names.</p>';
+                });
+        });
+    }
+
     function renderCompareTable(brokers) {
+        var wrap = qs('#bscCompareResults');
+        if (!wrap) {
+            return;
+        }
         if (!brokers.length) {
-            $('#bscCompareResults').html('<p class="bsc-muted">No results.</p>');
+            wrap.innerHTML = '<p class="bsc-muted">No results.</p>';
             return;
         }
 
@@ -155,7 +262,7 @@
             }).join('') + '</tr>';
         }
 
-        var html = '<div class="table-responsive"><table class="bsc-compare-table">' +
+        wrap.innerHTML = '<div class="bsc-table-wrap"><table class="bsc-compare-table">' +
             '<thead><tr><th>Metric</th>' + headers + '</tr></thead><tbody>' +
             row('Risk level', function (b) { return b.risk_icon + ' ' + b.risk_label; }) +
             row('Regulation tier', function (b) { return b.regulation.tier; }) +
@@ -169,34 +276,51 @@
                 return b.protection.items[2] && b.protection.items[2].active ? 'Yes' : 'No';
             }) +
             '</tbody></table></div>';
-
-        $('#bscCompareResults').html(html);
     }
 
     function clearReportErrors() {
-        $('#bscReportForm .bsc-field-error').addClass('d-none').text('');
-        $('#bscReportForm .is-invalid').removeClass('is-invalid');
-        $('#bscReportAlert').addClass('d-none').removeClass('bsc-form-alert--success bsc-form-alert--error').text('');
+        qsa('#bscReportForm .bsc-field-error').forEach(function (el) {
+            hide(el);
+            el.textContent = '';
+        });
+        qsa('#bscReportForm .is-invalid').forEach(function (el) {
+            el.classList.remove('is-invalid');
+        });
+        var alertEl = qs('#bscReportAlert');
+        if (alertEl) {
+            hide(alertEl);
+            alertEl.classList.remove('bsc-form-alert--success', 'bsc-form-alert--error');
+            alertEl.textContent = '';
+        }
     }
 
     function showReportFieldError(field, message) {
-        var $input = $('#bscReportForm [name="' + field + '"]');
-        $input.addClass('is-invalid');
-        $('#bscReportForm [data-error-for="' + field + '"]').removeClass('d-none').text(message);
+        var fieldEl = qs('#bscReportForm [name="' + field + '"]');
+        if (fieldEl) {
+            fieldEl.classList.add('is-invalid');
+        }
+        var errorEl = qs('#bscReportForm [data-error-for="' + field + '"]');
+        if (errorEl) {
+            show(errorEl);
+            errorEl.textContent = message;
+        }
     }
 
     function showReportAlert(type, message) {
-        $('#bscReportAlert')
-            .removeClass('d-none bsc-form-alert--success bsc-form-alert--error')
-            .addClass(type === 'success' ? 'bsc-form-alert--success' : 'bsc-form-alert--error')
-            .text(message);
+        var alertEl = qs('#bscReportAlert');
+        if (!alertEl) {
+            return;
+        }
+        alertEl.classList.remove('bsc-hidden', 'bsc-form-alert--success', 'bsc-form-alert--error');
+        alertEl.classList.add(type === 'success' ? 'bsc-form-alert--success' : 'bsc-form-alert--error');
+        alertEl.textContent = message;
     }
 
     function validateReportForm() {
         clearReportErrors();
         var valid = true;
-        var issueType = $.trim($('#bscIssueType').val());
-        var message = $.trim($('#bscReportMessage').val());
+        var issueType = (qs('#bscIssueType') || {}).value || '';
+        var message = ((qs('#bscReportMessage') || {}).value || '').trim();
 
         if (!issueType) {
             showReportFieldError('issue_type', 'Please select an issue type.');
@@ -218,87 +342,117 @@
     }
 
     function setReportSubmitting(isSubmitting) {
-        var $btn = $('#bscReportSubmit');
-        $btn.prop('disabled', isSubmitting);
-        $btn.find('.bsc-submit-label').toggleClass('d-none', isSubmitting);
-        $btn.find('.bsc-submit-spinner').toggleClass('d-none', !isSubmitting);
-    }
-
-    $('#bscReportMessage').on('input', function () {
-        var length = $(this).val().length;
-        $('#bscMessageCount').text(length);
-    }).trigger('input');
-
-    $('#bscReportForm').on('submit', function (event) {
-        event.preventDefault();
-
-        if (!reportUrl || !validateReportForm()) {
+        var btn = qs('#bscReportSubmit');
+        if (!btn) {
             return;
         }
+        btn.disabled = isSubmitting;
+        var label = qs('.bsc-submit-label', btn);
+        var spinner = qs('.bsc-submit-spinner', btn);
+        if (isSubmitting) {
+            hide(label);
+            show(spinner);
+        } else {
+            show(label);
+            hide(spinner);
+        }
+    }
 
-        setReportSubmitting(true);
-        clearReportErrors();
+    var reportMessage = qs('#bscReportMessage');
+    var messageCount = qs('#bscMessageCount');
+    if (reportMessage && messageCount) {
+        var updateCount = function () {
+            messageCount.textContent = String(reportMessage.value.length);
+        };
+        reportMessage.addEventListener('input', updateCount);
+        updateCount();
+    }
 
-        $.ajax({
-            url: reportUrl,
-            method: 'POST',
-            data: $(this).serialize(),
-            headers: {
-                'X-CSRF-TOKEN': csrfToken,
-                'Accept': 'application/json'
-            }
-        }).done(function (response) {
-            showReportAlert('success', response.message || 'Report submitted successfully.');
-            $('#bscReportForm')[0].reset();
-            $('#bscMessageCount').text('0');
-            $('#bscIssueType').prop('selectedIndex', 0);
+    var reportForm = qs('#bscReportForm');
+    if (reportForm) {
+        reportForm.addEventListener('submit', function (event) {
+            event.preventDefault();
 
-            if (typeof Swal !== 'undefined') {
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Report submitted',
-                    text: response.message,
-                    confirmButtonColor: '#007AAD'
-                });
-            }
-
-            setTimeout(function () {
-                var modalEl = document.getElementById('bscReportModal');
-                if (modalEl) {
-                    bootstrap.Modal.getInstance(modalEl)?.hide();
-                }
-            }, 1200);
-        }).fail(function (xhr) {
-            if (xhr.status === 401) {
-                showReportAlert('error', 'Your session has expired. Please log in again.');
+            if (!reportUrl || !validateReportForm()) {
                 return;
             }
 
-            if (xhr.status === 422) {
-                var payload = xhr.responseJSON || {};
-                if (payload.errors) {
-                    Object.keys(payload.errors).forEach(function (field) {
-                        var messages = payload.errors[field];
-                        if (messages && messages.length) {
-                            showReportFieldError(field, messages[0]);
-                        }
+            setReportSubmitting(true);
+            clearReportErrors();
+
+            fetch(reportUrl, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': csrfToken,
+                    Accept: 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: new FormData(reportForm)
+            })
+                .then(function (res) {
+                    return res.json().then(function (data) {
+                        return { status: res.status, data: data };
                     });
-                }
-                showReportAlert('error', payload.message || 'Please fix the errors below and try again.');
-                return;
-            }
+                })
+                .then(function (result) {
+                    if (result.status === 401) {
+                        showReportAlert('error', 'Your session has expired. Please log in again.');
+                        return;
+                    }
+                    if (result.status === 422) {
+                        var payload = result.data || {};
+                        if (payload.errors) {
+                            Object.keys(payload.errors).forEach(function (field) {
+                                var messages = payload.errors[field];
+                                if (messages && messages.length) {
+                                    showReportFieldError(field, messages[0]);
+                                }
+                            });
+                        }
+                        showReportAlert('error', payload.message || 'Please fix the errors below and try again.');
+                        return;
+                    }
+                    if (result.status >= 400) {
+                        showReportAlert('error', 'Something went wrong. Please try again in a moment.');
+                        return;
+                    }
 
-            showReportAlert('error', 'Something went wrong. Please try again in a moment.');
-        }).always(function () {
-            setReportSubmitting(false);
+                    showReportAlert('success', result.data.message || 'Report submitted successfully.');
+                    reportForm.reset();
+                    if (messageCount) {
+                        messageCount.textContent = '0';
+                    }
+                    var issueType = qs('#bscIssueType');
+                    if (issueType) {
+                        issueType.selectedIndex = 0;
+                    }
+
+                    if (window.Swal) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Report submitted',
+                            text: result.data.message,
+                            confirmButtonColor: '#007AAD'
+                        });
+                    }
+
+                    window.setTimeout(function () {
+                        closeModal(qs('#bscReportModal'));
+                    }, 1200);
+                })
+                .catch(function () {
+                    showReportAlert('error', 'Something went wrong. Please try again in a moment.');
+                })
+                .finally(function () {
+                    setReportSubmitting(false);
+                });
         });
-    });
+    }
 
-    if (openReport && document.getElementById('bscReportModal')) {
-        var reportModal = new bootstrap.Modal(document.getElementById('bscReportModal'));
-        reportModal.show();
+    if (openReport) {
+        openModal(qs('#bscReportModal'));
     }
 
     animateScoreRing();
     animateMeters();
-})(jQuery);
+})();

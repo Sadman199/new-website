@@ -1,336 +1,264 @@
 @extends('admin.layout.app')
 
-@section('heading', 'BrokersCourt Admin Dashboard')
+@section('dashboard_page', true)
+@section('main_content_class', 'main-content--dashboard')
 
 @section('main_content')
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-md-12">
-            <div class="welcome-box shadow-sm">
-                <div class="welcome-text">
-                    <h2><strong>Welcome back, Admin!</strong></h2>
-                    <p>Here's what's happening with your platform today.</p>
-                </div>
-                <div class="quick-stats">
-                    <div class="stat-item">
-                        <i class="fas fa-chart-line"></i>
-                        <span>{{ $total_news }} New Posts</span>
-                    </div>
-                    <div class="stat-item">
-                        <i class="fas fa-users"></i>
-                        <span>{{ $total_subscriber }} Subscribers</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+@php
+    $firstName = explode(' ', $adminName)[0];
+    $hour = now()->hour;
+    $greeting = $hour < 12 ? 'Good morning' : ($hour < 17 ? 'Good afternoon' : 'Good evening');
+    $today = now()->format('l, F j');
+@endphp
 
-    <!-- Summary Cards -->
-    <div class="row summary-cards">
-        <!-- Content Management -->
-        <div class="col-lg-4 col-md-6 mb-4">
-            <div class="card card-summary shadow-sm border-0">
-                <div class="card-header bg-white border-0">
-                    <h5 class="mb-0"><i class="fas fa-newspaper text-primary mr-2"></i>Content</h5>
+<div class="adm-dash">
+    <div class="adm-wrap">
+
+        {{-- ── Header ─────────────────────────────────────────────── --}}
+        <header class="adm-header">
+            <div class="adm-header__left">
+                <p class="adm-header__date">{{ $today }}</p>
+                <h1 class="adm-header__title">{{ $greeting }}, {{ $firstName }}</h1>
+                <p class="adm-header__sub">Here's what's happening across your platform today.</p>
+            </div>
+            <div class="adm-header__actions">
+                <a href="{{ route('home') }}" target="_blank" rel="noopener" class="adm-btn adm-btn--ghost">
+                    <i class="fas fa-external-link-alt"></i>
+                    View site
+                </a>
+                <a href="{{ route('admin_broker_create') }}" class="adm-btn adm-btn--primary">
+                    <i class="fas fa-plus"></i>
+                    New broker
+                </a>
+            </div>
+        </header>
+
+        {{-- ── Action alerts ──────────────────────────────────────── --}}
+        @if($stats['pending_reviews'] > 0 || $stats['contact_new'] > 0)
+        <div class="adm-alerts">
+            @if($stats['pending_reviews'] > 0)
+            <div class="adm-alert adm-alert--warn">
+                <span class="adm-alert__dot adm-alert__dot--warn"></span>
+                <span class="adm-alert__text">
+                    <strong>{{ $stats['pending_reviews'] }}</strong>
+                    {{ \Illuminate\Support\Str::plural('review', $stats['pending_reviews']) }} pending moderation
+                </span>
+                <a href="{{ route('reviews.pending') }}" class="adm-alert__action">Moderate now</a>
+            </div>
+            @endif
+            @if($stats['contact_new'] > 0)
+            <div class="adm-alert adm-alert--info">
+                <span class="adm-alert__dot adm-alert__dot--info"></span>
+                <span class="adm-alert__text">
+                    <strong>{{ $stats['contact_new'] }}</strong> new
+                    {{ \Illuminate\Support\Str::plural('inquiry', $stats['contact_new']) }} in inbox
+                </span>
+                <a href="{{ route('admin_contact_inquiries.index') }}" class="adm-alert__action">Open inbox</a>
+            </div>
+            @endif
+        </div>
+        @endif
+
+        {{-- ── KPI strip ───────────────────────────────────────────── --}}
+        <div class="adm-kpis">
+            <div class="adm-kpi">
+                <div class="adm-kpi__icon adm-kpi__icon--blue">
+                    <i class="fas fa-briefcase"></i>
                 </div>
-                <div class="card-body">
-                    <div class="summary-item">
-                        <div class="icon-circle bg-primary-light">
-                            <i class="fas fa-layer-group text-primary"></i>
-                        </div>
-                        <div class="summary-text">
-                            <h6>Categories</h6>
-                            <p>{{ $total_category }}</p>
-                        </div>
-                    </div>
-                    <div class="summary-item">
-                        <div class="icon-circle bg-success-light">
-                            <i class="fas fa-tags text-success"></i>
-                        </div>
-                        <div class="summary-text">
-                            <h6>Subcategories</h6>
-                            <p>{{ $total_subcategory }}</p>
-                        </div>
-                    </div>
-                    <div class="summary-item">
-                        <div class="icon-circle bg-info-light">
-                            <i class="fas fa-file-alt text-info"></i>
-                        </div>
-                        <div class="summary-text">
-                            <h6>News Posts</h6>
-                            <p>{{ $total_news }}</p>
-                        </div>
-                    </div>
+                <div class="adm-kpi__body">
+                    <p class="adm-kpi__label">Live brokers</p>
+                    <p class="adm-kpi__value">{{ number_format($stats['brokers']) }}</p>
+                    <p class="adm-kpi__sub">{{ number_format($stats['scam_brokers']) }} flagged as scam</p>
+                </div>
+            </div>
+            <div class="adm-kpi">
+                <div class="adm-kpi__icon adm-kpi__icon--amber">
+                    <i class="fas fa-star-half-alt"></i>
+                </div>
+                <div class="adm-kpi__body">
+                    <p class="adm-kpi__label">Reviews</p>
+                    <p class="adm-kpi__value">{{ number_format($stats['reviews']) }}</p>
+                    @if($stats['pending_reviews'] > 0)
+                        <p class="adm-kpi__sub adm-kpi__sub--warn">{{ $stats['pending_reviews'] }} awaiting approval</p>
+                    @else
+                        <p class="adm-kpi__sub">All approved</p>
+                    @endif
+                </div>
+            </div>
+            <div class="adm-kpi">
+                <div class="adm-kpi__icon adm-kpi__icon--green">
+                    <i class="fas fa-envelope"></i>
+                </div>
+                <div class="adm-kpi__body">
+                    <p class="adm-kpi__label">Inquiries</p>
+                    <p class="adm-kpi__value">{{ number_format($stats['contact_new']) }}</p>
+                    <p class="adm-kpi__sub">Unread messages</p>
+                </div>
+            </div>
+            <div class="adm-kpi">
+                <div class="adm-kpi__icon adm-kpi__icon--violet">
+                    <i class="fas fa-gift"></i>
+                </div>
+                <div class="adm-kpi__body">
+                    <p class="adm-kpi__label">Promotions</p>
+                    <p class="adm-kpi__value">{{ number_format($stats['bonuses']) }}</p>
+                    <p class="adm-kpi__sub">Active forex bonuses</p>
                 </div>
             </div>
         </div>
 
-        <!-- Broker Data -->
-        <div class="col-lg-4 col-md-6 mb-4">
-            <div class="card card-summary shadow-sm border-0">
-                <div class="card-header bg-white border-0">
-                    <h5 class="mb-0"><i class="fas fa-briefcase text-warning mr-2"></i>Brokers</h5>
+        {{-- ── Main grid: panels + actions ────────────────────────── --}}
+        <div class="adm-grid">
+
+            {{-- Pending reviews --}}
+            <div class="adm-panel">
+                <div class="adm-panel__head">
+                    <div>
+                        <p class="adm-panel__eyebrow">Queue</p>
+                        <h2 class="adm-panel__title">Pending reviews</h2>
+                    </div>
+                    <a href="{{ route('reviews.pending') }}" class="adm-panel__viewall">View all</a>
                 </div>
-                <div class="card-body">
-                    <div class="summary-item">
-                        <div class="icon-circle bg-warning-light">
-                            <i class="fas fa-briefcase text-warning"></i>
-                        </div>
-                        <div class="summary-text">
-                            <h6>Total Brokers</h6>
-                            <p>{{ $total_broker }}</p>
-                        </div>
+                @if($pendingReviews->isEmpty())
+                    <div class="adm-empty">
+                        <i class="fas fa-check-circle"></i>
+                        <p>No reviews pending — you're all caught up.</p>
                     </div>
-                    <div class="summary-item">
-                        <div class="icon-circle bg-danger-light">
-                            <i class="fas fa-gift text-danger"></i>
-                        </div>
-                        <div class="summary-text">
-                            <h6>Forex Bonuses</h6>
-                            <p>{{ $total_forexBonus }}</p>
-                        </div>
+                @else
+                    <ul class="adm-list">
+                        @foreach($pendingReviews as $review)
+                        <li class="adm-list__row">
+                            <div class="adm-list__avatar adm-list__avatar--amber">
+                                <i class="fas fa-star"></i>
+                            </div>
+                            <div class="adm-list__info">
+                                <p class="adm-list__name">{{ $review->name }}</p>
+                                <p class="adm-list__meta">{{ $review->broker->name ?? '—' }} &middot; {{ $review->created_at->diffForHumans() }}</p>
+                            </div>
+                            <span class="adm-rating">
+                                {{ number_format($review->rating, 1) }}
+                                <i class="fas fa-star adm-rating__star"></i>
+                            </span>
+                        </li>
+                        @endforeach
+                    </ul>
+                @endif
+            </div>
+
+            {{-- Recent inquiries --}}
+            <div class="adm-panel">
+                <div class="adm-panel__head">
+                    <div>
+                        <p class="adm-panel__eyebrow">Inbox</p>
+                        <h2 class="adm-panel__title">Recent inquiries</h2>
                     </div>
-                    <div class="summary-item">
-                        <div class="icon-circle bg-secondary-light">
-                            <i class="fas fa-comment-dots text-secondary"></i>
-                        </div>
-                        <div class="summary-text">
-                            <h6>User Reviews</h6>
-                            <p>{{ $total_review }}</p>
-                        </div>
-                    </div>
+                    <a href="{{ route('admin_contact_inquiries.index') }}" class="adm-panel__viewall">View all</a>
                 </div>
+                @if($recentInquiries->isEmpty())
+                    <div class="adm-empty">
+                        <i class="fas fa-inbox"></i>
+                        <p>No inquiries yet.</p>
+                    </div>
+                @else
+                    <ul class="adm-list">
+                        @foreach($recentInquiries as $inq)
+                        <li class="adm-list__row">
+                            <div class="adm-list__avatar adm-list__avatar--blue">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <div class="adm-list__info">
+                                <p class="adm-list__name">{{ $inq->name }}</p>
+                                <p class="adm-list__meta">{{ Str::limit($inq->subject, 36) }} &middot; {{ $inq->created_at->diffForHumans() }}</p>
+                            </div>
+                            <span class="adm-badge adm-badge--{{ $inq->status === 'new' ? 'new' : 'read' }}">{{ $inq->status }}</span>
+                        </li>
+                        @endforeach
+                    </ul>
+                @endif
             </div>
         </div>
 
-        <!-- Engagement -->
-        <div class="col-lg-4 col-md-6 mb-4">
-            <div class="card card-summary shadow-sm border-0">
-                <div class="card-header bg-white border-0">
-                    <h5 class="mb-0"><i class="fas fa-chart-pie text-success mr-2"></i>Engagement</h5>
-                </div>
-                <div class="card-body">
-                    <div class="summary-item">
-                        <div class="icon-circle bg-info-light">
-                            <i class="fas fa-video text-info"></i>
-                        </div>
-                        <div class="summary-text">
-                            <h6>Videos</h6>
-                            <p>{{ $total_video }}</p>
-                        </div>
-                    </div>
-                    <div class="summary-item">
-                        <div class="icon-circle bg-purple-light">
-                            <i class="fas fa-question-circle text-purple"></i>
-                        </div>
-                        <div class="summary-text">
-                            <h6>FAQs</h6>
-                            <p>{{ $total_faq }}</p>
-                        </div>
-                    </div>
-                    <div class="summary-item">
-                        <div class="icon-circle bg-teal-light">
-                            <i class="fas fa-users text-teal"></i>
-                        </div>
-                        <div class="summary-text">
-                            <h6>Subscribers</h6>
-                            <p>{{ $total_subscriber }}</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+        {{-- ── Bottom grid: recent posts + quick actions ───────────── --}}
+        <div class="adm-grid adm-grid--3">
 
-    <!-- Recent Activity & Quick Actions -->
-    <div class="row">
-        <div class="col-lg-8 mb-4">
-            <div class="card shadow-sm border-0">
-                <div class="card-header bg-white border-0">
-                    <h5 class="mb-0"><i class="fas fa-chart-line mr-2"></i>Platform Analytics</h5>
+            {{-- Recent posts --}}
+            <div class="adm-panel adm-panel--span2">
+                <div class="adm-panel__head">
+                    <div>
+                        <p class="adm-panel__eyebrow">Content</p>
+                        <h2 class="adm-panel__title">Recent posts</h2>
+                    </div>
+                    <a href="{{ route('admin_post_show') }}" class="adm-panel__viewall">View all</a>
                 </div>
-                <div class="card-body">
-                    <div class="chart-placeholder" style="height: 300px;">
-                        <!-- This would be replaced with an actual chart (Chart.js, etc.) -->
-                        <div class="d-flex align-items-center justify-content-center h-100 text-muted">
-                            <i class="fas fa-chart-bar fa-3x mr-2"></i>
-                            <span>Analytics Chart Will Appear Here</span>
-                        </div>
+                @if($recentPosts->isEmpty())
+                    <div class="adm-empty">
+                        <i class="fas fa-file-alt"></i>
+                        <p>No posts yet. Write your first article.</p>
+                    </div>
+                @else
+                    <ul class="adm-list">
+                        @foreach($recentPosts as $post)
+                        <li class="adm-list__row">
+                            <div class="adm-list__avatar adm-list__avatar--violet">
+                                <i class="fas fa-pen"></i>
+                            </div>
+                            <div class="adm-list__info">
+                                <p class="adm-list__name">{{ Str::limit($post->post_title, 52) }}</p>
+                                <p class="adm-list__meta">{{ $post->created_at->format('M j, Y') }}</p>
+                            </div>
+                            <a href="{{ route('admin_post_edit', $post->id) }}" class="adm-link-btn">Edit</a>
+                        </li>
+                        @endforeach
+                    </ul>
+                @endif
+            </div>
+
+            {{-- Quick actions --}}
+            <div class="adm-panel">
+                <div class="adm-panel__head">
+                    <div>
+                        <p class="adm-panel__eyebrow">Shortcuts</p>
+                        <h2 class="adm-panel__title">Quick actions</h2>
                     </div>
                 </div>
-            </div>
-        </div>
-        
-        <div class="col-lg-4 mb-4">
-            <div class="card shadow-sm border-0">
-                <div class="card-header bg-white border-0">
-                    <h5 class="mb-0"><i class="fas fa-bolt mr-2"></i>Quick Actions</h5>
-                </div>
-                <div class="card-body">
-                    <a href="#" class="quick-action-btn">
-                        <i class="fas fa-plus-circle text-primary"></i>
-                        <span>Add New Post</span>
+                <div class="adm-actions">
+                    @foreach($quickActions as $action)
+                    <a href="{{ route($action['route']) }}" class="adm-action">
+                        <span class="adm-action__icon">
+                            <i class="fas fa-{{ $action['icon'] }}"></i>
+                        </span>
+                        <span class="adm-action__label">{{ $action['label'] }}</span>
                     </a>
-                    <a href="#" class="quick-action-btn">
-                        <i class="fas fa-user-plus text-success"></i>
-                        <span>Add Broker</span>
-                    </a>
-                    <a href="#" class="quick-action-btn">
-                        <i class="fas fa-video text-info"></i>
-                        <span>Upload Video</span>
-                    </a>
-                    <a href="#" class="quick-action-btn">
-                        <i class="fas fa-gift text-warning"></i>
-                        <span>Create Bonus</span>
-                    </a>
+                    @endforeach
                 </div>
             </div>
+
         </div>
+
+        {{-- ── Site snapshot ────────────────────────────────────────── --}}
+        <div class="adm-snapshot">
+            <div class="adm-snapshot__head">
+                <p class="adm-panel__eyebrow">Site overview</p>
+                <h2 class="adm-panel__title">Platform snapshot</h2>
+            </div>
+            <div class="adm-snapshot__grid">
+                @foreach([
+                    ['label' => 'Posts',         'value' => $stats['posts'],         'icon' => 'file-alt'],
+                    ['label' => 'Categories',    'value' => $stats['categories'],    'icon' => 'folder'],
+                    ['label' => 'Prop firms',    'value' => $stats['prop_firms'],    'icon' => 'building'],
+                    ['label' => 'FAQs',          'value' => $stats['faqs'],          'icon' => 'question-circle'],
+                    ['label' => 'CMS pages',     'value' => $stats['cms_pages'],     'icon' => 'layer-group'],
+                    ['label' => 'Subcategories', 'value' => $stats['subcategories'], 'icon' => 'tags'],
+                ] as $item)
+                <div class="adm-snap">
+                    <i class="fas fa-{{ $item['icon'] }} adm-snap__icon"></i>
+                    <span class="adm-snap__val">{{ number_format($item['value']) }}</span>
+                    <span class="adm-snap__lbl">{{ $item['label'] }}</span>
+                </div>
+                @endforeach
+            </div>
+        </div>
+
     </div>
 </div>
-
-<style>
-    .welcome-box {
-        background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-        color: white;
-        border-radius: 10px;
-        padding: 25px;
-        margin-bottom: 30px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-    
-    .welcome-text h2 {
-        font-weight: 600;
-        margin-bottom: 5px;
-    }
-    
-    .welcome-text p {
-        opacity: 0.8;
-        margin-bottom: 0;
-    }
-    
-    .quick-stats {
-        display: flex;
-    }
-    
-    .stat-item {
-        background: rgba(255,255,255,0.15);
-        border-radius: 30px;
-        padding: 8px 20px;
-        margin-left: 15px;
-        display: flex;
-        align-items: center;
-    }
-    
-    .stat-item i {
-        margin-right: 8px;
-    }
-    
-    .card-summary {
-        border-radius: 10px;
-        height: 100%;
-    }
-    
-    .card-summary .card-header {
-        padding: 15px 20px;
-        border-bottom: 1px solid rgba(0,0,0,0.05);
-        border-radius: 10px 10px 0 0 !important;
-    }
-    
-    .summary-item {
-        display: flex;
-        align-items: center;
-        padding: 12px 0;
-        border-bottom: 1px solid rgba(0,0,0,0.05);
-    }
-    
-    .summary-item:last-child {
-        border-bottom: none;
-    }
-    
-    .icon-circle {
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin-right: 15px;
-    }
-    
-    .bg-primary-light {
-        background-color: rgba(13,110,253,0.1);
-    }
-    
-    .bg-success-light {
-        background-color: rgba(25,135,84,0.1);
-    }
-    
-    .bg-info-light {
-        background-color: rgba(13,202,240,0.1);
-    }
-    
-    .bg-warning-light {
-        background-color: rgba(255,193,7,0.1);
-    }
-    
-    .bg-danger-light {
-        background-color: rgba(220,53,69,0.1);
-    }
-    
-    .bg-purple-light {
-        background-color: rgba(111,66,193,0.1);
-    }
-    
-    .bg-teal-light {
-        background-color: rgba(32,201,151,0.1);
-    }
-    
-    .bg-secondary-light {
-        background-color: rgba(108,117,125,0.1);
-    }
-    
-    .summary-text h6 {
-        font-size: 14px;
-        color: #6c757d;
-        margin-bottom: 2px;
-    }
-    
-    .summary-text p {
-        font-size: 18px;
-        font-weight: 600;
-        margin-bottom: 0;
-    }
-    
-    .quick-action-btn {
-        display: flex;
-        align-items: center;
-        padding: 12px 15px;
-        border-radius: 8px;
-        background: #f8f9fa;
-        margin-bottom: 10px;
-        color: #495057;
-        text-decoration: none;
-        transition: all 0.3s;
-    }
-    
-    .quick-action-btn:hover {
-        background: #e9ecef;
-        transform: translateX(5px);
-    }
-    
-    .quick-action-btn i {
-        font-size: 20px;
-        margin-right: 10px;
-        width: 24px;
-        text-align: center;
-    }
-    
-    .chart-placeholder {
-        background: #f8f9fa;
-        border-radius: 8px;
-    }
-</style>
 @endsection

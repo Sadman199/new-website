@@ -1,4 +1,5 @@
 <section class="bc-trust-section" id="community-sentiment" aria-labelledby="bcTrustTitle">
+    @php $t = $site_t ?? fn (string $key, ?string $default = null) => $default ?? $key; @endphp
     <div class="bc-container bc-trust-section__container">
         <header class="bc-trust-section__head">
             <div class="bc-trust-section__intro">
@@ -6,13 +7,13 @@
                     <span class="bc-trust-section__eyebrow-icon" aria-hidden="true">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z"/></svg>
                     </span>
-                    Trust &amp; rankings
+                    {{ $t('home.trust_eyebrow') }}
                 </p>
-                <h2 id="bcTrustTitle" class="bc-trust-section__title">Broker trust board</h2>
-                <p class="bc-trust-section__sub">Editor picks, live popularity scores, and verified scam alerts in one place.</p>
+                <h2 id="bcTrustTitle" class="bc-trust-section__title">{{ $t('home.trust_title') }}</h2>
+                <p class="bc-trust-section__sub">{{ $t('home.trust_sub') }}</p>
             </div>
             <a href="{{ route('broker.reviews.index') }}" class="bc-trust-section__cta">
-                Browse reviews
+                {{ $t('home.trust_browse') }}
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3"/></svg>
             </a>
         </header>
@@ -20,27 +21,7 @@
         <div class="bc-trust-board">
             <div class="bc-trust-board__body">
                 <div class="bc-trust-board__primary">
-                    @if($sentimentRecommended->isNotEmpty())
-                        <section class="bc-trust-zone bc-trust-zone--recommended" aria-labelledby="bcTrustRecTitle">
-                            <header class="bc-trust-zone__head">
-                                <div class="bc-trust-zone__title-wrap">
-                                    <span class="bc-trust-zone__icon bc-trust-zone__icon--good" aria-hidden="true">
-                                        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
-                                    </span>
-                                    <div>
-                                        <h3 id="bcTrustRecTitle" class="bc-trust-zone__title">Recommended</h3>
-                                        <p class="bc-trust-zone__desc">Top Broker Rank · highest first</p>
-                                    </div>
-                                </div>
-                                <span class="bc-trust-zone__count">{{ $sentimentRecommended->count() }}</span>
-                            </header>
-                            <div class="bc-trust-card-grid">
-                                @foreach($sentimentRecommended as $item)
-                                    @include('front.homepage.inc.broker_trust_recommend_card', ['item' => $item])
-                                @endforeach
-                            </div>
-                        </section>
-                    @endif
+                    @include('front.homepage.inc.broker_sentiment_recommended', ['sentimentRecommended' => $sentimentRecommended])
 
                     @if($sentimentScam->isNotEmpty())
                         <section class="bc-trust-zone bc-trust-zone--caution" aria-labelledby="bcTrustScamTitle">
@@ -92,7 +73,7 @@
 
                                         <div class="bc-trust-leader-row__logo">
                                             @if($broker->logo)
-                                                <img src="{{ asset($broker->logo) }}" alt="">
+                                                <img src="{{ asset($broker->logo) }}" alt="" loading="lazy" decoding="async">
                                             @else
                                                 <span>{{ strtoupper(substr($broker->name, 0, 1)) }}</span>
                                             @endif

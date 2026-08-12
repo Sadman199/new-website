@@ -5,10 +5,14 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\ActivityLog;
 use App\Models\User;
+use App\Services\UserNotificationService;
 use Illuminate\Http\Request;
 
 class AdminUserController extends Controller
 {
+    public function __construct(
+        private UserNotificationService $notifications
+    ) {}
     public function index(Request $request)
     {
         $query = User::query()->withCount('reviews');
@@ -57,6 +61,7 @@ class AdminUserController extends Controller
         $user->save();
 
         ActivityLog::record('verified_by_admin', 'Account verified by admin', $user->id);
+        $this->notifications->notifyAccountVerified($user);
 
         return redirect()->back()->with('success', $user->name . ' has been verified.');
     }

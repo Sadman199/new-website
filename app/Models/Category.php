@@ -10,6 +10,14 @@ class Category extends Model
 {
     use HasFactory, Cachable;
 
+    protected $fillable = [
+        'category_name',
+        'slug',
+        'show_on_menu',
+        'category_order',
+        'language_id',
+    ];
+
     public function rSubCategory()
     {
         return $this->hasMany(SubCategory::class)

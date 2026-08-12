@@ -2,6 +2,7 @@
 
 @section('title', 'Best brokers for every need in ' . date('Y') . ' | BrokersCourt')
 @section('meta_description', 'Explore editor-picked best broker rankings by trading style, platform, asset class, and country. Find the ideal broker for your goals.')
+@section('canonical', route('brokers.best.index'))
 
 @push('head')
     <link rel="stylesheet" href="{{ asset('css/best-brokers-index.css') }}?v=5">
@@ -34,6 +35,8 @@
             <p class="bbh-hero__eyebrow">Independent broker research</p>
             <h1 class="bbh-hero__title">Explore the <span class="bbh-hero__accent">top brokers</span> for every need</h1>
             <p class="bbh-hero__subtitle">Browse our editor-picked rankings to find the ideal broker for your goals</p>
+
+            @include('front.brokers.partials.country_context_hero')
 
             <div class="bbh-hero__search-wrap">
                 <svg class="bbh-hero__search-icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">

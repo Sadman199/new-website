@@ -2,9 +2,11 @@
 
 @section('title', $comparison['broker1']['name'] . ' vs ' . $comparison['broker2']['name'] . ' | Broker Comparison | BrokersCourt')
 @section('meta_description', 'Compare ' . $comparison['broker1']['name'] . ' and ' . $comparison['broker2']['name'] . ' side by side — regulation, spreads, platforms, deposits, safety scores, and more.')
+@section('canonical', $shareUrl)
+@section('og_image', $comparison['broker1']['logo'] ?? '')
 
 @push('head')
-    <link rel="stylesheet" href="{{ asset('css/broker-compare.css') }}?v=4">
+    <link rel="stylesheet" href="{{ asset('css/broker-compare.css') }}?v=6">
 @endpush
 
 @section('main_content')
@@ -16,6 +18,9 @@
 
 <div class="bc-compare-page bc-result-page">
     @include('front.comparison.partials.result_hero')
+
+    @include('front.comparison.partials.result_score_bars')
+    @include('front.comparison.partials.result_promos')
 
     <div class="bc-compare-wrap">
         @if(!empty($popularComparisons))
@@ -44,5 +49,5 @@
 @endsection
 
 @push('scripts')
-    <script src="{{ asset('js/broker-compare.js') }}?v=4" defer></script>
+    <script src="{{ asset('js/broker-compare.js') }}?v=7" defer></script>
 @endpush

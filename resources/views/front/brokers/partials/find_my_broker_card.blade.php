@@ -7,11 +7,15 @@
     $performance = array_slice($broker['performance'] ?? [], 0, 2);
 @endphp
 
-<article class="fmb-card {{ !empty($broker['is_featured']) ? 'is-featured' : '' }}" data-fmb-card data-broker-id="{{ $broker['id'] }}">
+<article class="fmb-card {{ !empty($broker['is_featured']) ? 'is-featured' : '' }} {{ !empty($broker['is_best_match']) ? 'is-best-match' : '' }} {{ !empty($broker['is_match']) ? 'is-match' : '' }}" data-fmb-card data-broker-id="{{ $broker['id'] }}" data-broker-slug="{{ $broker['slug'] }}">
+    <label class="fmb-card__compare">
+        <input type="checkbox" class="fmb-card__compare-input" data-fmb-compare value="{{ $broker['slug'] }}">
+        Compare
+    </label>
     <div class="fmb-card__brand">
         <a href="{{ $broker['review_url'] }}" class="fmb-card__logo" aria-hidden="true" tabindex="-1">
             @if($broker['logo'])
-                <img src="{{ $broker['logo'] }}" alt="{{ $broker['name'] }}">
+                <img src="{{ $broker['logo'] }}" alt="{{ $broker['name'] }}" loading="lazy" decoding="async">
             @else
                 <span class="fmb-card__logo-fallback">{{ strtoupper(substr($broker['name'], 0, 1)) }}</span>
             @endif
@@ -30,7 +34,11 @@
                     {{ number_format($broker['rating'], 1) }}/5
                 </span>
             @endif
-            @if(!empty($broker['is_featured']))
+            @if(!empty($broker['is_best_match']))
+                <span class="fmb-card__badge fmb-card__badge--match">Best match</span>
+            @elseif(!empty($broker['is_match']))
+                <span class="fmb-card__badge fmb-card__badge--match">Quiz match</span>
+            @elseif(!empty($broker['is_featured']))
                 <span class="fmb-card__badge">Featured</span>
             @endif
         </div>

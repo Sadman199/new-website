@@ -14,7 +14,7 @@
                 <h2 class="bc-section__title">Active promotions</h2>
                 <p class="bc-section__sub">Live deposit bonuses, no-deposit offers, contests, and cashback deals from regulated brokers — updated from our promotions database.</p>
             </div>
-            <a href="{{ route('forex_deposit_bonus') }}" class="bc-promos__all-link">
+            <a href="{{ route('promotions.index') }}" class="bc-promos__all-link">
                 Browse all bonuses
                 <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
             </a>
@@ -52,7 +52,10 @@
                         <div class="bc-promo-spotlight__body">
                             <div class="bc-promo-spotlight__meta">
                                 <span class="bc-promo-badge bc-promo-badge--{{ $featured->promoTypeTone() }}">{{ $featured->promoTypeShort() }}</span>
-                                @if($featured->promotion_status === 'limited-time')
+                                @php $featuredBadge = $featured->expiryBadge(); @endphp
+                                @if($featuredBadge && in_array($featuredBadge['tone'], ['urgent', 'soon'], true))
+                                    @include('front.partials.expiry_badge', ['badge' => $featuredBadge])
+                                @elseif($featured->promotion_status === 'limited-time')
                                     <span class="bc-promo-badge bc-promo-badge--urgent">Limited time</span>
                                 @endif
                             </div>
@@ -70,7 +73,7 @@
                                     <li>{{ $featured->minDepositLabel() }}</li>
                                 @endif
                                 @if($featured->expiryLabel())
-                                    <li>{{ $featured->expiryLabel() }}</li>
+                                    <li @class(['bc-expiry-fact--' . ($featured->expiryTone() ?? '') => $featured->expiryTone()])>{{ $featured->expiryLabel() }}</li>
                                 @endif
                             </ul>
 
@@ -82,6 +85,7 @@
 
             <div class="bc-promos__grid">
                 @foreach($cards as $bonus)
+                    @php $cardBadge = $bonus->expiryBadge(); @endphp
                     <article class="bc-promo-card bc-promo-card--{{ $bonus->promoTypeTone() }}">
                         <a href="{{ $bonus->cardUrl() }}" class="bc-promo-card__link">
                             <div class="bc-promo-card__top">
@@ -99,6 +103,9 @@
                                 </div>
                                 <div class="bc-promo-card__head">
                                     <span class="bc-promo-badge bc-promo-badge--{{ $bonus->promoTypeTone() }}">{{ $bonus->promoTypeShort() }}</span>
+                                    @if($cardBadge && in_array($cardBadge['tone'], ['urgent', 'soon'], true))
+                                        @include('front.partials.expiry_badge', ['badge' => $cardBadge])
+                                    @endif
                                     <h3 class="bc-promo-card__title">{{ Str::limit($bonus->title, 72) }}</h3>
                                     @if($bonus->brokerDisplayName())
                                         <p class="bc-promo-card__broker">{{ $bonus->brokerDisplayName() }}</p>
@@ -114,7 +121,7 @@
                                         <span>{{ $bonus->minDepositLabel() }}</span>
                                     @endif
                                     @if($bonus->expiryLabel())
-                                        <span>{{ $bonus->expiryLabel() }}</span>
+                                        <span @class(['bc-expiry-fact--' . ($bonus->expiryTone() ?? '') => $bonus->expiryTone()])>{{ $bonus->expiryLabel() }}</span>
                                     @endif
                                 </div>
                                 <span class="bc-promo-card__cta">Details</span>

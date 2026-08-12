@@ -5,11 +5,15 @@ namespace App\Services;
 use App\Models\PropFirm;
 use App\Models\PropFirmFaq;
 use App\Models\PropFirmProgram;
+use App\Services\Admin\PublicUploadService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
 class PropFirmAdminService
 {
+    public function __construct(protected PublicUploadService $uploads)
+    {
+    }
     /** @var string[] */
     protected array $fillableScalars = [
         'prop_firm_category_id', 'name', 'slug', 'description', 'website', 'affiliate_link',
@@ -139,34 +143,21 @@ class PropFirmAdminService
         PropFirm $propFirm,
         string $column
     ): void {
-        if (! $request->hasFile($inputName)) {
-            return;
+        $path = $this->uploads->replaceFromRequest(
+            $request,
+            $inputName,
+            $propFirm->{$column},
+            $directory,
+            $prefix
+        );
+
+        if ($path !== null) {
+            $propFirm->{$column} = $path;
         }
-
-        $file = $request->file($inputName);
-        $targetDir = public_path(trim($directory, '/'));
-
-        if (! is_dir($targetDir)) {
-            mkdir($targetDir, 0755, true);
-        }
-
-        $this->deletePublicFile($propFirm->{$column});
-
-        $filename = $prefix . time() . '_' . Str::random(6) . '.' . $file->getClientOriginalExtension();
-        $file->move($targetDir, $filename);
-        $propFirm->{$column} = trim($directory, '/') . '/' . $filename;
     }
 
     protected function deletePublicFile(?string $path): void
     {
-        if (! $path) {
-            return;
-        }
-
-        $full = public_path(ltrim($path, '/'));
-
-        if (is_file($full)) {
-            @unlink($full);
-        }
+        $this->uploads->delete($path);
     }
 }

@@ -28,69 +28,6 @@
     color: var(--pf-muted);
 }
 
-.pf-stats-bar {
-    display: inline-flex;
-    flex-wrap: wrap;
-    align-items: stretch;
-    gap: 0;
-    max-width: 100%;
-    padding: 0.35rem;
-    background: rgba(12, 29, 50, 0.55);
-    border: 1px solid var(--pf-border);
-    border-radius: 12px;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
-}
-
-.pf-stats-bar__item {
-    display: flex;
-    align-items: baseline;
-    gap: 0.45rem;
-    padding: 0.55rem 1rem;
-    min-width: 0;
-}
-
-.pf-stats-bar__item + .pf-stats-bar__item {
-    border-left: 1px solid var(--pf-border);
-}
-
-.pf-stats-bar__value {
-    font-family: var(--pf-font-display);
-    font-size: 1.125rem;
-    font-weight: 700;
-    line-height: 1;
-    color: var(--pf-ocean-light);
-}
-
-.pf-stats-bar__label {
-    font-size: 0.75rem;
-    font-weight: 500;
-    color: var(--pf-dim);
-    white-space: nowrap;
-}
-
-@media (max-width: 639px) {
-    .pf-stats-bar {
-        display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        width: 100%;
-    }
-
-    .pf-stats-bar__item {
-        padding: 0.65rem 0.85rem;
-    }
-
-    .pf-stats-bar__item + .pf-stats-bar__item {
-        border-left: none;
-    }
-
-    .pf-stats-bar__item:nth-child(odd) {
-        border-right: 1px solid var(--pf-border);
-    }
-
-    .pf-stats-bar__item:nth-child(-n+2) {
-        border-bottom: 1px solid var(--pf-border);
-    }
-}
 
 /* legacy stat blocks — kept for reuse elsewhere */
 .pf-index__stats {

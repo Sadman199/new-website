@@ -4,7 +4,8 @@
 
 @section('title', ($firm->meta_title ?: $firm->name . ' Review — Programs & Funding | BrokersCourt'))
 @section('meta_description', $firm->meta_description ?: Str::limit(strip_tags($firm->description), 155))
-@section('meta_keywords', $firm->meta_keywords)
+@section('canonical', route('prop_firms.show', ['slug' => $firm->slug]))
+@section('og_image', $firm->og_image ?: ($firm->logo ?: ''))
 
 @push('page-styles')
     <link rel="stylesheet" href="{{ asset('css/prop-firms-design-system.css') }}?v=3">

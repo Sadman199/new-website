@@ -3,30 +3,54 @@
 namespace App\Http\Controllers\Front;
 
 use App\Http\Controllers\Controller;
+use App\Services\PromotionsGuideService;
 use App\Services\PromotionsIndexService;
 use Illuminate\Http\Request;
 
 class PromotionsController extends Controller
 {
-    public function index(PromotionsIndexService $promotionsIndexService, ?string $type = null)
-    {
-        return view('front.promotions.index', $promotionsIndexService->buildIndex($type));
+    public function index(
+        PromotionsIndexService $promotionsIndexService,
+        PromotionsGuideService $promotionsGuideService,
+        Request $request,
+        ?string $type = null,
+    ) {
+        $sort = $request->query('sort');
+        $featuredOnly = $request->boolean('featured');
+        $search = $request->query('q');
+
+        $data = $promotionsIndexService->buildIndex($type, $sort, $featuredOnly, $search);
+        $data['guide'] = $promotionsGuideService->buildHub($data['stats'], $data['tabs']);
+        unset($data['catalog']);
+
+        return view('front.promotions.index', $data);
     }
 
     public function loadMore(Request $request, PromotionsIndexService $promotionsIndexService)
     {
-        $type = (string) $request->get('type', 'deposit-bonuses');
+        $type = (string) $request->get('type', PromotionsIndexService::TAB_ALL);
         $offset = max(0, (int) $request->get('offset', PromotionsIndexService::INITIAL_CARDS));
+        $sort = $request->query('sort');
+        $featuredOnly = $request->boolean('featured');
+        $search = $request->query('q');
 
-        $data = $promotionsIndexService->loadMore($type, $offset);
+        $data = $promotionsIndexService->loadMore($type, $offset, $sort, $featuredOnly, $search);
 
         if ($request->ajax() || $request->boolean('partial')) {
             return view('front.promotions.partials.promo_cards_batch', $data);
         }
 
-        return redirect()->route(
-            $type === 'deposit-bonuses' ? 'promotions.index' : 'promotions.tab',
-            $type === 'deposit-bonuses' ? [] : ['type' => $type]
+        $activeType = $promotionsIndexService->resolveTabSlug($type);
+        $params = $promotionsIndexService->buildFilterQuery(
+            $promotionsIndexService->resolveSort($sort),
+            $featuredOnly,
+            $search !== null ? trim($search) : null,
         );
+
+        if ($activeType === PromotionsIndexService::TAB_ALL) {
+            return redirect()->route('promotions.index', $params);
+        }
+
+        return redirect()->route('promotions.tab', array_merge(['type' => $activeType], $params));
     }
 }

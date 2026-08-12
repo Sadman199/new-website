@@ -1,39 +1,14 @@
 <?php
 namespace App\Helper;
 
-use Illuminate\Http\Request;
-use App\Models\Language;
-use File;
+use App\Services\SiteTranslationService;
 
 class Helpers
 {
-public static function read_json()
-{
-    if(!session()->get('session_short_name')) {
-        $default_lang_data = Language::where('is_default','Yes')->first();
-        if ($default_lang_data) {
-            $current_short_name = $default_lang_data->short_name;
-        } else {
-            $current_short_name = 'en'; // default fallback
-        }
-    } else {
-        $current_short_name = session()->get('session_short_name');
+    public static function read_json()
+    {
+        $shortName = (string) config('site-locale.default', 'en');
+
+        app(SiteTranslationService::class)->setLocale($shortName)->applyLegacyConstants();
     }
-
-    $file = resource_path('languages/'.$current_short_name.'.json');
-
-    if(!File::exists($file)) {
-        return; // prevent crash
-    }
-
-    $json_data = json_decode(file_get_contents($file));
-
-    foreach($json_data as $key => $value) {
-        if(!defined($key)) {
-            define($key,$value);
-        }
-    }
-}
-
-
 }

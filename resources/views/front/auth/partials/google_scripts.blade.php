@@ -1,4 +1,5 @@
 @push('scripts')
+    @include('front.layout.partials.sweetalert')
     <script>
         (function () {
             var clientId = @json(\App\Support\GoogleOAuth::clientId());

@@ -4,79 +4,59 @@ namespace App\Http\Controllers\Front;
 
 use App\Http\Controllers\Controller;
 use App\Models\Broker;
-use App\Models\Page;
-use App\Models\HomeAdvertisement;
-use App\Models\Language;
-use App\Helper\Helpers;
-use App\Services\ScamBrokersIndexService;
+use App\Services\ScamBrokerDetailService;
+use Illuminate\Support\Str;
 
 class ScamBrokerController extends Controller
 {
-    public function index(ScamBrokersIndexService $indexService)
+    public function index(\App\Services\ScamBrokersIndexService $indexService)
     {
-        Helpers::read_json();
+        $brokersPayload = \Illuminate\Support\Facades\Cache::remember('scam_brokers_index_v1', 1800, function () use ($indexService) {
+            return Broker::query()
+                ->where('is_scam', true)
+                ->orderByDesc('scam_reported_date')
+                ->orderBy('name')
+                ->get()
+                ->map(fn (Broker $broker) => $indexService->serialize($broker))
+                ->values();
+        });
 
-        if (!session()->get('session_short_name')) {
-            $current_short_name = optional(Language::where('is_default', 'Yes')->first())->short_name ?? 'en';
-        } else {
-            $current_short_name = session()->get('session_short_name');
-        }
-        $current_language_id = optional(Language::where('short_name', $current_short_name)->first())->id ?? 1;
-
-        $page_data = Page::where('language_id', $current_language_id)->first();
-        $home_ad_data = HomeAdvertisement::where('id', 1)->first();
-
-        $brokers = Broker::query()
-            ->where('is_scam', true)
-            ->orderByDesc('scam_reported_date')
-            ->orderBy('name')
-            ->get();
-
-        $brokersPayload = $brokers
-            ->map(fn (Broker $broker) => $indexService->serialize($broker))
-            ->values();
-
-        $scamCount = Broker::where('is_scam', true)->count();
-        $warningFilters = $indexService->warningFilters();
-        $warningSigns = $indexService->warningSigns();
-
-        return view('front.scam-brokers', compact(
-            'brokersPayload',
-            'scamCount',
-            'page_data',
-            'home_ad_data',
-            'warningFilters',
-            'warningSigns'
-        ));
+        return view('front.scam-brokers', [
+            'brokersPayload' => $brokersPayload,
+            'scamCount' => $brokersPayload->count(),
+            'page_data' => null,
+            'home_ad_data' => null,
+            'warningFilters' => $indexService->warningFilters(),
+            'warningSigns' => $indexService->warningSigns(),
+            'stats' => $indexService->stats(),
+            'warningCounts' => $indexService->warningFilterCounts($brokersPayload),
+        ]);
     }
 
-    public function show($slug)
+    public function show(string $slug, ScamBrokerDetailService $detailService)
     {
-        Helpers::read_json();
+        $slug = Str::slug($slug);
 
-        if (!session()->get('session_short_name')) {
-            $current_short_name = optional(Language::where('is_default', 'Yes')->first())->short_name ?? 'en';
-        } else {
-            $current_short_name = session()->get('session_short_name');
-        }
-        $current_language_id = optional(Language::where('short_name', $current_short_name)->first())->id ?? 1;
+        $broker = Broker::query()
+            ->where('is_scam', true)
+            ->where(function ($query) use ($slug) {
+                $query->where('slug', $slug)
+                    ->orWhereRaw('LOWER(REPLACE(name, " ", "-")) = ?', [$slug]);
+            })
+            ->first();
 
-        $page_data = Page::where('language_id', $current_language_id)->first();
-        $home_ad_data = HomeAdvertisement::where('id', 1)->first();
+        abort_if(! $broker, 404);
 
-        $slug = \Illuminate\Support\Str::slug($slug);
-        $broker = Broker::where('is_scam', true)->get()
-            ->first(fn ($b) => $b->scam_slug === $slug || \Illuminate\Support\Str::slug((string) $b->slug) === $slug);
-        abort_if(!$broker, 404);
+        $detail = $detailService->build($broker);
+        $related = $detailService->relatedBrokers($broker);
+        $scamCount = $detailService->scamCount();
+        $warningFilters = app(\App\Services\ScamBrokersIndexService::class)->warningFilters();
 
-        $relatedScam = Broker::where('is_scam', true)
-            ->where('id', '!=', $broker->id)
-            ->orderByDesc('scam_reported_date')
-            ->take(3)
-            ->get();
-
-        $scamCount = Broker::where('is_scam', true)->count();
-
-        return view('front.scam-broker-detail', compact('broker', 'relatedScam', 'scamCount', 'page_data', 'home_ad_data'));
+        return view('front.scam-brokers.show', compact(
+            'detail',
+            'related',
+            'scamCount',
+            'warningFilters',
+        ));
     }
 }

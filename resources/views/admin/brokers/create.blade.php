@@ -9,14 +9,25 @@
 @endsection
 
 @section('main_content')
-<div class="section-body">
-    <div class="card shadow">
-        <div class="card-header bg-white">
-            <h4 class="mb-0">Add New Broker</h4>
-            <small class="text-muted">Complete all four sections: Profile &amp; SEO, Classification &amp; Regions, Trading &amp; Payments, Safety &amp; Review.</small>
+<div class="tw-max-w-6xl tw-mx-auto tw-px-4 tw-py-6">
+    <div class="tw-bg-white tw-rounded-2xl tw-border tw-border-slate-200/70 tw-shadow-sm tw-overflow-hidden">
+        <div class="tw-flex tw-items-start tw-justify-between tw-gap-4 tw-px-6 tw-py-5 tw-border-b tw-border-slate-100">
+            <div>
+                <h2 class="tw-text-lg tw-font-extrabold tw-text-slate-900">Add New Broker</h2>
+                <p class="tw-mt-1 tw-text-sm tw-text-slate-600">
+                    Fill the four sections below. Each group includes help text so you know exactly what to enter.
+                </p>
+            </div>
+            <div class="tw-hidden lg:tw-flex tw-items-center tw-gap-2 tw-text-xs tw-font-semibold tw-text-slate-600">
+                <span class="tw-inline-flex tw-items-center tw-gap-2 tw-px-3 tw-py-2 tw-rounded-xl tw-bg-slate-50 tw-border tw-border-slate-200">
+                    <i class="fas fa-circle-info tw-text-brand"></i>
+                    Help text included per field
+                </span>
+            </div>
         </div>
-        <div class="card-body">
-            <form action="{{ route('admin_broker_store') }}" method="POST" enctype="multipart/form-data">
+
+        <div class="tw-px-6 tw-py-6">
+            <form action="{{ route('admin_broker_store') }}" method="POST" enctype="multipart/form-data" class="tw-space-y-6">
                 @csrf
                 @include('admin.brokers._form', ['broker' => $broker, 'formOptions' => $formOptions])
             </form>
@@ -27,11 +38,7 @@
 
 @push('styles')
 <style>
-    #broker-accordion .card-header .btn-link { font-weight: 600; text-decoration: none; color: #34395e; width: 100%; text-align: left; }
-    #broker-accordion .card-header .btn-link:hover { color: #6777ef; }
-    #broker-accordion .card { margin-bottom: .75rem; border: 1px solid #e4e6fc; border-radius: .5rem; overflow: hidden; }
-    #broker-accordion .card-header { background: #f8f9fe; border-bottom: 1px solid #e4e6fc; }
-    #broker-accordion .card-body { background: #fff; }
-    .broker-form-section-title { font-size: .95rem; letter-spacing: .01em; }
+    /* Legacy broker accordion styles (no longer used after Tailwind redesign). */
+    #broker-accordion { display: block; }
 </style>
 @endpush

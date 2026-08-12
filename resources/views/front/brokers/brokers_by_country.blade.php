@@ -1,12 +1,31 @@
 @extends('front.layout.app')
 @section('title', ucfirst($country) . ' Brokers | Trusted Forex Brokers – BrokersCourt')
 @section('meta_description', 'Find trusted and regulated ' . ucfirst($country) . ' forex brokers. Compare their features, trading platforms, and account types to choose the right broker for your needs.')
+@section('canonical', route('broker_by_country', ['country' => $country]))
 
 @section('main_content')
+
+@php
+    $pageCountrySlug = \Illuminate\Support\Str::slug($country);
+    $pageCountryMeta = ($brokerCountries ?? [])[$pageCountrySlug] ?? [
+        'name' => ucfirst($country),
+        'slug' => $pageCountrySlug,
+        'code' => null,
+        'flag' => '🌍',
+        'shortcode' => strtoupper(substr($pageCountrySlug, 0, 2)),
+    ];
+@endphp
 
 <!-- Page Header with Breadcrumb -->
 <div class="bg-white border-b border-gray-200">
     <div class="container px-4 mx-auto max-w-7xl py-8 mt-20">
+        @include('front.brokers.partials.country_context_hero', [
+            'pageCountry' => $pageCountryMeta,
+            'variant' => 'legacy',
+            'eyebrow' => 'Country broker guide',
+            'title' => 'Brokers in <em>{country}</em>',
+        ])
+
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center">
             <div>
                 <h1 class="text-2xl md:text-3xl font-bold text-gray-800">

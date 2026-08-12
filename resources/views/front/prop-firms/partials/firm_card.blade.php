@@ -3,7 +3,7 @@
     <div class="pf-firm-card__head">
         <div class="pf-firm-card__logo">
             @if($firm->logo)
-                <img src="{{ asset($firm->logo) }}" alt="{{ $firm->name }}">
+                <img src="{{ asset($firm->logo) }}" alt="{{ $firm->name }}" loading="lazy" decoding="async">
             @endif
         </div>
         <div class="pf-firm-card__meta">

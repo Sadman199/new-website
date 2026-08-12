@@ -31,18 +31,18 @@
         </header>
 
         <div class="bc-tools-sheet__body">
-            <div class="bc-tools-sheet__search">
-                <span class="bc-tools-sheet__search-icon" aria-hidden="true">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-                </span>
+            <form class="bc-tools-sheet__search" action="{{ route('search') }}" method="GET" role="search">
                 <input type="search"
                        class="bc-tools-sheet__input"
+                       name="q"
                        data-bc-tools-search
-                       placeholder="Search broker name…"
+                       placeholder="Search brokers, articles, tools…"
                        autocomplete="off"
-                       aria-label="Search brokers">
-                <div class="bc-tools-sheet__results" data-bc-tools-results></div>
-            </div>
+                       aria-label="Search the site"
+                       minlength="2"
+                       required>
+                <div class="bc-tools-sheet__results" data-bc-tools-results hidden></div>
+            </form>
 
             <p class="bc-tools-sheet__section-title">Useful tools</p>
             <div class="bc-tools-sheet__links">
@@ -60,10 +60,17 @@
                         <small>Bonuses and offers</small>
                     </span>
                 </a>
+                <a href="{{ route('broker.scam_checker') }}" class="bc-tools-sheet__link">
+                    <span class="bc-tools-sheet__link-icon bc-tools-sheet__link-icon--warn"><i class="fas fa-shield-alt" aria-hidden="true"></i></span>
+                    <span class="bc-tools-sheet__link-text">
+                        <strong>Scam checker</strong>
+                        <small>Verify any broker instantly</small>
+                    </span>
+                </a>
                 <a href="{{ route('scam_brokers') }}" class="bc-tools-sheet__link">
                     <span class="bc-tools-sheet__link-icon bc-tools-sheet__link-icon--warn"><i class="fas fa-exclamation-triangle" aria-hidden="true"></i></span>
                     <span class="bc-tools-sheet__link-text">
-                        <strong>Scam scanner</strong>
+                        <strong>Scam broker list</strong>
                         <small>Verified warnings list</small>
                     </span>
                 </a>

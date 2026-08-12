@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Front;
 
 use App\Http\Controllers\Controller;
 use App\Models\BrokerReport;
+use App\Services\UserNotificationService;
 use App\Services\BrokerSafetyScoreService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -13,6 +14,10 @@ use Illuminate\Validation\Rule;
 
 class BrokerScamCheckerController extends Controller
 {
+    public function __construct(
+        private UserNotificationService $notifications
+    ) {}
+
     public function index(BrokerSafetyScoreService $safetyService)
     {
         $query = trim((string) request('q', ''));
@@ -142,7 +147,8 @@ class BrokerScamCheckerController extends Controller
             return back()->with('error', $message)->with('open_report_modal', true);
         }
 
-        BrokerReport::create([
+        $report = BrokerReport::create([
+            'user_id' => $user->id,
             'broker_id' => $broker->id,
             'broker_name' => $broker->name,
             'reporter_name' => $user->name,
@@ -152,6 +158,8 @@ class BrokerScamCheckerController extends Controller
             'status' => 'pending',
             'ip_address' => $request->ip(),
         ]);
+
+        $this->notifications->notifyReportSubmitted($user, $report);
 
         $successMessage = 'Thank you. Your report has been submitted and will be reviewed by our editorial team.';
 

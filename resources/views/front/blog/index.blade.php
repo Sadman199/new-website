@@ -2,6 +2,7 @@
 
 @section('title', 'Financial & Broker News — Daily Market Updates | BrokersCourt')
 @section('meta_description', 'Stay ahead with BrokersCourt news: broker updates, market analysis, regulation insights, and trading education from our editorial team.')
+@section('canonical', route('blog'))
 
 @push('head')
     <link rel="stylesheet" href="{{ asset('css/blog-index.css') }}?v=4">
@@ -23,6 +24,15 @@
             <p class="bli-hero__subtitle">
                 Independent coverage on brokers, markets, regulation, and trading — updated by the BrokersCourt editorial team.
             </p>
+
+            @include('front.partials.hero_metrics', [
+                'stats' => [
+                    ['label' => 'Articles', 'value' => number_format($stats['total_posts']), 'tone' => 'highlight'],
+                    ['label' => 'Topics', 'value' => $stats['subcategories']],
+                    ['label' => 'Total reads', 'value' => number_format($stats['total_views'])],
+                    ['label' => 'Contributors', 'value' => $stats['authors']],
+                ],
+            ])
         </div>
     </header>
 
@@ -49,25 +59,6 @@
                 </a>
             </div>
         @endif
-
-        <div class="bli-stats">
-            <div class="bli-stat">
-                <span class="bli-stat__value">{{ number_format($stats['total_posts']) }}</span>
-                <span class="bli-stat__label">Articles</span>
-            </div>
-            <div class="bli-stat">
-                <span class="bli-stat__value">{{ $stats['subcategories'] }}</span>
-                <span class="bli-stat__label">Topics</span>
-            </div>
-            <div class="bli-stat">
-                <span class="bli-stat__value">{{ number_format($stats['total_views']) }}</span>
-                <span class="bli-stat__label">Total reads</span>
-            </div>
-            <div class="bli-stat">
-                <span class="bli-stat__value">{{ $stats['authors'] }}</span>
-                <span class="bli-stat__label">Contributors</span>
-            </div>
-        </div>
 
         <section class="bli-section" aria-labelledby="bliNewsTitle">
             <div class="bli-section__head">

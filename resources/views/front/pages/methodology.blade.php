@@ -2,6 +2,7 @@
 
 @section('title', 'Our Methodology | BrokersCourt')
 @section('meta_description', 'Learn how BrokersCourt evaluates forex brokers using transparent research, data analysis, and expert validation.')
+@section('canonical', route('methodology'))
 
 @section('main_content')
 <section class="pt-16 sm:pt-24 md:pt-32 lg:pt-40 pb-12 min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 text-gray-100 px-4 sm:px-6 lg:px-8">

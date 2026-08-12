@@ -32,7 +32,7 @@
         <a href="{{ $reviewUrl }}" class="bc-pick-card__logo-wrap" tabindex="-1" aria-hidden="true">
             <div class="bc-pick-card__logo">
                 @if($broker->logo)
-                    <img src="{{ asset($broker->logo) }}" alt="">
+                    <img src="{{ asset($broker->logo) }}" alt="" loading="lazy" decoding="async">
                 @else
                     <span class="bc-pick-card__logo-fallback">{{ strtoupper(substr($broker->name, 0, 1)) }}</span>
                 @endif

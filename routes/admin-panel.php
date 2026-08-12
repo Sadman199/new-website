@@ -76,16 +76,6 @@ Route::middleware(['web', 'admin:admin'])
 
         Route::get('/authors', [PanelAuthorsController::class, 'index'])->name('authors.index');
 
-        Route::view('/pages', 'admin.panel.pages.pages.index', [
-            'title' => 'Static Pages',
-            'pageTitle' => 'Static Pages',
-        ])->name('pages.index');
-
-        Route::view('/media', 'admin.panel.pages.media.index', [
-            'title' => 'Media',
-            'pageTitle' => 'Media',
-        ])->name('media.index');
-
         Route::view('/live-channels', 'admin.panel.pages.live-channels.index', [
             'title' => 'Live Channels',
             'pageTitle' => 'Live Channels',
@@ -100,11 +90,6 @@ Route::middleware(['web', 'admin:admin'])
             'title' => 'Advertisements',
             'pageTitle' => 'Advertisements',
         ])->name('advertisements.index');
-
-        Route::view('/subscribers', 'admin.panel.pages.subscribers.index', [
-            'title' => 'Subscribers',
-            'pageTitle' => 'Subscribers',
-        ])->name('subscribers.index');
 
         Route::view('/trading-tools', 'admin.panel.pages.trading-tools.index', [
             'title' => 'Trading Tools',
@@ -125,14 +110,4 @@ Route::middleware(['web', 'admin:admin'])
             'title' => 'Settings',
             'pageTitle' => 'Settings',
         ])->name('settings.index');
-
-        Route::view('/languages', 'admin.panel.pages.languages.index', [
-            'title' => 'Languages',
-            'pageTitle' => 'Languages',
-        ])->name('languages.index');
-
-        Route::view('/social-items', 'admin.panel.pages.social-items.index', [
-            'title' => 'Social Links',
-            'pageTitle' => 'Social Links',
-        ])->name('social-items.index');
     });

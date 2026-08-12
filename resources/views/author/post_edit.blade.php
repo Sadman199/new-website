@@ -71,14 +71,7 @@
                             <label>New Tags</label>
                             <input type="text" class="form-control" name="tags" value="">
                         </div>
-                        <div class="form-group mb-3">
-                            <label>Select Language</label>
-                            <select name="language_id" class="form-control">
-                                @foreach($global_language_data as $row)
-                                <option value="{{ $row->id }}" @if($row->id == $post_single->language_id) selected @endif>{{ $row->name }}</option>
-                                @endforeach
-                            </select>
-                        </div>
+                        @include('admin.partials.language_id_field', ['language_id' => $post_single->language_id])
                     </div>
                 </div>
             </div>

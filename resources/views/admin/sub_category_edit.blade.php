@@ -54,14 +54,7 @@
                                                 <label class="font-weight-bold">Sub Category Order <span class="text-danger">*</span></label>
                                                 <input type="number" class="form-control" name="sub_category_order" value="{{ old('sub_category_order', $sub_category_single->sub_category_order) }}" placeholder="Enter order number" required>
                                             </div>
-                                            <div class="form-group">
-                                                <label class="font-weight-bold">Select Language</label>
-                                                <select name="language_id" class="form-control custom-select" required>
-                                                    @foreach($global_language_data as $row)
-                                                        <option value="{{ $row->id }}" @if($row->id == $sub_category_single->language_id) selected @endif>{{ $row->name }}</option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
+                                            @include('admin.partials.language_id_field', ['language_id' => $sub_category_single->language_id])
                                         </div>
                                     </div>
                                 </div>

@@ -35,24 +35,14 @@
                 Fibonacci levels, and currency conversion. Pick a tool, enter your values, and see results instantly.
             </p>
 
-            <div class="tt-hero__stats">
-                <div class="tt-stat tt-stat--highlight">
-                    <span class="tt-stat__label">Calculators</span>
-                    <span class="tt-stat__value">{{ $toolCount }}</span>
-                </div>
-                <div class="tt-stat">
-                    <span class="tt-stat__label">Results</span>
-                    <span class="tt-stat__value">Instant</span>
-                </div>
-                <div class="tt-stat">
-                    <span class="tt-stat__label">Cost</span>
-                    <span class="tt-stat__value">Free</span>
-                </div>
-                <div class="tt-stat">
-                    <span class="tt-stat__label">Updated</span>
-                    <span class="tt-stat__value">{{ date('Y') }}</span>
-                </div>
-            </div>
+            @include('front.partials.hero_metrics', [
+                'stats' => [
+                    ['label' => 'Calculators', 'value' => $toolCount, 'tone' => 'highlight'],
+                    ['label' => 'Results', 'value' => 'Instant'],
+                    ['label' => 'Cost', 'value' => 'Free'],
+                    ['label' => 'Updated', 'value' => date('Y')],
+                ],
+            ])
         </div>
     </header>
 

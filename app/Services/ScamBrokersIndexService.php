@@ -19,6 +19,63 @@ class ScamBrokersIndexService
         ];
     }
 
+    /** @return array<string, int> */
+    public function warningFilterCounts(iterable $brokers): array
+    {
+        $counts = array_fill_keys(array_keys($this->warningFilters()), 0);
+
+        foreach ($brokers as $broker) {
+            $payload = is_array($broker)
+                ? $broker
+                : $this->serialize($broker);
+
+            foreach ($payload['warning_tags'] ?? [] as $tag) {
+                if (isset($counts[$tag])) {
+                    $counts[$tag]++;
+                }
+            }
+        }
+
+        return $counts;
+    }
+
+    /** @return array<string, int> */
+    public function stats(): array
+    {
+        $brokers = Broker::query()
+            ->where('is_scam', true)
+            ->get();
+
+        $noRegulation = 0;
+        $reportedThisYear = 0;
+        $year = (int) date('Y');
+
+        foreach ($brokers as $broker) {
+            $tags = $this->warningTagsFor($broker, $broker->regulationList());
+
+            if (in_array('no-regulation', $tags, true)) {
+                $noRegulation++;
+            }
+
+            if ($broker->scam_reported_date && (int) $broker->scam_reported_date->format('Y') === $year) {
+                $reportedThisYear++;
+            }
+        }
+
+        return [
+            'scam_count' => $brokers->count(),
+            'no_regulation_count' => $noRegulation,
+            'reported_this_year' => $reportedThisYear,
+            'withdrawal_issues_count' => $brokers->filter(
+                fn (Broker $broker) => in_array(
+                    'withdrawal-issues',
+                    $this->warningTagsFor($broker, $broker->regulationList()),
+                    true
+                )
+            )->count(),
+        ];
+    }
+
     /** @return array<string, mixed> */
     public function serialize(Broker $broker): array
     {
@@ -56,41 +113,67 @@ class ScamBrokersIndexService
     public function warningTagsFor(Broker $broker, array $regulators = []): array
     {
         $tags = [];
-        $reason = strtolower((string) $broker->scam_reason);
+        $haystack = strtolower(trim(implode(' ', array_filter([
+            (string) $broker->scam_reason,
+            (string) $broker->short_description,
+            (string) $broker->top_feature,
+            (string) $broker->country,
+        ]))));
 
-        if ($regulators === [] && ! $broker->investor_protection) {
+        if ($regulators === []) {
             $tags[] = 'no-regulation';
+        } elseif (
+            str_contains($haystack, 'fake')
+            || str_contains($haystack, 'clone')
+            || str_contains($haystack, 'licen')
+            || str_contains($haystack, 'license')
+            || str_contains($haystack, 'unauthor')
+            || str_contains($haystack, 'revoked')
+            || str_contains($haystack, 'misleading')
+        ) {
+            $tags[] = 'fake-licence';
+        } elseif ($broker->is_scam) {
+            $tags[] = 'fake-licence';
         }
 
         if (
-            str_contains($reason, 'withdraw')
-            || str_contains($reason, 'payout')
-            || str_contains($reason, 'cash out')
+            str_contains($haystack, 'withdraw')
+            || str_contains($haystack, 'payout')
+            || str_contains($haystack, 'cash out')
+            || str_contains($haystack, 'cash-out')
+            || str_contains($haystack, 'blocked fund')
+            || str_contains($haystack, 'cannot withdraw')
         ) {
             $tags[] = 'withdrawal-issues';
         }
 
         if (
-            str_contains($reason, 'fake')
-            || str_contains($reason, 'clone')
-            || str_contains($reason, 'licen')
-            || str_contains($reason, 'license')
+            str_contains($haystack, 'guarant')
+            || str_contains($haystack, 'risk-free')
+            || str_contains($haystack, 'risk free')
+            || str_contains($haystack, 'fixed return')
+            || str_contains($haystack, 'promised return')
         ) {
-            $tags[] = 'fake-licence';
-        }
-
-        if (
-            str_contains($reason, 'guarant')
-            || str_contains($reason, 'profit')
-            || str_contains($reason, 'return')
+            $tags[] = 'guaranteed-profits';
+        } elseif (
+            str_contains($haystack, 'profit')
+            && (
+                str_contains($haystack, 'promise')
+                || str_contains($haystack, 'guarant')
+                || str_contains($haystack, 'scheme')
+            )
         ) {
             $tags[] = 'guaranteed-profits';
         }
 
         if (
-            str_contains($reason, 'complaint')
-            || str_contains($reason, 'report')
-            || str_contains($reason, 'victim')
+            str_contains($haystack, 'complaint')
+            || str_contains($haystack, 'report')
+            || str_contains($haystack, 'victim')
+            || str_contains($haystack, 'warning')
+            || str_contains($haystack, 'blacklist')
+            || str_contains($haystack, 'fraud')
+            || str_contains($haystack, 'scam')
         ) {
             $tags[] = 'user-reports';
         }

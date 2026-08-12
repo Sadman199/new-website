@@ -2,67 +2,42 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Http\Requests\Admin\LiveChannelRequest;
 use App\Models\LiveChannel;
 
-class AdminLiveChannelController extends Controller
+class AdminLiveChannelController extends AdminResourceController
 {
-    public function show()
+    protected function modelClass(): string
     {
-        $live_channels = LiveChannel::get();
-        return view('admin.live_channel_show', compact('live_channels'));
+        return LiveChannel::class;
     }
 
-    public function create()
+    protected function formRequestClass(): string
     {
-        return view('admin.live_channel_create');
+        return LiveChannelRequest::class;
     }
 
-    public function store(Request $request)
+    protected function indexRoute(): string
     {
-        $request->validate([
-            'heading' => 'required',
-            'video_id' => 'required'
-        ]);
-
-        $live_channel = new LiveChannel();
-        $live_channel->video_id = $request->video_id;
-        $live_channel->heading = $request->heading;
-        $live_channel->language_id = $request->language_id;
-        $live_channel->save();
-
-        return redirect()->route('admin_live_channel_show')->with('success', 'Data is added successfully.');
+        return 'admin_live_channel_show';
     }
 
-    public function edit($id)
+    protected function views(): array
     {
-        $live_channel_data = LiveChannel::where('id',$id)->first();
-        return view('admin.live_channel_edit', compact('live_channel_data'));
+        return [
+            'index' => 'admin.live_channel_show',
+            'create' => 'admin.live_channel_create',
+            'edit' => 'admin.live_channel_edit',
+        ];
     }
 
-    public function update(Request $request,$id) 
+    protected function indexCollectionKey(): string
     {
-        $request->validate([
-            'heading' => 'required',
-            'video_id' => 'required'
-        ]);
-
-        $live_channel_data = LiveChannel::where('id',$id)->first();
-        $live_channel_data->video_id = $request->video_id;
-        $live_channel_data->heading = $request->heading;
-        $live_channel_data->language_id = $request->language_id;
-        $live_channel_data->update();
-
-        return redirect()->route('admin_live_channel_show')->with('success', 'Data is updated successfully.');
+        return 'live_channels';
     }
 
-    public function delete($id)
+    protected function editModelKey(): string
     {
-        $live_channel_data = LiveChannel::where('id',$id)->first();
-        $live_channel_data->delete();
-
-        return redirect()->route('admin_live_channel_show')->with('success', 'Data is deleted successfully.');
-
+        return 'live_channel_data';
     }
 }

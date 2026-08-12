@@ -3,13 +3,16 @@
 namespace App\Services;
 
 use App\Models\Broker;
+use App\Services\Admin\PublicUploadService;
 use Illuminate\Http\Request;
-use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Str;
 use App\Services\EditorialAssignmentService;
 
 class BrokerAdminService
 {
+    public function __construct(protected PublicUploadService $uploads)
+    {
+    }
     /** @var string[] */
     protected array $booleanFields = [
         'demo_account_available',
@@ -74,6 +77,8 @@ class BrokerAdminService
 
         $broker->save();
 
+        CountryBrokersService::flush();
+
         return $broker;
     }
 
@@ -84,6 +89,8 @@ class BrokerAdminService
         }
 
         $broker->delete();
+
+        CountryBrokersService::flush();
     }
 
     protected function normalizeArrayInput(mixed $value): array
@@ -133,32 +140,28 @@ class BrokerAdminService
             return;
         }
 
-        /** @var UploadedFile $file */
-        $file = $request->file($inputName);
-        $targetDir = public_path($directory);
+        $path = $this->uploads->replaceFromRequest(
+            $request,
+            $inputName,
+            $broker->{$column},
+            $directory,
+            $prefix
+        );
 
-        if (! is_dir($targetDir)) {
-            mkdir($targetDir, 0755, true);
+        if ($path === null) {
+            return;
         }
 
-        $this->deletePublicFile($broker->{$column});
+        if (trim($directory, '/') === 'uploads' && ! str_contains($path, '/')) {
+            $path = 'uploads/' . $path;
+        }
 
-        $filename = $prefix . time() . '_' . Str::random(6) . '.' . $file->getClientOriginalExtension();
-        $file->move($targetDir, $filename);
-        $broker->{$column} = trim($directory, '/') . '/' . $filename;
+        $broker->{$column} = $path;
     }
 
     protected function deletePublicFile(?string $relativePath): void
     {
-        if (! $relativePath) {
-            return;
-        }
-
-        $fullPath = public_path($relativePath);
-
-        if (is_file($fullPath)) {
-            unlink($fullPath);
-        }
+        $this->uploads->delete($relativePath);
     }
 
     public static function marketOptions(): array
@@ -238,5 +241,76 @@ class BrokerAdminService
             'south-africa' => 'South Africa',
             'nigeria' => 'Nigeria',
         ];
+    }
+
+    /** @return string[] */
+    public static function selectableCountrySlugs(): array
+    {
+        return array_merge(['global'], array_keys(self::countryListingOptions()));
+    }
+
+    /**
+     * Admin Country Listings + flags for nav, drawer, and homepage picker.
+     *
+     * @return array<string, array{name: string, flag: string, code: ?string, shortcode: string}>
+     */
+    public static function listedCountriesWithFlags(): array
+    {
+        $taxonomy = \App\Support\BrokerTaxonomy::countriesWithFlags();
+        $listed = [];
+
+        foreach (self::countryListingOptions() as $slug => $label) {
+            $meta = $taxonomy[$slug] ?? ['name' => $label, 'flag' => '🌍', 'code' => null];
+            $listed[$slug] = [
+                'name' => $meta['name'] ?? $label,
+                'flag' => $meta['flag'] ?? '🌍',
+                'code' => $meta['code'] ?? null,
+                'shortcode' => \App\Support\BrokerTaxonomy::countryShortcode($slug, $meta['code'] ?? null),
+            ];
+        }
+
+        return $listed;
+    }
+
+    /**
+     * Admin region options + flags for nav and mega menus.
+     *
+     * @return array<string, array{name: string, flag: string, code: ?string, shortcode: string}>
+     */
+    public static function listedRegionsWithFlags(): array
+    {
+        $taxonomy = \App\Support\BrokerTaxonomy::regionsWithFlags();
+        $listed = [];
+
+        foreach (self::regionOptions() as $slug => $label) {
+            $meta = $taxonomy[$slug] ?? ['name' => $label, 'flag' => '🌍', 'code' => null];
+            $listed[$slug] = [
+                'name' => $meta['name'] ?? $label,
+                'flag' => $meta['flag'] ?? '🌍',
+                'code' => $meta['code'] ?? null,
+                'shortcode' => \App\Support\BrokerTaxonomy::countryShortcode($slug, $meta['code'] ?? null),
+            ];
+        }
+
+        return $listed;
+    }
+
+    /**
+     * Global + admin Country Listings for the country selector UI.
+     *
+     * @return array<string, array{name: string, flag: string, code: ?string, shortcode: string}>
+     */
+    public static function countriesForSelector(): array
+    {
+        $global = \App\Support\BrokerTaxonomy::countriesWithFlags()['global'];
+
+        return [
+            'global' => [
+                'name' => $global['name'],
+                'flag' => $global['flag'],
+                'code' => $global['code'],
+                'shortcode' => 'GL',
+            ],
+        ] + self::listedCountriesWithFlags();
     }
 }

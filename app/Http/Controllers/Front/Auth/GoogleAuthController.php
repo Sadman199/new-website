@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Front\Auth;
 use App\Http\Controllers\Controller;
 use App\Models\ActivityLog;
 use App\Models\User;
+use App\Services\UserSessionPreferenceService;
 use App\Support\GoogleOAuth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -13,6 +14,10 @@ use Illuminate\Support\Str;
 
 class GoogleAuthController extends Controller
 {
+    public function __construct(
+        private UserSessionPreferenceService $sessionPreferences
+    ) {}
+
     public function redirect(Request $request)
     {
         if (Auth::guard('web')->check()) {
@@ -211,9 +216,13 @@ class GoogleAuthController extends Controller
 
         ActivityLog::record('login', 'Logged in via Google', $user->id);
 
-        return redirect()->intended(route('user.profile'))
+        $cookie = $this->sessionPreferences->applyPreferredCountry($user);
+
+        $response = redirect()->intended(route('user.profile'))
             ->with('success', $isNewUser
                 ? 'Welcome to BrokersCourt! Your Google account has been connected.'
                 : 'Welcome back, ' . $user->name . '!');
+
+        return $this->sessionPreferences->attachCookieToResponse($response, $cookie);
     }
 }

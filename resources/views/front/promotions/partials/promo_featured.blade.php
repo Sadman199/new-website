@@ -1,4 +1,4 @@
-<article class="bpr-featured bpr-featured--{{ $promo['type_tone'] }}">
+<article class="bpr-featured">
     <a href="{{ $promo['url'] }}" class="bpr-featured__link">
         <div class="bpr-featured__media">
             @if($promo['feature_image'])
@@ -22,11 +22,11 @@
 
         <div class="bpr-featured__body">
             <div class="bpr-featured__meta">
-                <span class="bpr-badge bpr-badge--{{ $promo['type_tone'] }}">{{ $promo['type_short'] }}</span>
-                @if($promo['is_limited'])
+                <span class="bpr-badge">{{ $promo['type_short'] }}</span>
+                @if(!empty($promo['expiry_badge']) && in_array($promo['expiry_badge']['tone'], ['urgent', 'soon', 'expired'], true))
+                    @include('front.partials.expiry_badge', ['badge' => $promo['expiry_badge']])
+                @elseif($promo['is_limited'])
                     <span class="bpr-badge bpr-badge--urgent">Limited time</span>
-                @elseif($promo['is_urgent'])
-                    <span class="bpr-badge bpr-badge--urgent">Ending soon</span>
                 @endif
             </div>
 
@@ -50,6 +50,17 @@
                         </span>
                     @endif
                 </div>
+                @if(!empty($promo['regulation_short']))
+                    <div class="bpr-card__trust bpr-card__trust--featured">
+                        @foreach($promo['regulation_short'] as $chip)
+                            <span class="bpr-card__reg">{{ $chip }}</span>
+                        @endforeach
+                    </div>
+                @endif
+            @endif
+
+            @if(!empty($promo['region_note']))
+                <p class="bpr-card__region">{{ $promo['region_note'] }}</p>
             @endif
 
             <ul class="bpr-featured__facts">
@@ -57,7 +68,7 @@
                     <li>{{ $promo['min_deposit'] }}</li>
                 @endif
                 @if($promo['expiry'])
-                    <li>{{ $promo['expiry'] }}</li>
+                    <li @class(['bc-expiry-fact--' . ($promo['expiry_tone'] ?? '') => !empty($promo['expiry_tone'])])>{{ $promo['expiry'] }}</li>
                 @endif
             </ul>
 

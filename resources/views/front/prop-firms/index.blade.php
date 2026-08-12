@@ -2,6 +2,7 @@
 
 @section('title', 'Prop Firms — Compare Funded Trading Programs | BrokersCourt')
 @section('meta_description', 'Discover and compare proprietary trading firms. Instant funding, one-step and two-step evaluations, profit splits, drawdown rules, and trust scores.')
+@section('canonical', route('prop_firms.index'))
 
 @push('page-styles')
     <link rel="stylesheet" href="{{ asset('css/prop-firms-design-system.css') }}?v=3">
@@ -25,24 +26,14 @@
             <h1 class="pf-index__title pf-display">Find your next <span>prop firm</span></h1>
             <p class="pf-index__lead">Compare evaluation programs, funding limits, profit splits, and platform features — curated for serious prop traders.</p>
 
-            <div class="pf-stats-bar" aria-label="Prop firm statistics">
-                <div class="pf-stats-bar__item">
-                    <strong class="pf-stats-bar__value">{{ $stats['total'] }}</strong>
-                    <span class="pf-stats-bar__label">Active firms</span>
-                </div>
-                <div class="pf-stats-bar__item">
-                    <strong class="pf-stats-bar__value">{{ $stats['featured'] }}</strong>
-                    <span class="pf-stats-bar__label">Featured</span>
-                </div>
-                <div class="pf-stats-bar__item">
-                    <strong class="pf-stats-bar__value">{{ $stats['verified'] }}</strong>
-                    <span class="pf-stats-bar__label">Verified</span>
-                </div>
-                <div class="pf-stats-bar__item">
-                    <strong class="pf-stats-bar__value">{{ $stats['categories'] }}</strong>
-                    <span class="pf-stats-bar__label">Categories</span>
-                </div>
-            </div>
+            @include('front.partials.hero_metrics', [
+                'stats' => [
+                    ['label' => 'Active firms', 'value' => $stats['total'], 'tone' => 'highlight'],
+                    ['label' => 'Featured', 'value' => $stats['featured']],
+                    ['label' => 'Verified', 'value' => $stats['verified']],
+                    ['label' => 'Categories', 'value' => $stats['categories']],
+                ],
+            ])
         </div>
     </header>
 

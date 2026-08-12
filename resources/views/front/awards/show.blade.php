@@ -2,6 +2,7 @@
 
 @section('title', $awardName . ' | Broker Awards ' . date('Y') . ' | BrokersCourt')
 @section('meta_description', $awardDescription)
+@section('canonical', route('awards.show', ['award' => $routeSlug]))
 
 @push('page-styles')
     <link rel="stylesheet" href="{{ asset('css/awards-index.css') }}?v=4">
@@ -35,20 +36,14 @@
                 </div>
             </div>
 
-            <div class="awd-hero__stats awd-hero__stats--compact awd-hero__stats--cols-3">
-                <div class="awd-stat">
-                    <span class="awd-stat__label">Matching brokers</span>
-                    <span class="awd-stat__value">{{ number_format($totalBrokers) }}</span>
-                </div>
-                <div class="awd-stat awd-stat--highlight">
-                    <span class="awd-stat__label">Award year</span>
-                    <span class="awd-stat__value">{{ date('Y') }}</span>
-                </div>
-                <div class="awd-stat">
-                    <span class="awd-stat__label">Updated from</span>
-                    <span class="awd-stat__value">Live data</span>
-                </div>
-            </div>
+            @include('front.partials.hero_metrics', [
+                'cols' => 3,
+                'stats' => [
+                    ['label' => 'Matching brokers', 'value' => number_format($totalBrokers)],
+                    ['label' => 'Award year', 'value' => date('Y'), 'tone' => 'highlight'],
+                    ['label' => 'Updated from', 'value' => 'Live data'],
+                ],
+            ])
         </div>
     </header>
 

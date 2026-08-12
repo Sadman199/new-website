@@ -2,9 +2,11 @@
 
 @section('title', 'Log In | BrokersCourt')
 @section('meta_description', 'Log in to your BrokersCourt account to write broker reviews, track your activity and manage your profile.')
+@section('robots', 'noindex, nofollow')
+@section('canonical', route('user.login'))
 
 @push('page-styles')
-    <link rel="stylesheet" href="{{ asset('css/user-account.css') }}?v=3">
+    <link rel="stylesheet" href="{{ asset('css/user-account.css') }}?v=4">
 @endpush
 
 @section('main_content')
@@ -34,7 +36,10 @@
                 </div>
 
                 <div class="ua-field">
-                    <label for="password">Password</label>
+                    <div class="ua-field__row">
+                        <label for="password">Password</label>
+                        <a href="{{ route('user.password.request') }}" class="ua-link ua-link--inline">Forgot password?</a>
+                    </div>
                     <input type="password" name="password" id="password" required autocomplete="current-password"
                         class="ua-input @error('password') is-error @enderror" placeholder="Enter your password">
                     @error('password')<p class="ua-error"><i class="fas fa-exclamation-circle"></i> {{ $message }}</p>@enderror

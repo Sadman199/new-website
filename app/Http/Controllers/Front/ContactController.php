@@ -60,7 +60,7 @@ class ContactController extends Controller
         session()->forget('contact_form_started_at');
 
         return redirect()
-            ->route('contact')
+            ->back()
             ->with('success', 'Your message has been sent successfully. We will get back to you soon.');
     }
 
@@ -69,7 +69,7 @@ class ContactController extends Controller
         session()->forget('contact_form_started_at');
 
         return redirect()
-            ->route('contact')
+            ->back()
             ->with('success', 'Your message has been sent successfully. We will get back to you soon.');
     }
 }

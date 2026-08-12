@@ -5,11 +5,15 @@ namespace App\Http\Controllers\Front\Auth;
 use App\Http\Controllers\Controller;
 use App\Helper\Helpers;
 use App\Models\ActivityLog;
+use App\Services\UserSessionPreferenceService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class LoginController extends Controller
 {
+    public function __construct(
+        private UserSessionPreferenceService $sessionPreferences
+    ) {}
     public function showForm()
     {
         if (Auth::guard('web')->check()) {
@@ -53,8 +57,12 @@ class LoginController extends Controller
 
         ActivityLog::record('login', 'Logged in', $user->id);
 
-        return redirect()->intended(route('user.profile'))
+        $cookie = $this->sessionPreferences->applyPreferredCountry($user);
+
+        $response = redirect()->intended(route('user.profile'))
             ->with('success', 'Welcome back, ' . $user->name . '!');
+
+        return $this->sessionPreferences->attachCookieToResponse($response, $cookie);
     }
 
     public function logout(Request $request)

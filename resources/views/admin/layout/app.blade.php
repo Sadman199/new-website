@@ -5,10 +5,24 @@
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no" name="viewport">
     <link rel="icon" type="image/png" href="{{ asset('uploads/favicon.png') }}">
     <title>Admin Panel</title>
-    <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            prefix: 'tw-',
+            corePlugins: { preflight: false },
+            theme: {
+                extend: {
+                    colors: {
+                        brand: { DEFAULT: '#007AAD', dark: '#0C1D32', light: '#D9E2E9' }
+                    }
+                }
+            }
+        }
+    </script>
     @include('admin.layout.styles')
     @include('admin.layout.scripts')
-    
+    @stack('styles')
 </head>
 
 <body>
@@ -20,7 +34,10 @@
     <div class="main-wrapper">
         @include('admin.layout.nav')
         @include('admin.layout.sidebar')        
-        <div class="main-content">
+        <div class="main-content @yield('main_content_class')">
+            @hasSection('dashboard_page')
+                @yield('main_content')
+            @else
             <section class="section">
                 <div class="section-header">
                     <h1>@yield('heading')</h1>
@@ -30,10 +47,12 @@
                 </div>
                 @yield('main_content')
             </section>
+            @endif
         </div>
     </div>
 </div>
 @include('admin.layout.scripts_footer')
+<script src="{{ asset('js/admin-topbar.js') }}?v=2"></script>
  <!-- SweetAlert for success and error -->
     @if(session('success'))
         <script>

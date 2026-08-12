@@ -7,6 +7,7 @@
 .env
 .env.backup
 .env.bak
+.env.deploy-backup
 .env.staging
 .env.production
 .phpunit.result.cache

@@ -1,5 +1,6 @@
 @extends('front.layout.app')
 @section('title', $page_title)
+@section('canonical', url()->current())
 @section('main_content')
 <section class="bg-white py-8 border-b">
     <div class="container px-4 max-w-7xl mx-auto w-full mt-12 py-12">
@@ -132,18 +133,7 @@
                 @foreach ($forexBonuses as $bonus)
                 
                 @php
-                    $daysLeft = ceil((strtotime($bonus->expiry_date) - time()) / 86400);
-                
-                    if ($daysLeft <= 0) {
-                        $daysText = 'Expired';
-                        $daysColor = 'text-red-500';
-                    } elseif ($daysLeft == 1) {
-                        $daysText = '1 Day Left';
-                        $daysColor = 'text-red-500';
-                    } else {
-                        $daysText = $daysLeft.' Days Left';
-                        $daysColor = $daysLeft <= 7 ? 'text-orange-500' : 'text-green-600';
-                    }
+                    $expiryBadge = $bonus->expiryBadge();
                 @endphp
                 
                 <!-- Bonus Card -->
@@ -182,9 +172,9 @@
                                 {{ $bonus->bonus_category }}
                             </span>
                 
-                            <span class="text-xs font-bold {{ $daysColor }}">
-                                {{ $daysText }}
-                            </span>
+                            @if($expiryBadge)
+                                @include('front.partials.expiry_badge', ['badge' => $expiryBadge, 'pill' => false, 'class' => 'bc-expiry-badge text-xs font-bold'])
+                            @endif
                         </div>
                 
                         <!-- Actions -->

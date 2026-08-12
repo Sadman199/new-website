@@ -1,25 +1,11 @@
 @php
     $isRegulated = $broker->isRegulated();
-    $rating = (float) ($broker->rating ?? 0);
-    $categoryScores = is_array($broker->category_scores) ? $broker->category_scores : [];
-    $scoreLabels = [
-        'fees' => 'Fees & Costs',
-        'safety' => 'Safety & Regulation',
-        'platforms' => 'Trading Platforms',
-        'deposit_withdrawal' => 'Deposit & Withdrawal',
-        'customer_support' => 'Customer Support',
-        'education' => 'Education',
-        'research' => 'Research',
-        'account_opening' => 'Account Opening',
-        'products' => 'Products & Markets',
-    ];
-    $marketsLabel = $broker->marketList()
-        ? implode(', ', array_map('ucfirst', $broker->marketList()))
-        : null;
-    $guidePage = $reviewPageMeta ?? ['updated_at' => ''];
+    $guidePage = $reviewPageMeta ?? ['updated_at' => '', 'updated_relative' => null];
+    $snapshot = $snapshot ?? \App\Support\BrokerReviewPresenter::decisionSnapshot($broker, $reviewStats ?? []);
+    $guides = $publishedGuides ?? collect();
 @endphp
 
-<header class="bbg-hero br-hero" id="gettingstarted">
+<header class="bbg-hero br-hero{{ $snapshot['is_scam'] ? ' br-hero--scam' : '' }}" id="gettingstarted">
     <div class="bbg-container">
         <nav class="bbg-breadcrumb" aria-label="Breadcrumb">
             <a href="{{ route('home') }}">Home</a>
@@ -29,7 +15,20 @@
             <span>{{ $broker->name }}</span>
         </nav>
 
-        <p class="bbg-hero__eyebrow">Independent broker review</p>
+        @if($snapshot['is_scam'])
+            <div class="br-hero__alert" role="alert">
+                <p class="br-hero__alert-title">High-risk / scam warning</p>
+                <p class="br-hero__alert-text">
+                    {{ $snapshot['scam_reason'] ?: 'This broker has been flagged as high-risk. Do not deposit funds until you have read the warning below.' }}
+                    @if($snapshot['scam_reported'])
+                        <span>Flagged {{ $snapshot['scam_reported'] }}.</span>
+                    @endif
+                </p>
+                <a href="{{ route('methodology') }}" class="br-hero__alert-link">How we flag brokers</a>
+            </div>
+        @endif
+
+        <p class="bbg-hero__eyebrow">{{ $snapshot['is_scam'] ? 'Safety warning' : 'Independent broker review' }}</p>
 
         <div class="br-hero__head">
             <div class="br-hero__identity">
@@ -45,98 +44,79 @@
                     <h1 class="bbg-hero__title">{{ $broker->title ?: $broker->name . ' Review' }}</h1>
 
                     @if($broker->short_description)
-                        <p class="br-hero__subtitle">{!! Str::limit(strip_tags($broker->short_description), 220) !!}</p>
+                        <p class="br-hero__subtitle">{!! Str::limit(strip_tags($broker->short_description), 180) !!}</p>
                     @endif
 
                     <div class="br-hero__badges">
-                        @if($broker->is_scam)
+                        @if($snapshot['is_scam'])
                             <span class="br-badge br-badge--danger">High Risk</span>
                         @elseif($isRegulated)
                             <span class="br-badge br-badge--safe">Regulated</span>
                         @else
                             <span class="br-badge br-badge--warn">Unregulated</span>
                         @endif
-                        @if($broker->featured_broker)
+                        @if($broker->featured_broker && ! $snapshot['is_scam'])
                             <span class="br-badge br-badge--featured">Featured</span>
+                        @endif
+                        @if($snapshot['review_count'] > 0)
+                            <a href="#voices" class="br-hero__reviews-chip">
+                                {{ number_format((float) $snapshot['review_average'], 1) }}/5
+                                · {{ $snapshot['review_count'] }} {{ Str::plural('review', $snapshot['review_count']) }}
+                            </a>
+                        @else
+                            <a href="#voices" class="br-hero__reviews-chip">Write a review</a>
                         @endif
                     </div>
                 </div>
             </div>
 
             <div class="br-hero__score-wrap">
-                <div class="br-hero__score-ring" aria-label="Overall score {{ number_format($rating, 1) }} out of 10">
-                    <span class="br-hero__score-value">{{ number_format($rating, 1) }}</span>
+                <div class="br-hero__score-ring" aria-label="Overall score {{ $snapshot['score'] }} out of 10">
+                    <span class="br-hero__score-value">{{ $snapshot['score'] }}</span>
                     <span class="br-hero__score-label">Score</span>
                 </div>
-                @if($broker->trust_score && (int) $broker->trust_score <= 99)
-                    <p class="br-hero__trust">Trust score {{ (int) $broker->trust_score }}/99</p>
+                @if($snapshot['trust_score'])
+                    <p class="br-hero__trust">Trust {{ $snapshot['trust_score'] }}/99</p>
                 @endif
+                <a href="{{ route('methodology') }}" class="br-hero__how">How we score</a>
             </div>
         </div>
+
+        @if(!empty($snapshot['facts']))
+            <dl class="br-hero__facts" aria-label="Key trading conditions">
+                @foreach($snapshot['facts'] as $fact)
+                    <div class="br-hero__fact">
+                        <dt>{{ $fact['label'] }}</dt>
+                        <dd>{{ $fact['value'] }}</dd>
+                    </div>
+                @endforeach
+            </dl>
+        @endif
+
+        @include('front.brokers.partials.decision_ctas', [
+            'broker' => $broker,
+            'snapshot' => $snapshot,
+            'variant' => 'hero',
+        ])
+
+        @include('front.brokers.partials.country_context_hero', [
+            'variant' => 'inline',
+            'context' => 'review',
+            'brokerName' => $broker->name,
+        ])
 
         @include('front.brokers.partials.best_guide_hero_author', [
             'editorialTeam' => $editorialTeam ?? [],
             'guidePage' => $guidePage,
         ])
 
-        <div class="br-hero__meta">
-            @if($broker->year_founded)
-            <div class="br-hero__meta-item">
-                <span>Founded</span>
-                <strong>{{ $broker->year_founded }}</strong>
-            </div>
-            @endif
-            <div class="br-hero__meta-item">
-                <span>Min. Deposit</span>
-                <strong>${{ number_format((float) ($broker->minimum_deposit ?? 0), 0) }}</strong>
-            </div>
-            @if($broker->country)
-            <div class="br-hero__meta-item">
-                <span>Headquarters</span>
-                <strong>{{ strip_tags($broker->country) }}</strong>
-            </div>
-            @endif
-            @if($broker->leverage)
-            <div class="br-hero__meta-item">
-                <span>Max Leverage</span>
-                <strong>{{ strip_tags($broker->leverage) }}</strong>
-            </div>
-            @endif
-            @if($marketsLabel)
-            <div class="br-hero__meta-item">
-                <span>Markets</span>
-                <strong>{{ Str::limit($marketsLabel, 48) }}</strong>
-            </div>
-            @endif
-        </div>
-
-        <div class="br-hero__actions">
-            <a href="{{ $broker->open_live ?: $broker->visit_site ?: $broker->url }}" target="_blank" rel="noopener noreferrer" class="br-btn br-btn--primary">
-                Open an account
-            </a>
-            @if($broker->demo_link || $broker->open_demo)
-            <a href="{{ $broker->demo_link ?: $broker->open_demo }}" target="_blank" rel="noopener noreferrer" class="br-btn br-btn--secondary">
-                Try demo
-            </a>
-            @endif
-            <a href="#compare" class="br-btn br-btn--ghost">Compare brokers</a>
-        </div>
-
-        @if(!empty($categoryScores))
-        <div class="br-score-grid">
-            @foreach($scoreLabels as $key => $label)
-                @if(isset($categoryScores[$key]) && $categoryScores[$key] !== '' && $categoryScores[$key] !== null)
-                    @php $val = min(10, max(0, (float) $categoryScores[$key])); @endphp
-                    <div class="br-score-card">
-                        <div class="br-score-card__label">{{ $label }}</div>
-                        <div class="br-score-card__value">{{ number_format($val, 1) }}</div>
-                        <div class="br-score-card__bar">
-                            <div class="br-score-card__bar-fill" style="width: {{ $val * 10 }}%"></div>
-                        </div>
-                    </div>
-                @endif
-            @endforeach
-        </div>
+        @if($guides->isNotEmpty())
+            <nav class="br-hero__guides" aria-label="Related guides">
+                <span class="br-hero__guides-label">Guides</span>
+                @foreach($guides->take(4) as $guide)
+                    <a href="{{ app(\App\Services\BrokerGuideService::class)->publicUrl($guide) }}">{{ $guide->title }}</a>
+                @endforeach
+            </nav>
         @endif
     </div>
 </header>

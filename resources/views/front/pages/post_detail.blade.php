@@ -2,7 +2,8 @@
 
 @section('title', $post_detail->meta_title ?? $post_detail->post_title)
 @section('meta_description', $post_detail->meta_description ?? Str::limit(strip_tags($post_detail->post_detail), 150))
-@section('meta_keywords', $post_detail->meta_keywords)
+@section('canonical', route('news_detail', ['subcategory_slug' => $post_detail->rSubCategory->slug ?? request()->route('subcategory_slug'), 'post_slug' => $post_detail->slug]))
+@section('og_image', $post_detail->post_photo ? 'uploads/'.$post_detail->post_photo : '')
 
 @push('head')
     <link rel="stylesheet" href="{{ asset('css/best-broker-guide.css') }}?v=6">

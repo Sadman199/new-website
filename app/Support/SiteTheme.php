@@ -3,6 +3,7 @@
 namespace App\Support;
 
 use App\Models\Setting;
+use Illuminate\Support\Facades\Cache;
 
 class SiteTheme
 {
@@ -12,13 +13,9 @@ class SiteTheme
 
     public static function setting(): ?Setting
     {
-        static $cached = null;
-
-        if ($cached === null) {
-            $cached = Setting::query()->find(1);
-        }
-
-        return $cached;
+        return Cache::remember('site_setting_v1', 3600, function () {
+            return Setting::query()->find(1);
+        });
     }
 
     public static function primary(): string
@@ -136,6 +133,39 @@ class SiteTheme
         return $description !== ''
             ? $description
             : 'BrokersCourt helps you compare and find top forex brokers, read expert reviews, and grab exclusive deals on trading accounts.';
+    }
+
+    public static function logoUrl(): string
+    {
+        $logo = trim((string) (self::setting()?->logo ?? ''));
+
+        return $logo !== ''
+            ? asset('uploads/' . ltrim($logo, '/'))
+            : asset('uploads/logo.png');
+    }
+
+    public static function faviconUrl(): string
+    {
+        $favicon = trim((string) (self::setting()?->favicon ?? ''));
+
+        return $favicon !== ''
+            ? asset('uploads/' . ltrim($favicon, '/'))
+            : asset('uploads/favicon.png');
+    }
+
+    public static function ogImageUrl(?string $override = null): string
+    {
+        $override = trim((string) $override);
+
+        if ($override === '') {
+            return self::logoUrl();
+        }
+
+        if (str_starts_with($override, 'http://') || str_starts_with($override, 'https://')) {
+            return $override;
+        }
+
+        return asset(ltrim($override, '/'));
     }
 
     public static function footerCopyright(): ?string

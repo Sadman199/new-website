@@ -1,11 +1,48 @@
 /* Global theme bridge — uses CSS variables from admin Brand Colors */
+html {
+    overflow-x: clip;
+}
+
 .bc-btn-primary,
 .btn-primary,
 .ua-btn--primary,
-.mf-cta__card.is-primary,
-#scrollToTopBtn {
+.mf-cta__card.is-primary {
     background: var(--bc-primary, #007AAD) !important;
     border-color: var(--bc-primary, #007AAD) !important;
+}
+
+#scrollToTopBtn {
+    position: fixed;
+    bottom: 1.5rem;
+    right: 1.5rem;
+    z-index: 40;
+    width: 2.75rem;
+    height: 2.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    border-radius: 50%;
+    color: #fff;
+    background: var(--bc-primary, #007AAD);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    cursor: pointer;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translateY(0.5rem);
+    transition: opacity 0.2s ease, visibility 0.2s ease, transform 0.2s ease, background 0.2s ease;
+}
+
+#scrollToTopBtn.is-visible {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: translateY(0);
+}
+
+#scrollToTopBtn:hover {
+    background: var(--bc-primary-dark, #006694);
 }
 
 .bc-btn-primary:hover,
@@ -34,4 +71,62 @@ a.ua-link,
     --pf-midnight: var(--bc-dark, #0C1D32);
     --pf-ice: var(--bc-light, #D9E2E9);
     --pf-bg: var(--bc-dark, #0C1D32);
+}
+
+/* Expiry badges — shared across promotions, homepage, broker reviews */
+.bc-expiry-badge {
+    display: inline-flex;
+    align-items: center;
+    font-weight: 700;
+    line-height: 1.2;
+    white-space: nowrap;
+}
+
+.bc-expiry-badge--pill {
+    padding: 0.15rem 0.5rem;
+    font-size: 0.5625rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    border-radius: 999px;
+    border: 1px solid transparent;
+}
+
+.bc-expiry-badge--expired {
+    color: #64748b;
+    background: #f1f5f9;
+    border-color: #e2e8f0;
+}
+
+.bc-expiry-badge--urgent {
+    color: #dc2626;
+    background: rgba(220, 38, 38, 0.08);
+    border-color: rgba(220, 38, 38, 0.16);
+}
+
+.bc-expiry-badge--soon {
+    color: #c2410c;
+    background: rgba(249, 115, 22, 0.1);
+    border-color: rgba(249, 115, 22, 0.18);
+}
+
+.bc-expiry-badge--normal {
+    color: #0369a1;
+    background: rgba(0, 122, 173, 0.08);
+    border-color: rgba(0, 122, 173, 0.14);
+}
+
+.bc-expiry-fact--urgent,
+.bc-expiry-fact--soon,
+.is-urgent {
+    color: #dc2626 !important;
+    font-weight: 700;
+}
+
+.bc-expiry-fact--expired {
+    color: #64748b !important;
+    text-decoration: line-through;
+}
+
+.bc-expiry-fact--normal {
+    color: #64748b;
 }

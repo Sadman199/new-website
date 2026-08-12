@@ -2,6 +2,8 @@
 
 @section('title', 'Edit Profile | BrokersCourt')
 @section('meta_description', 'Update your BrokersCourt profile information, photo, and bio.')
+@section('robots', 'noindex, nofollow')
+@section('canonical', route('user.profile.edit'))
 
 @push('page-styles')
     <link rel="stylesheet" href="{{ asset('css/user-account.css') }}?v=1">

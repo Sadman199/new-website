@@ -2,87 +2,52 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Http\Requests\Admin\CategoryRequest;
 use App\Models\Category;
-use DB;
 
-class AdminCategoryController extends Controller
+class AdminCategoryController extends AdminResourceController
 {
-    // Show all categories
-    public function show()
+    protected function modelClass(): string
     {
-        $categories = Category::with('rLanguage')->orderBy('category_order', 'asc')->get();
-        return view('admin.category_show', compact('categories'));
+        return Category::class;
     }
 
-    // Show the create category form
-    public function create()
+    protected function formRequestClass(): string
     {
-        return view('admin.category_create');
+        return CategoryRequest::class;
     }
 
-    // Store a new category
-    public function store(Request $request)
+    protected function indexRoute(): string
     {
-        $request->validate([
-            'category_name' => 'required',
-            'category_order' => 'required'
-        ]);
-
-        $category = new Category();
-        $category->category_name = $request->category_name;
-        $category->slug = $request->slug;
-        $category->show_on_menu = $request->show_on_menu;
-        $category->category_order = $request->category_order;
-        $category->language_id = $request->language_id;
-        $category->save();
-
-        return redirect()->route('admin_category_show')->with('success', 'Data is added successfully.');
+        return 'admin_category_show';
     }
 
-    // Show the edit form for a category
-    public function edit($id)
+    protected function views(): array
     {
-        $category_single = Category::findOrFail($id);  // Using findOrFail to throw an exception if not found
-        return view('admin.category_edit', compact('category_single'));
+        return [
+            'index' => 'admin.category_show',
+            'create' => 'admin.category_create',
+            'edit' => 'admin.category_edit',
+        ];
     }
 
-    // Update an existing category
-    public function update(Request $request, $id)
+    protected function indexCollectionKey(): string
     {
-        $request->validate([
-            'category_name' => 'required',
-            'category_order' => 'required'
-        ]);
-
-        $category = Category::findOrFail($id);  // Using findOrFail to throw an exception if not found
-        $category->category_name = $request->category_name;
-        $category->slug = $request->slug;
-        $category->show_on_menu = $request->show_on_menu;
-        $category->category_order = $request->category_order;
-        $category->language_id = $request->language_id;
-        $category->save(); // Instead of update() we can use save() directly after changes
-
-        return redirect()->route('admin_category_show')->with('success', 'Data is updated successfully.');
+        return 'categories';
     }
 
-    // Delete a category
-    public function delete($id)
+    protected function editModelKey(): string
     {
-        DB::beginTransaction();
+        return 'category_single';
+    }
 
-        try {
-            $category_single = Category::findOrFail($id);  // Using findOrFail to ensure the category exists
-            $category_single->delete();  // Deleting the category
+    protected function indexRelations(): array
+    {
+        return ['rLanguage'];
+    }
 
-            DB::commit();  // Commit the transaction
-
-            return redirect()->route('admin_category_show')->with('success', 'Data is deleted successfully.');
-        } catch (\Exception $e) {
-            DB::rollBack();  // Rollback transaction if any error occurs
-
-            return redirect()->route('admin_category_show')->with('error', 'Failed to delete category: ' . $e->getMessage());
-        }
+    protected function indexOrder(): array
+    {
+        return ['category_order', 'asc'];
     }
 }

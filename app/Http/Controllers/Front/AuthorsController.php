@@ -11,4 +11,9 @@ class AuthorsController extends Controller
     {
         return view('front.authors.index', $authorsIndexService->buildIndex());
     }
+
+    public function show(string $slug, AuthorsIndexService $authorsIndexService)
+    {
+        return view('front.authors.show', $authorsIndexService->buildShow($slug));
+    }
 }

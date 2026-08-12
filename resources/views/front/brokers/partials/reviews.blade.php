@@ -18,13 +18,67 @@
             </div>
 
             @php
+                $userReview = $userReview ?? null;
                 if (session('review_timeout_' . $broker->id) && now()->greaterThan(session('review_timeout_' . $broker->id))) {
                     session()->forget(['review_submitted_' . $broker->id, 'review_timeout_' . $broker->id]);
                 }
             @endphp
 
             <div class="br-comment-compose">
-                @if(session('review_submitted_' . $broker->id))
+                @if($userReview && $userReview->isApproved())
+                    <div class="br-comment-alert br-comment-alert--success">
+                        Your review is published in the list below. Thanks for sharing your experience.
+                    </div>
+                @elseif($userReview && $userReview->isDeclined())
+                    <div class="br-comment-alert br-comment-alert--error">
+                        Your review was not approved. Contact support if you think this was a mistake.
+                    </div>
+                @elseif($userReview && $userReview->isPending())
+                    <h3 class="br-comment-compose__heading">Edit your pending comment</h3>
+                    <p class="br-comment-compose__text">This review is awaiting moderation. You can update or remove it from your profile until it is approved.</p>
+                    <form action="{{ route('user.reviews.update', $userReview) }}" method="POST" class="br-comment-form">
+                        @csrf
+                        @method('PUT')
+
+                        <div class="br-comment-form__row">
+                            <div class="br-comment-form__field">
+                                <label for="review_country">Country</label>
+                                <input type="text" name="country" id="review_country" value="{{ old('country', $userReview->country) }}" placeholder="Your country">
+                                @error('country')
+                                    <span class="br-comment-form__error">{{ $message }}</span>
+                                @enderror
+                            </div>
+                            <div class="br-comment-form__field">
+                                <label>Your rating</label>
+                                <div class="br-rating-input">
+                                    <div class="br-rating-input__stars" id="starRating">
+                                        @for($i = 1; $i <= 5; $i++)
+                                            <input type="radio" id="star{{ $i }}" name="rating" value="{{ $i }}" {{ (int) old('rating', $userReview->rating) === $i ? 'checked' : '' }} class="br-rating-input__radio">
+                                            <label for="star{{ $i }}">{{ $i }}</label>
+                                        @endfor
+                                    </div>
+                                    <span class="br-rating-input__text" id="ratingText">{{ old('rating', $userReview->rating) }}/5</span>
+                                </div>
+                                @error('rating')
+                                    <span class="br-comment-form__error">{{ $message }}</span>
+                                @enderror
+                            </div>
+                        </div>
+
+                        <div class="br-comment-form__field">
+                            <label for="review_description">Your comment</label>
+                            <textarea name="description" id="review_description" rows="4" required placeholder="Describe spreads, execution, withdrawals, support…">{{ old('description', $userReview->description) }}</textarea>
+                            @error('description')
+                                <span class="br-comment-form__error">{{ $message }}</span>
+                            @enderror
+                        </div>
+
+                        <div class="br-comment-form__actions">
+                            <button type="submit" class="br-btn br-btn--primary">Save changes</button>
+                            <a href="{{ route('user.profile', ['tab' => 'overview']) }}#ua-reviews" class="br-btn br-btn--secondary br-btn--sm">Manage in profile</a>
+                        </div>
+                    </form>
+                @elseif(session('review_submitted_' . $broker->id))
                     <div class="br-comment-alert br-comment-alert--success">
                         Your comment has been submitted and is pending moderation. Thank you!
                     </div>

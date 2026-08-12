@@ -2,6 +2,12 @@
     <div class="bc-result-sidebar__block">
         <p class="bc-result-sidebar__title">Jump to section</p>
         <nav class="bc-result-sidebar__nav">
+            @if(!empty($comparison['score_bars']))
+                <a href="#bc-result-scores" class="bc-result-sidebar__link">Category scores</a>
+            @endif
+            @if(!empty($comparison['promotions']['broker1']) || !empty($comparison['promotions']['broker2']))
+                <a href="#bc-result-promos" class="bc-result-sidebar__link">Active promotions</a>
+            @endif
             @foreach($comparison['toc'] as $item)
                 <a href="#bc-result-{{ $item['id'] }}" class="bc-result-sidebar__link" data-result-toc="{{ $item['id'] }}">
                     {{ $item['label'] }}

@@ -10,19 +10,22 @@
     $categoryScores = old('category_scores', is_array($broker->category_scores) ? $broker->category_scores : []);
 @endphp
 
-<div id="broker-accordion">
+<div id="broker-accordion" class="tw-space-y-5">
     {{-- SECTION 1: Profile & SEO --}}
-    <div class="card">
-        <div class="card-header" id="headingProfile">
+    <div class="card tw-bg-white tw-rounded-2xl tw-border tw-border-slate-200/70 tw-overflow-hidden">
+        <div class="card-header tw-bg-slate-50 tw-border-b tw-border-slate-200/70 tw-px-6 tw-py-4" id="headingProfile">
             <h5 class="mb-0">
-                <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseProfile" aria-expanded="true">
+                <button class="btn btn-link tw-w-full tw-text-left tw-flex tw-items-center tw-gap-3 tw-font-extrabold tw-text-slate-900 hover:tw-underline" type="button" data-toggle="collapse" data-target="#collapseProfile" aria-expanded="true">
                     1. Profile &amp; SEO
                 </button>
             </h5>
         </div>
         <div id="collapseProfile" class="collapse show" data-parent="#broker-accordion">
-            <div class="card-body">
+            <div class="card-body tw-px-6 tw-py-5">
                 <h6 class="text-primary font-weight-bold mb-3">Identity</h6>
+                <p class="tw-mt-1 tw-text-xs tw-text-slate-600">
+                    Used to identify the broker across admin + the public site (name, URL slug, headquarters country).
+                </p>
                 <div class="row">
                     <div class="col-md-4 form-group">
                         <label for="name">Broker Name <span class="text-danger">*</span></label>
@@ -62,6 +65,9 @@
                 </div>
 
                 <h6 class="text-primary font-weight-bold mb-3 mt-2">Affiliate Links</h6>
+                <p class="tw-mt-1 tw-text-xs tw-text-slate-600">
+                    Landing page URLs used when users click through to the broker.
+                </p>
                 <div class="row">
                     <div class="col-md-4 form-group">
                         <label for="visit_site">Visit Site URL</label>
@@ -135,6 +141,9 @@
                 </div>
 
                 <h6 class="text-primary font-weight-bold mb-3 mt-2">SEO</h6>
+                <p class="tw-mt-1 tw-text-xs tw-text-slate-600">
+                    Meta fields that improve search previews for broker pages.
+                </p>
                 <div class="form-group">
                     <label for="meta_title">Meta Title</label>
                     <input type="text" name="meta_title" id="meta_title" class="form-control" value="{{ old('meta_title', $broker->meta_title) }}">
@@ -152,17 +161,20 @@
     </div>
 
     {{-- SECTION 2: Classification --}}
-    <div class="card">
-        <div class="card-header" id="headingClassification">
+    <div class="card tw-bg-white tw-rounded-2xl tw-border tw-border-slate-200/70 tw-overflow-hidden">
+        <div class="card-header tw-bg-slate-50 tw-border-b tw-border-slate-200/70 tw-px-6 tw-py-4" id="headingClassification">
             <h5 class="mb-0">
-                <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseClassification">
+                <button class="btn btn-link collapsed tw-w-full tw-text-left tw-flex tw-items-center tw-gap-3 tw-font-extrabold tw-text-slate-900 hover:tw-underline" type="button" data-toggle="collapse" data-target="#collapseClassification">
                     2. Classification &amp; Regions
                 </button>
             </h5>
         </div>
         <div id="collapseClassification" class="collapse show" data-parent="#broker-accordion">
-            <div class="card-body">
+            <div class="card-body tw-px-6 tw-py-5">
                 <h6 class="text-primary font-weight-bold mb-2">Broker Categories</h6>
+                <p class="tw-mt-1 tw-text-xs tw-text-slate-600">
+                    Controls where this broker appears in category-based listings.
+                </p>
                 <p class="text-muted small mb-3">Used for <strong>Best Brokers → By Category</strong> listings. Select all that apply.</p>
                 <div class="form-group mb-4">
                     <div class="row">
@@ -180,6 +192,9 @@
                 </div>
 
                 <h6 class="text-primary font-weight-bold mb-2">Regions</h6>
+                <p class="tw-mt-1 tw-text-xs tw-text-slate-600">
+                    Select regions where the broker actively serves clients.
+                </p>
                 <p class="text-muted small mb-3">Select every region where this broker actively serves clients.</p>
                 <div class="form-group mb-4">
                     <div class="row">
@@ -197,6 +212,9 @@
                 </div>
 
                 <h6 class="text-primary font-weight-bold mb-2">Country Listings</h6>
+                <p class="tw-mt-1 tw-text-xs tw-text-slate-600">
+                    Optional: enables this broker on country-specific best-broker pages.
+                </p>
                 <p class="text-muted small mb-3">Optional — used for country-specific best-broker pages.</p>
                 <div class="form-group mb-0">
                     <div class="row">
@@ -215,17 +233,20 @@
     </div>
 
     {{-- SECTION 3: Trading & Payments --}}
-    <div class="card">
-        <div class="card-header" id="headingTrading">
+    <div class="card tw-bg-white tw-rounded-2xl tw-border tw-border-slate-200/70 tw-overflow-hidden">
+        <div class="card-header tw-bg-slate-50 tw-border-b tw-border-slate-200/70 tw-px-6 tw-py-4" id="headingTrading">
             <h5 class="mb-0">
-                <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseTrading">
+                <button class="btn btn-link collapsed tw-w-full tw-text-left tw-flex tw-items-center tw-gap-3 tw-font-extrabold tw-text-slate-900 hover:tw-underline" type="button" data-toggle="collapse" data-target="#collapseTrading">
                     3. Trading &amp; Payments
                 </button>
             </h5>
         </div>
         <div id="collapseTrading" class="collapse" data-parent="#broker-accordion">
-            <div class="card-body">
+            <div class="card-body tw-px-6 tw-py-5">
                 <h6 class="text-primary font-weight-bold mb-3">Trading Conditions</h6>
+                <p class="tw-mt-1 tw-text-xs tw-text-slate-600">
+                    Minimum deposits, spreads, and fee details that affect how users experience this broker.
+                </p>
                 <div class="row">
                     <div class="col-md-3 form-group">
                         <label for="minimum_deposit">Min. Deposit ($)</label>
@@ -267,6 +288,9 @@
                 </div>
 
                 <h6 class="text-primary font-weight-bold mb-3">Platforms &amp; Markets</h6>
+                <p class="tw-mt-1 tw-text-xs tw-text-slate-600">
+                    Select the platforms and asset classes this broker supports.
+                </p>
                 <div class="form-group">
                     <label>Trading Platforms</label>
                     <div class="row">
@@ -302,6 +326,9 @@
                 </div>
 
                 <h6 class="text-primary font-weight-bold mb-3">Payment Methods</h6>
+                <p class="tw-mt-1 tw-text-xs tw-text-slate-600">
+                    Summaries for deposits, withdrawals, and general payment information.
+                </p>
                 <div class="form-group">
                     <label for="deposit_methods">Deposit Methods</label>
                     <textarea name="deposit_methods" id="deposit_methods" class="form-control" rows="2">{{ old('deposit_methods', $broker->deposit_methods) }}</textarea>
@@ -316,6 +343,9 @@
                 </div>
 
                 <h6 class="text-primary font-weight-bold mb-3">Tools &amp; Support</h6>
+                <p class="tw-mt-1 tw-text-xs tw-text-slate-600">
+                    What the broker offers beyond basic trading (tools, support, research, etc.).
+                </p>
                 @foreach([
                     'mobile_trading' => 'Mobile Trading',
                     'web_trader' => 'Web Trader',
@@ -347,17 +377,20 @@
     </div>
 
     {{-- SECTION 4: Safety, Scores & Review --}}
-    <div class="card">
-        <div class="card-header" id="headingSafety">
+    <div class="card tw-bg-white tw-rounded-2xl tw-border tw-border-slate-200/70 tw-overflow-hidden">
+        <div class="card-header tw-bg-slate-50 tw-border-b tw-border-slate-200/70 tw-px-6 tw-py-4" id="headingSafety">
             <h5 class="mb-0">
-                <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseSafety">
+                <button class="btn btn-link collapsed tw-w-full tw-text-left tw-flex tw-items-center tw-gap-3 tw-font-extrabold tw-text-slate-900 hover:tw-underline" type="button" data-toggle="collapse" data-target="#collapseSafety">
                     4. Safety, Scores &amp; Review
                 </button>
             </h5>
         </div>
         <div id="collapseSafety" class="collapse" data-parent="#broker-accordion">
-            <div class="card-body">
+            <div class="card-body tw-px-6 tw-py-5">
                 <h6 class="text-primary font-weight-bold mb-3">Scores</h6>
+                <p class="tw-mt-1 tw-text-xs tw-text-slate-600">
+                    These values power safety scoring + review summaries. Keep ranges within the labels.
+                </p>
                 <div class="row">
                     <div class="col-md-4 form-group">
                         <label for="rating">Overall Rating (0–5)</label>
@@ -375,6 +408,9 @@
                 </div>
                 <div class="form-group">
                     <label>Category Scores (0–10)</label>
+                    <p class="tw-mt-1 tw-text-xs tw-text-slate-600">
+                        Per-category scoring used to build “Best broker” comparisons.
+                    </p>
                     <div class="row">
                         @foreach($formOptions['categoryScores'] as $key => $label)
                             <div class="col-md-4 form-group">
@@ -436,6 +472,9 @@
                 </div>
 
                 <h6 class="text-primary font-weight-bold mb-3">Review Content</h6>
+                <p class="tw-mt-1 tw-text-xs tw-text-slate-600">
+                    Editorial text shown in broker reviews. Write concise, factual pros/cons.
+                </p>
                 <div class="form-group">
                     <label for="verdict">Verdict</label>
                     <textarea name="verdict" id="verdict" class="form-control" rows="3">{{ old('verdict', $broker->verdict) }}</textarea>
@@ -452,6 +491,9 @@
                 </div>
 
                 <h6 class="text-primary font-weight-bold mb-3 mt-2">Scam Flag</h6>
+                <p class="tw-mt-1 tw-text-xs tw-text-slate-600">
+                    Mark only when you have reliable evidence. Add a reason and date for auditability.
+                </p>
                 <div class="custom-control custom-checkbox mb-3">
                     <input type="hidden" name="is_scam" value="0">
                     <input type="checkbox" class="custom-control-input" name="is_scam" id="is_scam" value="1" @checked(old('is_scam', $broker->is_scam))>
@@ -473,14 +515,25 @@
 
 @include('admin.partials._editorial_fields', ['model' => $broker, 'editorialOptions' => $formOptions['editorialOptions'] ?? null])
 
-<div class="mt-4">
-    <button type="submit" class="btn btn-primary btn-lg">
-        <i class="fas fa-save"></i> {{ $isEdit ? 'Update Broker' : 'Create Broker' }}
-    </button>
-    @if($isEdit)
-        <a href="{{ route('admin_account_options_index', $broker->id) }}" class="btn btn-outline-secondary btn-lg ml-2">
-            <i class="fas fa-layer-group"></i> Account Options
-        </a>
-    @endif
-    <a href="{{ route('admin_broker_show') }}" class="btn btn-light btn-lg ml-2">Cancel</a>
+<div class="tw-pt-2 tw-flex tw-flex-col sm:tw-flex-row sm:tw-items-center sm:tw-justify-between tw-gap-3">
+    <div class="tw-flex tw-items-center tw-gap-3">
+        <button type="submit"
+                class="tw-inline-flex tw-items-center tw-gap-2 tw-rounded-xl tw-bg-brand tw-text-white tw-px-5 tw-py-2.5 tw-text-sm tw-font-bold hover:tw-bg-brand/90">
+            <i class="fas fa-save"></i>
+            {{ $isEdit ? 'Update Broker' : 'Create Broker' }}
+        </button>
+
+        @if($isEdit)
+            <a href="{{ route('admin_account_options_index', $broker->id) }}"
+               class="tw-inline-flex tw-items-center tw-gap-2 tw-rounded-xl tw-border tw-border-slate-200 tw-bg-white tw-text-slate-800 tw-px-4 tw-py-2.5 tw-text-sm tw-font-semibold hover:tw-bg-slate-50">
+                <i class="fas fa-layer-group tw-text-slate-400"></i>
+                Account Options
+            </a>
+        @endif
+    </div>
+
+    <a href="{{ route('admin_broker_show') }}"
+       class="tw-inline-flex tw-items-center tw-gap-2 tw-rounded-xl tw-bg-slate-50 tw-border tw-border-slate-200 tw-text-slate-700 tw-px-4 tw-py-2.5 tw-text-sm tw-font-semibold hover:tw-bg-slate-100">
+        Cancel
+    </a>
 </div>

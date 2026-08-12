@@ -9,7 +9,13 @@
             <article class="br-promo">
                 <div class="br-promo__summary">
                     <div>
-                        <span class="br-promo__type">{{ $promo->promo_type }}</span>
+                        <div class="br-promo__head">
+                            <span class="br-promo__type">{{ $promo->promo_type }}</span>
+                            @php $expiryBadge = $promo->expiryBadge(); @endphp
+                            @if($expiryBadge)
+                                @include('front.partials.expiry_badge', ['badge' => $expiryBadge])
+                            @endif
+                        </div>
                         <h3 class="br-promo__title">{{ $promo->title }}</h3>
                         @if($promo->bonus_amount || $promo->bonus_percentage)
                             <p class="br-promo__value">

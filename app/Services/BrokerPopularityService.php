@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Broker;
 use Illuminate\Support\Collection;
+use App\Support\BrokerTaxonomy;
 
 class BrokerPopularityService
 {
@@ -11,11 +12,11 @@ class BrokerPopularityService
 
     private const LEADERBOARD_SIZE = 6;
 
-    public function forHomepage(): array
+    public function forHomepage(string $countrySlug = 'global'): array
     {
         $reviewCounts = $this->reviewCountsByBroker();
 
-        $recommended = $this->recommended($reviewCounts);
+        $recommended = $this->recommended($reviewCounts, $countrySlug);
         $scam = $this->scamBrokers($reviewCounts);
         $ranking = $this->popularityRanking($reviewCounts);
 
@@ -29,14 +30,42 @@ class BrokerPopularityService
     /** @return Collection<int, int> */
     private function reviewCountsByBroker(): Collection
     {
-        return Broker::query()
-            ->withCount([
-                'reviews as approved_reviews_count' => fn ($query) => $query->where('status', 1),
-            ])
-            ->pluck('approved_reviews_count', 'id');
+        return \App\Models\Review::query()
+            ->where('status', 1)
+            ->selectRaw('broker_id, COUNT(*) as approved_reviews_count')
+            ->groupBy('broker_id')
+            ->pluck('approved_reviews_count', 'broker_id');
     }
 
-    private function recommended(Collection $reviewCounts): Collection
+    private function recommended(Collection $reviewCounts, string $countrySlug = 'global'): Collection
+    {
+        if ($countrySlug === 'global') {
+            return $this->globalRecommended($reviewCounts);
+        }
+
+        $countryService = app(CountryBrokersService::class);
+        if (! isset(BrokerTaxonomy::countriesWithFlags()[$countrySlug])) {
+            return $this->globalRecommended($reviewCounts);
+        }
+
+        $countryBrokers = $countryService->headquartersQueryForSlug($countrySlug)
+            ->orderByDesc('top_broker')
+            ->orderByDesc('rating')
+            ->take(self::GRID_SIZE)
+            ->get();
+
+        if ($countryBrokers->isNotEmpty()) {
+            return $countryBrokers->values()->map(fn (Broker $broker, int $index) => $this->formatBroker(
+                $broker,
+                max(1, (int) $broker->top_broker ?: ($index + 1)),
+                (int) ($reviewCounts[$broker->id] ?? 0),
+            ));
+        }
+
+        return $this->globalRecommended($reviewCounts);
+    }
+
+    private function globalRecommended(Collection $reviewCounts): Collection
     {
         return Broker::query()
             ->where('is_scam', false)
@@ -73,6 +102,8 @@ class BrokerPopularityService
         return Broker::query()
             ->where('is_scam', false)
             ->whereNotNull('rating')
+            ->orderByDesc('rating')
+            ->take(30)
             ->get()
             ->map(function (Broker $broker) use ($reviewCounts) {
                 $reviews = (int) ($reviewCounts[$broker->id] ?? 0);

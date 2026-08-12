@@ -7,6 +7,7 @@
 
 @section('title', $pageTitle)
 @section('meta_description', $metaDescription)
+@section('canonical', route('brokers.best', ['slug' => $guidePage['slug'] ?? request()->route('slug')]))
 
 @push('head')
     <link rel="stylesheet" href="{{ asset('css/best-broker-guide.css') }}?v=6">

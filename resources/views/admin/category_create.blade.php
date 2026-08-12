@@ -37,14 +37,7 @@
                                 <label class="font-weight-bold">Category Order <span class="text-danger">*</span></label>
                                 <input type="number" class="form-control" name="category_order" value="" placeholder="Enter order number" required>
                             </div>
-                            <div class="form-group">
-                                <label class="font-weight-bold">Select Language</label>
-                                <select name="language_id" class="form-control custom-select" required>
-                                    @foreach($global_language_data as $row)
-                                    <option value="{{ $row->id }}">{{ $row->name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
+                            @include('admin.partials.language_id_field')
                             <div class="form-group text-center mt-4">
                                 <button type="submit" class="btn btn-primary btn-lg px-5">Create Category</button>
                             </div>

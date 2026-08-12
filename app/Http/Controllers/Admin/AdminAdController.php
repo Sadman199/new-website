@@ -2,14 +2,17 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
 use App\Models\Ad;
+use App\Services\Admin\PublicUploadService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 
-class AdminAdController extends Controller
+class AdminAdController extends AdminController
 {
+    public function __construct(protected PublicUploadService $uploads)
+    {
+    }
+
     public function index(Request $request)
     {
         $query = Ad::query()->orderByDesc('priority')->orderByDesc('id');
@@ -22,14 +25,7 @@ class AdminAdController extends Controller
             $query->where('is_active', (bool) $request->get('active'));
         }
 
-        if ($search = trim((string) $request->get('q'))) {
-            $query->where(function ($q) use ($search) {
-                $q->where('title', 'like', '%' . $search . '%')
-                    ->orWhere('category', 'like', '%' . $search . '%');
-            });
-        }
-
-        $ads = $query->paginate(20)->withQueryString();
+        $ads = $this->paginateWithSearch($query, $request, ['title', 'category'], 20);
 
         return view('admin.ads.index', compact('ads'));
     }
@@ -52,53 +48,55 @@ class AdminAdController extends Controller
     public function store(Request $request)
     {
         $data = $this->validated($request);
-        $data['image'] = $this->storeImage($request);
+        $data['image'] = $this->uploads->storeFromRequest($request, 'image', 'uploads', 'ad_');
         $data['pages'] = $this->parsePages($request->input('pages'));
 
         Ad::create($data);
 
-        return redirect()->route('admin_ads_index')->with('success', 'Ad created successfully.');
+        return $this->flashSuccess('admin_ads_index', 'Ad created successfully.');
     }
 
     public function edit($id)
     {
-        $ad = Ad::findOrFail($id);
+        $ad = $this->findOrFail(Ad::class, $id);
 
         return view('admin.ads.form', compact('ad'));
     }
 
     public function update(Request $request, $id)
     {
-        $ad = Ad::findOrFail($id);
+        $ad = $this->findOrFail(Ad::class, $id);
         $data = $this->validated($request, $ad->id);
         $data['pages'] = $this->parsePages($request->input('pages'));
-
-        if ($request->hasFile('image')) {
-            $this->deleteImageFile($ad->image);
-            $data['image'] = $this->storeImage($request);
-        }
+        $data['image'] = $this->uploads->replaceFromRequest(
+            $request,
+            'image',
+            $ad->image,
+            'uploads',
+            'ad_'
+        );
 
         $ad->update($data);
 
-        return redirect()->route('admin_ads_index')->with('success', 'Ad updated successfully.');
+        return $this->flashSuccess('admin_ads_index', 'Ad updated successfully.');
     }
 
     public function destroy($id)
     {
-        $ad = Ad::findOrFail($id);
-        $this->deleteImageFile($ad->image);
+        $ad = $this->findOrFail(Ad::class, $id);
+        $this->uploads->delete($ad->image ? 'uploads/' . ltrim($ad->image, '/') : null);
         $ad->delete();
 
-        return redirect()->route('admin_ads_index')->with('success', 'Ad deleted successfully.');
+        return $this->flashSuccess('admin_ads_index', 'Ad deleted successfully.');
     }
 
     public function toggle($id)
     {
-        $ad = Ad::findOrFail($id);
+        $ad = $this->findOrFail(Ad::class, $id);
         $ad->is_active = ! $ad->is_active;
         $ad->save();
 
-        return redirect()->back()->with('success', $ad->is_active ? 'Ad activated.' : 'Ad deactivated.');
+        return $this->flashBack($ad->is_active ? 'Ad activated.' : 'Ad deactivated.');
     }
 
     private function validated(Request $request, ?int $id = null): array
@@ -148,36 +146,5 @@ class AdminAdController extends Controller
             ->all();
 
         return $pages ?: null;
-    }
-
-    private function storeImage(Request $request): ?string
-    {
-        if (! $request->hasFile('image')) {
-            return null;
-        }
-
-        $file = $request->file('image');
-        $name = 'ad_' . time() . '_' . Str::random(6) . '.' . $file->extension();
-        $dest = rtrim($_SERVER['DOCUMENT_ROOT'] ?? public_path(), '/') . '/uploads/';
-
-        if (! is_dir($dest)) {
-            @mkdir($dest, 0755, true);
-        }
-
-        $file->move($dest, $name);
-
-        return $name;
-    }
-
-    private function deleteImageFile(?string $filename): void
-    {
-        if (! $filename) {
-            return;
-        }
-
-        $path = rtrim($_SERVER['DOCUMENT_ROOT'] ?? public_path(), '/') . '/uploads/' . ltrim($filename, '/');
-        if (is_file($path)) {
-            @unlink($path);
-        }
     }
 }

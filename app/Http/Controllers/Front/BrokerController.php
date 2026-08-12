@@ -16,6 +16,7 @@ use App\Services\BlogIndexService;
 use App\Services\BestBrokersIndexService;
 use App\Services\BrokerReviewsIndexService;
 use App\Services\BrokerAssessmentService;
+use App\Services\BrokerReviewScoreService;
 use App\Services\EditorialAssignmentService;
 use App\Support\BrokerListingFilter;
 use App\Support\BrokerTaxonomy;
@@ -77,28 +78,32 @@ class BrokerController extends Controller
     ) {
         Helpers::read_json();
 
-        $brokers = Broker::query()
-            ->where('is_scam', false)
-            ->with(['accountOptions' => fn ($query) => $query->ordered()])
-            ->withCount(['reviews as approved_review_count' => function ($query) {
-                $query->where('status', 1);
-            }])
-            ->orderByDesc('rating')
-            ->orderBy('name')
-            ->get();
+        $brokersPayload = \Illuminate\Support\Facades\Cache::remember('broker_reviews_index_v2', 1800, function () use ($reviewsIndexService, $assessmentService) {
+            return Broker::query()
+                ->where('is_scam', false)
+                ->with(['accountOptions' => fn ($query) => $query->ordered()])
+                ->withCount(['reviews as approved_review_count' => function ($query) {
+                    $query->where('status', 1);
+                }])
+                ->orderByDesc('rating')
+                ->orderBy('name')
+                ->get()
+                ->map(function (Broker $broker) use ($reviewsIndexService, $assessmentService) {
+                    $payload = $reviewsIndexService->serialize($broker);
+                    $payload['performance'] = $assessmentService->cardMetrics($broker);
 
-        $brokersPayload = $brokers
-            ->map(function (Broker $broker) use ($reviewsIndexService, $assessmentService) {
-                $payload = $reviewsIndexService->serialize($broker);
-                $payload['performance'] = $assessmentService->cardMetrics($broker);
-
-                return $payload;
-            })
-            ->values();
+                    return $payload;
+                })
+                ->values()
+                ->all();
+        });
 
         $marketFilters = $reviewsIndexService->marketFilters();
 
-        return view('front.brokers.reviews_index', compact('brokersPayload', 'marketFilters'));
+        return view('front.brokers.reviews_index', [
+            'brokersPayload' => collect($brokersPayload),
+            'marketFilters' => $marketFilters,
+        ]);
     }
 
     public function reviewDetail($slug)
@@ -144,14 +149,13 @@ class BrokerController extends Controller
             return $baseSlug;
         }
 
-        $broker = Broker::all()->first(function (Broker $broker) use ($slug, $baseSlug) {
-            $nameSlug = Str::slug($broker->name);
-
-            return $broker->slug === $baseSlug
-                || $nameSlug === $baseSlug
-                || $nameSlug . '-review' === $slug
-                || Str::slug($broker->name . ' review') === $slug;
-        });
+        $broker = Broker::query()
+            ->where(function ($query) use ($slug, $baseSlug) {
+                $query->where('slug', $baseSlug)
+                    ->orWhereRaw('LOWER(REPLACE(name, " ", "-")) = ?', [$baseSlug])
+                    ->orWhereRaw('LOWER(REPLACE(name, " ", "-")) = ?', [$slug]);
+            })
+            ->first();
 
         if ($broker) {
             return $broker->slug;
@@ -178,6 +182,7 @@ class BrokerController extends Controller
         $broker = Broker::with([
             'faqs',
             'accountOptions',
+            'guides',
             'forexBonuses' => fn ($q) => $q->where('promotion_status', '!=', 'expired')->latest('publish_date'),
             'writtenByAuthor',
             'editedByAuthor',
@@ -207,6 +212,10 @@ class BrokerController extends Controller
             'count' => $approved_reviews->count(),
             'average' => round((float) $approved_reviews->avg('rating'), 1),
         ];
+
+        $userReview = auth('web')->check()
+            ? $broker->reviews()->where('user_id', auth('web')->id())->first()
+            : null;
     
         // Fetch the featured brokers
         $featured = Broker::where('featured_broker', 1)->get();
@@ -214,11 +223,7 @@ class BrokerController extends Controller
         // Fetch the home advertisement data
         $home_ad_data = HomeAdvertisement::where('id', 1)->first();
     
-        // Fetch all brokers for comparison, excluding the current broker
-        $compare_brokers = Broker::where('id', '!=', $broker->id)
-        ->inRandomOrder()
-        ->limit(15)
-        ->get();        $faqs = $broker->faqs;
+        $faqs = $broker->faqs;
         $account_options = $broker->accountOptions->filter(function ($option) {
             return ($option->is_active ?? true) !== false;
         });
@@ -227,9 +232,36 @@ class BrokerController extends Controller
             'updated_at' => $broker->updated_at
                 ? $broker->updated_at->format('M j, Y')
                 : now()->format('M j, Y'),
+            'updated_relative' => $broker->updated_at
+                ? $broker->updated_at->diffForHumans()
+                : null,
         ];
 
-        $reviewToc = \App\Support\BrokerReviewPresenter::tableOfContents($broker, $account_options);
+        $scoreBreakdown = app(BrokerReviewScoreService::class)->breakdown($broker);
+        $snapshot = \App\Support\BrokerReviewPresenter::decisionSnapshot($broker, $reviewStats);
+
+        $compare_brokers = Broker::query()
+            ->where('id', '!=', $broker->id)
+            ->where('is_scam', false)
+            ->whereNotNull('slug')
+            ->where('slug', '!=', '')
+            ->orderByDesc('rating')
+            ->limit(8)
+            ->get();
+
+        $publishedGuides = app(\App\Services\BrokerGuideService::class)->publishedGuidesForBroker($broker);
+        $guideHubTitle = app(\App\Services\BrokerGuideHubService::class)->titleFor($broker);
+        $guideHubDescription = app(\App\Services\BrokerGuideHubService::class)->description();
+
+        $reviewToc = \App\Support\BrokerReviewPresenter::tableOfContents($broker, $account_options, $scoreBreakdown['has_scores']);
+        $reviewJsonLd = \App\Support\BrokerReviewJsonLd::graph(
+            $broker,
+            $approved_reviews,
+            $faqs,
+            $reviewStats,
+            $editorialTeam,
+            $snapshot,
+        );
 
         // Return the view and pass all necessary data
         return view('front.brokers.broker_detail', compact(
@@ -245,14 +277,26 @@ class BrokerController extends Controller
             'editorialCredits',
             'editorialTeam',
             'reviewStats',
+            'userReview',
             'reviewPageMeta',
             'reviewToc',
+            'scoreBreakdown',
+            'snapshot',
+            'publishedGuides',
+            'guideHubTitle',
+            'guideHubDescription',
+            'reviewJsonLd',
         ));
     }
     
 
 
 public function liveSearch(Request $request)
+{
+    return $this->search($request);
+}
+
+public function search(Request $request)
 {
     $query = $request->get('query');
 

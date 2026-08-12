@@ -1,9 +1,12 @@
 @extends('front.layout.app')
 @section('title', 'Find the Best Forex Brokers Today - ' . date('Y'))
 @section('meta_description', 'Compare and choose from the top regulated forex brokers. Discover the best platforms, spreads, bonuses, and leverage options in ' . date('Y') . '.')
+@section('canonical', route('all_brokers'))
 @section('main_content')
 <div class="py-8 border-b">
     <div class="container max-w-7xl mx-auto w-full px-4 mt-20">
+        @include('front.brokers.partials.country_context_hero', ['variant' => 'legacy'])
+
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center">
             <!-- Heading aligned left -->
             <div class="mb-4 md:mb-0">
@@ -216,14 +219,23 @@
                 </form>
     
                <script>
-                    $(function() {
-                    let open = true;
-                    $('#filter-toggle').on('click', function() {
-                        $('#filter-content').toggleClass('hidden', open);
-                        $('#toggle-icon').toggleClass('rotate-180', !open);
-                        open = !open;
-                    });
-                    });
+                    (function () {
+                        var toggle = document.getElementById('filter-toggle');
+                        var content = document.getElementById('filter-content');
+                        var icon = document.getElementById('toggle-icon');
+                        if (!toggle || !content) {
+                            return;
+                        }
+
+                        var open = true;
+                        toggle.addEventListener('click', function () {
+                            open = !open;
+                            content.classList.toggle('hidden', !open);
+                            if (icon) {
+                                icon.classList.toggle('rotate-180', !open);
+                            }
+                        });
+                    })();
                     </script>
     
     
@@ -283,28 +295,4 @@
     </div>
 </section>
 
-@endsection
-
-@section('scripts')
-<script>
-    $(document).ready(function() {
-        $('#filter-form').on('submit', function(e) {
-            e.preventDefault();
-            $.ajax({
-                url: $(this).attr('action'),
-                method: 'GET',
-                data: $(this).serialize(),
-                success: function(response) {
-                    $('.grid-cols-1.sm\\:grid-cols-2.lg\\:grid-cols-3.xl\\:grid-cols-3').html(
-                        $(response).find('.grid-cols-1.sm\\:grid-cols-2.lg\\:grid-cols-3.xl\\:grid-cols-3').html()
-                    );
-                },
-                error: function(xhr) {
-                    console.error('Error applying filters:', xhr);
-                    alert('An error occurred while applying filters. Please try again.');
-                }
-            });
-        });
-    });
-</script>
 @endsection

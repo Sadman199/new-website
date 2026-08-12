@@ -212,7 +212,7 @@
                 @foreach($pfFeatured->take(5) as $firm)
                     <a href="{{ route('prop_firms.show', $firm->slug) }}" class="pf-nav-firm">
                         <span class="pf-nav-firm-logo">
-                            @if($firm->logo)<img src="{{ asset($firm->logo) }}" alt="">@endif
+                            @if($firm->logo)<img src="{{ asset($firm->logo) }}" alt="" loading="lazy" decoding="async">@endif
                         </span>
                         <span class="pf-nav-firm-name">{{ $firm->name }}</span>
                         @if($firm->trust_score)<span class="pf-nav-trust">{{ number_format($firm->trust_score, 1) }}</span>@endif

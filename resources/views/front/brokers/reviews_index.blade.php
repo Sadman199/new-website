@@ -2,17 +2,13 @@
 
 @section('title', 'Broker Reviews ' . date('Y') . ' | BrokersCourt')
 @section('meta_description', 'Browse independent forex broker reviews. Compare fees, regulation, platforms, and safety scores to find the right broker for your trading style.')
+@section('canonical', route('broker.reviews.index'))
 
 @push('head')
     <link rel="stylesheet" href="{{ asset('css/broker-reviews-index.css') }}?v=6">
 @endpush
 
 @section('main_content')
-@php
-    $countryName = ($preferredCountry['slug'] ?? 'global') === 'global'
-        ? 'worldwide'
-        : ($preferredCountry['name'] ?? 'your country');
-@endphp
 <div class="bri-page">
     <header class="bri-hero">
         <div class="bri-wrap">
@@ -28,6 +24,8 @@
             </p>
             <h1 class="bri-hero__title">Broker <span class="bri-hero__accent">reviews</span></h1>
             <p class="bri-hero__subtitle">Find the right broker and invest on your own — compare regulation, fees, and platforms before you open an account.</p>
+
+            @include('front.brokers.partials.country_context_hero')
         </div>
     </header>
 
@@ -74,7 +72,11 @@
                 <div class="bri-main__toolbar">
                     <div class="bri-main__toolbar-text">
                         <h2 class="bri-main__heading">
-                            Brokers available in {{ $countryName }} in {{ date('Y') }}
+                            @if(($preferredCountry['slug'] ?? 'global') === 'global')
+                                Brokers available worldwide in {{ date('Y') }}
+                            @else
+                                Filter results for {{ $preferredCountry['name'] ?? 'your region' }}
+                            @endif
                         </h2>
                         <p class="bri-results-count" id="briResultsCount"></p>
                     </div>

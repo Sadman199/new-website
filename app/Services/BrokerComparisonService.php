@@ -4,13 +4,25 @@ namespace App\Services;
 
 use App\Http\Controllers\Front\BrokerController;
 use App\Models\Broker;
+use App\Models\ForexBonus;
 use Illuminate\Support\Collection;
 
 class BrokerComparisonService
 {
     public function __construct(
         protected BrokerSafetyScoreService $safetyScoreService,
+        protected PromotionsIndexService $promotionsIndexService,
     ) {    }
+
+    public static function canonicalPairUrl(string $slug1, string $slug2): string
+    {
+        $slugs = collect([$slug1, $slug2])->filter()->sort()->values();
+
+        return route('brokers.compare', [
+            'broker1_slug' => $slugs[0],
+            'broker2_slug' => $slugs[1],
+        ]);
+    }
 
     /** @return array<string, mixed> */
     public function buildPairComparison(Broker $broker1, Broker $broker2): array
@@ -34,11 +46,76 @@ class BrokerComparisonService
             'sections' => $sections,
             'summary' => $this->quickSummary($broker1, $broker2, $left, $right),
             'overall_winner' => $this->overallWinner($left, $right),
+            'score_bars' => $this->scoreBars($left, $right),
+            'promotions' => [
+                'broker1' => $this->activePromoForBroker($broker1),
+                'broker2' => $this->activePromoForBroker($broker2),
+            ],
             'toc' => collect($sections)->map(fn ($section) => [
                 'id' => $section['id'],
                 'label' => $section['label'],
             ])->all(),
         ];
+    }
+
+    /** @return array<int, array<string, mixed>> */
+    protected function scoreBars(array $left, array $right): array
+    {
+        $labels = [
+            'fees' => 'Fees & costs',
+            'safety' => 'Safety & regulation',
+            'platforms' => 'Platforms',
+            'deposit_withdrawal' => 'Deposits & withdrawals',
+            'customer_support' => 'Customer support',
+            'education' => 'Education',
+        ];
+
+        $bars = [];
+
+        foreach ($labels as $key => $label) {
+            $lScore = $left['category_scores'][$key] ?? null;
+            $rScore = $right['category_scores'][$key] ?? null;
+
+            if ($lScore === null && $rScore === null) {
+                continue;
+            }
+
+            $bars[] = [
+                'key' => $key,
+                'label' => $label,
+                'left' => $lScore,
+                'right' => $rScore,
+                'left_pct' => $lScore !== null ? min(100, max(0, ($lScore / 10) * 100)) : 0,
+                'right_pct' => $rScore !== null ? min(100, max(0, ($rScore / 10) * 100)) : 0,
+                'winner' => $this->winnerHigher($lScore, $rScore),
+            ];
+        }
+
+        return $bars;
+    }
+
+    /** @return array<string, mixed>|null */
+    protected function activePromoForBroker(Broker $broker): ?array
+    {
+        $bonus = ForexBonus::query()
+            ->where('broker_id', $broker->id)
+            ->where(function ($query) {
+                $query->whereNull('expiry_date')
+                    ->orWhereDate('expiry_date', '>=', now());
+            })
+            ->where(function ($query) {
+                $query->whereNull('promotion_status')
+                    ->orWhereIn('promotion_status', ['ongoing', 'limited-time']);
+            })
+            ->orderByDesc('is_featured')
+            ->orderByDesc('publish_date')
+            ->first();
+
+        if (! $bonus || ! $bonus->isActivePromotion()) {
+            return null;
+        }
+
+        return $this->promotionsIndexService->serializeCard($bonus);
     }
 
     /** @return array<int, array<string, mixed>> */
@@ -65,7 +142,7 @@ class BrokerComparisonService
                 'rows' => [
                     $this->row('Regulators', $left['regulation'], $right['regulation'], null),
                     $this->row('Regulatory tier', $left['regulatory_tier'], $right['regulatory_tier'], $this->winnerLowerTier($left['regulatory_tier'], $right['regulatory_tier'])),
-                    $this->row('Broker type', $left['broker_type'], $right['broker_type'], null),
+                    $this->row('Broker type', $left['broker_type'], $right['broker_type'], $this->winnerRegulated($left['broker_type'], $right['broker_type'])),
                     $this->row('Investor protection', $left['investor_protection'], $right['investor_protection'], $this->winnerBool($left['investor_protection'], $right['investor_protection'])),
                     $this->row('Segregated funds', $left['segregation_of_funds'], $right['segregation_of_funds'], $this->winnerBool($left['segregation_of_funds'], $right['segregation_of_funds'])),
                     $this->row('Negative balance protection', $left['negative_balance_protection'], $right['negative_balance_protection'], $this->winnerBool($left['negative_balance_protection'], $right['negative_balance_protection'])),
@@ -78,7 +155,7 @@ class BrokerComparisonService
                     $this->row('Minimum deposit', $left['minimum_deposit'], $right['minimum_deposit'], $this->winnerLower($this->numeric($left['minimum_deposit_raw']), $this->numeric($right['minimum_deposit_raw']))),
                     $this->row('Average spreads', $left['spreads'], $right['spreads'], null),
                     $this->row('Commission', $left['commission'], $right['commission'], null),
-                    $this->row('Maximum leverage', $left['leverage'], $right['leverage'], null),
+                    $this->row('Maximum leverage', $left['leverage'], $right['leverage'], $this->winnerLeverage($left['leverage'], $right['leverage'])),
                     $this->row('Fee level', $left['fee_level'], $right['fee_level'], null),
                     $this->row('Withdrawal fee', $left['withdrawal_fee'], $right['withdrawal_fee'], null),
                 ],
@@ -292,6 +369,41 @@ class BrokerComparisonService
         }
 
         return $l ? 'broker1' : 'broker2';
+    }
+
+    protected function winnerRegulated(string $left, string $right): ?string
+    {
+        $l = strtolower($left) === 'regulated';
+        $r = strtolower($right) === 'regulated';
+
+        if ($l === $r) {
+            return null;
+        }
+
+        return $l ? 'broker1' : 'broker2';
+    }
+
+    protected function winnerLeverage(string $left, string $right): ?string
+    {
+        $l = $this->leverageNumber($left);
+        $r = $this->leverageNumber($right);
+
+        if ($l === null || $r === null || $l === $r) {
+            return null;
+        }
+
+        return $l > $r ? 'broker1' : 'broker2';
+    }
+
+    protected function leverageNumber(string $value): ?float
+    {
+        if (preg_match('/1\s*:\s*([0-9,.]+)/i', $value, $matches)) {
+            return (float) str_replace(',', '', $matches[1]);
+        }
+
+        $numeric = preg_replace('/[^0-9.]/', '', $value);
+
+        return $numeric !== '' ? (float) $numeric : null;
     }
 
     protected function winnerLowerTier(string $left, string $right): ?string

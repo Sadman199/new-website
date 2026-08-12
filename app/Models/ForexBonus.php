@@ -224,7 +224,7 @@ class ForexBonus extends Model
         return $this->detailUrl()
             ?? $this->affiliate_link
             ?? $this->link
-            ?? route('forex_deposit_bonus');
+            ?? route('promotions.index');
     }
 
     public function promoTypeShort(): string
@@ -291,19 +291,113 @@ class ForexBonus extends Model
 
     public function expiryLabel(): ?string
     {
+        $badge = $this->expiryBadge();
+
+        return $badge['label'] ?? null;
+    }
+
+    /** @return array{label: string, short: string, tone: string, days: int|null}|null */
+    public function expiryBadge(): ?array
+    {
         if (! $this->expiry_date) {
             return null;
         }
 
-        if ($this->expiry_date->isPast()) {
-            return 'Expired';
+        $days = $this->daysUntilExpiry();
+        $tone = $this->expiryTone();
+
+        if ($days === null) {
+            return null;
         }
 
-        if ($this->expiry_date->lte(now()->addDays(14))) {
-            return 'Ends '.$this->expiry_date->format('M j');
+        if ($days < 0) {
+            return [
+                'label' => 'Expired',
+                'short' => 'Expired',
+                'tone' => 'expired',
+                'days' => $days,
+            ];
         }
 
-        return 'Until '.$this->expiry_date->format('M j, Y');
+        if ($days === 0) {
+            return [
+                'label' => 'Ends today',
+                'short' => 'Ends today',
+                'tone' => 'urgent',
+                'days' => 0,
+            ];
+        }
+
+        if ($days === 1) {
+            return [
+                'label' => 'Ends '.$this->expiry_date->format('M j'),
+                'short' => '1 day left',
+                'tone' => 'urgent',
+                'days' => 1,
+            ];
+        }
+
+        if ($days <= 7) {
+            return [
+                'label' => 'Ends '.$this->expiry_date->format('M j'),
+                'short' => $days.' days left',
+                'tone' => 'urgent',
+                'days' => $days,
+            ];
+        }
+
+        if ($days <= 14) {
+            return [
+                'label' => 'Ends '.$this->expiry_date->format('M j'),
+                'short' => $days.' days left',
+                'tone' => 'soon',
+                'days' => $days,
+            ];
+        }
+
+        return [
+            'label' => 'Until '.$this->expiry_date->format('M j, Y'),
+            'short' => 'Until '.$this->expiry_date->format('M j'),
+            'tone' => 'normal',
+            'days' => $days,
+        ];
+    }
+
+    public function daysUntilExpiry(): ?int
+    {
+        if (! $this->expiry_date) {
+            return null;
+        }
+
+        return (int) now()->startOfDay()->diffInDays($this->expiry_date->copy()->startOfDay(), false);
+    }
+
+    public function expiryTone(): ?string
+    {
+        if (! $this->expiry_date) {
+            return null;
+        }
+
+        $days = $this->daysUntilExpiry();
+
+        if ($days === null || $days < 0) {
+            return 'expired';
+        }
+
+        if ($days <= 7) {
+            return 'urgent';
+        }
+
+        if ($days <= 14) {
+            return 'soon';
+        }
+
+        return 'normal';
+    }
+
+    public function isExpiryUrgent(): bool
+    {
+        return in_array($this->expiryTone(), ['urgent', 'soon'], true);
     }
 
     public function isActivePromotion(): bool
@@ -323,12 +417,12 @@ class ForexBonus extends Model
     public static function homepageCategoryLinks(): array
     {
         return [
-            ['label' => 'Deposit bonuses', 'type' => 'deposit-bonuses', 'route' => 'bonuses.type'],
-            ['label' => 'No deposit', 'type' => 'no-deposit-bonuses', 'route' => 'bonuses.type'],
-            ['label' => 'Live contests', 'type' => 'live-contests', 'route' => 'bonuses.type'],
-            ['label' => 'Demo contests', 'type' => 'demo-contests', 'route' => 'bonuses.type'],
-            ['label' => 'Cashback', 'type' => 'cashback-rebates', 'route' => 'bonuses.type'],
-            ['label' => 'Crypto promos', 'type' => 'crypto-bonuses', 'route' => 'bonuses.type'],
+            ['label' => 'Deposit bonuses', 'type' => 'deposit-bonuses', 'route' => 'promotions.tab'],
+            ['label' => 'No deposit', 'type' => 'no-deposit-bonuses', 'route' => 'promotions.tab'],
+            ['label' => 'Live contests', 'type' => 'live-contests', 'route' => 'promotions.tab'],
+            ['label' => 'Demo contests', 'type' => 'demo-contests', 'route' => 'promotions.tab'],
+            ['label' => 'Cashback', 'type' => 'cashback-rebates', 'route' => 'promotions.tab'],
+            ['label' => 'Crypto promos', 'type' => 'crypto-bonuses', 'route' => 'promotions.tab'],
         ];
     }
 }

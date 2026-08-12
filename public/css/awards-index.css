@@ -194,55 +194,6 @@ body:has(.awd-page) {
     to { transform: rotate(360deg); }
 }
 
-.awd-hero__stats {
-    position: relative;
-    z-index: 1;
-    display: flex;
-    flex-wrap: nowrap;
-    gap: 0.5rem;
-    max-width: 40rem;
-}
-
-.awd-hero__stats--compact {
-    margin-top: 0.25rem;
-}
-
-.awd-stat {
-    flex: 1 1 0;
-    min-width: 0;
-    padding: 0.625rem 0.75rem;
-    background: rgba(255, 255, 255, 0.04);
-    border: 1px solid var(--awd-border);
-    border-radius: 0.625rem;
-}
-
-.awd-stat--highlight {
-    background: rgba(0, 122, 173, 0.12);
-    border-color: rgba(0, 122, 173, 0.28);
-}
-
-.awd-stat__value {
-    display: block;
-    font-size: 1rem;
-    font-weight: 800;
-    letter-spacing: -0.02em;
-    color: var(--awd-off-white);
-    line-height: 1.2;
-}
-
-.awd-stat--highlight .awd-stat__value {
-    color: var(--awd-ocean-light);
-}
-
-.awd-stat__label {
-    display: block;
-    margin-bottom: 0.2rem;
-    font-size: 0.625rem;
-    font-weight: 600;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-    color: var(--awd-dim);
-}
 
 /* ── Body layout ── */
 .awd-body {

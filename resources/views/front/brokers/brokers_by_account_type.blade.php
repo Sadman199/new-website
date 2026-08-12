@@ -1,7 +1,7 @@
 @extends('front.layout.app')
 @section('title', ucfirst($type) . ' Brokers | Top Accounts Compared – BrokersCourt')
 @section('meta_description', 'Discover top-rated ' . ucfirst($type) . ' brokers. Compare account features, spreads, leverage, and trading conditions to choose the best option for your trading style.')
-
+@section('canonical', route('brokers.byAccountType', ['type' => $type]))
 @section('main_content')
 
 <!-- Page Header with Breadcrumb -->

@@ -2,6 +2,7 @@
 
 @section('title', 'About Us | BrokersCourt')
 @section('meta_description', 'Learn about BrokersCourt — our mission to provide independent, unbiased forex broker reviews and help traders make informed decisions.')
+@section('canonical', route('about'))
 
 @push('page-styles')
     <link rel="stylesheet" href="{{ asset('css/about-page.css') }}?v=1">

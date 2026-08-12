@@ -50,6 +50,34 @@ class BrokerTaxonomy
     }
 
     /**
+     * Admin region slugs with display metadata and flags for navigation.
+     *
+     * @return array<string, array{name: string, flag: string, code: ?string}>
+     */
+    public static function regionsWithFlags(): array
+    {
+        $countries = self::countriesWithFlags();
+        $overrides = [
+            'asia' => ['name' => 'Asian Brokers', 'flag' => '🌏', 'code' => null],
+            'africa' => ['name' => 'African Brokers', 'flag' => '🌍', 'code' => null],
+            'middle-east' => ['name' => 'Middle East', 'flag' => '🇦🇪', 'code' => 'ae'],
+        ];
+
+        $listed = [];
+
+        foreach (self::regions() as $slug => $label) {
+            $meta = $countries[$slug] ?? $overrides[$slug] ?? ['name' => $label, 'flag' => '🌍', 'code' => null];
+            $listed[$slug] = [
+                'name' => $meta['name'] ?? $label,
+                'flag' => $meta['flag'] ?? '🌍',
+                'code' => $meta['code'] ?? null,
+            ];
+        }
+
+        return $listed;
+    }
+
+    /**
      * Country slugs for residence-based broker listings (slug => label).
      *
      * @return array<string, string>
@@ -87,7 +115,38 @@ class BrokerTaxonomy
             'pakistan' => ['name' => 'Pakistan', 'flag' => '🇵🇰', 'code' => 'pk'],
             'indonesia' => ['name' => 'Indonesia', 'flag' => '🇮🇩', 'code' => 'id'],
             'mexico' => ['name' => 'Mexico', 'flag' => '🇲🇽', 'code' => 'mx'],
+            'cyprus' => ['name' => 'Cyprus', 'flag' => '🇨🇾', 'code' => 'cy'],
+            'netherlands' => ['name' => 'Netherlands', 'flag' => '🇳🇱', 'code' => 'nl'],
+            'switzerland' => ['name' => 'Switzerland', 'flag' => '🇨🇭', 'code' => 'ch'],
+            'japan' => ['name' => 'Japan', 'flag' => '🇯🇵', 'code' => 'jp'],
+            'thailand' => ['name' => 'Thailand', 'flag' => '🇹🇭', 'code' => 'th'],
         ];
+    }
+
+    /** @return string[] */
+    public static function countryMatchNames(string $slug): array
+    {
+        $countries = self::countriesWithFlags();
+        if (! isset($countries[$slug]) || $slug === 'global') {
+            return [];
+        }
+
+        $name = $countries[$slug]['name'];
+        $aliases = [
+            'united-kingdom' => ['UK', 'U.K.', 'Great Britain', 'England'],
+            'united-states' => ['USA', 'U.S.A.', 'U.S.', 'America'],
+            'uae' => ['UAE', 'U.A.E.', 'United Arab Emirates'],
+            'south-africa' => ['SA'],
+            'netherlands' => ['Holland'],
+            'czechia' => ['Czech Republic'],
+        ];
+
+        $names = [$name];
+        foreach ($aliases[$slug] ?? [] as $alias) {
+            $names[] = $alias;
+        }
+
+        return array_values(array_unique($names));
     }
 
     public static function countryFlagUrl(?string $code, int $width = 40): ?string

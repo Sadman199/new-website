@@ -2,79 +2,78 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Http\Requests\Admin\SubCategoryRequest;
 use App\Models\Category;
 use App\Models\SubCategory;
 use Illuminate\Support\Str;
 
-
-class AdminSubCategoryController extends Controller
+class AdminSubCategoryController extends AdminResourceController
 {
-    public function show()
+    protected function modelClass(): string
     {
-        $sub_categories = SubCategory::with('rCategory','rLanguage')->orderBy('sub_category_order','asc')->get();
-        return view('admin.sub_category_show', compact('sub_categories'));
+        return SubCategory::class;
     }
 
-    public function create()
+    protected function formRequestClass(): string
     {
-        $categories = Category::orderBy('category_order','asc')->get();
-        return view('admin.sub_category_create', compact('categories'));
+        return SubCategoryRequest::class;
     }
 
-    public function store(Request $request)
+    protected function indexRoute(): string
     {
-        $request->validate([
-            'sub_category_name' => 'required',
-            'sub_category_order' => 'required'
-        ]);
-
-        $sub_category = new SubCategory();
-        $sub_category->sub_category_name = $request->sub_category_name;
-        $sub_category->slug = $request->slug ?? Str::slug($request->sub_category_name);
-        $sub_category->show_on_menu = $request->show_on_menu;
-        $sub_category->show_on_home = $request->show_on_home;
-        $sub_category->sub_category_order = $request->sub_category_order;
-        $sub_category->category_id = $request->category_id;
-        $sub_category->language_id = $request->language_id;
-        $sub_category->save();
-
-        return redirect()->route('admin_sub_category_show')->with('success', 'Data is added successfully.');
+        return 'admin_sub_category_show';
     }
 
-    public function edit($id)
+    protected function views(): array
     {
-        $categories = Category::orderBy('category_order','asc')->get();
-        $sub_category_single = SubCategory::where('id',$id)->first();
-        return view('admin.sub_category_edit', compact('categories','sub_category_single'));
+        return [
+            'index' => 'admin.sub_category_show',
+            'create' => 'admin.sub_category_create',
+            'edit' => 'admin.sub_category_edit',
+        ];
     }
 
-    public function update(Request $request, $id)
+    protected function indexCollectionKey(): string
     {
-        $request->validate([
-            'sub_category_name' => 'required',
-            'sub_category_order' => 'required'
-        ]);
-
-        $sub_category = SubCategory::where('id',$id)->first();
-        $sub_category->sub_category_name = $request->sub_category_name;
-        $sub_category->slug = $request->slug ?? Str::slug($request->sub_category_name);
-        $sub_category->show_on_menu = $request->show_on_menu;
-        $sub_category->show_on_home = $request->show_on_home;
-        $sub_category->sub_category_order = $request->sub_category_order;
-        $sub_category->category_id = $request->category_id;
-        $sub_category->language_id = $request->language_id;
-        $sub_category->update();
-
-        return redirect()->route('admin_sub_category_show')->with('success', 'Data is updated successfully.');
+        return 'sub_categories';
     }
 
-    public function delete($id)
+    protected function editModelKey(): string
     {
-        $sub_category_single = SubCategory::where('id',$id)->first();
-        $sub_category_single->delete();
+        return 'sub_category_single';
+    }
 
-        return redirect()->route('admin_sub_category_show')->with('success', 'Data is deleted successfully.');
+    protected function indexRelations(): array
+    {
+        return ['rCategory', 'rLanguage'];
+    }
+
+    protected function indexOrder(): array
+    {
+        return ['sub_category_order', 'asc'];
+    }
+
+    protected function createViewData(): array
+    {
+        return ['categories' => $this->orderedCategories()];
+    }
+
+    protected function editViewData($model): array
+    {
+        return ['categories' => $this->orderedCategories()];
+    }
+
+    protected function attributesFromValidated(array $validated): array
+    {
+        if (empty($validated['slug'])) {
+            $validated['slug'] = Str::slug($validated['sub_category_name']);
+        }
+
+        return $validated;
+    }
+
+    private function orderedCategories()
+    {
+        return Category::orderBy('category_order', 'asc')->get();
     }
 }

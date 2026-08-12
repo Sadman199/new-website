@@ -88,14 +88,7 @@
                                                     <label class="custom-file-label" for="post_photo">Choose file</label>
                                                 </div>
                                             </div>
-                                            <div class="form-group">
-                                                <label class="font-weight-bold">Select Language</label>
-                                                <select name="language_id" class="form-control custom-select" required>
-                                                    @foreach($global_language_data as $row)
-                                                        <option value="{{ $row->id }}" @if($row->id == $post_single->language_id) selected @endif>{{ $row->name }}</option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
+                                            @include('admin.partials.language_id_field', ['language_id' => $post_single->language_id])
                                             <div class="form-group">
                                                 <label class="font-weight-bold">Is Sharable?</label>
                                                 <select name="is_share" class="form-control custom-select">

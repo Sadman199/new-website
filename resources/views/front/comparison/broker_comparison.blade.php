@@ -2,9 +2,10 @@
 
 @section('title', 'Compare Forex Brokers Side by Side | BrokersCourt')
 @section('meta_description', 'Compare up to 3 forex brokers side by side. Review regulation, spreads, platforms, deposit methods, and ratings to find the best broker for your trading style.')
+@section('canonical', route('broker.comparison'))
 
 @push('head')
-    <link rel="stylesheet" href="{{ asset('css/broker-compare.css') }}?v=4">
+    <link rel="stylesheet" href="{{ asset('css/broker-compare.css') }}?v=6">
 @endpush
 
 @section('main_content')
@@ -54,7 +55,7 @@
                     @endif
                     <div class="bc-compare-slot" data-compare-slot="{{ $i }}">
                         <div class="bc-compare-slot__inner">
-                            <span class="bc-compare-slot__placeholder">Add a broker</span>
+                            <span class="bc-compare-slot__placeholder">{{ $i === 0 ? 'Add a broker' : ($i === 1 ? 'Add a second broker' : 'Optional third broker') }}</span>
                             <div class="bc-compare-slot__selected bc-compare-hidden">
                                 <span class="bc-compare-slot__logo"></span>
                                 <span class="bc-compare-slot__name"></span>
@@ -76,15 +77,18 @@
             </div>
 
             <div class="bc-compare-actions">
-                <p class="bc-compare-actions__hint">Pick at least 2 brokers to see the comparison table below.</p>
+                <p class="bc-compare-actions__hint" id="bcCompareHint">Pick at least 2 brokers to see the comparison table below.</p>
                 <div class="bc-compare-actions__buttons">
+                    <a href="#" class="bc-compare-btn bc-compare-btn--primary bc-compare-hidden" id="bcComparePairLink">Open full comparison</a>
                     <button type="button" class="bc-compare-btn bc-compare-btn--ghost" id="bcCompareClearBtn">
                         Clear all
                     </button>
                 </div>
             </div>
 
-            <div class="bc-compare-main">
+            <div class="bc-compare-winners bc-compare-hidden" id="bcCompareWinners" aria-live="polite"></div>
+
+            <div class="bc-compare-main" id="bcCompareMain">
                 <aside class="bc-compare-sidebar">
                     <div class="bc-compare-sidebar__head" id="bcCompareSidebarHead">Overall</div>
                     <ul class="bc-compare-sidebar__rows" id="bcCompareSidebarRows"></ul>
@@ -94,7 +98,7 @@
                     <div id="bcCompareMatrixWrap" class="bc-compare-hidden"></div>
 
                     <div class="bc-compare-suggestions" id="bcCompareSuggestions">
-                        <p class="bc-compare-suggestions__title">Suggested brokers</p>
+                        <p class="bc-compare-suggestions__title" id="bcCompareSuggestionsTitle">Suggested brokers</p>
                         <div class="bc-compare-suggestions__grid">
                             @foreach($suggestedBrokers as $broker)
                                 <button type="button"
@@ -102,7 +106,7 @@
                                         data-suggest-slug="{{ $broker->slug }}">
                                     <div class="bc-compare-suggestion__logo">
                                         @if($broker->logo)
-                                            <img src="{{ asset($broker->logo) }}" alt="{{ $broker->name }}">
+                                            <img src="{{ asset($broker->logo) }}" alt="{{ $broker->name }}" loading="lazy" decoding="async">
                                         @else
                                             <span>{{ strtoupper(substr($broker->name, 0, 1)) }}</span>
                                         @endif
@@ -127,8 +131,9 @@
     window.BROKER_COMPARE = {
         brokers: @json($brokersPayload),
         tabGroups: @json($tabGroups),
-        searchUrl: @json(route('broker.live.search'))
+        searchUrl: @json(route('broker.live.search')),
+        pairBase: @json(url('/brokers/compare'))
     };
 </script>
-<script src="{{ asset('js/broker-compare.js') }}?v=4"></script>
+<script src="{{ asset('js/broker-compare.js') }}?v=7"></script>
 @endpush

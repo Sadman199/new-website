@@ -6,17 +6,39 @@
     $required = $required ?? false;
 @endphp
 
-<div class="form-group">
-    <label for="{{ $inputId }}" class="font-weight-bold">{{ $label }} @if($required)<span class="text-danger">*</span>@endif</label>
-    <input type="file" name="{{ $inputId }}" id="{{ $inputId }}" class="form-control-file js-image-upload-preview" accept="image/*" data-preview-target="{{ $previewId }}" @if($required) required @endif>
-    <small class="text-muted d-block mt-1">JPG, PNG, WEBP, AVIF — max 2MB. Leave empty on edit to keep the current image.</small>
-    <div class="mt-3">
-        <label class="d-block text-muted small mb-1">Preview</label>
+<div class="tw-flex tw-flex-col tw-gap-2">
+    <label for="{{ $inputId }}" class="tw-text-sm tw-font-semibold tw-text-slate-800">
+        {{ $label }}
+        @if($required)<span class="tw-text-red-600">*</span>@endif
+    </label>
+
+    <input
+        type="file"
+        name="{{ $inputId }}"
+        id="{{ $inputId }}"
+        class="tw-block tw-w-full tw-text-sm tw-text-slate-700
+               file:tw-mr-4 file:tw-px-3 file:tw-py-2
+               file:tw-rounded-lg file:tw-border-0
+               file:tw-text-sm file:tw-font-semibold
+               file:tw-bg-brand file:tw-text-white
+               hover:file:tw-bg-brand/90
+               js-image-upload-preview"
+        accept="image/*"
+        data-preview-target="{{ $previewId }}"
+        @if($required) required @endif />
+
+    <p class="tw-text-xs tw-text-slate-500">
+        JPG, PNG, WEBP, AVIF — max 2MB.
+        Leave empty on edit to keep the current image.
+    </p>
+
+    <div class="tw-pt-1">
+        <p class="tw-text-xs tw-font-semibold tw-text-slate-500 tw-mb-1">Preview</p>
         <img id="{{ $previewId }}"
              src="{{ $currentUrl ?: '#' }}"
              alt="Image preview"
-             class="img-thumbnail"
-             style="max-width: 220px; max-height: 160px; object-fit: contain; {{ $currentUrl ? '' : 'display:none;' }}">
+             class="tw-w-full tw-max-w-[220px] tw-h-[160px] tw-object-contain tw-rounded-xl tw-border tw-border-slate-200 tw-bg-white
+                    {{ $currentUrl ? '' : 'tw-hidden' }}">
     </div>
 </div>
 

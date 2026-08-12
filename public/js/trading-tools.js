@@ -10,6 +10,12 @@
     var csrf = document.querySelector('meta[name="csrf-token"]');
     var token = csrf ? csrf.getAttribute('content') : '';
 
+    function findPanel(slug) {
+        return root.querySelector('.tt-panel[data-panel="' + slug + '"]')
+            || root.querySelector('.tt-tool__panel')
+            || root;
+    }
+
     root.querySelectorAll('.tt-tab').forEach(function (btn) {
         btn.addEventListener('click', function () {
             var slug = btn.getAttribute('data-tool');
@@ -141,7 +147,7 @@
     root.querySelectorAll('.tt-calc-btn').forEach(function (btn) {
         btn.addEventListener('click', function () {
             var slug = btn.getAttribute('data-calc');
-            var panel = root.querySelector('.tt-panel[data-panel="' + slug + '"]');
+            var panel = findPanel(slug);
             var status = root.querySelector('.tt-status[data-status="' + slug + '"]');
 
             if (status) {

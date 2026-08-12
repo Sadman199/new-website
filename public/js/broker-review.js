@@ -143,4 +143,85 @@
             });
         }
     }
+
+    /* Mobile sticky visit bar — appears after scrolling past hero */
+    var mobileCta = document.getElementById('br-mobile-cta');
+    var reviewHero = document.querySelector('.br-page .br-hero');
+
+    if (mobileCta && reviewHero) {
+        var mobileCtaMq = window.matchMedia('(max-width: 1023px)');
+
+        function syncMobileCtaVisibility() {
+            if (!mobileCtaMq.matches) {
+                mobileCta.hidden = true;
+                mobileCta.setAttribute('aria-hidden', 'true');
+                document.body.classList.remove('br-has-mobile-cta');
+                return;
+            }
+
+            document.body.classList.add('br-has-mobile-cta');
+        }
+
+        if (typeof IntersectionObserver !== 'undefined') {
+            var mobileCtaObserver = new IntersectionObserver(function (entries) {
+                if (!mobileCtaMq.matches) {
+                    return;
+                }
+
+                var heroVisible = entries[0] && entries[0].isIntersecting;
+                mobileCta.hidden = heroVisible;
+                mobileCta.setAttribute('aria-hidden', heroVisible ? 'true' : 'false');
+            }, { threshold: 0, rootMargin: '-4rem 0px 0px 0px' });
+
+            mobileCtaObserver.observe(reviewHero);
+        }
+
+        syncMobileCtaVisibility();
+        if (typeof mobileCtaMq.addEventListener === 'function') {
+            mobileCtaMq.addEventListener('change', syncMobileCtaVisibility);
+        } else if (typeof mobileCtaMq.addListener === 'function') {
+            mobileCtaMq.addListener(syncMobileCtaVisibility);
+        }
+    }
+
+    function readSavedIds() {
+        try {
+            return JSON.parse(localStorage.getItem('savedBrokers') || '[]').map(String);
+        } catch (e) {
+            return [];
+        }
+    }
+
+    function writeSavedIds(ids) {
+        localStorage.setItem('savedBrokers', JSON.stringify(ids.map(String)));
+    }
+
+    function paintSaveButton(btn, isSaved) {
+        btn.classList.toggle('is-saved', isSaved);
+        btn.setAttribute('aria-pressed', isSaved ? 'true' : 'false');
+        btn.textContent = isSaved ? 'Saved' : 'Save';
+    }
+
+    document.querySelectorAll('[data-br-save]').forEach(function (btn) {
+        var id = String(btn.getAttribute('data-broker-id') || '');
+        if (!id) {
+            return;
+        }
+
+        paintSaveButton(btn, readSavedIds().indexOf(id) !== -1);
+
+        btn.addEventListener('click', function () {
+            var list = readSavedIds();
+            var isSaved = list.indexOf(id) !== -1;
+            list = isSaved ? list.filter(function (item) { return item !== id; }) : list.concat(id);
+            writeSavedIds(list);
+            document.querySelectorAll('[data-br-save][data-broker-id="' + id + '"]').forEach(function (el) {
+                paintSaveButton(el, !isSaved);
+            });
+
+            if (window.bcSyncSavedBroker) {
+                window.bcSyncSavedBroker(id, !isSaved);
+            }
+        });
+    });
 })();

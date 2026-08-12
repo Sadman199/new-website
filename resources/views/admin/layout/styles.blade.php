@@ -1,5 +1,5 @@
 <link rel="stylesheet" href="{{ asset('dist/css/bootstrap.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('dist/css/font_awesome_5_free.min.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
     <link rel="stylesheet" href="{{ asset('dist/css/select2.min.css') }}">
     <link rel="stylesheet" href="{{ asset('dist/css/bootstrap-datepicker.min.css') }}">
     <link rel="stylesheet" href="{{ asset('dist/css/bootstrap-timepicker.min.css') }}">
@@ -14,3 +14,7 @@
     <link rel="stylesheet" href="{{ asset('dist/css/components.css') }}">
     <link rel="stylesheet" href="{{ asset('dist/css/spacing.css') }}">
     <link rel="stylesheet" href="{{ asset('dist/css/custom.css') }}">
+    <style id="admin-site-theme-vars">{!! \App\Support\SiteTheme::cssBlock() !!}</style>
+    <link rel="stylesheet" href="{{ asset('css/admin-sidebar.css') }}?v=4">
+    <link rel="stylesheet" href="{{ asset('css/admin-shell.css') }}?v=1">
+    <link rel="stylesheet" href="{{ asset('css/admin-dashboard.css') }}?v=2">

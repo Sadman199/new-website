@@ -1,0 +1,303 @@
+/* Admin shell — fixes Stisla layout + component styles (works with Tailwind tw- prefix) */
+
+body {
+    font-family: 'Inter', system-ui, sans-serif;
+}
+
+/* ---- Topbar positioning (fix Stisla 250px default) ---- */
+.navbar-bg.adm-topbar-bg {
+    position: fixed !important;
+    top: 0 !important;
+    right: 0 !important;
+    left: var(--adm-sidebar-width, 300px) !important;
+    width: auto !important;
+    height: 70px !important;
+    z-index: 890 !important;
+    background: linear-gradient(90deg, #0f2744 0%, var(--bc-dark, #0C1D32) 50%, #081525 100%) !important;
+    border-bottom: 1px solid rgba(var(--bc-light-rgb, 217, 226, 233), 0.1);
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
+}
+
+.navbar.adm-topbar {
+    position: fixed !important;
+    top: 0 !important;
+    right: 0 !important;
+    left: var(--adm-sidebar-width, 300px) !important;
+    width: auto !important;
+    height: 70px !important;
+    z-index: 891 !important;
+    background: transparent !important;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+body.sidebar-mini .navbar-bg.adm-topbar-bg,
+body.sidebar-mini .navbar.adm-topbar {
+    left: 65px !important;
+}
+
+body.sidebar-gone .navbar-bg.adm-topbar-bg,
+body.sidebar-gone .navbar.adm-topbar {
+    left: 0 !important;
+}
+
+.main-content--dashboard {
+    padding-top: 70px !important;
+    padding-left: var(--adm-sidebar-width, 300px) !important;
+    padding-right: 0 !important;
+    background: #f0f4f8 !important;
+    min-height: 100vh;
+}
+
+body.sidebar-mini .main-content--dashboard {
+    padding-left: 65px !important;
+}
+
+body.sidebar-gone .main-content--dashboard {
+    padding-left: 0 !important;
+}
+
+/* Mobile search strip under topbar */
+.adm-mobile-search {
+    position: fixed;
+    top: 70px;
+    right: 0;
+    left: var(--adm-sidebar-width, 300px);
+    z-index: 889;
+    background: linear-gradient(180deg, #0f2744, var(--bc-dark, #0C1D32));
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    overflow: hidden;
+    max-height: 0;
+    opacity: 0;
+    transition: max-height 0.25s ease, opacity 0.2s ease;
+}
+
+.adm-mobile-search--open {
+    max-height: 120px;
+    opacity: 1;
+}
+
+body.sidebar-mini .adm-mobile-search {
+    left: 65px;
+}
+
+/* ---- Topbar components ---- */
+.adm-icon-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border: none;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.08);
+    color: #e2e8f0;
+    cursor: pointer;
+    position: relative;
+    transition: background 0.2s ease, color 0.2s ease, transform 0.15s ease;
+}
+
+.adm-icon-btn:hover {
+    background: rgba(var(--bc-primary-rgb, 0, 122, 173), 0.25);
+    color: #fff;
+}
+
+.adm-badge {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    min-width: 16px;
+    height: 16px;
+    padding: 0 4px;
+    border-radius: 999px;
+    background: #ef4444;
+    color: #fff;
+    font-size: 10px;
+    font-weight: 700;
+    line-height: 16px;
+    text-align: center;
+}
+
+.adm-search-input {
+    width: 100%;
+    height: 42px;
+    padding: 0 1rem 0 2.75rem;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(255, 255, 255, 0.08);
+    color: #f1f5f9;
+    font-size: 0.875rem;
+    outline: none;
+    transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+}
+
+.adm-search-input::placeholder {
+    color: rgba(226, 232, 240, 0.45);
+}
+
+.adm-search-input:focus {
+    background: rgba(255, 255, 255, 0.12);
+    border-color: rgba(var(--bc-primary-rgb, 0, 122, 173), 0.5);
+    box-shadow: 0 0 0 3px rgba(var(--bc-primary-rgb, 0, 122, 173), 0.2);
+}
+
+.adm-profile-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    height: 42px;
+    padding: 0.25rem 0.625rem 0.25rem 0.25rem;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(255, 255, 255, 0.06);
+    cursor: pointer;
+    transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.adm-profile-btn:hover,
+.adm-profile-btn[aria-expanded="true"] {
+    background: rgba(var(--bc-primary-rgb, 0, 122, 173), 0.2);
+    border-color: rgba(var(--bc-primary-rgb, 0, 122, 173), 0.4);
+}
+
+.adm-profile-fallback {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--bc-primary, #007AAD), #006694);
+    color: #fff;
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+
+/* ---- Smooth dropdowns ---- */
+.adm-dropdown {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    min-width: 280px;
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    box-shadow: 0 20px 50px rgba(15, 23, 42, 0.15);
+    z-index: 9000;
+    opacity: 0;
+    transform: translateY(-8px) scale(0.98);
+    transform-origin: top right;
+    pointer-events: none;
+    transition: opacity 0.22s cubic-bezier(0.4, 0, 0.2, 1),
+                transform 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.adm-dropdown--open {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    pointer-events: auto;
+}
+
+.adm-dropdown--search {
+    left: 0;
+    right: 0;
+    min-width: 0;
+    max-height: 320px;
+    overflow-y: auto;
+}
+
+.adm-dropdown--search .adm-search-result-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: #334155;
+    text-decoration: none;
+    border-bottom: 1px solid #f1f5f9;
+    transition: background 0.15s ease;
+}
+
+.adm-dropdown--search .adm-search-result-item:hover {
+    background: #f8fafc;
+    color: var(--bc-primary, #007AAD);
+    text-decoration: none;
+}
+
+.adm-dropdown--search .adm-search-result-item small {
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #94a3b8;
+}
+
+.adm-notify-item {
+    display: block;
+    padding: 0.875rem 1rem;
+    border-bottom: 1px solid #f8fafc;
+    text-decoration: none;
+    transition: background 0.15s ease;
+}
+
+.adm-notify-item:hover {
+    background: #f8fafc;
+    text-decoration: none;
+}
+
+.adm-menu-item {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    width: 100%;
+    padding: 0.625rem 1rem;
+    font-size: 0.8125rem;
+    color: #334155;
+    text-decoration: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+    transition: background 0.15s ease;
+}
+
+.adm-menu-item:hover {
+    background: #f8fafc;
+    text-decoration: none;
+    color: #334155;
+}
+
+.adm-menu-item i {
+    width: 1rem;
+    color: #94a3b8;
+}
+
+.adm-menu-item--danger {
+    color: #dc2626 !important;
+}
+
+.adm-menu-item--danger i {
+    color: #dc2626;
+}
+
+/* KPI icon colors (Tailwind dynamic classes don't compile from PHP loops) */
+.tw-bg-sky-50 { background-color: #f0f9ff; }
+.tw-text-sky-600 { color: #0284c7; }
+.tw-bg-amber-50 { background-color: #fffbeb; }
+.tw-text-amber-600 { color: #d97706; }
+.tw-bg-emerald-50 { background-color: #ecfdf5; }
+.tw-text-emerald-600 { color: #059669; }
+.tw-bg-violet-50 { background-color: #f5f3ff; }
+.tw-text-violet-600 { color: #7c3aed; }
+
+@media (max-width: 1024px) {
+    .navbar-bg.adm-topbar-bg,
+    .navbar.adm-topbar,
+    .adm-mobile-search {
+        left: 0 !important;
+    }
+
+    .main-content--dashboard {
+        padding-left: 0 !important;
+    }
+}

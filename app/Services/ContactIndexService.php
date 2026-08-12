@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Language;
 use App\Models\Page;
+use App\Support\SiteTheme;
 
 class ContactIndexService
 {
@@ -24,7 +25,8 @@ class ContactIndexService
         return [
             'page' => $this->pageContent($page),
             'channels' => $this->channels(),
-            'topics' => $this->helpTopics(),
+            'stats' => $this->stats(),
+            'quick_links' => $this->quickLinks(),
         ];
     }
 
@@ -39,29 +41,35 @@ class ContactIndexService
         ];
     }
 
-    /** @return array<int, array<string, string>> */
+    /** @return array<int, array<string, string|null>> */
     private function channels(): array
     {
+        $phone = SiteTheme::contactPhone();
+
         return [
             [
+                'key' => 'email',
                 'label' => 'Email',
                 'value' => 'info@brokerscourt.com',
                 'href' => 'mailto:info@brokerscourt.com',
                 'hint' => 'Best for detailed questions and document attachments.',
             ],
             [
+                'key' => 'phone',
                 'label' => 'Phone',
-                'value' => '+44 7577 309951',
-                'href' => 'tel:+447577309951',
+                'value' => $phone,
+                'href' => 'tel:' . preg_replace('/\s+/', '', $phone),
                 'hint' => 'Speak with our team during office hours.',
             ],
             [
+                'key' => 'office',
                 'label' => 'Office',
                 'value' => 'Al Nahda 2, Dubai',
                 'href' => null,
                 'hint' => 'Editorial and business correspondence.',
             ],
             [
+                'key' => 'hours',
                 'label' => 'Hours',
                 'value' => 'Mon–Fri, 9 AM – 5 PM EST',
                 'href' => null,
@@ -71,24 +79,43 @@ class ContactIndexService
     }
 
     /** @return array<int, array<string, string>> */
-    private function helpTopics(): array
+    private function stats(): array
+    {
+        return [
+            ['label' => 'Response time', 'value' => '~24h'],
+            ['label' => 'Office', 'value' => 'Dubai'],
+            ['label' => 'Support days', 'value' => 'Mon–Fri'],
+            ['label' => 'Languages', 'value' => 'English'],
+        ];
+    }
+
+    /** @return array<int, array<string, string>> */
+    private function quickLinks(): array
     {
         return [
             [
-                'title' => 'Broker reviews',
-                'description' => 'Ask about our methodology, rating criteria, or suggest a broker for review.',
+                'label' => 'Scam broker checker',
+                'desc' => 'Verify a broker before you deposit',
+                'route' => 'broker.scam_checker',
+                'icon' => 'fa-solid fa-shield-halved',
             ],
             [
-                'title' => 'Partnerships & media',
-                'description' => 'Reach out for business inquiries, press requests, or affiliate questions.',
+                'label' => 'Regulated brokers',
+                'desc' => 'Browse licensed & regulated brokers',
+                'route' => 'regulated_brokers',
+                'icon' => 'fa-solid fa-certificate',
             ],
             [
-                'title' => 'Report a scam broker',
-                'description' => 'Share evidence about suspicious brokers so we can investigate and warn traders.',
+                'label' => 'Our editorial team',
+                'desc' => 'Meet the writers behind our reviews',
+                'route' => 'authors',
+                'icon' => 'fa-solid fa-users',
             ],
             [
-                'title' => 'Site feedback',
-                'description' => 'Tell us about bugs, missing data, or features you would like to see on BrokersCourt.',
+                'label' => 'Trading tools',
+                'desc' => 'Free forex calculators & planners',
+                'route' => 'trading.tools',
+                'icon' => 'fa-solid fa-calculator',
             ],
         ];
     }

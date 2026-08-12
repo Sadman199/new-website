@@ -25,4 +25,26 @@ class Review extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function isPending(): bool
+    {
+        return (int) $this->status === 0;
+    }
+
+    public function isApproved(): bool
+    {
+        return (int) $this->status === 1;
+    }
+
+    public function isDeclined(): bool
+    {
+        return (int) $this->status === -1;
+    }
+
+    public function canBeEditedBy(?User $user): bool
+    {
+        return $user
+            && (int) $this->user_id === (int) $user->id
+            && $this->isPending();
+    }
 }

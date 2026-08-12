@@ -2,90 +2,93 @@
 
 @section('title', 'Our Editorial Team | BrokersCourt')
 @section('meta_description', 'Meet the BrokersCourt editorial team — writers, editors, and fact-checkers behind our broker reviews and financial news.')
+@section('canonical', route('authors'))
 
 @push('page-styles')
-    <link rel="stylesheet" href="{{ asset('css/authors-index.css') }}?v=1">
+    <link rel="stylesheet" href="{{ asset('css/authors-index.css') }}?v=4">
 @endpush
 
 @section('main_content')
 <div class="aui-page">
-    <div class="aui-wrap">
-        <header class="aui-hero">
-            <span class="aui-hero__badge">Editorial team</span>
+    <header class="aui-hero">
+        <div class="aui-wrap">
+            <nav class="aui-breadcrumb" aria-label="Breadcrumb">
+                <a href="{{ route('home') }}">Home</a>
+                <span aria-hidden="true">/</span>
+                <span>Our team</span>
+            </nav>
+
+            <p class="aui-hero__eyebrow">Editorial team</p>
             <h1 class="aui-hero__title">{{ $page['title'] }}</h1>
             <p class="aui-hero__subtitle">{{ $page['subtitle'] }}</p>
-        </header>
-
-        <div class="aui-stats">
-            <div class="aui-stat">
-                <span class="aui-stat__value">{{ number_format($stats['total_authors']) }}</span>
-                <span class="aui-stat__label">Team members</span>
-            </div>
-            <div class="aui-stat">
-                <span class="aui-stat__value">{{ number_format($stats['writers']) }}</span>
-                <span class="aui-stat__label">Writers</span>
-            </div>
-            <div class="aui-stat">
-                <span class="aui-stat__value">{{ number_format($stats['editors']) }}</span>
-                <span class="aui-stat__label">Editors</span>
-            </div>
-            <div class="aui-stat">
-                <span class="aui-stat__value">{{ number_format($stats['fact_checkers']) }}</span>
-                <span class="aui-stat__label">Fact-checkers</span>
-            </div>
         </div>
+    </header>
 
-        @if($authors === [])
-            <div class="aui-empty">
-                <p>No authors have been published yet. Check back soon.</p>
-            </div>
-        @else
-            <div class="aui-grid">
-                @foreach($authors as $author)
-                    <article class="aui-card">
-                        <div class="aui-card__media">
-                            <img src="{{ $author['photo'] }}" alt="{{ $author['name'] }}" loading="lazy">
-                        </div>
-                        <div class="aui-card__body">
-                            @if($author['roles'] !== [])
-                                <div class="aui-card__roles">
-                                    @foreach($author['roles'] as $role)
-                                        <span class="aui-role">{{ $role }}</span>
-                                    @endforeach
+    <div class="aui-body">
+        <div class="aui-wrap">
+            @if($authors === [])
+                <div class="aui-empty">
+                    <p>No authors have been published yet. Check back soon.</p>
+                </div>
+            @else
+                <div class="aui-grid">
+                    @foreach($authors as $author)
+                        <a href="{{ $author['profile_url'] }}" class="aui-card">
+                            <span class="aui-card__photo">
+                                <img src="{{ $author['photo'] }}" alt="{{ $author['name'] }}" loading="lazy">
+                            </span>
+                            <span class="aui-card__body">
+                                @if($author['roles'] !== [])
+                                    <span class="aui-card__roles">
+                                        @foreach($author['roles'] as $role)
+                                            <span class="aui-role">{{ $role }}</span>
+                                        @endforeach
+                                    </span>
+                                @endif
+                                <span class="aui-card__name">{{ $author['name'] }}</span>
+                                @if($author['bio'])
+                                    <span class="aui-card__bio">{{ Str::limit($author['bio'], 110) }}</span>
+                                @endif
+                                <span class="aui-card__link">View profile →</span>
+                            </span>
+                        </a>
+                    @endforeach
+                </div>
+            @endif
+
+            @if(!empty($how_we_work))
+                <section class="aui-work" aria-labelledby="auiWorkTitle">
+                    <div class="aui-work__head">
+                        <h2 class="aui-work__title" id="auiWorkTitle">How we work</h2>
+                        <p class="aui-work__lead">Every broker review and article follows the same editorial process — research, write, verify, publish.</p>
+                    </div>
+                    <ol class="aui-work__steps">
+                        @foreach($how_we_work as $step)
+                            <li class="aui-work__step">
+                                <span class="aui-work__step-num">{{ $step['step'] }}</span>
+                                <div>
+                                    <h3 class="aui-work__step-title">{{ $step['title'] }}</h3>
+                                    <p class="aui-work__step-text">{{ $step['text'] }}</p>
                                 </div>
-                            @endif
+                            </li>
+                        @endforeach
+                    </ol>
+                </section>
+            @endif
 
-                            <h2 class="aui-card__name">{{ $author['name'] }}</h2>
-
-                            @if($author['bio'])
-                                <p class="aui-card__bio">{{ $author['bio'] }}</p>
-                            @endif
-
-                            <dl class="aui-card__stats">
-                                @if($author['contributions']['written'] > 0)
-                                    <div class="aui-card__stat">
-                                        <dt>Written</dt>
-                                        <dd>{{ number_format($author['contributions']['written']) }}</dd>
-                                    </div>
-                                @endif
-                                @if($author['contributions']['edited'] > 0)
-                                    <div class="aui-card__stat">
-                                        <dt>Edited</dt>
-                                        <dd>{{ number_format($author['contributions']['edited']) }}</dd>
-                                    </div>
-                                @endif
-                                @if($author['contributions']['fact_checked'] > 0)
-                                    <div class="aui-card__stat">
-                                        <dt>Fact-checked</dt>
-                                        <dd>{{ number_format($author['contributions']['fact_checked']) }}</dd>
-                                    </div>
-                                @endif
-                            </dl>
-                        </div>
-                    </article>
-                @endforeach
-            </div>
-        @endif
+            <section class="aui-join" aria-labelledby="auiJoinTitle">
+                <div class="aui-join__glow" aria-hidden="true"></div>
+                <div class="aui-join__inner">
+                    <p class="aui-join__eyebrow">Careers</p>
+                    <h2 class="aui-join__title" id="auiJoinTitle">Join our team</h2>
+                    <p class="aui-join__text">We're always interested in experienced financial writers, editors, and researchers who care about transparent broker coverage.</p>
+                    <a href="{{ route('contact') }}" class="aui-join__btn">
+                        Get in touch
+                        <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M3 10a.75.75 0 0 1 .75-.75h10.638L10.23 5.29a.75.75 0 1 1 1.04-1.08l5.5 5.25a.75.75 0 0 1 0 1.08l-5.5 5.25a.75.75 0 1 1-1.04-1.08l4.158-3.96H3.75A.75.75 0 0 1 3 10Z" clip-rule="evenodd"/></svg>
+                    </a>
+                </div>
+            </section>
+        </div>
     </div>
 </div>
 @endsection

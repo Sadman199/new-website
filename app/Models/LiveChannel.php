@@ -9,6 +9,12 @@ class LiveChannel extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'heading',
+        'video_id',
+        'language_id',
+    ];
+
     public function rLanguage()
     {
         return $this->belongsTo(Language::class, 'language_id');

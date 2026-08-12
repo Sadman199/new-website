@@ -15,6 +15,7 @@
 
 @section('title', $pageTitle)
 @section('meta_description', $metaDescription)
+@section('canonical', url()->current())
 
 @section('main_content')
 

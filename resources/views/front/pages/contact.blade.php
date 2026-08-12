@@ -1,5 +1,6 @@
 @extends('front.layout.app')
 @section('title', 'BrokersCourt | Get in Touch with Us')
+@section('canonical', route('contact'))
 @section('main_content')
 <div class="bg-gray-900 py-12 border-b border-gray-800 relative overflow-hidden mt-12">
     <div class="absolute top-0 left-1/4 w-64 h-64 bg-blue-500 rounded-full mix-blend-overlay filter blur-3xl"></div>

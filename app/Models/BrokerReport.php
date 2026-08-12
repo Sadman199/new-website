@@ -35,6 +35,7 @@ class BrokerReport extends Model
     ];
 
     protected $fillable = [
+        'user_id',
         'broker_id',
         'broker_name',
         'reporter_name',
@@ -49,6 +50,11 @@ class BrokerReport extends Model
     public function broker(): BelongsTo
     {
         return $this->belongsTo(Broker::class);
+    }
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
     }
 
     public function issueLabel(): string

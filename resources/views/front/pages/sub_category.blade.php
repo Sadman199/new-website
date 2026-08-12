@@ -1,6 +1,7 @@
 @extends('front.layout.app')
 @section('title', $sub_category_data->sub_category_name . ' | Explore Forex Topics | BrokersCourt')
 @section('meta_description', 'Explore expert insights and resources on ' . $sub_category_data->sub_category_name . '. Stay informed with the latest updates, strategies, and guides in forex trading at BrokersCourt.')
+@section('canonical', route('category', ['slug' => $sub_category_data->slug]))
 @section('main_content')
 <div class="bg-white py-8 border-b border-gray-200">
   <div class="container px-4 max-w-7xl mx-auto w-full mt-12 pt-8">

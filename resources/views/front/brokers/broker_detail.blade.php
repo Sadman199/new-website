@@ -2,34 +2,31 @@
 @extends('front.layout.app')
 @section('title', $broker->meta_title ?? $broker->title)
 @section('meta_description', $broker->meta_description ?? Str::limit(strip_tags($broker->description), 150))
-@section('meta_keywords', $broker->meta_keyword)
+@section('canonical', route('broker_detail', ['slug' => \App\Http\Controllers\Front\BrokerController::reviewSlugFor($broker)]))
+@section('og_image', $broker->logo ?: '')
 
 @push('head')
-    <link rel="stylesheet" href="{{ asset('css/best-broker-guide.css') }}?v=6">
-    <link rel="stylesheet" href="{{ asset('css/broker-review.css') }}?v=9">
+    <link rel="stylesheet" href="{{ asset('css/best-broker-guide.css') }}?v=7">
+    <link rel="stylesheet" href="{{ asset('css/broker-review.css') }}?v=17">
+@endpush
+
+@push('json_ld')
+    <script type="application/ld+json">@json($reviewJsonLd)</script>
 @endpush
 
 @section('main_content')
-<div class="bbg-page br-page">
-    @if($broker->is_scam)
-    <div class="br-scam-banner">
-        <div class="bbg-container">
-            <p class="br-scam-banner__title">Scam / High-Risk Warning</p>
-            <p class="br-scam-banner__text">
-                {{ $broker->scam_reason ?: 'This broker has been flagged as high-risk. We strongly advise caution before depositing any funds.' }}
-                @if($broker->scam_reported_date)
-                    (Reported {{ \Carbon\Carbon::parse($broker->scam_reported_date)->format('M d, Y') }})
-                @endif
-            </p>
-            <a href="{{ route('scam_brokers') }}" class="br-scam-banner__link">View scam broker list</a>
-        </div>
-    </div>
-    @endif
-
+@php
+    $snapshot = $snapshot ?? \App\Support\BrokerReviewPresenter::decisionSnapshot($broker, $reviewStats ?? []);
+@endphp
+<div class="bbg-page br-page{{ $snapshot['is_scam'] ? ' br-page--scam' : '' }}">
     @include('front.brokers.partials.hero', [
         'broker' => $broker,
         'editorialTeam' => $editorialTeam ?? [],
         'reviewPageMeta' => $reviewPageMeta ?? ['updated_at' => ''],
+        'publishedGuides' => $publishedGuides ?? collect(),
+        'guideHubDescription' => $guideHubDescription ?? null,
+        'snapshot' => $snapshot,
+        'reviewStats' => $reviewStats ?? [],
     ])
 
     <div class="bbg-container">
@@ -48,6 +45,11 @@
                             </select>
                         </div>
 
+                        @include('front.brokers.partials.score-breakdown', [
+                            'broker' => $broker,
+                            'scoreBreakdown' => $scoreBreakdown ?? ['has_scores' => false],
+                        ])
+
                         @include('front.brokers.partials.key-stats', ['broker' => $broker])
 
                         @if(strip_tags($broker->description ?? ''))
@@ -63,27 +65,45 @@
                         @endif
 
                         @include('front.brokers.partials.review-sections', ['broker' => $broker, 'account_options' => $account_options])
-                        @include('front.brokers.partials.promotions', ['broker' => $broker])
+                        @unless($snapshot['is_scam'])
+                            @include('front.brokers.partials.promotions', ['broker' => $broker])
+                        @endunless
                     </main>
 
                     <aside class="br-sidebar" aria-label="Broker actions">
-                        <div class="br-sidebar__inner">
+                        <div class="br-sidebar__inner{{ $snapshot['is_scam'] ? ' br-sidebar__inner--scam' : '' }}">
                             @if($broker->logo)
                                 <img src="{{ asset($broker->logo) }}" alt="{{ $broker->name }}" class="br-sidebar__logo">
                             @endif
-                            <p class="br-sidebar__name">{{ $broker->name }}</p>
-                            <p class="br-sidebar__score">{{ number_format((float) $broker->rating, 1) }}</p>
-                            <p class="br-sidebar__score-label">Overall score</p>
-                            <a href="{{ $broker->open_live ?: $broker->visit_site ?: $broker->url }}" target="_blank" rel="noopener noreferrer" class="br-btn br-btn--primary">
-                                Visit broker
-                            </a>
-                            @if($broker->demo_link ?: $broker->open_demo)
-                            <a href="{{ $broker->demo_link ?: $broker->open_demo }}" target="_blank" rel="noopener noreferrer" class="br-btn br-btn--secondary">
-                                Try demo
-                            </a>
+                            <div class="br-sidebar__info">
+                                <p class="br-sidebar__name">{{ $broker->name }}</p>
+                                <p class="br-sidebar__score-row">
+                                    <span class="br-sidebar__score">{{ $snapshot['score'] }}</span>
+                                    <span class="br-sidebar__score-label">Overall score</span>
+                                </p>
+                                @if(!empty($reviewPageMeta['updated_at']))
+                                    <p class="br-sidebar__updated">
+                                        <i class="far fa-clock" aria-hidden="true"></i>
+                                        Updated {{ $reviewPageMeta['updated_at'] }}
+                                    </p>
+                                @endif
+                            </div>
+                            @if(!empty($scoreBreakdown['has_scores']))
+                                <ul class="br-sidebar__scores" aria-label="Category scores">
+                                    @foreach(array_slice($scoreBreakdown['items'], 0, 4) as $item)
+                                        <li>
+                                            <span>{{ $item['label'] }}</span>
+                                            <strong>{{ $item['display'] }}</strong>
+                                        </li>
+                                    @endforeach
+                                </ul>
+                                <a href="#score-breakdown" class="br-sidebar__scores-link">Full breakdown</a>
                             @endif
-                            <a href="#compare" class="br-sidebar__compare-link">Compare with others</a>
-                            <p class="br-sidebar__risk">Your capital is at risk. CFDs are complex instruments.</p>
+                            @include('front.brokers.partials.decision_ctas', [
+                                'broker' => $broker,
+                                'snapshot' => $snapshot,
+                                'variant' => 'sidebar',
+                            ])
                         </div>
                     </aside>
                 </div>
@@ -99,19 +119,33 @@
 
     <div class="br-full-section br-full-section--reviews">
         <div class="bbg-container">
-            @include('front.brokers.partials.reviews', ['broker' => $broker, 'approved_reviews' => $approved_reviews, 'reviewStats' => $reviewStats ?? ['count' => 0, 'average' => 0]])
+            @include('front.brokers.partials.reviews', [
+                'broker' => $broker,
+                'approved_reviews' => $approved_reviews,
+                'reviewStats' => $reviewStats ?? ['count' => 0, 'average' => 0],
+                'userReview' => $userReview ?? null,
+            ])
         </div>
     </div>
 
     <div class="br-full-section br-full-section--compare">
         <div class="bbg-container">
-            @include('front.brokers.partials.compare', ['broker' => $broker, 'compare_brokers' => $compare_brokers])
+            @include('front.brokers.partials.compare', [
+                'broker' => $broker,
+                'compare_brokers' => $compare_brokers,
+                'snapshot' => $snapshot,
+            ])
         </div>
     </div>
+
+    @include('front.brokers.partials.mobile_cta_bar', [
+        'broker' => $broker,
+        'snapshot' => $snapshot,
+    ])
 </div>
 @endsection
 
 @push('scripts')
     <script src="{{ asset('js/best-broker-guide.js') }}?v=6" defer></script>
-    <script src="{{ asset('js/broker-review.js') }}?v=6" defer></script>
+    <script src="{{ asset('js/broker-review.js') }}?v=8" defer></script>
 @endpush

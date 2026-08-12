@@ -86,6 +86,11 @@ class Broker extends Model
         return $relation->orderBy('id');
     }
 
+    public function guides()
+    {
+        return $this->hasMany(BrokerGuide::class);
+    }
+
     public function forexBonuses()
     {
         return $this->hasMany(ForexBonus::class);

@@ -8,7 +8,7 @@
     <div class="sbi-card__head">
         <a href="{{ $broker['detail_url'] }}" class="sbi-card__logo" aria-hidden="true" tabindex="-1">
             @if($broker['logo'])
-                <img src="{{ $broker['logo'] }}" alt="{{ $broker['name'] }}">
+                <img src="{{ $broker['logo'] }}" alt="{{ $broker['name'] }}" loading="lazy" decoding="async">
             @else
                 <span class="sbi-card__logo-fallback">{{ strtoupper(substr($broker['name'], 0, 1)) }}</span>
             @endif
@@ -26,30 +26,30 @@
             <div class="sbi-card__tags">
                 @foreach($broker['warning_tags'] as $tag)
                     @if(isset($warningFilters[$tag]))
-                        <span class="sbi-card__tag">{{ $warningFilters[$tag] }}</span>
+                        <span class="sbi-card__tag" data-sbi-tag="{{ $tag }}">{{ $warningFilters[$tag] }}</span>
                     @endif
                 @endforeach
             </div>
         @endif
 
-        <div class="sbi-card__meta">
+        <dl class="sbi-card__meta">
             <div class="sbi-card__meta-row">
-                <span class="sbi-card__meta-label">Reported</span>
-                <span class="sbi-card__meta-value">{{ $broker['reported_label'] }}</span>
+                <dt>Reported</dt>
+                <dd>{{ $broker['reported_label'] }}</dd>
             </div>
             @if($broker['country'])
                 <div class="sbi-card__meta-row">
-                    <span class="sbi-card__meta-label">Country</span>
-                    <span class="sbi-card__meta-value">{{ $broker['country'] }}</span>
+                    <dt>Country</dt>
+                    <dd>{{ $broker['country'] }}</dd>
                 </div>
             @endif
             <div class="sbi-card__meta-row">
-                <span class="sbi-card__meta-label">Regulation</span>
-                <span class="sbi-card__meta-value {{ $broker['is_regulated'] ? '' : 'sbi-card__meta-value--danger' }}">
+                <dt>Regulation</dt>
+                <dd class="{{ $broker['is_regulated'] ? '' : 'sbi-card__meta-value--danger' }}">
                     {{ $broker['regulation_summary'] }}
-                </span>
+                </dd>
             </div>
-        </div>
+        </dl>
 
         <div class="sbi-card__actions">
             <a href="{{ $broker['detail_url'] }}" class="sbi-card__cta">

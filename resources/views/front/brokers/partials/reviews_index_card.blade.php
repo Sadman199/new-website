@@ -15,7 +15,7 @@
         <div class="bri-card__header">
             <a href="{{ $broker['review_url'] }}" class="bri-card__logo" aria-hidden="true" tabindex="-1">
                 @if($broker['logo'])
-                    <img src="{{ $broker['logo'] }}" alt="{{ $broker['name'] }}">
+                    <img src="{{ $broker['logo'] }}" alt="{{ $broker['name'] }}" loading="lazy" decoding="async">
                 @else
                     <span class="bri-card__logo-fallback">{{ strtoupper(substr($broker['name'], 0, 1)) }}</span>
                 @endif

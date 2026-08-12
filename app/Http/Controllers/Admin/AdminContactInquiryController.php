@@ -2,11 +2,10 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
 use App\Models\ContactInquiry;
 use Illuminate\Http\Request;
 
-class AdminContactInquiryController extends Controller
+class AdminContactInquiryController extends AdminController
 {
     public function index(Request $request)
     {
@@ -45,17 +44,13 @@ class AdminContactInquiryController extends Controller
     {
         $inquiry->update(['status' => ContactInquiry::STATUS_ARCHIVED]);
 
-        return redirect()
-            ->route('admin_contact_inquiries.index')
-            ->with('success', 'Inquiry archived.');
+        return $this->flashSuccess('admin_contact_inquiries.index', 'Inquiry archived.');
     }
 
     public function destroy(ContactInquiry $inquiry)
     {
         $inquiry->delete();
 
-        return redirect()
-            ->route('admin_contact_inquiries.index')
-            ->with('success', 'Inquiry deleted.');
+        return $this->flashSuccess('admin_contact_inquiries.index', 'Inquiry deleted.');
     }
 }

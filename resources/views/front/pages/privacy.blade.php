@@ -1,5 +1,6 @@
 @extends('front.layout.app')
 @section('title', 'BrokersCourt Privacy Policy | Your Data Protection Rights')
+@section('canonical', route('privacy'))
 @section('main_content')
 
 <div class="pt-16 sm:pt-24 md:pt-32 lg:pt-40 pb-12 min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 text-gray-100 px-4 sm:px-6 lg:px-8">

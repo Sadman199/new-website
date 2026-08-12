@@ -29,6 +29,23 @@ class BrokerFilterService
         $brokers = $query->paginate(20)->withQueryString();
         $brokers->getCollection()->transform(fn (Broker $broker) => $this->serializeCard($broker));
 
+        $matchSlugs = FindMyBrokerFilters::parseList($request->get('match'));
+        $fromQuiz = $request->query('from') === 'quiz';
+
+        if ($matchSlugs !== [] && $brokers->currentPage() === 1) {
+            $order = array_flip($matchSlugs);
+            $collection = $brokers->getCollection()
+                ->sortBy(fn (array $broker) => $order[$broker['slug']] ?? 1000)
+                ->values()
+                ->map(function (array $broker) use ($matchSlugs) {
+                    $broker['is_match'] = in_array($broker['slug'], $matchSlugs, true);
+                    $broker['is_best_match'] = ($matchSlugs[0] ?? null) === ($broker['slug'] ?? null);
+
+                    return $broker;
+                });
+            $brokers->setCollection($collection);
+        }
+
         $activeChips = $this->buildActiveChips($filters, $catalogs);
         $activeLabels = array_column($activeChips, 'label');
 
@@ -47,6 +64,8 @@ class BrokerFilterService
             'total' => $brokers->total(),
             'pageStats' => $this->pageStats(),
             'quickPresets' => $this->quickPresets(),
+            'fromQuiz' => $fromQuiz,
+            'matchSlugs' => $matchSlugs,
         ];
     }
 

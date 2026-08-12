@@ -2,11 +2,11 @@
 
 @section('title', $seoTitle)
 @section('meta_description', $seoDescription)
+@section('canonical', $canonicalUrl)
+@section('robots', !empty($fromQuiz) ? 'noindex, follow' : '')
 
 @push('head')
-    <link rel="canonical" href="{{ $canonicalUrl }}">
-    <meta property="og:url" content="{{ $canonicalUrl }}">
-    <link rel="stylesheet" href="{{ asset('css/find-my-broker.css') }}?v=1">
+    <link rel="stylesheet" href="{{ asset('css/find-my-broker.css') }}?v=4">
 @endpush
 
 @section('main_content')
@@ -25,31 +25,28 @@
                 </svg>
                 Smart broker matching
             </p>
-            <h1 class="fmb-hero__title">Find my <span class="fmb-hero__accent">broker</span></h1>
-            <p class="fmb-hero__subtitle">Filter {{ number_format($pageStats['total']) }}+ reviewed brokers by deposit, regulation, platform, costs, and features — updated live from our database.</p>
+            @if(!empty($fromQuiz))
+                <h1 class="fmb-hero__title">Your <span class="fmb-hero__accent">BrokerMatch</span> results</h1>
+                <p class="fmb-hero__subtitle">Brokers ranked from your quiz answers. Visit, read the review, save, or compare — or retake the quiz to refine the match.</p>
+            @else
+                <h1 class="fmb-hero__title">Find my <span class="fmb-hero__accent">broker</span></h1>
+                <p class="fmb-hero__subtitle">Filter {{ number_format($pageStats['total']) }}+ reviewed brokers by deposit, regulation, platform, costs, and features — updated live from our database. Prefer questions? <a href="{{ route('home') }}#bcMatchQuiz" class="fmb-hero__quiz-link">Take the BrokerMatch quiz</a>.</p>
+            @endif
 
-            <div class="fmb-hero__stats">
-                <div class="fmb-hero__stat">
-                    <span class="fmb-hero__stat-label">In database</span>
-                    <strong class="fmb-hero__stat-value">{{ number_format($pageStats['total']) }}</strong>
-                </div>
-                <div class="fmb-hero__stat">
-                    <span class="fmb-hero__stat-label">Matching now</span>
-                    <strong class="fmb-hero__stat-value fmb-hero__stat-value--match" id="fmb-hero-match">{{ number_format($total ?? $brokers->total()) }}</strong>
-                </div>
-                <div class="fmb-hero__stat">
-                    <span class="fmb-hero__stat-label">Regulated</span>
-                    <strong class="fmb-hero__stat-value">{{ number_format($pageStats['regulated']) }}</strong>
-                </div>
-                <div class="fmb-hero__stat">
-                    <span class="fmb-hero__stat-label">Avg. rating</span>
-                    <strong class="fmb-hero__stat-value">{{ $pageStats['avg_rating'] }}</strong>
-                </div>
-            </div>
+            @include('front.brokers.partials.country_context_hero', ['variant' => 'inline'])
+
+            @include('front.partials.hero_metrics', [
+                'stats' => [
+                    ['label' => 'In database', 'value' => number_format($pageStats['total'])],
+                    ['label' => 'Matching now', 'value' => number_format($total ?? $brokers->total()), 'tone' => 'match', 'id' => 'fmb-hero-match'],
+                    ['label' => 'Regulated', 'value' => number_format($pageStats['regulated'])],
+                    ['label' => 'Avg. rating', 'value' => $pageStats['avg_rating']],
+                ],
+            ])
         </div>
     </header>
 
-    <div class="fmb-wrap" id="fmb-app" data-endpoint="{{ route('find_my_broker') }}">
+    <div class="fmb-wrap" id="fmb-app" data-endpoint="{{ route('find_my_broker') }}" data-compare-base="{{ url('/brokers/compare') }}">
         @if(!empty($quickPresets))
             <section class="fmb-presets" aria-label="Popular searches">
                 <p class="fmb-presets__label">Popular searches</p>
@@ -129,5 +126,5 @@
 @endsection
 
 @push('scripts')
-<script src="{{ asset('js/find-my-broker.js') }}?v=2" defer></script>
+<script src="{{ asset('js/find-my-broker.js') }}?v=5" defer></script>
 @endpush

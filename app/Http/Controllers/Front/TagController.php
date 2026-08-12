@@ -2,25 +2,35 @@
 
 namespace App\Http\Controllers\Front;
 
-use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use App\Models\Tag;
-use App\Models\ForexBonus;
-use App\Models\Post;
 use App\Helper\Helpers;
+use App\Models\Post;
+use App\Models\Tag;
+use Illuminate\Http\Request;
 
-class TagController extends Controller
+class TagController extends FrontController
 {
-    public function show($tag_name)
+    public function show(string $tag_name)
     {
-        Helpers::read_json();
-        
-        $all_data = Tag::where('tag_name',$tag_name)->get();
-        $all_post_ids = [];
-        foreach($all_data as $row) {
-            $all_post_ids[] = $row->post_id;
-        }
-        $all_posts = Post::orderBy('id','desc')->get();
-        return view('front.pages.tag', compact('all_post_ids','all_posts','tag_name'));
+        $this->bootFront();
+
+        $postIds = Tag::query()
+            ->where('tag_name', $tag_name)
+            ->pluck('post_id')
+            ->unique()
+            ->values()
+            ->all();
+
+        $all_posts = Post::query()
+            ->with('rSubCategory')
+            ->when($postIds !== [], fn ($query) => $query->whereIn('id', $postIds))
+            ->when($postIds === [], fn ($query) => $query->whereRaw('1 = 0'))
+            ->orderByDesc('id')
+            ->paginate(12);
+
+        return view('front.pages.tag', [
+            'all_post_ids' => $postIds,
+            'all_posts' => $all_posts,
+            'tag_name' => $tag_name,
+        ]);
     }
 }

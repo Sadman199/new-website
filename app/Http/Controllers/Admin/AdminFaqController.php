@@ -2,91 +2,58 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use App\Models\Faq;
+use App\Http\Requests\Admin\FaqRequest;
 use App\Models\Broker;
+use App\Models\Faq;
 
-class AdminFaqController extends Controller
+class AdminFaqController extends AdminResourceController
 {
-    public function show()
+    protected function modelClass(): string
     {
-        $faq_data = Faq::get();
-        return view('admin.faq_show', compact('faq_data'));
+        return Faq::class;
     }
 
-    public function create()
+    protected function formRequestClass(): string
     {
-        return view('admin.faq_create');
+        return FaqRequest::class;
     }
 
-    public function store(Request $request)
+    protected function indexRoute(): string
     {
-         // Validate the incoming request
-    $validated = $request->validate([
-        'faq_title' => 'required|string|max:255',
-        'faq_detail' => 'required|string',
-        'language_id' => 'required|exists:languages,id', // Assuming you have languages table
-        'broker_id' => 'required|exists:brokers,id', // Ensure broker_id exists in brokers table
-    ]);
-
-    // Create the FAQ object
-    $faq = new Faq();
-    $faq->faq_title = $validated['faq_title'];
-    $faq->faq_detail = $validated['faq_detail'];
-    $faq->language_id = $validated['language_id'];
-    $faq->broker_id = $validated['broker_id'];  // Set the broker_id
-    $faq->save();
-
-
-        return redirect()->route('admin_faq_show')->with('success', 'Data is added successfully.');
+        return 'admin_faq_show';
     }
 
-    public function edit($id)
+    protected function views(): array
     {
-       // Fetch the FAQ data and brokers
-    $faq_data = Faq::where('id', $id)->first();
-    $brokers = Broker::all(); // Fetch all brokers
-
-    // Return the edit view with faq_data and brokers
-    return view('admin.faq_edit', compact('faq_data', 'brokers'));
+        return [
+            'index' => 'admin.faq_show',
+            'create' => 'admin.faq_create',
+            'edit' => 'admin.faq_edit',
+        ];
     }
 
-    public function update(Request $request,$id) 
+    protected function indexCollectionKey(): string
     {
-       // Validate the incoming request
-    $request->validate([
-        'faq_title' => 'required|string|max:255',
-        'faq_detail' => 'required|string',
-        'language_id' => 'required|exists:languages,id', // Assuming you have languages table
-        'broker_id' => 'required|exists:brokers,id', // Ensure broker_id exists in brokers table
-    ]);
-
-    // Find the FAQ to update
-    $faq = Faq::where('id', $id)->first();
-
-    // Update the FAQ fields
-    $faq->faq_title = $request->faq_title;
-    $faq->faq_detail = $request->faq_detail;
-    $faq->language_id = $request->language_id;
-    $faq->broker_id = $request->broker_id; // Set the broker_id
-    $faq->save(); // Save the updated FAQ
-
-    // Redirect to the FAQ list with success message
-    return redirect()->route('admin_faq_show')->with('success', 'FAQ updated successfully.');
+        return 'faq_data';
     }
 
-    public function delete(Request $request, $id)
+    protected function editModelKey(): string
     {
-        $faq = Faq::findOrFail($id);
-        $faq->delete();
-    
-        // Preserve pagination
-        $currentPage = $request->input('page', 1);
-    
-        return redirect()->route('admin_faq_show', ['page' => $currentPage])
-                         ->with('success', 'FAQ deleted successfully.');
+        return 'faq_data';
     }
 
+    protected function createViewData(): array
+    {
+        return ['brokers' => $this->brokers()];
+    }
 
+    protected function editViewData($model): array
+    {
+        return ['brokers' => $this->brokers()];
+    }
+
+    private function brokers()
+    {
+        return Broker::query()->orderBy('name')->get(['id', 'name']);
+    }
 }

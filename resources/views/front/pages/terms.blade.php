@@ -1,5 +1,6 @@
 @extends('front.layout.app')
 @section('title', 'BrokersCourt | Terms and Conditions for Using Our Platform')
+@section('canonical', route('terms'))
 @section('main_content')
 
 <div class="pt-16 sm:pt-24 md:pt-32 lg:pt-40 pb-12 min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 text-gray-100 px-4 sm:px-6 lg:px-8 relative overflow-hidden">

@@ -3,7 +3,7 @@
         <header class="bc-explore__head">
             <p class="bc-explore__eyebrow">
                 <span class="bc-explore__eyebrow-icon" aria-hidden="true">
-                    <i class="fa-solid fa-compass"></i>
+                    <i class="fas fa-compass"></i>
                 </span>
                 Browse categories
             </p>
@@ -13,7 +13,7 @@
 
         <div class="bc-explore__grid">
             <a href="{{ route('brokers.best.index') }}" class="bc-explore-card">
-                <span class="bc-explore-card__icon" aria-hidden="true"><i class="fa-solid fa-trophy"></i></span>
+                <span class="bc-explore-card__icon" aria-hidden="true"><i class="fas fa-trophy"></i></span>
                 <span class="bc-explore-card__body">
                     <strong class="bc-explore-card__title">Best brokers {{ date('Y') }}</strong>
                     <span class="bc-explore-card__desc">Rankings by category</span>
@@ -24,7 +24,7 @@
             </a>
 
             <a href="{{ route('regulated_brokers') }}" class="bc-explore-card">
-                <span class="bc-explore-card__icon" aria-hidden="true"><i class="fa-solid fa-shield-halved"></i></span>
+                <span class="bc-explore-card__icon" aria-hidden="true"><i class="fas fa-shield-alt"></i></span>
                 <span class="bc-explore-card__body">
                     <strong class="bc-explore-card__title">Regulated brokers</strong>
                     <span class="bc-explore-card__desc">{{ $homeStats['regulated'] ?? 0 }} licensed platforms</span>
@@ -35,7 +35,7 @@
             </a>
 
             <a href="{{ route('brokers.best', ['slug' => 'high-leverage']) }}" class="bc-explore-card">
-                <span class="bc-explore-card__icon" aria-hidden="true"><i class="fa-solid fa-chart-line"></i></span>
+                <span class="bc-explore-card__icon" aria-hidden="true"><i class="fas fa-chart-line"></i></span>
                 <span class="bc-explore-card__body">
                     <strong class="bc-explore-card__title">High leverage</strong>
                     <span class="bc-explore-card__desc">Up to 1:2000+</span>
@@ -46,7 +46,7 @@
             </a>
 
             <a href="{{ route('brokers.best', ['slug' => 'mt5-brokers']) }}" class="bc-explore-card">
-                <span class="bc-explore-card__icon" aria-hidden="true"><i class="fa-solid fa-desktop"></i></span>
+                <span class="bc-explore-card__icon" aria-hidden="true"><i class="fas fa-desktop"></i></span>
                 <span class="bc-explore-card__body">
                     <strong class="bc-explore-card__title">MetaTrader 5</strong>
                     <span class="bc-explore-card__desc">MT5-supported brokers</span>
@@ -57,7 +57,7 @@
             </a>
 
             <a href="{{ route('brokers.by.regulation', 'fca') }}" class="bc-explore-card">
-                <span class="bc-explore-card__icon" aria-hidden="true"><i class="fa-solid fa-landmark"></i></span>
+                <span class="bc-explore-card__icon" aria-hidden="true"><i class="fas fa-landmark"></i></span>
                 <span class="bc-explore-card__body">
                     <strong class="bc-explore-card__title">FCA regulated</strong>
                     <span class="bc-explore-card__desc">UK-authorised brokers</span>
@@ -68,7 +68,7 @@
             </a>
 
             <a href="{{ route('find_my_broker', ['min_deposit' => 10]) }}" class="bc-explore-card">
-                <span class="bc-explore-card__icon" aria-hidden="true"><i class="fa-solid fa-wallet"></i></span>
+                <span class="bc-explore-card__icon" aria-hidden="true"><i class="fas fa-wallet"></i></span>
                 <span class="bc-explore-card__body">
                     <strong class="bc-explore-card__title">Low minimum deposit</strong>
                     <span class="bc-explore-card__desc">Start from $10 or less</span>
@@ -78,8 +78,8 @@
                 </span>
             </a>
 
-            <a href="{{ route('forex_deposit_bonus') }}" class="bc-explore-card">
-                <span class="bc-explore-card__icon" aria-hidden="true"><i class="fa-solid fa-gift"></i></span>
+            <a href="{{ route('promotions.tab', 'deposit-bonuses') }}" class="bc-explore-card">
+                <span class="bc-explore-card__icon" aria-hidden="true"><i class="fas fa-gift"></i></span>
                 <span class="bc-explore-card__body">
                     <strong class="bc-explore-card__title">Deposit bonuses</strong>
                     <span class="bc-explore-card__desc">Extra trading credit</span>
@@ -90,7 +90,7 @@
             </a>
 
             <a href="{{ route('methodology') }}" class="bc-explore-card">
-                <span class="bc-explore-card__icon" aria-hidden="true"><i class="fa-solid fa-microscope"></i></span>
+                <span class="bc-explore-card__icon" aria-hidden="true"><i class="fas fa-microscope"></i></span>
                 <span class="bc-explore-card__body">
                     <strong class="bc-explore-card__title">Our methodology</strong>
                     <span class="bc-explore-card__desc">How we rate brokers</span>

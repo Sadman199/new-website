@@ -2,63 +2,95 @@
 
 @section('title', 'Scam Broker List ' . date('Y') . ' | Flagged & Blacklisted Forex Brokers | BrokersCourt')
 @section('meta_description', 'Verified list of scam and blacklisted forex brokers. Check flagged brokers, the reasons they were reported, and protect yourself before you deposit.')
-
-@push('head')
-    <link rel="canonical" href="{{ url('/scam-brokers') }}">
-@endpush
+@section('canonical', route('scam_brokers'))
 
 @push('page-styles')
-    <link rel="stylesheet" href="{{ asset('css/scam-brokers-index.css') }}?v=1">
+    <link rel="stylesheet" href="{{ asset('css/scam-brokers-index.css') }}?v=2">
 @endpush
 
 @section('main_content')
 <div class="sbi-page">
-    <div class="sbi-wrap">
-        <header class="sbi-hero">
-            <span class="sbi-hero__badge">High-risk warning list</span>
-            <h1 class="sbi-hero__title">Scam broker list</h1>
-            <p class="sbi-hero__subtitle">
-                Brokers flagged for fraudulent behaviour, missing regulation, blocked withdrawals, or regulator warnings.
-                Always verify a broker here before you deposit.
-            </p>
-        </header>
+    <header class="sbi-hero">
+        <div class="sbi-wrap">
+            <nav class="sbi-breadcrumb" aria-label="Breadcrumb">
+                <a href="{{ route('home') }}">Home</a>
+                <span aria-hidden="true">/</span>
+                <span>Scam brokers</span>
+            </nav>
 
+            <p class="sbi-hero__eyebrow">High-risk warning list</p>
+            <h1 class="sbi-hero__title">Scam <span class="sbi-hero__accent">broker list</span></h1>
+            <p class="sbi-hero__subtitle">
+                Brokers flagged for fraud, missing regulation, blocked withdrawals, or regulator warnings.
+                Verify any broker here before you deposit.
+            </p>
+
+            @include('front.partials.hero_metrics', [
+                'stats' => [
+                    ['label' => 'Flagged brokers', 'value' => $stats['scam_count'], 'tone' => 'primary'],
+                    ['label' => 'No regulation', 'value' => $stats['no_regulation_count']],
+                    ['label' => 'Withdrawal issues', 'value' => $stats['withdrawal_issues_count']],
+                    ['label' => 'Reported in '.date('Y'), 'value' => $stats['reported_this_year']],
+                ],
+            ])
+        </div>
+    </header>
+
+    <div class="sbi-wrap">
         <div class="sbi-notice">
-            <strong>How we flag brokers:</strong> we rely on public regulator warnings, verified user complaints,
-            and evidence of unregulated activity. If you believe a listing is inaccurate,
-            <a href="{{ route('contact') }}">contact us</a>.
+            <strong>How we flag brokers:</strong> public regulator warnings, verified user complaints, and evidence of unregulated activity.
+            <a href="{{ route('contact') }}">Report an issue</a>.
         </div>
 
         <div class="sbi-layout">
             <aside class="sbi-sidebar" aria-label="Filter scam brokers">
-                <h2 class="sbi-sidebar__title">Filter by name</h2>
+                <h2 class="sbi-sidebar__title">Filters</h2>
                 <input type="search"
                        id="sbiSearchInput"
                        class="sbi-sidebar__search"
-                       placeholder="Type broker name"
+                       placeholder="Search by broker name"
                        autocomplete="off"
                        aria-label="Search flagged brokers by name">
 
-                <div class="sbi-sidebar__section">
-                    <h3 class="sbi-sidebar__section-title">Warning type</h3>
-                    @foreach($warningFilters as $key => $label)
-                        <label class="sbi-filter-option">
-                            <input type="checkbox"
-                                   value="{{ $key }}"
-                                   data-sbi-warning-filter>
-                            <span>{{ $label }}</span>
-                        </label>
-                    @endforeach
+                <div class="sbi-filter-group is-open">
+                    <h3 class="sbi-filter-group__title">Warning type</h3>
+                    <div class="sbi-filter-group__body">
+                        @foreach($warningFilters as $key => $label)
+                            <label class="sbi-filter-option">
+                                <input type="checkbox"
+                                       value="{{ $key }}"
+                                       data-sbi-warning-filter>
+                                <span>{{ $label }}</span>
+                                <span class="sbi-filter-count" data-sbi-filter-count="{{ $key }}">{{ $warningCounts[$key] ?? 0 }}</span>
+                            </label>
+                        @endforeach
+                    </div>
                 </div>
 
                 <button type="button" class="sbi-sidebar__clear" id="sbiClearFilters">
-                    Clear filters
+                    Reset filters
                 </button>
 
-                <div class="sbi-sidebar__section">
-                    <h3 class="sbi-sidebar__section-title">Quick links</h3>
+                <div class="sbi-sidebar__tools">
+                    <p class="sbi-sidebar__tools-title">Quick check</p>
+                    <form class="sbi-checker" action="{{ route('broker.scam_checker') }}" method="get">
+                        <input type="search"
+                               name="q"
+                               class="sbi-checker__input"
+                               placeholder="Broker name…"
+                               autocomplete="off"
+                               aria-label="Check a broker for scam warnings">
+                        <button type="submit" class="sbi-checker__btn">Check</button>
+                    </form>
+                    <a href="{{ route('broker.scam_checker') }}" class="sbi-sidebar__link sbi-sidebar__link--checker">
+                        Open full scam checker
+                    </a>
+                </div>
+
+                <div class="sbi-sidebar__links">
+                    <p class="sbi-sidebar__links-title">Quick links</p>
                     <a href="{{ route('regulated_brokers') }}" class="sbi-sidebar__link sbi-sidebar__link--safe">
-                        See regulated brokers
+                        Regulated brokers
                     </a>
                     <a href="{{ route('broker.reviews.index') }}" class="sbi-sidebar__link">
                         Broker reviews
@@ -70,12 +102,12 @@
             </aside>
 
             <div class="sbi-main">
-                <h2 class="sbi-main__heading">
-                    Flagged &amp; blacklisted brokers in {{ date('Y') }}
-                </h2>
-                <p class="sbi-results-count" id="sbiResultsCount">
-                    {{ $scamCount }} flagged {{ \Illuminate\Support\Str::plural('broker', $scamCount) }}
-                </p>
+                <div class="sbi-main__head">
+                    <h2 class="sbi-main__heading">Flagged &amp; blacklisted brokers in {{ date('Y') }}</h2>
+                    <p class="sbi-results-count" id="sbiResultsCount" data-sbi-total="{{ $scamCount }}">
+                        {{ $scamCount }} flagged {{ \Illuminate\Support\Str::plural('broker', $scamCount) }}
+                    </p>
+                </div>
 
                 @if($brokersPayload->isNotEmpty())
                     <ul class="sbi-grid" id="sbiBrokerGrid">
@@ -89,13 +121,19 @@
                 @endif
 
                 <div class="sbi-empty {{ $brokersPayload->isNotEmpty() ? 'is-hidden' : '' }}" id="sbiEmptyState">
-                    <div class="sbi-empty__icon" aria-hidden="true">✓</div>
-                    <h3 class="sbi-empty__title">No scam brokers found</h3>
-                    <p class="sbi-empty__text">
+                    <div class="sbi-empty__icon" aria-hidden="true">!</div>
+                    <h3 class="sbi-empty__title" id="sbiEmptyTitle">
+                        @if($brokersPayload->isEmpty())
+                            No scam brokers listed
+                        @else
+                            No brokers match your filters
+                        @endif
+                    </h3>
+                    <p class="sbi-empty__text" id="sbiEmptyText">
                         @if($brokersPayload->isEmpty())
                             There are currently no brokers flagged as scam in our database.
                         @else
-                            No brokers match your filters. Try clearing the search or warning types.
+                            Try clearing the search or warning type filters.
                         @endif
                     </p>
                 </div>
@@ -121,5 +159,5 @@
 @endsection
 
 @push('scripts')
-<script src="{{ asset('js/scam-brokers-index.js') }}?v=1"></script>
+<script src="{{ asset('js/scam-brokers-index.js') }}?v=2"></script>
 @endpush

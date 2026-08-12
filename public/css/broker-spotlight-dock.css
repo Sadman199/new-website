@@ -5,18 +5,20 @@
     --bsd-ice: #D9E2E9;
 
     position: fixed;
-    left: 50%;
+    left: 1rem;
+    right: 1rem;
     bottom: 1.125rem;
     z-index: 1205;
-    width: min(calc(100vw - 2rem), 26rem);
-    transform: translateX(-50%);
+    width: auto;
+    max-width: 26rem;
+    margin-inline: auto;
     pointer-events: none;
     transition: opacity 0.32s ease, transform 0.32s ease;
 }
 
 .bc-spotlight-dock.is-hidden {
     opacity: 0;
-    transform: translateX(-50%) translateY(1rem);
+    transform: translateY(1rem);
     pointer-events: none;
 }
 
@@ -166,7 +168,7 @@
 }
 
 .bc-spotlight-dock.is-expanded .bc-spotlight-dock__panel {
-    max-height: 22rem;
+    max-height: 24rem;
     opacity: 1;
     transform: translateY(0);
 }
@@ -181,6 +183,29 @@
         0 18px 42px rgba(12, 29, 50, 0.16),
         0 0 0 1px rgba(255, 255, 255, 0.7) inset;
     overflow: hidden;
+}
+
+/* jCarousel-style track */
+.bc-spotlight-dock__carousel-viewport {
+    overflow: hidden;
+}
+
+.bc-spotlight-dock__carousel-track {
+    display: flex;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    will-change: transform;
+}
+
+.bc-spotlight-dock__carousel-track.is-refreshing {
+    opacity: 0.4;
+    transition: opacity 0.22s ease;
+}
+
+.bc-spotlight-dock__slide {
+    flex: 0 0 100%;
+    min-width: 100%;
 }
 
 .bc-spotlight-dock__head {
@@ -430,10 +455,16 @@
     display: none;
 }
 
+.bc-spotlight-dock__foot .bc-spotlight-dock__collapse {
+    margin-left: 0.125rem;
+}
+
 @media (max-width: 767px) {
     .bc-spotlight-dock {
+        left: 0.5rem;
+        right: 0.5rem;
         bottom: 0.75rem;
-        width: min(calc(100vw - 1rem), 24rem);
+        max-width: 24rem;
     }
 
     .bc-spotlight-dock__peek-rating {
@@ -459,7 +490,8 @@
     .bc-spotlight-dock__peek,
     .bc-spotlight-dock__panel,
     .bc-spotlight-dock__chip,
-    .bc-spotlight-dock__btn {
+    .bc-spotlight-dock__btn,
+    .bc-spotlight-dock__carousel-track {
         transition: none;
         animation: none;
     }

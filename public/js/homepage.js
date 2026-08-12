@@ -2,57 +2,70 @@
     'use strict';
 
     document.addEventListener('DOMContentLoaded', function () {
-        initSearchTabs();
+        initHeroFilters();
         initSearchForm();
         initFinderDropdowns();
         initPickTabs();
     });
 
-    function initSearchTabs() {
+    function initHeroFilters() {
+        var toggle = document.getElementById('bcHeroFiltersToggle');
+        var panel = document.getElementById('bcHeroFilters');
+        if (!toggle || !panel) {
+            return;
+        }
+
+        var filterInputs = panel.querySelectorAll('[data-bc-dropdown-input]');
+        var filterTriggers = panel.querySelectorAll('[data-bc-dropdown-trigger]');
+
+        toggle.addEventListener('click', function () {
+            var open = panel.hasAttribute('hidden');
+            toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+            toggle.classList.toggle('is-open', open);
+
+            if (open) {
+                panel.removeAttribute('hidden');
+            } else {
+                panel.setAttribute('hidden', '');
+                closeAllDropdowns();
+            }
+
+            filterInputs.forEach(function (el) {
+                el.disabled = !open;
+            });
+            filterTriggers.forEach(function (el) {
+                el.disabled = !open;
+            });
+        });
+    }
+
+    function initSearchForm() {
         var form = document.getElementById('bcHomeSearchForm');
         if (!form) return;
 
-        var tabs = form.querySelectorAll('[data-bc-tab]');
-        var panels = form.querySelectorAll('[data-bc-panel]');
-        var nameInput = form.querySelector('input[name="q"]');
-        var filterInputs = form.querySelectorAll('[data-bc-dropdown-input]');
-        var filterTriggers = form.querySelectorAll('[data-bc-panel="filter"] [data-bc-dropdown-trigger]');
+        form.addEventListener('submit', function (e) {
+            var panel = document.getElementById('bcHeroFilters');
+            var filtersOpen = panel && !panel.hasAttribute('hidden');
+            var submitter = e.submitter;
+            var usedFilters = filtersOpen && submitter && submitter.classList.contains('bc-hero__search-btn--filter');
 
-        tabs.forEach(function (tab) {
-            tab.addEventListener('click', function () {
-                var mode = tab.getAttribute('data-bc-tab');
-                tabs.forEach(function (t) {
-                    var active = t === tab;
-                    t.classList.toggle('is-active', active);
-                    t.setAttribute('aria-selected', active ? 'true' : 'false');
-                });
-                panels.forEach(function (p) {
-                    p.classList.toggle('is-hidden', p.getAttribute('data-bc-panel') !== mode);
-                });
+            form.querySelectorAll('input').forEach(function (el) {
+                if (!el.name || el.disabled) return;
 
-                var isName = mode === 'name';
-                closeAllDropdowns();
-
-                if (nameInput) {
-                    nameInput.disabled = !isName;
+                if (usedFilters && el.name === 'q') {
+                    el.removeAttribute('name');
+                    return;
                 }
-                filterInputs.forEach(function (el) {
-                    el.disabled = isName;
-                });
-                filterTriggers.forEach(function (el) {
-                    el.disabled = isName;
-                });
-            });
-        });
 
-        if (nameInput) {
-            nameInput.disabled = false;
-        }
-        filterInputs.forEach(function (el) {
-            el.disabled = true;
-        });
-        filterTriggers.forEach(function (el) {
-            el.disabled = true;
+                if (!usedFilters && el.name !== 'q') {
+                    el.removeAttribute('name');
+                    return;
+                }
+
+                if ((el.value || '').trim() === '') {
+                    el.removeAttribute('name');
+                }
+            });
         });
     }
 
@@ -125,31 +138,6 @@
             if (trigger) {
                 trigger.setAttribute('aria-expanded', 'false');
             }
-        });
-    }
-
-    function initSearchForm() {
-        var form = document.getElementById('bcHomeSearchForm');
-        if (!form) return;
-
-        form.addEventListener('submit', function () {
-            var namePanel = form.querySelector('[data-bc-panel="name"]');
-            var isName = namePanel && !namePanel.classList.contains('is-hidden');
-
-            form.querySelectorAll('input').forEach(function (el) {
-                if (!el.name || el.disabled) return;
-                if (isName && el.name !== 'q') {
-                    el.removeAttribute('name');
-                    return;
-                }
-                if (!isName && el.name === 'q') {
-                    el.removeAttribute('name');
-                    return;
-                }
-                if ((el.value || '').trim() === '') {
-                    el.removeAttribute('name');
-                }
-            });
         });
     }
 

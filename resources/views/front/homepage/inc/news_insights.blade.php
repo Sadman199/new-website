@@ -15,7 +15,7 @@
             <div class="bc-insights__intro">
                 <p class="bc-insights__eyebrow">
                     <span class="bc-insights__eyebrow-icon" aria-hidden="true">
-                        <i class="fa-solid fa-newspaper"></i>
+                        <i class="fas fa-newspaper"></i>
                     </span>
                     Editorial
                 </p>
@@ -24,7 +24,7 @@
             </div>
             <a href="{{ route('blog') }}" class="bc-insights__cta">
                 View blog
-                <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+                <i class="fas fa-arrow-right" aria-hidden="true"></i>
             </a>
         </header>
 

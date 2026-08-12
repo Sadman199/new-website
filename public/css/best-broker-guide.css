@@ -263,7 +263,7 @@
     top: calc(100% + 0.5rem);
     left: 0;
     z-index: 40;
-    width: min(18rem, calc(100vw - 2rem));
+    width: min(18rem, calc(100% - 2rem));
     padding: 1rem;
     background: var(--bbg-surface);
     border-radius: 0.75rem;
@@ -1019,7 +1019,7 @@
     .bbg-mobile-toc {
         display: block;
         position: sticky;
-        top: 4.5rem;
+        top: calc(3.75rem + env(safe-area-inset-top, 0px));
         z-index: 20;
         margin-bottom: 1rem;
         padding: 0.625rem 0.875rem;

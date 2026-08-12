@@ -1,9 +1,37 @@
-/* Contact index — white theme */
+/* Contact — BrokersCourt dark ocean theme (matches trading-tools) */
 .cti-page {
-    background: #f4f6f8;
-    color: #0f172a;
+    --cti-ocean: #007AAD;
+    --cti-ocean-light: #33a3d4;
+    --cti-ocean-dark: #006694;
+    --cti-midnight: #0C1D32;
+    --cti-bg-mid: #0f2744;
+    --cti-ice: #D9E2E9;
+    --cti-off-white: #FFFBFC;
+    --cti-muted: rgba(217, 226, 233, 0.62);
+    --cti-dim: rgba(217, 226, 233, 0.38);
+    --cti-border: rgba(217, 226, 233, 0.12);
+    --cti-border-strong: rgba(217, 226, 233, 0.2);
+    --cti-surface: rgba(19, 40, 67, 0.82);
+    --cti-surface-solid: #132843;
+    --cti-success: #34d399;
+    --cti-danger: #f87171;
+    --cti-radius: 14px;
+    --cti-radius-lg: 18px;
+
     min-height: 100vh;
-    padding: 5.5rem 0 3rem;
+    background: var(--cti-midnight);
+    color: var(--cti-off-white);
+    padding-bottom: 3rem;
+}
+
+.cti-page *,
+.cti-page *::before,
+.cti-page *::after {
+    box-sizing: border-box;
+}
+
+body:has(.cti-page) {
+    background: var(--cti-midnight);
 }
 
 .cti-wrap {
@@ -11,39 +39,104 @@
     margin: 0 auto;
 }
 
-.cti-hero {
-    text-align: center;
-    margin-bottom: 2rem;
+@media (min-width: 1024px) {
+    .cti-wrap {
+        width: min(100% - 3rem, 80rem);
+    }
 }
 
-.cti-hero__badge {
+/* Hero */
+.cti-hero {
+    position: relative;
+    overflow: hidden;
+    padding: 5.25rem 0 2rem;
+    border-bottom: 1px solid var(--cti-border);
+}
+
+.cti-hero__bg {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background:
+        radial-gradient(ellipse 70% 55% at 50% -15%, rgba(0, 122, 173, 0.28) 0%, transparent 58%),
+        linear-gradient(180deg, var(--cti-bg-mid) 0%, var(--cti-midnight) 100%);
+}
+
+.cti-breadcrumb {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.4rem;
+    margin-bottom: 1rem;
+    font-size: 0.8125rem;
+    color: var(--cti-dim);
+}
+
+.cti-breadcrumb a {
+    color: rgba(217, 226, 233, 0.72);
+    text-decoration: none;
+    transition: color 0.18s ease;
+}
+
+.cti-breadcrumb a:hover {
+    color: var(--cti-off-white);
+}
+
+.cti-hero__eyebrow {
+    position: relative;
+    z-index: 1;
     display: inline-flex;
-    margin-bottom: 0.75rem;
-    padding: 0.35rem 0.875rem;
-    border-radius: 999px;
-    background: linear-gradient(135deg, #fef3c7, #fde68a);
-    border: 1px solid #fcd34d;
-    color: #92400e;
-    font-size: 0.75rem;
+    align-items: center;
+    gap: 0.4rem;
+    margin: 0 0 0.625rem;
+    padding: 0.25rem 0.625rem;
+    font-size: 0.625rem;
     font-weight: 700;
-    letter-spacing: 0.04em;
+    letter-spacing: 0.06em;
     text-transform: uppercase;
+    color: var(--cti-ocean-light);
+    background: rgba(0, 122, 173, 0.12);
+    border: 1px solid rgba(0, 122, 173, 0.22);
+    border-radius: 999px;
+}
+
+.cti-hero__eyebrow svg {
+    width: 0.8125rem;
+    height: 0.8125rem;
 }
 
 .cti-hero__title {
-    margin: 0 0 0.5rem;
-    font-size: clamp(1.875rem, 4vw, 2.5rem);
+    position: relative;
+    z-index: 1;
+    margin: 0 0 0.625rem;
+    max-width: 44rem;
+    font-size: clamp(1.75rem, 4vw, 2.5rem);
     font-weight: 800;
     letter-spacing: -0.03em;
-    color: #0f172a;
+    line-height: 1.12;
+    color: var(--cti-off-white);
+}
+
+.cti-hero__accent {
+    color: var(--cti-ocean-light);
 }
 
 .cti-hero__subtitle {
-    margin: 0 auto;
-    max-width: 42rem;
-    font-size: 1rem;
-    line-height: 1.6;
-    color: #475569;
+    position: relative;
+    z-index: 1;
+    margin: 0;
+    max-width: 40rem;
+    font-size: 0.9375rem;
+    line-height: 1.65;
+    color: var(--cti-muted);
+}
+
+
+/* Body */
+.cti-body {
+    padding: 1.75rem 0 0;
 }
 
 .cti-alert {
@@ -54,15 +147,15 @@
 }
 
 .cti-alert--success {
-    background: #ecfdf5;
-    border: 1px solid #6ee7b7;
-    color: #065f46;
+    background: rgba(52, 211, 153, 0.12);
+    border: 1px solid rgba(52, 211, 153, 0.32);
+    color: #6ee7b7;
 }
 
 .cti-alert--error {
-    background: #fef2f2;
-    border: 1px solid #fca5a5;
-    color: #991b1b;
+    background: rgba(248, 113, 113, 0.12);
+    border: 1px solid rgba(248, 113, 113, 0.32);
+    color: #fca5a5;
 }
 
 .cti-alert__list {
@@ -70,45 +163,196 @@
     padding-left: 1.1rem;
 }
 
-.cti-layout {
-    display: grid;
-    gap: 1.25rem;
+.cti-notice {
+    margin-bottom: 1.25rem;
+    padding: 0.875rem 1rem;
+    font-size: 0.8125rem;
+    line-height: 1.55;
+    color: var(--cti-muted);
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--cti-border);
+    border-radius: 0.625rem;
 }
 
-@media (min-width: 992px) {
-    .cti-layout {
-        grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
-        align-items: start;
+.cti-notice strong {
+    color: var(--cti-off-white);
+}
+
+.cti-notice a {
+    color: var(--cti-ocean-light);
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.cti-notice a:hover {
+    color: var(--cti-off-white);
+    text-decoration: underline;
+}
+
+/* Channel cards */
+.cti-channels {
+    display: grid;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+}
+
+@media (min-width: 640px) {
+    .cti-channels {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 }
 
-.cti-form-panel,
-.cti-card {
-    padding: 1.5rem;
-    border: 1px solid #e2e8f0;
-    border-radius: 0.875rem;
-    background: #fff;
-    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05);
+@media (min-width: 1024px) {
+    .cti-channels {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+}
+
+.cti-channel-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.875rem;
+    padding: 1.125rem;
+    background: var(--cti-surface);
+    border: 1px solid var(--cti-border);
+    border-radius: var(--cti-radius);
+    color: inherit;
+    text-decoration: none;
+    transition: border-color 0.18s ease, transform 0.18s ease, background 0.18s ease;
+}
+
+a.cti-channel-card:hover {
+    border-color: rgba(0, 122, 173, 0.35);
+    background: rgba(19, 40, 67, 0.95);
+    transform: translateY(-2px);
+}
+
+.cti-channel-card__icon {
+    flex-shrink: 0;
+    width: 2.5rem;
+    height: 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.625rem;
+    background: rgba(0, 122, 173, 0.14);
+    border: 1px solid rgba(0, 122, 173, 0.24);
+    color: var(--cti-ocean-light);
+}
+
+.cti-channel-card__icon svg {
+    width: 1.125rem;
+    height: 1.125rem;
+}
+
+.cti-channel-card__body {
+    flex: 1;
+    min-width: 0;
+    display: grid;
+    gap: 0.15rem;
+}
+
+.cti-channel-card__label {
+    display: block;
+    font-size: 0.625rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--cti-dim);
+}
+
+.cti-channel-card__value {
+    display: block;
+    font-size: 0.9375rem;
+    font-weight: 800;
+    color: var(--cti-off-white);
+    line-height: 1.25;
+}
+
+.cti-channel-card__hint {
+    display: block;
+    font-size: 0.75rem;
+    line-height: 1.45;
+    color: var(--cti-muted);
+}
+
+.cti-channel-card__arrow {
+    flex-shrink: 0;
+    color: var(--cti-dim);
+    margin-top: 0.15rem;
+}
+
+.cti-channel-card__arrow svg {
+    width: 1.125rem;
+    height: 1.125rem;
+}
+
+a.cti-channel-card:hover .cti-channel-card__arrow {
+    color: var(--cti-ocean-light);
+}
+
+/* Layout */
+.cti-layout {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+    align-items: start;
+}
+
+@media (min-width: 1024px) {
+    .cti-layout {
+        grid-template-columns: 1fr 280px;
+        gap: 1.5rem;
+    }
+}
+
+/* Form panel */
+.cti-panel {
+    background: var(--cti-surface);
+    border: 1px solid var(--cti-border);
+    border-radius: var(--cti-radius-lg);
+    overflow: hidden;
+    padding: 1.25rem;
+}
+
+@media (min-width: 640px) {
+    .cti-panel {
+        padding: 1.5rem 1.75rem;
+    }
+}
+
+.cti-panel__head {
+    margin-bottom: 1.25rem;
 }
 
 .cti-panel__title {
     margin: 0 0 0.35rem;
-    font-size: 1.25rem;
+    font-size: 1.125rem;
     font-weight: 800;
-    color: #0f172a;
-    letter-spacing: -0.02em;
+    color: var(--cti-off-white);
 }
 
-.cti-panel__lead {
-    margin: 0 0 1.25rem;
-    font-size: 0.9375rem;
+.cti-panel__desc {
+    margin: 0;
+    font-size: 0.8125rem;
     line-height: 1.55;
-    color: #64748b;
+    color: var(--cti-muted);
 }
 
 .cti-form {
     display: grid;
     gap: 1rem;
+}
+
+.cti-form__grid {
+    display: grid;
+    gap: 0.875rem;
+}
+
+@media (min-width: 640px) {
+    .cti-form__grid {
+        grid-template-columns: 1fr 1fr;
+    }
 }
 
 .cti-honeypot {
@@ -119,154 +363,200 @@
     overflow: hidden;
 }
 
-.cti-field {
-    display: grid;
-    gap: 0.35rem;
+.cti-field label {
+    display: block;
+    margin-bottom: 0.35rem;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    color: var(--cti-dim);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.cti-field input,
+.cti-field select,
+.cti-field textarea {
+    width: 100%;
+    padding: 0.7rem 0.875rem;
+    border: 1px solid var(--cti-border-strong);
+    border-radius: 0.625rem;
+    background: rgba(12, 29, 50, 0.55);
+    color: var(--cti-off-white);
+    font-size: 0.9375rem;
+    transition: border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.cti-field input::placeholder,
+.cti-field textarea::placeholder {
+    color: var(--cti-dim);
+}
+
+.cti-field input:focus,
+.cti-field select:focus,
+.cti-field textarea:focus {
+    outline: none;
+    border-color: rgba(0, 122, 173, 0.55);
+    box-shadow: 0 0 0 3px rgba(0, 122, 173, 0.18);
+}
+
+.cti-field input.is-invalid,
+.cti-field select.is-invalid,
+.cti-field textarea.is-invalid {
+    border-color: var(--cti-danger);
+}
+
+.cti-field select option {
+    background: var(--cti-surface-solid);
+    color: var(--cti-off-white);
+}
+
+.cti-field textarea {
+    resize: vertical;
+    min-height: 8.5rem;
 }
 
 .cti-field--checkbox {
+    display: grid;
     grid-template-columns: auto 1fr;
     align-items: start;
     gap: 0.625rem;
-    font-size: 0.8125rem;
-    color: #475569;
-    line-height: 1.5;
 }
 
 .cti-field--checkbox input {
-    margin-top: 0.2rem;
+    width: auto;
+    margin-top: 0.15rem;
+    accent-color: var(--cti-ocean);
+}
+
+.cti-field--checkbox label {
+    margin: 0;
+    font-size: 0.8125rem;
+    font-weight: 400;
+    letter-spacing: 0;
+    text-transform: none;
+    color: var(--cti-muted);
+    line-height: 1.5;
 }
 
 .cti-field--checkbox a {
-    color: #b45309;
+    color: var(--cti-ocean-light);
     text-decoration: underline;
 }
 
-.cti-label {
-    font-size: 0.8125rem;
-    font-weight: 600;
-    color: #334155;
-}
-
-.cti-input {
-    width: 100%;
-    padding: 0.7rem 0.875rem;
-    border: 1px solid #cbd5e1;
-    border-radius: 0.5rem;
-    background: #fff;
-    color: #0f172a;
-    font-size: 0.9375rem;
-    transition: border-color 0.15s, box-shadow 0.15s;
-}
-
-.cti-input:focus {
-    outline: none;
-    border-color: #fbbf24;
-    box-shadow: 0 0 0 3px rgba(251, 191, 36, 0.2);
-}
-
-.cti-input.is-invalid {
-    border-color: #f87171;
-}
-
-.cti-input--textarea {
-    resize: vertical;
-    min-height: 8rem;
-}
-
 .cti-error {
+    display: block;
+    margin-top: 0.3rem;
     font-size: 0.75rem;
-    color: #dc2626;
+    color: var(--cti-danger);
 }
 
 .cti-submit {
-    justify-self: start;
-    padding: 0.75rem 1.5rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.375rem;
     border: none;
     border-radius: 999px;
-    background: linear-gradient(135deg, #fbbf24, #f59e0b);
-    color: #0f172a;
-    font-size: 0.9375rem;
+    background: linear-gradient(135deg, var(--cti-ocean) 0%, #0094c9 100%);
+    color: #fff;
+    font-size: 0.875rem;
     font-weight: 700;
     cursor: pointer;
-    transition: transform 0.15s, box-shadow 0.15s;
+    box-shadow: 0 8px 20px rgba(0, 122, 173, 0.28);
+    transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.cti-submit svg {
+    width: 1rem;
+    height: 1rem;
 }
 
 .cti-submit:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 4px 14px rgba(251, 191, 36, 0.35);
+    transform: translateY(-2px);
+    box-shadow: 0 12px 28px rgba(0, 122, 173, 0.36);
 }
 
-.cti-side {
-    display: grid;
-    gap: 1rem;
+/* Sidebar */
+.cti-sidebar {
+    background: var(--cti-surface);
+    border: 1px solid var(--cti-border);
+    border-radius: var(--cti-radius);
+    padding: 1.125rem;
 }
 
-.cti-channels {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: grid;
-    gap: 0.875rem;
+@media (min-width: 1024px) {
+    .cti-sidebar {
+        position: sticky;
+        top: 5.5rem;
+    }
 }
 
-.cti-channel {
-    display: grid;
-    gap: 0.15rem;
-    padding-bottom: 0.875rem;
-    border-bottom: 1px solid #f1f5f9;
-}
-
-.cti-channel:last-child {
-    padding-bottom: 0;
-    border-bottom: none;
-}
-
-.cti-channel__label {
+.cti-sidebar__title {
+    margin: 0 0 0.75rem;
     font-size: 0.6875rem;
     font-weight: 700;
     letter-spacing: 0.05em;
     text-transform: uppercase;
-    color: #94a3b8;
+    color: var(--cti-dim);
 }
 
-.cti-channel__value {
-    font-size: 0.9375rem;
-    font-weight: 700;
-    color: #0f172a;
-    text-decoration: none;
-}
-
-a.cti-channel__value:hover {
-    color: #b45309;
-}
-
-.cti-channel__hint {
-    font-size: 0.8125rem;
-    color: #64748b;
-    line-height: 1.45;
-}
-
-.cti-topics {
-    list-style: none;
-    margin: 0;
-    padding: 0;
+.cti-sidebar__nav {
     display: grid;
-    gap: 0.875rem;
+    gap: 0.35rem;
 }
 
-.cti-topic h3 {
-    margin: 0 0 0.2rem;
-    font-size: 0.9375rem;
-    font-weight: 700;
-    color: #0f172a;
-}
-
-.cti-topic p {
-    margin: 0;
+.cti-sidebar__link {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.625rem;
+    padding: 0.625rem 0.75rem;
+    border-radius: 0.625rem;
     font-size: 0.8125rem;
-    line-height: 1.55;
-    color: #64748b;
+    color: var(--cti-muted);
+    text-decoration: none;
+    border: 1px solid transparent;
+    transition: color 0.18s ease, background 0.18s ease, border-color 0.18s ease;
+}
+
+.cti-sidebar__link i {
+    flex-shrink: 0;
+    width: 1rem;
+    margin-top: 0.1rem;
+    text-align: center;
+    color: var(--cti-ocean-light);
+    font-size: 0.8125rem;
+}
+
+.cti-sidebar__link span {
+    display: grid;
+    gap: 0.1rem;
+    min-width: 0;
+}
+
+.cti-sidebar__link strong {
+    font-size: 0.8125rem;
+    font-weight: 700;
+    color: var(--cti-off-white);
+}
+
+.cti-sidebar__link small {
+    font-size: 0.6875rem;
+    line-height: 1.4;
+    color: var(--cti-dim);
+}
+
+.cti-sidebar__link:hover {
+    color: var(--cti-off-white);
+    background: rgba(255, 255, 255, 0.04);
+    border-color: var(--cti-border);
+}
+
+.cti-sidebar__social,
+.cti-sidebar__map {
+    margin-top: 1.125rem;
+    padding-top: 1.125rem;
+    border-top: 1px solid var(--cti-border);
 }
 
 .cti-social {
@@ -279,31 +569,46 @@ a.cti-channel__value:hover {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 2.5rem;
-    height: 2.5rem;
-    border: 1px solid #e2e8f0;
+    width: 2.375rem;
+    height: 2.375rem;
+    border: 1px solid var(--cti-border);
     border-radius: 0.5rem;
-    background: #f8fafc;
-    color: #475569;
+    background: rgba(255, 255, 255, 0.03);
+    color: var(--cti-muted);
     text-decoration: none;
-    transition: background 0.15s, color 0.15s, border-color 0.15s;
+    transition: background 0.18s ease, color 0.18s ease, border-color 0.18s ease;
 }
 
 .cti-social a:hover {
-    background: #fffbeb;
-    border-color: #fcd34d;
-    color: #b45309;
+    background: rgba(0, 122, 173, 0.14);
+    border-color: rgba(0, 122, 173, 0.28);
+    color: var(--cti-ocean-light);
 }
 
 .cti-map {
     overflow: hidden;
-    border-radius: 0.5rem;
-    border: 1px solid #e2e8f0;
+    border-radius: 0.625rem;
+    border: 1px solid var(--cti-border);
 }
 
 .cti-map iframe {
     display: block;
     width: 100%;
-    min-height: 220px;
+    min-height: 160px;
     border: 0;
+}
+
+.cti-disclaimer {
+    margin: 1.5rem 0 0;
+    font-size: 0.75rem;
+    line-height: 1.6;
+    color: var(--cti-dim);
+    text-align: center;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .cti-channel-card:hover,
+    .cti-submit:hover {
+        transform: none;
+    }
 }

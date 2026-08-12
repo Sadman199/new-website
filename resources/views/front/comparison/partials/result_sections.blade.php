@@ -32,13 +32,13 @@
                         @foreach($section['rows'] as $row)
                             <tr>
                                 <th scope="row" class="bc-result-table__metric">{{ $row['label'] }}</th>
-                                <td class="bc-result-table__value {{ $row['winner'] === 'broker1' ? 'is-best' : '' }} {{ $row['left'] === 'Yes' ? 'is-yes' : ($row['left'] === 'No' ? 'is-no' : '') }}">
+                                <td class="bc-result-table__value {{ $row['winner'] === 'broker1' ? 'is-best' : '' }} {{ $row['left'] === $row['right'] ? 'is-same' : '' }} {{ $row['left'] === 'Yes' ? 'is-yes' : ($row['left'] === 'No' ? 'is-no' : '') }}" data-broker="{{ $comparison['broker1']['name'] }}">
                                     {{ $row['left'] }}
                                     @if($row['winner'] === 'broker1')
                                         <span class="bc-result-table__win" aria-label="Best value"><i class="fas fa-check"></i></span>
                                     @endif
                                 </td>
-                                <td class="bc-result-table__value {{ $row['winner'] === 'broker2' ? 'is-best' : '' }} {{ $row['right'] === 'Yes' ? 'is-yes' : ($row['right'] === 'No' ? 'is-no' : '') }}">
+                                <td class="bc-result-table__value {{ $row['winner'] === 'broker2' ? 'is-best' : '' }} {{ $row['left'] === $row['right'] ? 'is-same' : '' }} {{ $row['right'] === 'Yes' ? 'is-yes' : ($row['right'] === 'No' ? 'is-no' : '') }}" data-broker="{{ $comparison['broker2']['name'] }}">
                                     {{ $row['right'] }}
                                     @if($row['winner'] === 'broker2')
                                         <span class="bc-result-table__win" aria-label="Best value"><i class="fas fa-check"></i></span>

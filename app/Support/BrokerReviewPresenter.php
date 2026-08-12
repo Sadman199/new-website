@@ -192,12 +192,17 @@ class BrokerReviewPresenter
     }
 
     /** @return array<int, array{id: string, label: string}> */
-    public static function tableOfContents(Broker $broker, iterable $accountOptions): array
+    public static function tableOfContents(Broker $broker, iterable $accountOptions, bool $includeScoreBreakdown = false): array
     {
         $toc = [
             ['id' => 'gettingstarted', 'label' => 'Overview'],
-            ['id' => 'key-stats', 'label' => 'Pros & Cons'],
         ];
+
+        if ($includeScoreBreakdown) {
+            $toc[] = ['id' => 'score-breakdown', 'label' => 'Score Breakdown'];
+        }
+
+        $toc[] = ['id' => 'key-stats', 'label' => 'Pros & Cons'];
 
         if (strip_tags($broker->description ?? '')) {
             $toc[] = ['id' => 'review-body', 'label' => 'Full Review'];
@@ -213,15 +218,86 @@ class BrokerReviewPresenter
             $toc[] = ['id' => 'account-types', 'label' => 'Account Types'];
         }
 
-        if ($broker->relationLoaded('forexBonuses') && $broker->forexBonuses->isNotEmpty()) {
+        if (
+            ! $broker->is_scam
+            && $broker->relationLoaded('forexBonuses')
+            && $broker->forexBonuses->isNotEmpty()
+        ) {
             $toc[] = ['id' => 'broker-promotions', 'label' => 'Promotions'];
         }
 
         $toc[] = ['id' => 'faqs', 'label' => 'FAQs'];
         $toc[] = ['id' => 'voices', 'label' => 'Comments'];
-        $toc[] = ['id' => 'compare', 'label' => 'Compare'];
+        $toc[] = ['id' => 'compare', 'label' => $broker->is_scam ? 'Safer alternatives' : 'Compare'];
 
         return $toc;
+    }
+
+    /**
+     * First-screen facts for the review hero, sidebar, and mobile CTA.
+     *
+     * @param  array{count?: int, average?: float|int}  $reviewStats
+     * @return array<string, mixed>
+     */
+    public static function decisionSnapshot(Broker $broker, array $reviewStats = []): array
+    {
+        $firstAccount = $broker->accountOptions->first();
+        $regulations = $broker->regulationList();
+        $platforms = $broker->platformList();
+        $accountTypes = $broker->accountTypeLabelList();
+        $countries = is_array($broker->associated_countries)
+            ? array_values(array_filter($broker->associated_countries))
+            : [];
+
+        $spreads = $broker->spreads
+            ?: optional($firstAccount)->spread_label
+            ?: (optional($firstAccount)->spread_value ? optional($firstAccount)->spread_value . ' pips' : null);
+
+        $minDeposit = $broker->minimum_deposit !== null
+            ? self::money($broker->minimum_deposit)
+            : (optional($firstAccount)->min_deposit !== null ? self::money($firstAccount->min_deposit) : null);
+
+        $visitUrl = $broker->open_live ?: $broker->visit_site ?: $broker->url;
+        $demoUrl = $broker->demo_link ?: $broker->open_demo;
+
+        $facts = array_values(array_filter([
+            [
+                'label' => 'Regulation',
+                'value' => $regulations
+                    ? implode(', ', array_slice($regulations, 0, 3))
+                    : ($broker->isRegulated() ? 'Investor protection' : 'Unregulated'),
+            ],
+            $minDeposit ? ['label' => 'Min. deposit', 'value' => $minDeposit] : null,
+            ($broker->leverage ?: optional($firstAccount)->leverage_label)
+                ? ['label' => 'Max leverage', 'value' => strip_tags((string) ($broker->leverage ?: $firstAccount->leverage_label))]
+                : null,
+            $spreads ? ['label' => 'Spreads', 'value' => strip_tags((string) $spreads)] : null,
+            $platforms ? ['label' => 'Platforms', 'value' => implode(', ', array_slice($platforms, 0, 3))] : null,
+            $accountTypes ? ['label' => 'Accounts', 'value' => implode(', ', array_slice($accountTypes, 0, 3))] : null,
+            $broker->year_founded ? ['label' => 'Founded', 'value' => (string) $broker->year_founded] : null,
+            $broker->country ? ['label' => 'Headquarters', 'value' => strip_tags($broker->country)] : null,
+            $countries ? ['label' => 'Available in', 'value' => implode(', ', array_slice($countries, 0, 3))] : null,
+        ]));
+
+        return [
+            'is_scam' => (bool) $broker->is_scam,
+            'is_regulated' => $broker->isRegulated(),
+            'facts' => $facts,
+            'visit_url' => $visitUrl,
+            'demo_url' => $demoUrl,
+            'compare_url' => route('broker.comparison', ['brokers' => $broker->slug]),
+            'review_count' => (int) ($reviewStats['count'] ?? 0),
+            'review_average' => $reviewStats['average'] ?? 0,
+            'score' => number_format((float) $broker->rating, 1),
+            'trust_score' => $broker->trust_score && (int) $broker->trust_score <= 99
+                ? (int) $broker->trust_score
+                : null,
+            'scam_reason' => $broker->scam_reason,
+            'scam_reported' => $broker->scam_reported_date
+                ? \Carbon\Carbon::parse($broker->scam_reported_date)->format('M j, Y')
+                : null,
+            'available_in' => array_slice($countries, 0, 4),
+        ];
     }
 
     /** @return array<int, array<string, mixed>> */

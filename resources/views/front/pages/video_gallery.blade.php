@@ -88,13 +88,4 @@
     @endif
 </section>
 </div>
-    <script>
-        $(document).ready(function () {
-        handleAdBannersForAllPages('.breadcrumb_wrapper_by_video', {
-            offset: 200, // Adjust as needed
-            fadeDuration: 400,
-            slideDuration: 600,
-        });
-        });
-    </script>
 @endsection

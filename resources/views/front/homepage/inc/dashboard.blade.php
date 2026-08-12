@@ -68,19 +68,19 @@
                     <span class="bv-section__title">Trading Promotions</span>
                 </div>
                 <div class="bv-promo-row">
-                    <a href="{{ route('bonuses.type','deposit-bonuses') }}" class="bv-promo-mini">
+                    <a href="{{ route('promotions.tab','deposit-bonuses') }}" class="bv-promo-mini">
                         <div class="bv-promo-mini__title">Deposit Bonus</div>
                         <div class="bv-promo-mini__sub">Up to 50% extra</div>
                     </a>
-                    <a href="{{ route('bonuses.type','no-deposit-bonuses') }}" class="bv-promo-mini">
+                    <a href="{{ route('promotions.tab','no-deposit-bonuses') }}" class="bv-promo-mini">
                         <div class="bv-promo-mini__title">No Deposit</div>
                         <div class="bv-promo-mini__sub">Free trading credit</div>
                     </a>
-                    <a href="{{ route('bonuses.type','live-contests') }}" class="bv-promo-mini">
+                    <a href="{{ route('promotions.tab','live-contests') }}" class="bv-promo-mini">
                         <div class="bv-promo-mini__title">Live Contest</div>
                         <div class="bv-promo-mini__sub">Prize pools</div>
                     </a>
-                    <a href="{{ route('bonuses.type','cashback-rebates') }}" class="bv-promo-mini">
+                    <a href="{{ route('promotions.tab','cashback-rebates') }}" class="bv-promo-mini">
                         <div class="bv-promo-mini__title">Cashback</div>
                         <div class="bv-promo-mini__sub">Up to 15% weekly</div>
                     </a>

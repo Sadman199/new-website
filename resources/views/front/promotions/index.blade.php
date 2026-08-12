@@ -2,13 +2,17 @@
 
 @section('title', 'Broker Promos — Bonuses, Contests & Cashback | BrokersCourt')
 @section('meta_description', 'Browse live broker promotions: deposit bonuses, no-deposit offers, trading contests, cashback deals, and crypto contests — updated from our promotions database.')
+@section('canonical', ($activeTab ?? 'all') === 'all' ? route('promotions.index') : route('promotions.tab', ['type' => $activeTab]))
 
 @push('page-styles')
-    <link rel="stylesheet" href="{{ asset('css/promotions-index.css') }}?v=4">
+    <link rel="stylesheet" href="{{ asset('css/promotions-index.css') }}?v=13">
 @endpush
 
 @section('main_content')
-<div class="bpr-page" id="bpr-app" data-active-tab="{{ $activeTab }}">
+<div class="bpr-page" id="bpr-app"
+     data-active-tab="{{ $activeTab }}"
+     data-active-sort="{{ $activeSort }}"
+     data-featured-only="{{ $featuredOnly ? '1' : '0' }}">
     <header class="bpr-hero">
         <div class="bpr-wrap">
             <nav class="bpr-breadcrumb" aria-label="Breadcrumb">
@@ -24,42 +28,24 @@
                 Live broker offers
             </p>
             <h1 class="bpr-hero__title">Broker <span class="bpr-hero__accent">promos</span></h1>
-            <p class="bpr-hero__subtitle">Deposit bonuses, no-deposit offers, trading contests, and cashback deals from regulated brokers — refreshed from our live promotions database.</p>
+            <p class="bpr-hero__subtitle">Deposit bonuses, contests, and cashback from regulated brokers — sorted and refreshed from our live database.</p>
 
-            <div class="bpr-hero__stats">
-                <div class="bpr-hero__stat">
-                    <span class="bpr-hero__stat-label">Active offers</span>
-                    <strong class="bpr-hero__stat-value">{{ number_format($stats['total_active']) }}</strong>
-                </div>
-                <div class="bpr-hero__stat">
-                    <span class="bpr-hero__stat-label">Categories</span>
-                    <strong class="bpr-hero__stat-value">{{ $stats['categories'] }}</strong>
-                </div>
-                <div class="bpr-hero__stat">
-                    <span class="bpr-hero__stat-label">Featured</span>
-                    <strong class="bpr-hero__stat-value">{{ number_format($stats['featured']) }}</strong>
-                </div>
-                <div class="bpr-hero__stat">
-                    <span class="bpr-hero__stat-label">Ending soon</span>
-                    <strong class="bpr-hero__stat-value bpr-hero__stat-value--urgent">{{ number_format($stats['ending_soon']) }}</strong>
-                </div>
-            </div>
+            @include('front.brokers.partials.country_context_hero', [
+                'variant' => 'inline',
+                'eyebrow' => 'Viewing offers for your region',
+                'title'   => 'Offers available in {country}',
+            ])
+
+            <p class="bpr-hero__updated">Last updated: {{ $refreshedAt ?? now()->format('M j, Y') }}</p>
         </div>
     </header>
 
     <div class="bpr-wrap">
-        <nav class="bpr-tabs" aria-label="Promotion categories">
-            <div class="bpr-tabs__scroll">
-                @foreach($tabs as $tab)
-                    <a href="{{ $tab['url'] }}"
-                       class="bpr-tab {{ $activeTab === $tab['slug'] ? 'is-active' : '' }}"
-                       @if($activeTab === $tab['slug']) aria-current="page" @endif>
-                        <span class="bpr-tab__label">{{ $tab['name'] }}</span>
-                        <span class="bpr-tab__count">{{ $tab['count'] }}</span>
-                    </a>
-                @endforeach
-            </div>
-        </nav>
+        @include('front.promotions.partials.promo_toolbar')
+
+        @if(!$featuredOnly && $activeTab === \App\Services\PromotionsIndexService::TAB_ALL)
+            @include('front.promotions.partials.promo_featured_row')
+        @endif
 
         <section class="bpr-section" aria-labelledby="bprSectionTitle">
             <div class="bpr-section__head">
@@ -76,6 +62,8 @@
                 @include('front.promotions.partials.promo_grid', [
                     'cards' => $cards,
                     'activeTab' => $activeTab,
+                    'activeSort' => $activeSort,
+                    'featuredOnly' => $featuredOnly,
                     'loadedCount' => $loadedCount,
                     'totalCount' => $totalCount,
                     'hasMore' => $hasMore,
@@ -87,21 +75,14 @@
                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4H5z"/>
                         </svg>
                     </div>
-                    <h3 class="bpr-empty__title">No active promotions yet</h3>
-                    <p class="bpr-empty__text">Try another category or check back soon for new broker offers.</p>
-                    <a href="{{ route('promotions.index') }}" class="bpr-btn bpr-btn--primary">View deposit bonuses</a>
+                    <h3 class="bpr-empty__title">No promotions match your filters</h3>
+                    <p class="bpr-empty__text">Try another category or turn off featured-only.</p>
+                    <a href="{{ route('promotions.index') }}" class="bpr-btn bpr-btn--primary">View all offers</a>
                 </div>
             @endif
-
-            <div class="bpr-section__footer">
-                <a href="{{ route('bonuses.type', $activeTab) }}" class="bpr-browse-link">
-                    Browse all {{ strtolower($activeTabName) }}
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
-                    </svg>
-                </a>
-            </div>
         </section>
+
+        @include('front.promotions.partials.promo_faq', ['guide' => $guide])
 
         <section class="bpr-cta" aria-label="More tools">
             <div class="bpr-cta__inner">
@@ -120,5 +101,5 @@
 @endsection
 
 @push('scripts')
-<script src="{{ asset('js/promotions-index.js') }}?v=1" defer></script>
+<script src="{{ asset('js/promotions-index.js') }}?v=5" defer></script>
 @endpush

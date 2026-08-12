@@ -6,27 +6,37 @@
     <a href="{{ route('admin_broker_show') }}" class="btn btn-primary">
         <i class="fas fa-arrow-left"></i> Back to Brokers
     </a>
-    <a href="{{ route('broker_detail', $broker->slug) }}" class="btn btn-outline-primary ml-2" target="_blank">
-        <i class="fas fa-external-link-alt"></i> View on Site
-    </a>
 @endsection
 
 @section('main_content')
-<div class="section-body">
-    <div class="card shadow">
-        <div class="card-header bg-white d-flex justify-content-between align-items-center flex-wrap">
+<div class="tw-max-w-6xl tw-mx-auto tw-px-4 tw-py-6">
+    <div class="tw-bg-white tw-rounded-2xl tw-border tw-border-slate-200/70 tw-shadow-sm tw-overflow-hidden">
+        <div class="tw-px-6 tw-py-5 tw-border-b tw-border-slate-100 tw-flex tw-items-start tw-justify-between tw-gap-4">
             <div>
-                <h4 class="mb-0">Edit Broker</h4>
-                <small class="text-muted">{{ $broker->slug }}</small>
+                <h2 class="tw-text-lg tw-font-extrabold tw-text-slate-900">Edit Broker</h2>
+                <p class="tw-mt-1 tw-text-sm tw-text-slate-600 tw-flex tw-items-center tw-gap-2">
+                    <span class="tw-inline-flex tw-items-center tw-gap-2 tw-px-2 tw-py-1 tw-rounded-lg tw-bg-slate-50 tw-border tw-border-slate-200">
+                        <i class="fas fa-link tw-text-slate-400"></i>
+                        <span class="tw-truncate">{{ $broker->slug }}</span>
+                    </span>
+                </p>
             </div>
+
             @if($broker->rating)
-                <span class="badge badge-warning badge-lg">{{ number_format($broker->rating, 1) }}/5</span>
+                <span class="tw-inline-flex tw-items-center tw-gap-2 tw-h-9 tw-px-4 tw-rounded-full tw-bg-amber-50 tw-border tw-border-amber-200 tw-text-amber-700 tw-font-bold tw-text-sm">
+                    <i class="fas fa-star"></i>
+                    {{ number_format($broker->rating, 1) }}/5
+                </span>
             @endif
         </div>
-        <div class="card-body">
+
+        <div class="tw-px-6 tw-py-6">
             @include('admin.brokers._tabs', ['broker' => $broker->loadCount('accountOptions'), 'activeTab' => 'broker'])
 
-            <form action="{{ route('admin_broker_update', $broker->id) }}" method="POST" enctype="multipart/form-data">
+            <form action="{{ route('admin_broker_update', $broker->id) }}"
+                  method="POST"
+                  enctype="multipart/form-data"
+                  class="tw-space-y-6">
                 @csrf
                 @method('PUT')
                 @include('admin.brokers._form', ['broker' => $broker, 'formOptions' => $formOptions])
@@ -38,10 +48,6 @@
 
 @push('styles')
 <style>
-    #broker-accordion .card-header .btn-link { font-weight: 600; text-decoration: none; color: #34395e; width: 100%; text-align: left; }
-    #broker-accordion .card-header .btn-link:hover { color: #6777ef; }
-    #broker-accordion .card { margin-bottom: .75rem; border: 1px solid #e4e6fc; border-radius: .5rem; overflow: hidden; }
-    #broker-accordion .card-header { background: #f8f9fe; border-bottom: 1px solid #e4e6fc; }
-    #broker-accordion .card-body { background: #fff; }
+    /* Legacy styles kept disabled; the broker form uses Tailwind <details> sections now. */
 </style>
 @endpush

@@ -1,0 +1,105 @@
+/* BrokersCourt — unified hero metrics (dark hero) */
+.bc-hm {
+    --bc-hm-label: rgba(217, 226, 233, 0.58);
+    --bc-hm-value: #FFFBFC;
+    --bc-hm-bg: rgba(255, 255, 255, 0.04);
+    --bc-hm-border: rgba(217, 226, 233, 0.1);
+
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.5rem;
+    margin: 0.875rem 0 0;
+    padding: 0;
+    list-style: none;
+}
+
+.bc-hm--cols-3 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.bc-hm--cols-3 .bc-hm__item:last-child:nth-child(odd) {
+    grid-column: 1 / -1;
+}
+
+@media (min-width: 640px) {
+    .bc-hm--cols-3 {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .bc-hm--cols-3 .bc-hm__item:last-child:nth-child(odd) {
+        grid-column: auto;
+    }
+
+    .bc-hm--cols-4,
+    .bc-hm:not([class*="bc-hm--cols-"]) {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+}
+
+.bc-hm--flush {
+    margin-top: 0;
+}
+
+.bc-hm--wide {
+    max-width: none;
+}
+
+.bc-hm__item {
+    padding: 0.5rem 0.625rem;
+    border-radius: 0.5rem;
+    background: var(--bc-hm-bg);
+    border: 1px solid var(--bc-hm-border);
+}
+
+.bc-hm__item dt {
+    margin: 0 0 0.1rem;
+    font-size: 0.5625rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--bc-hm-label);
+}
+
+.bc-hm__item dd {
+    margin: 0;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    line-height: 1.25;
+    color: var(--bc-hm-value);
+}
+
+/* Tones */
+.bc-hm__item--primary {
+    --bc-hm-label: #fecaca;
+    --bc-hm-bg: rgba(220, 38, 38, 0.12);
+    --bc-hm-border: rgba(248, 113, 113, 0.22);
+}
+
+.bc-hm__item--highlight {
+    --bc-hm-label: rgba(217, 226, 233, 0.72);
+    --bc-hm-bg: rgba(0, 122, 173, 0.12);
+    --bc-hm-border: rgba(0, 122, 173, 0.28);
+}
+
+.bc-hm__item--highlight dd {
+    color: #5ec4f0;
+}
+
+.bc-hm__item--urgent dd,
+.bc-hm__item--danger dd {
+    color: #f87171;
+}
+
+.bc-hm__item--success dd {
+    color: #34d399;
+}
+
+.bc-hm__item--match dd {
+    color: #5ec4f0;
+}
+
+@media (min-width: 768px) {
+    .bc-hm__item dd {
+        font-size: 0.875rem;
+    }
+}

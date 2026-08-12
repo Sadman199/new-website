@@ -12,6 +12,8 @@
                     id="bpr-load-more-btn"
                     data-offset="{{ $loadedCount ?? $cards->count() }}"
                     data-type="{{ $activeTab }}"
+                    data-sort="{{ $activeSort ?? 'featured' }}"
+                    data-featured="{{ !empty($featuredOnly) ? '1' : '0' }}"
                     data-endpoint="{{ route('promotions.load_more') }}">
                 Load more promotions
             </button>

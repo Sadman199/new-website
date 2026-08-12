@@ -64,13 +64,15 @@
     window.addEventListener('bc:country-drawer-open', closeSheet);
 
     function initSearch(input) {
-        var resultsBox = input.parentElement.querySelector('[data-bc-tools-results]');
+        var form = input.closest('form');
+        var resultsBox = form ? form.querySelector('[data-bc-tools-results]') : null;
         if (!resultsBox) {
             return;
         }
 
         var debounceTimer = null;
         var selectedIndex = -1;
+        var resultsUrl = null;
 
         function highlight(text, query) {
             var escaped = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -78,9 +80,11 @@
         }
 
         function hideResults() {
+            resultsBox.hidden = true;
             resultsBox.classList.remove('is-visible');
             resultsBox.innerHTML = '';
             selectedIndex = -1;
+            resultsUrl = null;
         }
 
         input.addEventListener('input', function () {
@@ -93,28 +97,43 @@
                     return;
                 }
 
-                fetch('/broker-live-search?query=' + encodeURIComponent(query))
+                fetch('/search/suggest?q=' + encodeURIComponent(query))
                     .then(function (response) {
                         return response.json();
                     })
                     .then(function (data) {
                         resultsBox.innerHTML = '';
                         selectedIndex = -1;
+                        resultsUrl = data.results_url || ('/search?q=' + encodeURIComponent(query));
+                        var items = Array.isArray(data.results) ? data.results : [];
 
-                        if (!data.length) {
-                            resultsBox.innerHTML = '<div class="bc-tools-sheet__empty">No brokers found</div>';
+                        if (!items.length) {
+                            resultsBox.innerHTML = '<div class="bc-tools-sheet__empty">No matches yet — press Enter for full results.</div>';
                         } else {
-                            data.forEach(function (broker) {
+                            items.forEach(function (item) {
                                 var link = document.createElement('a');
-                                link.href = '/broker-reviews/' + broker.slug;
+                                link.href = item.url;
                                 link.className = 'bc-tools-sheet__result';
+                                var imageHtml = item.image
+                                    ? '<img src="' + item.image + '" alt="">'
+                                    : '<span class="bc-tools-sheet__result-fallback" aria-hidden="true">↗</span>';
                                 link.innerHTML =
-                                    '<img src="' + broker.logo_url + '" alt="">' +
-                                    '<span>' + highlight(broker.name, query) + '</span>';
+                                    imageHtml +
+                                    '<span class="bc-tools-sheet__result-copy">' +
+                                        '<small>' + (item.type_label || 'Result') + '</small>' +
+                                        '<span>' + highlight(item.title || '', query) + '</span>' +
+                                    '</span>';
                                 resultsBox.appendChild(link);
                             });
+
+                            var viewAll = document.createElement('a');
+                            viewAll.href = resultsUrl;
+                            viewAll.className = 'bc-tools-sheet__view-all';
+                            viewAll.textContent = 'View all ' + (data.total || items.length) + ' results';
+                            resultsBox.appendChild(viewAll);
                         }
 
+                        resultsBox.hidden = false;
                         resultsBox.classList.add('is-visible');
                     })
                     .catch(function () {
@@ -147,6 +166,12 @@
                 item.classList.toggle('is-active', index === selectedIndex);
             });
         });
+
+        if (form) {
+            form.addEventListener('submit', function () {
+                closeSheet();
+            });
+        }
     }
 
     var searchInput = sheet.querySelector('[data-bc-tools-search]');

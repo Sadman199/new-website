@@ -11,7 +11,6 @@ use App\Models\Broker;
 use App\Models\Language;
 
 use App\Models\Page;
-use App\Models\Setting;
 use App\Support\BrokerTaxonomy;
 use App\Support\SiteTheme;
 
@@ -27,35 +26,39 @@ class FooterIndexService
 
     {
 
-        $page = $this->resolvePage();
+        return \Illuminate\Support\Facades\Cache::remember('footer_index_v3', 3600, function () {
+
+            $page = $this->resolvePage();
 
 
 
-        return [
+            return [
 
-            'brand' => $this->brand(),
+                'brand' => $this->brand(),
 
-            'cta' => $this->ctaBand(),
+                'cta' => $this->ctaBand(),
 
-            'top_brokers' => $this->topBrokers(),
+                'top_brokers' => $this->topBrokers(),
 
-            'comparisons' => $this->comparisons(),
+                'comparisons' => $this->comparisons(),
 
-            'regions' => $this->regions(),
+                'regions' => $this->regions(),
 
-            'for_users' => $this->forUsers(),
+                'for_users' => $this->forUsers(),
 
-            'contact' => $this->contact(),
+                'contact' => $this->contact(),
 
-            'social' => $this->socialLinks(),
+                'social' => $this->socialLinks(),
 
-            'legal' => $this->legalLinks($page),
+                'legal' => $this->legalLinks($page),
 
-            'disclaimer' => 'Trading forex, CFDs, and leveraged products carries significant risk and may not suit all investors. You may lose more than your deposit. Past performance is not indicative of future results. Content is for educational purposes only — not financial advice.',
+                'disclaimer' => 'Trading forex, CFDs, and leveraged products carries significant risk and may not suit all investors. You may lose more than your deposit. Past performance is not indicative of future results. Content is for educational purposes only — not financial advice.',
 
-            'affiliate' => 'BrokersCourt is an independent comparison site. We may receive compensation from featured brokers. Reviews remain editorially independent.',
+                'affiliate' => 'BrokersCourt is an independent comparison site. We may receive compensation from featured brokers. Reviews remain editorially independent.',
 
-        ];
+            ];
+
+        });
 
     }
 
@@ -109,13 +112,7 @@ class FooterIndexService
 
                     'label' => $first->name . ' vs ' . $second->name,
 
-                    'url' => route('brokers.compare', [
-
-                        'broker1_slug' => $first->slug,
-
-                        'broker2_slug' => $second->slug,
-
-                    ]),
+                    'url' => BrokerComparisonService::canonicalPairUrl($first->slug, $second->slug),
 
                 ];
 
@@ -191,14 +188,10 @@ class FooterIndexService
 
     private function brand(): array
     {
-        $setting = Setting::query()->find(1);
-
         return [
             'name' => SiteTheme::siteName(),
             'tagline' => SiteTheme::siteTagline(),
-            'logo' => $setting && $setting->logo
-                ? asset('uploads/' . $setting->logo)
-                : 'https://www.brokerscourt.com/uploads/logo.png',
+            'logo' => SiteTheme::logoUrl(),
         ];
     }
 

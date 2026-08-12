@@ -57,6 +57,9 @@ fi
 echo "==> Running migrations..."
 php artisan migrate --force
 
+echo "==> Verifying database health..."
+php artisan db:health --strict
+
 echo "==> Fixing permissions..."
 chmod -R 775 storage bootstrap/cache database 2>/dev/null || true
 
