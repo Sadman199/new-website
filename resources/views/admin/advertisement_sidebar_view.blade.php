@@ -42,9 +42,13 @@
                                             <a href="{{ route('admin_sidebar_ad_edit', $row->id) }}" class="btn btn-primary btn-sm mr-1" title="Edit">
                                                 <i class="fas fa-edit"></i> Edit
                                             </a>
-                                            <a href="{{ route('admin_sidebar_ad_delete', $row->id) }}" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this advertisement?');" title="Delete">
-                                                <i class="fas fa-trash"></i> Delete
-                                            </a>
+                                            <form action="{{ route('admin_sidebar_ad_delete', $row->id) }}" method="POST" style="display:inline;" onsubmit="return confirm('Are you sure you want to delete this advertisement?');">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn btn-danger btn-sm" title="Delete">
+                                                    <i class="fas fa-trash"></i> Delete
+                                                </button>
+                                            </form>
                                         </td>
                                     </tr>
                                     @endforeach

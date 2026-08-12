@@ -3,7 +3,9 @@
 @section('title', $guide->seoTitle())
 @section('meta_description', $guide->seoDescription())
 @section('canonical', app(\App\Services\BrokerGuideService::class)->publicUrl($guide))
-@section('og_image', $guide->broker?->logo ?: '')
+@section('og_image', ($guide->broker?->ogShareImageUrl()) ?: '')
+@section('og_image_width', $guide->broker ? (string) \App\Services\BrokerOgImageService::WIDTH : '')
+@section('og_image_height', $guide->broker ? (string) \App\Services\BrokerOgImageService::HEIGHT : '')
 
 @push('head')
     <link rel="stylesheet" href="{{ asset('css/best-broker-guide.css') }}?v=6">

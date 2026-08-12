@@ -72,9 +72,13 @@
                                                     <a href="{{ route('admin_post_edit', $row->id) }}" class="btn btn-sm btn-outline-primary mr-1" title="Edit">
                                                         <i class="fas fa-edit"></i>
                                                     </a>
-                                                    <a href="{{ route('admin_post_delete', $row->id) }}" class="btn btn-sm btn-outline-danger" title="Delete" onclick="return confirm('Are you sure you want to delete this post?');">
-                                                        <i class="fas fa-trash"></i>
-                                                    </a>
+                                                    <form action="{{ route('admin_post_delete', $row->id) }}" method="POST" style="display:inline;" onsubmit="return confirm('Are you sure you want to delete this post?');">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete">
+                                                            <i class="fas fa-trash"></i>
+                                                        </button>
+                                                    </form>
                                                 </div>
                                             @else
                                                 <span class="badge badge-secondary">No Actions</span>

@@ -211,14 +211,14 @@ class FindMyBrokerFilters
     public static function buildCanonicalQuery(array $params): string
     {
         $allowed = [
-            'q', 'min_deposit', 'account_type', 'regulation', 'platform',
+            'min_deposit', 'account_type', 'regulation', 'platform',
             'leverage', 'spread', 'commission', 'markets', 'payment',
-            'features', 'deposit_bonus', 'country', 'rating', 'sort', 'page',
+            'features', 'deposit_bonus', 'country', 'rating', 'sort',
         ];
 
         $clean = [];
         foreach ($allowed as $key) {
-            if (!array_key_exists($key, $params)) {
+            if (! array_key_exists($key, $params)) {
                 continue;
             }
             $val = $params[$key];
@@ -228,7 +228,7 @@ class FindMyBrokerFilters
             if (is_array($val)) {
                 $val = implode(',', array_values(array_filter($val)));
             }
-            if ($val === '' || ($key === 'sort' && $val === 'highest_rated') || ($key === 'page' && (int) $val <= 1)) {
+            if ($val === '' || ($key === 'sort' && $val === 'highest_rated')) {
                 continue;
             }
             $clean[$key] = $val;
@@ -237,6 +237,104 @@ class FindMyBrokerFilters
         ksort($clean);
 
         return http_build_query($clean);
+    }
+
+    /**
+     * Faceted FMB URLs explode quickly. Only the hub and single-facet filters
+     * should compete in search; everything else is noindex + hub/page-1 canonical.
+     *
+     * @param  array<string, mixed>  $query
+     * @param  array<string, mixed>  $filters
+     * @param  list<string>  $matchSlugs
+     * @return array{indexable: bool, robots: string, canonical_url: string}
+     */
+    public static function crawlPolicy(array $query, array $filters, bool $fromQuiz, array $matchSlugs): array
+    {
+        $hubUrl = url('/find-my-broker');
+        $page = max(1, (int) ($query['page'] ?? 1));
+        $hasSearch = trim((string) ($filters['q'] ?? '')) !== '';
+        $hasMatch = $matchSlugs !== [];
+        $facetCount = self::activeFacetCount($filters);
+        $hasMultiValueFacet = self::hasMultiValueFacet($filters);
+        $nonDefaultSort = (($filters['sort'] ?? 'highest_rated') !== 'highest_rated');
+
+        $indexable = ! $fromQuiz
+            && ! $hasMatch
+            && ! $hasSearch
+            && $page === 1
+            && ! $hasMultiValueFacet
+            && $facetCount <= 1
+            && ! ($nonDefaultSort && $facetCount === 0);
+
+        if ($indexable) {
+            $canonicalQuery = self::buildCanonicalQuery($query);
+
+            return [
+                'indexable' => true,
+                'robots' => 'index, follow',
+                'canonical_url' => $hubUrl.($canonicalQuery ? '?'.$canonicalQuery : ''),
+            ];
+        }
+
+        // Page 2+ of an otherwise clean single facet → point at page 1 of that facet.
+        $singleFacetIndexableShape = ! $fromQuiz
+            && ! $hasMatch
+            && ! $hasSearch
+            && ! $hasMultiValueFacet
+            && $facetCount <= 1
+            && ! ($nonDefaultSort && $facetCount === 0);
+
+        if ($singleFacetIndexableShape && $page > 1) {
+            $canonicalQuery = self::buildCanonicalQuery($query);
+
+            return [
+                'indexable' => false,
+                'robots' => 'noindex, follow',
+                'canonical_url' => $hubUrl.($canonicalQuery ? '?'.$canonicalQuery : ''),
+            ];
+        }
+
+        return [
+            'indexable' => false,
+            'robots' => 'noindex, follow',
+            'canonical_url' => $hubUrl,
+        ];
+    }
+
+    /** @param  array<string, mixed>  $filters */
+    public static function activeFacetCount(array $filters): int
+    {
+        $count = 0;
+
+        if (($filters['min_deposit'] ?? '') !== '') {
+            $count++;
+        }
+
+        foreach (['account_type', 'regulation', 'platform', 'markets', 'payment', 'features', 'country'] as $group) {
+            if (! empty($filters[$group])) {
+                $count++;
+            }
+        }
+
+        foreach (['leverage', 'spread', 'commission', 'deposit_bonus', 'rating'] as $single) {
+            if (($filters[$single] ?? '') !== '') {
+                $count++;
+            }
+        }
+
+        return $count;
+    }
+
+    /** @param  array<string, mixed>  $filters */
+    public static function hasMultiValueFacet(array $filters): bool
+    {
+        foreach (['account_type', 'regulation', 'platform', 'markets', 'payment', 'features', 'country'] as $group) {
+            if (count($filters[$group] ?? []) > 1) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public static function seoTitle(array $activeLabels): string

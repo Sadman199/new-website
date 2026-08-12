@@ -10,7 +10,7 @@
 @section('canonical', route('broker.scam_checker'))
 
 @push('page-styles')
-    <link rel="stylesheet" href="{{ asset('css/broker-scam-checker.css') }}?v=3">
+    <link rel="stylesheet" href="{{ asset('css/broker-scam-checker.css') }}?v=4">
 @endpush
 
 @section('main_content')
@@ -28,6 +28,8 @@
             <div class="bsc-hero__badge"><i class="fas fa-shield-alt"></i> Broker Safety Intelligence</div>
             <h1 class="bsc-hero__title">Is Your Broker Safe?</h1>
             <p class="bsc-hero__subtitle">Check broker regulation, trust score, risk indicators and safety history before investing.</p>
+
+            @include('front.partials.safety_hub_nav', ['activeHub' => 'checker'])
 
             <form class="bsc-search" action="{{ route('broker.scam_checker') }}" method="get" id="bscSearchForm" autocomplete="off">
                 <div class="bsc-search__wrap">

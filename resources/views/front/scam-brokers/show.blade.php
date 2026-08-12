@@ -3,10 +3,12 @@
 @section('title', 'Is '.$detail['hero']['name'].' a Scam? '.date('Y').' Warning | BrokersCourt')
 @section('meta_description', Str::limit($detail['flag']['reason'], 155))
 @section('canonical', route('scam_broker_detail', ['slug' => $detail['broker']->scam_slug]))
-@section('og_image', $detail['broker']->logo ?: '')
+@section('og_image', $detail['broker']->ogShareImageUrl())
+@section('og_image_width', (string) \App\Services\BrokerOgImageService::WIDTH)
+@section('og_image_height', (string) \App\Services\BrokerOgImageService::HEIGHT)
 
 @push('page-styles')
-    <link rel="stylesheet" href="{{ asset('css/scam-broker-detail.css') }}?v=2">
+    <link rel="stylesheet" href="{{ asset('css/scam-broker-detail.css') }}?v=3">
 @endpush
 
 @section('main_content')
@@ -28,6 +30,8 @@
                     @endif
                 @endforeach
             </nav>
+
+            @include('front.partials.safety_hub_nav', ['activeHub' => 'list'])
 
             <div class="sbd-hero__top">
                 <div class="sbd-hero__brand">

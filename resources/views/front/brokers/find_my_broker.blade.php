@@ -3,7 +3,7 @@
 @section('title', $seoTitle)
 @section('meta_description', $seoDescription)
 @section('canonical', $canonicalUrl)
-@section('robots', !empty($fromQuiz) ? 'noindex, follow' : '')
+@section('robots', $robots ?? 'index, follow')
 
 @push('head')
     <link rel="stylesheet" href="{{ asset('css/find-my-broker.css') }}?v=4">

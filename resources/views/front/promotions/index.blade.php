@@ -4,8 +4,14 @@
 @section('meta_description', 'Browse live broker promotions: deposit bonuses, no-deposit offers, trading contests, cashback deals, and crypto contests — updated from our promotions database.')
 @section('canonical', ($activeTab ?? 'all') === 'all' ? route('promotions.index') : route('promotions.tab', ['type' => $activeTab]))
 
+@push('json_ld')
+    @isset($promoJsonLd)
+        <script type="application/ld+json">@json($promoJsonLd)</script>
+    @endisset
+@endpush
+
 @push('page-styles')
-    <link rel="stylesheet" href="{{ asset('css/promotions-index.css') }}?v=13">
+    <link rel="stylesheet" href="{{ asset('css/promotions-index.css') }}?v=14">
 @endpush
 
 @section('main_content')

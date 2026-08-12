@@ -49,8 +49,12 @@ class BrokerFilterService
         $activeChips = $this->buildActiveChips($filters, $catalogs);
         $activeLabels = array_column($activeChips, 'label');
 
-        $canonicalQuery = FindMyBrokerFilters::buildCanonicalQuery($request->query());
-        $canonicalUrl = url('/find-my-broker') . ($canonicalQuery ? '?' . $canonicalQuery : '');
+        $crawl = FindMyBrokerFilters::crawlPolicy(
+            $request->query(),
+            $filters,
+            $fromQuiz,
+            $matchSlugs
+        );
 
         return [
             'brokers' => $brokers,
@@ -58,7 +62,9 @@ class BrokerFilterService
             'filters' => $filters,
             'activeChips' => $activeChips,
             'activeLabels' => $activeLabels,
-            'canonicalUrl' => $canonicalUrl,
+            'canonicalUrl' => $crawl['canonical_url'],
+            'robots' => $crawl['robots'],
+            'fmbIndexable' => $crawl['indexable'],
             'seoTitle' => FindMyBrokerFilters::seoTitle($activeLabels),
             'seoDescription' => FindMyBrokerFilters::seoDescription($activeLabels, $brokers->total()),
             'total' => $brokers->total(),

@@ -34,9 +34,13 @@
                                 <i class="fas fa-edit"></i>
                             </button>
                             @if($tag->post_id && $tag->id)
-                                <a href="{{ route('admin_post_delete_tag', [$tag->post_id, $tag->id]) }}" class="btn-bc btn-bc-ghost btn-bc-sm" onclick="return confirm('Delete this tag?');">
-                                    <i class="fas fa-trash"></i>
-                                </a>
+                                <form action="{{ route('admin_post_delete_tag', [$tag->id, $tag->post_id]) }}" method="POST" style="display:inline;" onsubmit="return confirm('Delete this tag?');">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn-bc btn-bc-ghost btn-bc-sm">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </form>
                             @endif
                         </td>
                     </tr>

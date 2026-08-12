@@ -23,6 +23,16 @@ class PromotionsController extends Controller
         $data['guide'] = $promotionsGuideService->buildHub($data['stats'], $data['tabs']);
         unset($data['catalog']);
 
+        $canonical = ($data['activeTab'] ?? 'all') === 'all'
+            ? route('promotions.index')
+            : route('promotions.tab', ['type' => $data['activeTab']]);
+        $title = 'Broker Promos — Bonuses, Contests & Cashback';
+        $data['promoJsonLd'] = \App\Support\PromoJsonLd::indexGraph(
+            $canonical,
+            $title,
+            $data['cards'] ?? []
+        );
+
         return view('front.promotions.index', $data);
     }
 

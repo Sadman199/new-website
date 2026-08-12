@@ -36,7 +36,11 @@
                                     <td>{{ $row->rLanguage->name }}</td>
                                     <td class="pt_10 pb_10">
                                         <a href="{{ route('admin_online_poll_edit',$row->id) }}" class="btn btn-primary">Edit</a>
-                                        <a href="{{ route('admin_online_poll_delete',$row->id) }}" class="btn btn-danger" onClick="return confirm('Are you sure?');">Delete</a>
+                                        <form action="{{ route('admin_online_poll_delete',$row->id) }}" method="POST" style="display:inline;" onsubmit="return confirm('Are you sure?');">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-danger">Delete</button>
+                                        </form>
                                     </td>
                                 </tr>
                                 @endforeach

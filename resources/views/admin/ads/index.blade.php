@@ -106,8 +106,15 @@
                                 </td>
                                 <td>
                                     <a href="{{ route('admin_ads_edit', $ad->id) }}" class="btn btn-primary btn-sm"><i class="fas fa-edit"></i></a>
-                                    <a href="{{ route('admin_ads_toggle', $ad->id) }}" class="btn btn-warning btn-sm" title="Toggle"><i class="fas fa-power-off"></i></a>
-                                    <a href="{{ route('admin_ads_delete', $ad->id) }}" class="btn btn-danger btn-sm" onclick="return confirm('Delete this ad?');"><i class="fas fa-trash"></i></a>
+                                    <form action="{{ route('admin_ads_toggle', $ad->id) }}" method="POST" style="display:inline;">
+                                        @csrf
+                                        <button type="submit" class="btn btn-warning btn-sm" title="Toggle"><i class="fas fa-power-off"></i></button>
+                                    </form>
+                                    <form action="{{ route('admin_ads_delete', $ad->id) }}" method="POST" style="display:inline;" onsubmit="return confirm('Delete this ad?');">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
+                                    </form>
                                 </td>
                             </tr>
                             @empty

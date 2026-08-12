@@ -44,7 +44,10 @@
                                 </td>
                                 <td>
                                     <a href="{{ route('admin_trading_tools_edit', $tool->id) }}" class="btn btn-primary btn-sm"><i class="fas fa-edit"></i></a>
-                                    <a href="{{ route('admin_trading_tools_toggle', $tool->id) }}" class="btn btn-warning btn-sm"><i class="fas fa-power-off"></i></a>
+                                    <form action="{{ route('admin_trading_tools_toggle', $tool->id) }}" method="POST" style="display:inline;">
+                                        @csrf
+                                        <button type="submit" class="btn btn-warning btn-sm" title="Toggle"><i class="fas fa-power-off"></i></button>
+                                    </form>
                                 </td>
                             </tr>
                             @endforeach

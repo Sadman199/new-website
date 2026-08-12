@@ -155,6 +155,18 @@ class Broker extends Model
         return \Illuminate\Support\Str::slug($this->name);
     }
 
+    public function ogShareImageUrl(): string
+    {
+        return app(\App\Services\BrokerOgImageService::class)->publicUrl($this);
+    }
+
+    public function usesGeneratedOgImage(): bool
+    {
+        $service = app(\App\Services\BrokerOgImageService::class);
+
+        return $service->canGenerate() || is_file(public_path('uploads/og/'.\Illuminate\Support\Str::slug($this->listingSlug()).'-og.png'));
+    }
+
     /** @return array<int, string> */
     public function regulationList(): array
     {

@@ -33,6 +33,7 @@ use App\Http\Controllers\Front\FindMyBrokerController;
 use App\Http\Controllers\Front\BrokerRecommendationController;
 use App\Http\Controllers\Front\CmsPageController;
 use App\Http\Controllers\Front\ScamBrokerController;
+use App\Http\Controllers\Front\OgImageController;
 use App\Http\Controllers\Front\Auth\LoginController as UserLoginController;
 use App\Http\Controllers\Front\Auth\RegisterController as UserRegisterController;
 use App\Http\Controllers\Front\Auth\GoogleAuthController;
@@ -118,6 +119,9 @@ Route::get('/best-brokers/{slug}', [BrokerController::class, 'bestBrokers'])->na
 Route::get('/broker-reviews', [BrokerController::class, 'reviewsIndex'])->name('broker.reviews.index');
 Route::get('/broker-reviews/{slug}/guides/{topic}', [\App\Http\Controllers\Front\BrokerGuideController::class, 'show'])->name('broker.guide.show');
 Route::get('/broker-reviews/{slug}', [BrokerController::class, 'reviewDetail'])->name('broker_detail');
+Route::get('/og/broker/{slug}.png', [OgImageController::class, 'broker'])
+    ->where('slug', '[A-Za-z0-9\-]+')
+    ->name('og.broker');
 
 
 /* Front End */
@@ -219,7 +223,6 @@ Route::middleware('guest:admin')->group(function () {
 });
 
 Route::post('/admin/logout', [AdminLoginController::class, 'logout'])->middleware('admin:admin')->name('admin_logout');
-Route::get('/admin/logout', [AdminLoginController::class, 'logout'])->middleware('admin:admin')->name('admin_logout_get');
 
 Route::get('/admin/home', [AdminHomeController::class, 'index'])->name('admin_home')->middleware('admin:admin');
 Route::get('/admin/search', AdminSearchController::class)->name('admin_search')->middleware('admin:admin');
@@ -255,7 +258,7 @@ Route::post('/admin/sidebar-advertisement-store', [AdminAdvertisementController:
 Route::get('/admin/sidebar-advertisement-edit/{id}', [AdminAdvertisementController::class, 'sidebar_ad_edit'])->name('admin_sidebar_ad_edit')->middleware('admin:admin');
 Route::post('/admin/sidebar-advertisement-update/{id}', [AdminAdvertisementController::class, 'sidebar_ad_update'])->name('admin_sidebar_ad_update');
 
-Route::get('/admin/sidebar-advertisement-delete/{id}', [AdminAdvertisementController::class, 'sidebar_ad_delete'])->name('admin_sidebar_ad_delete')->middleware('admin:admin');
+Route::delete('/admin/sidebar-advertisement-delete/{id}', [AdminAdvertisementController::class, 'sidebar_ad_delete'])->name('admin_sidebar_ad_delete')->middleware('admin:admin');
 
 // ==== Popup / Campaign Ads (scroll / time / stay triggers) ====
 Route::get('/admin/ads', [AdminAdController::class, 'index'])->name('admin_ads_index')->middleware('admin:admin');
@@ -263,13 +266,13 @@ Route::get('/admin/ads/create', [AdminAdController::class, 'create'])->name('adm
 Route::post('/admin/ads/store', [AdminAdController::class, 'store'])->name('admin_ads_store')->middleware('admin:admin');
 Route::get('/admin/ads/edit/{id}', [AdminAdController::class, 'edit'])->name('admin_ads_edit')->middleware('admin:admin');
 Route::post('/admin/ads/update/{id}', [AdminAdController::class, 'update'])->name('admin_ads_update')->middleware('admin:admin');
-Route::get('/admin/ads/toggle/{id}', [AdminAdController::class, 'toggle'])->name('admin_ads_toggle')->middleware('admin:admin');
-Route::get('/admin/ads/delete/{id}', [AdminAdController::class, 'destroy'])->name('admin_ads_delete')->middleware('admin:admin');
+Route::post('/admin/ads/toggle/{id}', [AdminAdController::class, 'toggle'])->name('admin_ads_toggle')->middleware('admin:admin');
+Route::delete('/admin/ads/delete/{id}', [AdminAdController::class, 'destroy'])->name('admin_ads_delete')->middleware('admin:admin');
 
 Route::get('/admin/trading-tools', [AdminTradingToolController::class, 'index'])->name('admin_trading_tools_index')->middleware('admin:admin');
 Route::get('/admin/trading-tools/edit/{id}', [AdminTradingToolController::class, 'edit'])->name('admin_trading_tools_edit')->middleware('admin:admin');
 Route::post('/admin/trading-tools/update/{id}', [AdminTradingToolController::class, 'update'])->name('admin_trading_tools_update')->middleware('admin:admin');
-Route::get('/admin/trading-tools/toggle/{id}', [AdminTradingToolController::class, 'toggle'])->name('admin_trading_tools_toggle')->middleware('admin:admin');
+Route::post('/admin/trading-tools/toggle/{id}', [AdminTradingToolController::class, 'toggle'])->name('admin_trading_tools_toggle')->middleware('admin:admin');
 
 // ==== Forex Category Start ====
 Route::group(['prefix' => 'admin/category', 'middleware' => 'admin:admin'], function () {
@@ -416,8 +419,8 @@ Route::group(['middleware' => 'admin:admin'], function () {
     Route::get('/admin/post/edit/{id}', [AdminPostController::class, 'edit'])->name('admin_post_edit');
     Route::match(['post', 'put'], '/admin/post/update/{id}', [AdminPostController::class, 'update'])->name('admin_post_update');
 
-    Route::get('/admin/post/delete/{id}', [AdminPostController::class, 'delete'])->name('admin_post_delete');
-    Route::get('/admin/post/tag/delete/{id}/{id1}', [AdminPostController::class, 'delete_tag'])->name('admin_post_delete_tag');
+    Route::delete('/admin/post/delete/{id}', [AdminPostController::class, 'delete'])->name('admin_post_delete');
+    Route::delete('/admin/post/tag/delete/{id}/{id1}', [AdminPostController::class, 'delete_tag'])->name('admin_post_delete_tag');
 
     // Setting-related routes
     Route::get('/admin/setting', [AdminSettingController::class, 'index'])->name('admin_setting');
@@ -429,7 +432,7 @@ Route::get('/admin/faq/create', [AdminFaqController::class, 'create'])->name('ad
 Route::post('/admin/faq/store', [AdminFaqController::class, 'store'])->name('admin_faq_store');
 Route::get('/admin/faq/edit/{id}', [AdminFaqController::class, 'edit'])->name('admin_faq_edit')->middleware('admin:admin');
 Route::post('/admin/faq/update/{id}', [AdminFaqController::class, 'update'])->name('admin_faq_update');
-Route::get('/admin/faq/delete/{id}', [AdminFaqController::class, 'delete'])->name('admin_faq_delete')->middleware('admin:admin');
+Route::delete('/admin/faq/delete/{id}', [AdminFaqController::class, 'delete'])->name('admin_faq_delete')->middleware('admin:admin');
 
 Route::group(['prefix' => 'admin/contact-inquiries', 'middleware' => 'admin:admin'], function () {
     Route::get('/', [AdminContactInquiryController::class, 'index'])->name('admin_contact_inquiries.index');
@@ -443,7 +446,7 @@ Route::get('/admin/live-channel/create', [AdminLiveChannelController::class, 'cr
 Route::post('/admin/live-channel/store', [AdminLiveChannelController::class, 'store'])->name('admin_live_channel_store');
 Route::get('/admin/live-channel/edit/{id}', [AdminLiveChannelController::class, 'edit'])->name('admin_live_channel_edit')->middleware('admin:admin');
 Route::post('/admin/live-channel/update/{id}', [AdminLiveChannelController::class, 'update'])->name('admin_live_channel_update');
-Route::get('/admin/live-channel/delete/{id}', [AdminLiveChannelController::class, 'delete'])->name('admin_live_channel_delete')->middleware('admin:admin');
+Route::delete('/admin/live-channel/delete/{id}', [AdminLiveChannelController::class, 'delete'])->name('admin_live_channel_delete')->middleware('admin:admin');
 
 
 Route::get('/admin/online-poll/show', [AdminOnlinePollController::class, 'show'])->name('admin_online_poll_show')->middleware('admin:admin');
@@ -451,14 +454,14 @@ Route::get('/admin/online-poll/create', [AdminOnlinePollController::class, 'crea
 Route::post('/admin/online-poll/store', [AdminOnlinePollController::class, 'store'])->name('admin_online_poll_store');
 Route::get('/admin/online-poll/edit/{id}', [AdminOnlinePollController::class, 'edit'])->name('admin_online_poll_edit')->middleware('admin:admin');
 Route::post('/admin/online-poll/update/{id}', [AdminOnlinePollController::class, 'update'])->name('admin_online_poll_update');
-Route::get('/admin/online-poll/delete/{id}', [AdminOnlinePollController::class, 'delete'])->name('admin_online_poll_delete')->middleware('admin:admin');
+Route::delete('/admin/online-poll/delete/{id}', [AdminOnlinePollController::class, 'delete'])->name('admin_online_poll_delete')->middleware('admin:admin');
 
 Route::get('/admin/author/show', [AdminAuthorController::class, 'show'])->name('admin_author_show')->middleware('admin:admin');
 Route::get('/admin/author/create', [AdminAuthorController::class, 'create'])->name('admin_author_create')->middleware('admin:admin');
 Route::post('/admin/author/store', [AdminAuthorController::class, 'store'])->name('admin_author_store')->middleware('admin:admin');
 Route::get('/admin/author/edit/{id}', [AdminAuthorController::class, 'edit'])->name('admin_author_edit')->middleware('admin:admin');
 Route::match(['post', 'put'], '/admin/author/update/{id}', [AdminAuthorController::class, 'update'])->name('admin_author_update')->middleware('admin:admin');
-Route::get('/admin/author/delete/{id}', [AdminAuthorController::class, 'delete'])->name('admin_author_delete')->middleware('admin:admin');
+Route::delete('/admin/author/delete/{id}', [AdminAuthorController::class, 'delete'])->name('admin_author_delete')->middleware('admin:admin');
 
 Route::get('/country/{country}', [BrokerCountryController::class, 'showBrokersByCountry'])->name('broker_by_country');
 

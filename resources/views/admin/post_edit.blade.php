@@ -57,9 +57,13 @@
                                                         <tr>
                                                             <td>{{ $item->tag_name }}</td>
                                                             <td class="text-center">
-                                                                <a href="{{ route('admin_post_delete_tag', [$item->id, $post_single->id]) }}" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this tag?');" title="Delete Tag">
-                                                                    <i class="fas fa-trash"></i>
-                                                                </a>
+                                                                <form action="{{ route('admin_post_delete_tag', [$item->id, $post_single->id]) }}" method="POST" style="display:inline;" onsubmit="return confirm('Are you sure you want to delete this tag?');">
+                                                                    @csrf
+                                                                    @method('DELETE')
+                                                                    <button type="submit" class="btn btn-danger btn-sm" title="Delete Tag">
+                                                                        <i class="fas fa-trash"></i>
+                                                                    </button>
+                                                                </form>
                                                             </td>
                                                         </tr>
                                                     @empty

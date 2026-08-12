@@ -53,12 +53,13 @@
                                 <a href="{{ route('admin_author_edit', $author->id) }}" class="btn-bc btn-bc-ghost btn-bc-sm" title="Edit">
                                     <i class="fas fa-edit"></i>
                                 </a>
-                                <a href="{{ route('admin_author_delete', $author->id) }}"
-                                   class="btn-bc btn-bc-ghost btn-bc-sm text-danger"
-                                   onclick="return confirm('Delete this author? Editorial credits on posts will be cleared.');"
-                                   title="Delete">
-                                    <i class="fas fa-trash"></i>
-                                </a>
+                                <form action="{{ route('admin_author_delete', $author->id) }}" method="POST" style="display:inline;" onsubmit="return confirm('Delete this author? Editorial credits on posts will be cleared.');">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn-bc btn-bc-ghost btn-bc-sm text-danger" title="Delete">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </form>
                             </td>
                         </tr>
                     @empty

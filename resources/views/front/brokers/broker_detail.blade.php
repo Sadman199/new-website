@@ -3,7 +3,9 @@
 @section('title', $broker->meta_title ?? $broker->title)
 @section('meta_description', $broker->meta_description ?? Str::limit(strip_tags($broker->description), 150))
 @section('canonical', route('broker_detail', ['slug' => \App\Http\Controllers\Front\BrokerController::reviewSlugFor($broker)]))
-@section('og_image', $broker->logo ?: '')
+@section('og_image', $broker->ogShareImageUrl())
+@section('og_image_width', (string) \App\Services\BrokerOgImageService::WIDTH)
+@section('og_image_height', (string) \App\Services\BrokerOgImageService::HEIGHT)
 
 @push('head')
     <link rel="stylesheet" href="{{ asset('css/best-broker-guide.css') }}?v=7">

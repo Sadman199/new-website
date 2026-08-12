@@ -34,8 +34,10 @@ class AppServiceProvider extends ServiceProvider
         try {
             app(GlobalViewDataService::class)->share();
             View::share('topRatedBrokers', app(GlobalViewDataService::class)->topRatedBrokers());
+            View::share('popularReviewBrokers', app(GlobalViewDataService::class)->popularReviews(10));
         } catch (\Throwable) {
             View::share('topRatedBrokers', collect());
+            View::share('popularReviewBrokers', collect());
         }
 
         View::composer(['components.admin.layout', 'admin.panel.*'], function ($view) {

@@ -3,7 +3,13 @@
 @section('title', $comparison['broker1']['name'] . ' vs ' . $comparison['broker2']['name'] . ' | Broker Comparison | BrokersCourt')
 @section('meta_description', 'Compare ' . $comparison['broker1']['name'] . ' and ' . $comparison['broker2']['name'] . ' side by side — regulation, spreads, platforms, deposits, safety scores, and more.')
 @section('canonical', $shareUrl)
-@section('og_image', $comparison['broker1']['logo'] ?? '')
+@section('og_image', $comparison['broker1']['og_image'] ?? ($comparison['broker1']['logo'] ?? ''))
+@section('og_image_width', (string) \App\Services\BrokerOgImageService::WIDTH)
+@section('og_image_height', (string) \App\Services\BrokerOgImageService::HEIGHT)
+
+@push('json_ld')
+    <script type="application/ld+json">@json($comparisonJsonLd)</script>
+@endpush
 
 @push('head')
     <link rel="stylesheet" href="{{ asset('css/broker-compare.css') }}?v=6">

@@ -2036,10 +2036,21 @@
 }
 
 .bpr-card__region {
-    margin: -0.35rem 0 0.75rem;
+    margin: -0.35rem 0 0.35rem;
     font-size: 0.75rem;
     line-height: 1.45;
     color: var(--bpr-muted);
+}
+
+.bpr-card__eligibility {
+    margin: 0 0 0.65rem;
+}
+
+.bpr-card__eligibility-text {
+    margin: 0;
+    font-size: 0.75rem;
+    line-height: 1.45;
+    color: #64748b;
 }
 
 .bpr-card__review {

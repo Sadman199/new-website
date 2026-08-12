@@ -59,8 +59,15 @@
                 @endif
             @endif
 
-            @if(!empty($promo['region_note']))
-                <p class="bpr-card__region">{{ $promo['region_note'] }}</p>
+            @if(!empty($promo['region_note']) || !empty($promo['eligibility_teaser']))
+                <div class="bpr-card__eligibility">
+                    @if(!empty($promo['region_note']))
+                        <p class="bpr-card__region">{{ $promo['region_note'] }}</p>
+                    @endif
+                    @if(!empty($promo['eligibility_teaser']))
+                        <p class="bpr-card__eligibility-text">{{ $promo['eligibility_teaser'] }}</p>
+                    @endif
+                </div>
             @endif
 
             <ul class="bpr-featured__facts">

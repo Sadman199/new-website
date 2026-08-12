@@ -9,18 +9,7 @@ $countryShortcode = $preferredCountry['shortcode'] ?? BrokerTaxonomy::countrySho
     $preferredCountry['code'] ?? null
 );
 
-$brokerReviews = [
-    'db-investing-review' => 'DB Investing Review',
-    'exness-review' => 'Exness Review',
-    'just-markets-review' => 'JustMarkets Review',
-    'tickmill-review' => 'TickMill Review',
-    'xm-review' => 'XM Review',
-    'fbs-review' => 'FBS Review',
-    'fp-markets-review' => 'FP Markets Review',
-    'robo-forex-review' => 'RoboForex Review',
-    'one-royal-review' => 'OneRoyal Review',
-    'assetsfx-review' => 'AssetsFX Review',
-];
+$popularReviewBrokers = ($popularReviewBrokers ?? collect())->take(10);
 @endphp
 
     <link rel="stylesheet" href="{{ asset('css/navbar.css') }}?v=1" data-bc-global>
@@ -67,9 +56,11 @@ $brokerReviews = [
                                 <div class="bc-reviews-mega-col">
                                     <p class="bc-mega-title">Popular reviews</p>
                                     <div class="bc-link-list">
-                                        @foreach($brokerReviews as $slug => $name)
-                                            <a href="{{ route('broker_detail', ['slug' => $slug]) }}" class="bc-mega-link">{{ $name }}</a>
-                                        @endforeach
+                                        @forelse($popularReviewBrokers as $broker)
+                                            <a href="{{ route('broker_detail', ['slug' => BrokerController::reviewSlugFor($broker)]) }}" class="bc-mega-link">{{ $broker->name }} Review</a>
+                                        @empty
+                                            <a href="{{ route('broker.reviews.index') }}" class="bc-mega-link">Browse all reviews</a>
+                                        @endforelse
                                     </div>
                                 </div>
                                 <div class="bc-reviews-mega-col">
@@ -102,6 +93,7 @@ $brokerReviews = [
                             <a href="{{ route('prop_firms.index') }}" class="bc-nav-dropdown-link">Prop Firms</a>
                             <a href="{{ route('broker.comparison') }}" class="bc-nav-dropdown-link">Compare Brokers</a>
                             <a href="{{ route('broker.scam_checker') }}" class="bc-nav-dropdown-link bc-nav-dropdown-link--danger">Scam Checker</a>
+                            <a href="{{ route('scam_brokers') }}" class="bc-nav-dropdown-link bc-nav-dropdown-link--danger">Scam broker list</a>
                             <a href="{{ route('trading.tools') }}" class="bc-nav-dropdown-link" data-bc-nav-warm>Trading Tools</a>
                         </div>
                     </div>
@@ -286,9 +278,11 @@ $brokerReviews = [
                         <p class="bc-mega-title">Popular reviews</p>
                     </div>
                     <div class="bc-link-list">
-                        @foreach(array_slice($brokerReviews, 0, 6, true) as $slug => $name)
-                            <a href="{{ route('broker_detail', ['slug' => $slug]) }}" class="bc-mega-link">{{ $name }}</a>
-                        @endforeach
+                        @forelse($popularReviewBrokers->take(6) as $broker)
+                            <a href="{{ route('broker_detail', ['slug' => BrokerController::reviewSlugFor($broker)]) }}" class="bc-mega-link">{{ $broker->name }} Review</a>
+                        @empty
+                            <a href="{{ route('broker.reviews.index') }}" class="bc-mega-link">Browse all reviews</a>
+                        @endforelse
                     </div>
                 </div>
             </div>
@@ -356,9 +350,11 @@ $brokerReviews = [
                     <div class="bc-mobile-reviews-grid">
                         <div>
                             <p class="bc-mobile-subtitle">Popular reviews</p>
-                            @foreach($brokerReviews as $slug => $name)
-                                <a href="{{ route('broker_detail', ['slug' => $slug]) }}" class="bc-mobile-nav-link bc-mobile-nav-link--child">{{ $name }}</a>
-                            @endforeach
+                            @forelse($popularReviewBrokers as $broker)
+                                <a href="{{ route('broker_detail', ['slug' => BrokerController::reviewSlugFor($broker)]) }}" class="bc-mobile-nav-link bc-mobile-nav-link--child">{{ $broker->name }} Review</a>
+                            @empty
+                                <a href="{{ route('broker.reviews.index') }}" class="bc-mobile-nav-link bc-mobile-nav-link--child">Browse all reviews</a>
+                            @endforelse
                         </div>
                         <div>
                             <p class="bc-mobile-subtitle">By region</p>
@@ -385,6 +381,7 @@ $brokerReviews = [
                     <a href="{{ route('promotions.index') }}" class="bc-mobile-nav-link bc-mobile-nav-link--child">Broker Promos</a>
                     <a href="{{ route('broker.comparison') }}" class="bc-mobile-nav-link bc-mobile-nav-link--child">Compare Brokers</a>
                     <a href="{{ route('broker.scam_checker') }}" class="bc-mobile-nav-link bc-mobile-nav-link--child" style="color:#f87171;">Scam Checker</a>
+                    <a href="{{ route('scam_brokers') }}" class="bc-mobile-nav-link bc-mobile-nav-link--child" style="color:#f87171;">Scam broker list</a>
                     <a href="{{ route('trading.tools') }}" class="bc-mobile-nav-link bc-mobile-nav-link--child">Trading Tools</a>
                 </div>
             </div>

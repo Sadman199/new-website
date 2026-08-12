@@ -567,6 +567,7 @@ class BrokerComparisonService
             'name' => $broker->name,
             'slug' => $broker->slug,
             'logo' => $broker->logo ? asset($broker->logo) : null,
+            'og_image' => $broker->ogShareImageUrl(),
             'rating' => $broker->rating !== null ? (float) $broker->rating : null,
             'regulation' => implode(', ', $broker->regulationList()) ?: '—',
             'regulatory_tier' => $broker->regulatory_tier ? 'Tier ' . $broker->regulatory_tier : '—',

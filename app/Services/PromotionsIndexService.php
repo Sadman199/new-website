@@ -215,6 +215,7 @@ class PromotionsIndexService
                 : null,
             'regulation_short' => $this->regulationShort($broker),
             'region_note' => $this->regionNote($bonus),
+            'eligibility_teaser' => $this->eligibilityTeaser($bonus),
             'feature_image' => $bonus->feature_image ? asset($bonus->feature_image) : null,
             'min_deposit' => $bonus->minDepositLabel(),
             'expiry' => $bonus->expiryLabel(),
@@ -415,6 +416,16 @@ class PromotionsIndexService
         }
 
         return 'Verify eligibility in '.$country['name'];
+    }
+
+    private function eligibilityTeaser(ForexBonus $bonus): ?string
+    {
+        $raw = trim(strip_tags((string) ($bonus->eligibility_criteria ?? '')));
+        if ($raw === '') {
+            return null;
+        }
+
+        return Str::limit($raw, 90);
     }
 
     /** @return \Illuminate\Database\Eloquent\Builder<ForexBonus> */

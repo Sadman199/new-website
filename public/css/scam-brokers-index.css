@@ -98,6 +98,49 @@
     color: rgba(217, 226, 233, 0.78);
 }
 
+.bc-safety-hub {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.65rem 1rem;
+    margin: 0 0 1.5rem;
+}
+
+.bc-safety-hub__label {
+    margin: 0;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(217, 226, 233, 0.55);
+}
+
+.bc-safety-hub__links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+}
+
+.bc-safety-hub__link {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.4rem 0.75rem;
+    border-radius: 999px;
+    border: 1px solid rgba(217, 226, 233, 0.18);
+    background: rgba(12, 29, 50, 0.45);
+    color: rgba(217, 226, 233, 0.88);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+
+.bc-safety-hub__link:hover,
+.bc-safety-hub__link.is-active {
+    color: #fff;
+    border-color: rgba(248, 113, 113, 0.45);
+    background: rgba(248, 113, 113, 0.16);
+}
 
 .sbi-notice {
     margin-bottom: 1.5rem;

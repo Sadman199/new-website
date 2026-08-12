@@ -19,6 +19,8 @@ class GlobalViewDataService
 
     private const TOP_BROKERS_KEY = 'global_top_rated_brokers_v2';
 
+    private const POPULAR_REVIEWS_KEY = 'global_popular_reviews_v1';
+
     private const FEATURED_BROKERS_KEY = 'global_featured_brokers_v1';
 
     private const SPOTLIGHT_BROKERS_KEY = 'global_spotlight_brokers_v1';
@@ -84,6 +86,36 @@ class GlobalViewDataService
                 ->whereNotNull('rating')
                 ->orderByDesc('rating')
                 ->take(6)
+                ->get();
+        });
+    }
+
+    /**
+     * Popular broker reviews for navbar menus (DB-backed, not hardcoded slugs).
+     *
+     * @return \Illuminate\Database\Eloquent\Collection<int, Broker>
+     */
+    public function popularReviews(int $limit = 10)
+    {
+        return Cache::remember(self::POPULAR_REVIEWS_KEY.'_'.$limit, self::CACHE_TTL, function () use ($limit) {
+            $popular = Broker::query()
+                ->where('is_scam', false)
+                ->where('top_broker', '>', 0)
+                ->whereNotNull('rating')
+                ->orderByDesc('top_broker')
+                ->orderByDesc('rating')
+                ->take($limit)
+                ->get();
+
+            if ($popular->count() >= min(6, $limit)) {
+                return $popular;
+            }
+
+            return Broker::query()
+                ->where('is_scam', false)
+                ->whereNotNull('rating')
+                ->orderByDesc('rating')
+                ->take($limit)
                 ->get();
         });
     }

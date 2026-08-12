@@ -75,9 +75,13 @@
                                             <a href="{{ route('admin_author_edit', $row->id) }}" class="btn btn-primary btn-sm mr-1" title="Edit">
                                                 <i class="fas fa-edit"></i>
                                             </a>
-                                            <a href="{{ route('admin_author_delete', $row->id) }}" class="btn btn-danger btn-sm" onclick="return confirm('Delete this author? Editorial credits on posts will be cleared.');" title="Delete">
-                                                <i class="fas fa-trash"></i>
-                                            </a>
+                                            <form action="{{ route('admin_author_delete', $row->id) }}" method="POST" style="display:inline;" onsubmit="return confirm('Delete this author? Editorial credits on posts will be cleared.');">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn btn-danger btn-sm" title="Delete">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </form>
                                         </td>
                                     </tr>
                                     @empty

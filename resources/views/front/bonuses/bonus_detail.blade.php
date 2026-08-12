@@ -3,7 +3,11 @@
 @section('title', $bonus->meta_title ?? $bonus->title)
 @section('meta_description', $bonus->meta_description ?? Str::limit(strip_tags($bonus->description), 150))
 @section('canonical', $bonus->detailUrl() ?: url()->current())
-@section('og_image', $bonus->feature_image ? 'uploads/'.$bonus->feature_image : ($bonus->broker?->logo ?: ''))
+@section('og_image', $bonus->feature_image ? 'uploads/'.$bonus->feature_image : ($bonus->broker?->ogShareImageUrl() ?: ''))
+
+@push('json_ld')
+    <script type="application/ld+json">@json($promoJsonLd)</script>
+@endpush
 
 @push('page-styles')
     <link rel="stylesheet" href="{{ asset('css/best-broker-guide.css') }}?v=6">

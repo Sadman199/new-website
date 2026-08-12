@@ -30,13 +30,15 @@ class BrokerComparisonController extends FrontController
         $broker2 = Broker::query()->where('slug', $broker2_slug)->firstOrFail();
 
         $comparison = $this->comparisonService->buildPairComparison($broker1, $broker2);
+        $shareUrl = BrokerComparisonService::canonicalPairUrl($broker1_slug, $broker2_slug);
 
         return view('front.comparison.broker_comparison_result', [
             'broker1' => $broker1,
             'broker2' => $broker2,
             'comparison' => $comparison,
-            'shareUrl' => BrokerComparisonService::canonicalPairUrl($broker1_slug, $broker2_slug),
+            'shareUrl' => $shareUrl,
             'popularComparisons' => app(FooterIndexService::class)->popularComparisons(),
+            'comparisonJsonLd' => \App\Support\BrokerComparisonJsonLd::graph($broker1, $broker2, $comparison, $shareUrl),
         ]);
     }
 

@@ -47,6 +47,7 @@ class BonusController extends FrontController
         return view('front.bonuses.bonus_detail', [
             'bonus' => $bonus,
             'detail' => $bonusDetailService->build($bonus, $editorialCredits),
+            'promoJsonLd' => \App\Support\PromoJsonLd::detailGraph($bonus),
         ]);
     }
 }

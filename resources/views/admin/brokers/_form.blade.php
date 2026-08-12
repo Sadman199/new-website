@@ -11,21 +11,22 @@
 @endphp
 
 <div id="broker-accordion" class="tw-space-y-5">
-    {{-- SECTION 1: Profile & SEO --}}
+    {{-- 1. Identity --}}
     <div class="card tw-bg-white tw-rounded-2xl tw-border tw-border-slate-200/70 tw-overflow-hidden">
-        <div class="card-header tw-bg-slate-50 tw-border-b tw-border-slate-200/70 tw-px-6 tw-py-4" id="headingProfile">
+        <div class="card-header tw-bg-slate-50 tw-border-b tw-border-slate-200/70 tw-px-6 tw-py-4" id="headingIdentity">
             <h5 class="mb-0">
-                <button class="btn btn-link tw-w-full tw-text-left tw-flex tw-items-center tw-gap-3 tw-font-extrabold tw-text-slate-900 hover:tw-underline" type="button" data-toggle="collapse" data-target="#collapseProfile" aria-expanded="true">
-                    1. Profile &amp; SEO
+                <button class="btn btn-link tw-w-full tw-text-left tw-flex tw-items-center tw-gap-3 tw-font-extrabold tw-text-slate-900 hover:tw-underline" type="button" data-toggle="collapse" data-target="#collapseIdentity" aria-expanded="true">
+                    1. Identity
                 </button>
             </h5>
         </div>
-        <div id="collapseProfile" class="collapse show" data-parent="#broker-accordion">
+        <div id="collapseIdentity" class="collapse show" data-parent="#broker-accordion">
             <div class="card-body tw-px-6 tw-py-5">
-                <h6 class="text-primary font-weight-bold mb-3">Identity</h6>
-                <p class="tw-mt-1 tw-text-xs tw-text-slate-600">
-                    Used to identify the broker across admin + the public site (name, URL slug, headquarters country).
+                <p class="tw-mt-0 tw-mb-4 tw-text-xs tw-text-slate-600">
+                    Who the broker is — name, slug, HQ, logos, affiliate links, and where they appear in listings.
                 </p>
+
+                <h6 class="text-primary font-weight-bold mb-3">Basics</h6>
                 <div class="row">
                     <div class="col-md-4 form-group">
                         <label for="name">Broker Name <span class="text-danger">*</span></label>
@@ -58,16 +59,9 @@
                         <label for="languages">Languages</label>
                         <input type="text" name="languages" id="languages" class="form-control" value="{{ old('languages', $broker->languages) }}">
                     </div>
-                    <div class="col-md-4 form-group">
-                        <label for="top_broker">Top Broker Rank</label>
-                        <input type="number" name="top_broker" id="top_broker" class="form-control" min="0" max="100" value="{{ old('top_broker', $broker->top_broker) }}">
-                    </div>
                 </div>
 
                 <h6 class="text-primary font-weight-bold mb-3 mt-2">Affiliate Links</h6>
-                <p class="tw-mt-1 tw-text-xs tw-text-slate-600">
-                    Landing page URLs used when users click through to the broker.
-                </p>
                 <div class="row">
                     <div class="col-md-4 form-group">
                         <label for="visit_site">Visit Site URL</label>
@@ -134,48 +128,9 @@
                     <label for="top_feature">Top Feature Highlight</label>
                     <textarea name="top_feature" id="top_feature" class="form-control" rows="2">{{ old('top_feature', $broker->top_feature) }}</textarea>
                 </div>
-                <div class="custom-control custom-checkbox mb-3">
-                    <input type="hidden" name="featured_broker" value="0">
-                    <input type="checkbox" class="custom-control-input" name="featured_broker" id="featured_broker" value="1" @checked(old('featured_broker', $broker->featured_broker))>
-                    <label class="custom-control-label" for="featured_broker">Featured broker</label>
-                </div>
 
-                <h6 class="text-primary font-weight-bold mb-3 mt-2">SEO</h6>
-                <p class="tw-mt-1 tw-text-xs tw-text-slate-600">
-                    Meta fields that improve search previews for broker pages.
-                </p>
-                <div class="form-group">
-                    <label for="meta_title">Meta Title</label>
-                    <input type="text" name="meta_title" id="meta_title" class="form-control" value="{{ old('meta_title', $broker->meta_title) }}">
-                </div>
-                <div class="form-group">
-                    <label for="meta_description">Meta Description</label>
-                    <textarea name="meta_description" id="meta_description" class="form-control" rows="2">{{ old('meta_description', $broker->meta_description) }}</textarea>
-                </div>
-                <div class="form-group mb-0">
-                    <label for="meta_keyword">Meta Keywords</label>
-                    <textarea name="meta_keyword" id="meta_keyword" class="form-control" rows="2">{{ old('meta_keyword', $broker->meta_keyword) }}</textarea>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    {{-- SECTION 2: Classification --}}
-    <div class="card tw-bg-white tw-rounded-2xl tw-border tw-border-slate-200/70 tw-overflow-hidden">
-        <div class="card-header tw-bg-slate-50 tw-border-b tw-border-slate-200/70 tw-px-6 tw-py-4" id="headingClassification">
-            <h5 class="mb-0">
-                <button class="btn btn-link collapsed tw-w-full tw-text-left tw-flex tw-items-center tw-gap-3 tw-font-extrabold tw-text-slate-900 hover:tw-underline" type="button" data-toggle="collapse" data-target="#collapseClassification">
-                    2. Classification &amp; Regions
-                </button>
-            </h5>
-        </div>
-        <div id="collapseClassification" class="collapse show" data-parent="#broker-accordion">
-            <div class="card-body tw-px-6 tw-py-5">
-                <h6 class="text-primary font-weight-bold mb-2">Broker Categories</h6>
-                <p class="tw-mt-1 tw-text-xs tw-text-slate-600">
-                    Controls where this broker appears in category-based listings.
-                </p>
-                <p class="text-muted small mb-3">Used for <strong>Best Brokers → By Category</strong> listings. Select all that apply.</p>
+                <h6 class="text-primary font-weight-bold mb-2 mt-3">Broker Categories</h6>
+                <p class="text-muted small mb-3">Used for <strong>Best Brokers → By Category</strong> listings.</p>
                 <div class="form-group mb-4">
                     <div class="row">
                         @foreach($formOptions['brokerCategories'] as $value => $label)
@@ -192,10 +147,6 @@
                 </div>
 
                 <h6 class="text-primary font-weight-bold mb-2">Regions</h6>
-                <p class="tw-mt-1 tw-text-xs tw-text-slate-600">
-                    Select regions where the broker actively serves clients.
-                </p>
-                <p class="text-muted small mb-3">Select every region where this broker actively serves clients.</p>
                 <div class="form-group mb-4">
                     <div class="row">
                         @foreach($formOptions['regions'] as $value => $label)
@@ -212,10 +163,7 @@
                 </div>
 
                 <h6 class="text-primary font-weight-bold mb-2">Country Listings</h6>
-                <p class="tw-mt-1 tw-text-xs tw-text-slate-600">
-                    Optional: enables this broker on country-specific best-broker pages.
-                </p>
-                <p class="text-muted small mb-3">Optional — used for country-specific best-broker pages.</p>
+                <p class="text-muted small mb-3">Optional — country-specific best-broker pages.</p>
                 <div class="form-group mb-0">
                     <div class="row">
                         @foreach($formOptions['countryListings'] as $value => $label)
@@ -232,198 +180,33 @@
         </div>
     </div>
 
-    {{-- SECTION 3: Trading & Payments --}}
+    {{-- 2. Regulation --}}
     <div class="card tw-bg-white tw-rounded-2xl tw-border tw-border-slate-200/70 tw-overflow-hidden">
-        <div class="card-header tw-bg-slate-50 tw-border-b tw-border-slate-200/70 tw-px-6 tw-py-4" id="headingTrading">
+        <div class="card-header tw-bg-slate-50 tw-border-b tw-border-slate-200/70 tw-px-6 tw-py-4" id="headingRegulation">
             <h5 class="mb-0">
-                <button class="btn btn-link collapsed tw-w-full tw-text-left tw-flex tw-items-center tw-gap-3 tw-font-extrabold tw-text-slate-900 hover:tw-underline" type="button" data-toggle="collapse" data-target="#collapseTrading">
-                    3. Trading &amp; Payments
+                <button class="btn btn-link collapsed tw-w-full tw-text-left tw-flex tw-items-center tw-gap-3 tw-font-extrabold tw-text-slate-900 hover:tw-underline" type="button" data-toggle="collapse" data-target="#collapseRegulation">
+                    2. Regulation
                 </button>
             </h5>
         </div>
-        <div id="collapseTrading" class="collapse" data-parent="#broker-accordion">
+        <div id="collapseRegulation" class="collapse" data-parent="#broker-accordion">
             <div class="card-body tw-px-6 tw-py-5">
-                <h6 class="text-primary font-weight-bold mb-3">Trading Conditions</h6>
-                <p class="tw-mt-1 tw-text-xs tw-text-slate-600">
-                    Minimum deposits, spreads, and fee details that affect how users experience this broker.
+                <p class="tw-mt-0 tw-mb-4 tw-text-xs tw-text-slate-600">
+                    Licenses, fund protection, trust signals, and scam flags.
                 </p>
+
                 <div class="row">
-                    <div class="col-md-3 form-group">
-                        <label for="minimum_deposit">Min. Deposit ($)</label>
-                        <input type="number" step="0.01" min="0" name="minimum_deposit" id="minimum_deposit" class="form-control" value="{{ old('minimum_deposit', $broker->minimum_deposit) }}">
-                    </div>
-                    <div class="col-md-3 form-group">
-                        <label for="spreads">Spreads</label>
-                        <input type="text" name="spreads" id="spreads" class="form-control" value="{{ old('spreads', $broker->spreads) }}">
-                    </div>
-                    <div class="col-md-3 form-group">
-                        <label for="leverage">Leverage</label>
-                        <input type="text" name="leverage" id="leverage" class="form-control" value="{{ old('leverage', $broker->leverage) }}">
-                    </div>
-                    <div class="col-md-3 form-group">
-                        <label for="commission">Commission</label>
-                        <input type="text" name="commission" id="commission" class="form-control" value="{{ old('commission', $broker->commission) }}">
-                    </div>
-                    <div class="col-md-3 form-group">
-                        <label for="fee_level">Fee Level</label>
-                        <select name="fee_level" id="fee_level" class="form-control">
-                            <option value="">— Select —</option>
-                            @foreach($formOptions['feeLevels'] as $value => $label)
-                                <option value="{{ $value }}" @selected(old('fee_level', $broker->fee_level) === $value)>{{ $label }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="col-md-3 form-group">
-                        <label for="withdrawal_fee">Withdrawal Fee</label>
-                        <input type="text" name="withdrawal_fee" id="withdrawal_fee" class="form-control" value="{{ old('withdrawal_fee', $broker->withdrawal_fee) }}">
-                    </div>
-                    <div class="col-md-3 form-group">
-                        <label for="instrument_count">Instrument Count</label>
-                        <input type="number" min="0" name="instrument_count" id="instrument_count" class="form-control" value="{{ old('instrument_count', $broker->instrument_count) }}">
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label for="pricing">Pricing &amp; Fees (detail)</label>
-                    <textarea name="pricing" id="pricing" class="form-control" rows="3">{{ old('pricing', $broker->pricing) }}</textarea>
-                </div>
-
-                <h6 class="text-primary font-weight-bold mb-3">Platforms &amp; Markets</h6>
-                <p class="tw-mt-1 tw-text-xs tw-text-slate-600">
-                    Select the platforms and asset classes this broker supports.
-                </p>
-                <div class="form-group">
-                    <label>Trading Platforms</label>
-                    <div class="row">
-                        @foreach($formOptions['platforms'] as $value => $label)
-                            <div class="col-md-4 col-lg-3">
-                                <div class="custom-control custom-checkbox mb-2">
-                                    <input type="checkbox" class="custom-control-input" name="platforms[]" id="platform_{{ \Illuminate\Support\Str::slug($value) }}" value="{{ $value }}" @checked(in_array($value, $selectedPlatforms, true))>
-                                    <label class="custom-control-label" for="platform_{{ \Illuminate\Support\Str::slug($value) }}">{{ $label }}</label>
-                                </div>
-                            </div>
-                        @endforeach
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label>Markets / Asset Classes</label>
-                    <div class="row">
-                        @foreach($formOptions['markets'] as $value => $label)
-                            <div class="col-md-4 col-lg-3">
-                                <div class="custom-control custom-checkbox mb-2">
-                                    <input type="checkbox" class="custom-control-input" name="markets[]" id="market_{{ $value }}" value="{{ $value }}" @checked(in_array($value, $selectedMarkets, true))>
-                                    <label class="custom-control-label" for="market_{{ $value }}">{{ $label }}</label>
-                                </div>
-                            </div>
-                        @endforeach
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label for="account_types_combined">Account Type Labels</label>
-                    <input type="text" name="account_types_combined" id="account_types_combined" class="form-control"
-                           value="{{ old('account_types_combined', implode(', ', $selectedAccountTypes)) }}"
-                           placeholder="Standard, Raw ECN, Pro…">
-                    <small class="text-muted">Optional labels for account structures shown on the review page (separate from listing categories).</small>
-                </div>
-
-                <h6 class="text-primary font-weight-bold mb-3">Payment Methods</h6>
-                <p class="tw-mt-1 tw-text-xs tw-text-slate-600">
-                    Summaries for deposits, withdrawals, and general payment information.
-                </p>
-                <div class="form-group">
-                    <label for="deposit_methods">Deposit Methods</label>
-                    <textarea name="deposit_methods" id="deposit_methods" class="form-control" rows="2">{{ old('deposit_methods', $broker->deposit_methods) }}</textarea>
-                </div>
-                <div class="form-group">
-                    <label for="withdrawal_method">Withdrawal Methods</label>
-                    <textarea name="withdrawal_method" id="withdrawal_method" class="form-control" rows="2">{{ old('withdrawal_method', $broker->withdrawal_method) }}</textarea>
-                </div>
-                <div class="form-group">
-                    <label for="payment_methods">Payment Summary</label>
-                    <textarea name="payment_methods" id="payment_methods" class="form-control" rows="2">{{ old('payment_methods', $broker->payment_methods) }}</textarea>
-                </div>
-
-                <h6 class="text-primary font-weight-bold mb-3">Tools &amp; Support</h6>
-                <p class="tw-mt-1 tw-text-xs tw-text-slate-600">
-                    What the broker offers beyond basic trading (tools, support, research, etc.).
-                </p>
-                @foreach([
-                    'mobile_trading' => 'Mobile Trading',
-                    'web_trader' => 'Web Trader',
-                    'charting_tools' => 'Charting Tools',
-                    'social_trading' => 'Social / Copy Trading',
-                    'customer_support' => 'Customer Support',
-                    'educational_resources' => 'Educational Resources',
-                    'research_tools' => 'Research Tools',
-                    'news_and_analysis' => 'News & Analysis',
-                ] as $field => $label)
-                    <div class="form-group">
-                        <label for="{{ $field }}">{{ $label }}</label>
-                        <textarea name="{{ $field }}" id="{{ $field }}" class="form-control" rows="2">{{ old($field, $broker->{$field}) }}</textarea>
-                    </div>
-                @endforeach
-                <div class="row">
-                    @foreach(['vps_hosting' => 'VPS Hosting', 'economic_calendar' => 'Economic Calendar', 'account_managers' => 'Account Managers'] as $field => $label)
-                        <div class="col-md-4">
-                            <div class="custom-control custom-checkbox mb-2">
-                                <input type="hidden" name="{{ $field }}" value="0">
-                                <input type="checkbox" class="custom-control-input" name="{{ $field }}" id="{{ $field }}" value="1" @checked(old($field, $broker->{$field}))>
-                                <label class="custom-control-label" for="{{ $field }}">{{ $label }}</label>
-                            </div>
-                        </div>
-                    @endforeach
-                </div>
-            </div>
-        </div>
-    </div>
-
-    {{-- SECTION 4: Safety, Scores & Review --}}
-    <div class="card tw-bg-white tw-rounded-2xl tw-border tw-border-slate-200/70 tw-overflow-hidden">
-        <div class="card-header tw-bg-slate-50 tw-border-b tw-border-slate-200/70 tw-px-6 tw-py-4" id="headingSafety">
-            <h5 class="mb-0">
-                <button class="btn btn-link collapsed tw-w-full tw-text-left tw-flex tw-items-center tw-gap-3 tw-font-extrabold tw-text-slate-900 hover:tw-underline" type="button" data-toggle="collapse" data-target="#collapseSafety">
-                    4. Safety, Scores &amp; Review
-                </button>
-            </h5>
-        </div>
-        <div id="collapseSafety" class="collapse" data-parent="#broker-accordion">
-            <div class="card-body tw-px-6 tw-py-5">
-                <h6 class="text-primary font-weight-bold mb-3">Scores</h6>
-                <p class="tw-mt-1 tw-text-xs tw-text-slate-600">
-                    These values power safety scoring + review summaries. Keep ranges within the labels.
-                </p>
-                <div class="row">
-                    <div class="col-md-4 form-group">
-                        <label for="rating">Overall Rating (0–5)</label>
-                        <input type="number" step="0.01" min="0" max="5" name="rating" id="rating" class="form-control" value="{{ old('rating', $broker->rating) }}">
-                    </div>
-                    <div class="col-md-4 form-group">
+                    <div class="col-md-6 form-group">
                         <label for="trust_score">Trust Score (1–99)</label>
                         <input type="number" min="1" max="99" name="trust_score" id="trust_score" class="form-control" value="{{ old('trust_score', $broker->trust_score) }}">
                     </div>
-                    <div class="col-md-4 form-group">
+                    <div class="col-md-6 form-group">
                         <label for="regulatory_tier">Regulatory Tier (1–5)</label>
                         <input type="number" min="1" max="5" name="regulatory_tier" id="regulatory_tier" class="form-control" value="{{ old('regulatory_tier', $broker->regulatory_tier) }}">
                         <small class="text-muted">1 = top-tier, 5 = offshore</small>
                     </div>
                 </div>
-                <div class="form-group">
-                    <label>Category Scores (0–10)</label>
-                    <p class="tw-mt-1 tw-text-xs tw-text-slate-600">
-                        Per-category scoring used to build “Best broker” comparisons.
-                    </p>
-                    <div class="row">
-                        @foreach($formOptions['categoryScores'] as $key => $label)
-                            <div class="col-md-4 form-group">
-                                <label for="category_scores_{{ $key }}" class="small">{{ $label }}</label>
-                                <input type="number" step="0.1" min="0" max="10" class="form-control form-control-sm"
-                                       name="category_scores[{{ $key }}]" id="category_scores_{{ $key }}"
-                                       value="{{ old('category_scores.' . $key, $categoryScores[$key] ?? '') }}">
-                            </div>
-                        @endforeach
-                    </div>
-                </div>
 
-                <h6 class="text-primary font-weight-bold mb-3">Regulation</h6>
                 <div class="form-group">
                     <label>Regulators</label>
                     <div class="row">
@@ -471,29 +254,7 @@
                     @endforeach
                 </div>
 
-                <h6 class="text-primary font-weight-bold mb-3">Review Content</h6>
-                <p class="tw-mt-1 tw-text-xs tw-text-slate-600">
-                    Editorial text shown in broker reviews. Write concise, factual pros/cons.
-                </p>
-                <div class="form-group">
-                    <label for="verdict">Verdict</label>
-                    <textarea name="verdict" id="verdict" class="form-control" rows="3">{{ old('verdict', $broker->verdict) }}</textarea>
-                </div>
-                <div class="row">
-                    <div class="col-md-6 form-group">
-                        <label for="pros">Pros</label>
-                        <textarea name="pros" id="pros" class="form-control snote" rows="6">{{ old('pros', $broker->pros) }}</textarea>
-                    </div>
-                    <div class="col-md-6 form-group">
-                        <label for="cons">Cons</label>
-                        <textarea name="cons" id="cons" class="form-control snote" rows="6">{{ old('cons', $broker->cons) }}</textarea>
-                    </div>
-                </div>
-
                 <h6 class="text-primary font-weight-bold mb-3 mt-2">Scam Flag</h6>
-                <p class="tw-mt-1 tw-text-xs tw-text-slate-600">
-                    Mark only when you have reliable evidence. Add a reason and date for auditability.
-                </p>
                 <div class="custom-control custom-checkbox mb-3">
                     <input type="hidden" name="is_scam" value="0">
                     <input type="checkbox" class="custom-control-input" name="is_scam" id="is_scam" value="1" @checked(old('is_scam', $broker->is_scam))>
@@ -511,9 +272,245 @@
             </div>
         </div>
     </div>
-</div>
 
-@include('admin.partials._editorial_fields', ['model' => $broker, 'editorialOptions' => $formOptions['editorialOptions'] ?? null])
+    {{-- 3. Trading --}}
+    <div class="card tw-bg-white tw-rounded-2xl tw-border tw-border-slate-200/70 tw-overflow-hidden">
+        <div class="card-header tw-bg-slate-50 tw-border-b tw-border-slate-200/70 tw-px-6 tw-py-4" id="headingTrading">
+            <h5 class="mb-0">
+                <button class="btn btn-link collapsed tw-w-full tw-text-left tw-flex tw-items-center tw-gap-3 tw-font-extrabold tw-text-slate-900 hover:tw-underline" type="button" data-toggle="collapse" data-target="#collapseTrading">
+                    3. Trading
+                </button>
+            </h5>
+        </div>
+        <div id="collapseTrading" class="collapse" data-parent="#broker-accordion">
+            <div class="card-body tw-px-6 tw-py-5">
+                <p class="tw-mt-0 tw-mb-4 tw-text-xs tw-text-slate-600">
+                    Costs, platforms, markets, payments, and trading tools.
+                </p>
+
+                <h6 class="text-primary font-weight-bold mb-3">Trading Conditions</h6>
+                <div class="row">
+                    <div class="col-md-3 form-group">
+                        <label for="minimum_deposit">Min. Deposit ($)</label>
+                        <input type="number" step="0.01" min="0" name="minimum_deposit" id="minimum_deposit" class="form-control" value="{{ old('minimum_deposit', $broker->minimum_deposit) }}">
+                    </div>
+                    <div class="col-md-3 form-group">
+                        <label for="spreads">Spreads</label>
+                        <input type="text" name="spreads" id="spreads" class="form-control" value="{{ old('spreads', $broker->spreads) }}">
+                    </div>
+                    <div class="col-md-3 form-group">
+                        <label for="leverage">Leverage</label>
+                        <input type="text" name="leverage" id="leverage" class="form-control" value="{{ old('leverage', $broker->leverage) }}">
+                    </div>
+                    <div class="col-md-3 form-group">
+                        <label for="commission">Commission</label>
+                        <input type="text" name="commission" id="commission" class="form-control" value="{{ old('commission', $broker->commission) }}">
+                    </div>
+                    <div class="col-md-3 form-group">
+                        <label for="fee_level">Fee Level</label>
+                        <select name="fee_level" id="fee_level" class="form-control">
+                            <option value="">— Select —</option>
+                            @foreach($formOptions['feeLevels'] as $value => $label)
+                                <option value="{{ $value }}" @selected(old('fee_level', $broker->fee_level) === $value)>{{ $label }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-md-3 form-group">
+                        <label for="withdrawal_fee">Withdrawal Fee</label>
+                        <input type="text" name="withdrawal_fee" id="withdrawal_fee" class="form-control" value="{{ old('withdrawal_fee', $broker->withdrawal_fee) }}">
+                    </div>
+                    <div class="col-md-3 form-group">
+                        <label for="instrument_count">Instrument Count</label>
+                        <input type="number" min="0" name="instrument_count" id="instrument_count" class="form-control" value="{{ old('instrument_count', $broker->instrument_count) }}">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="pricing">Pricing &amp; Fees (detail)</label>
+                    <textarea name="pricing" id="pricing" class="form-control" rows="3">{{ old('pricing', $broker->pricing) }}</textarea>
+                </div>
+
+                <h6 class="text-primary font-weight-bold mb-3">Platforms &amp; Markets</h6>
+                <div class="form-group">
+                    <label>Trading Platforms</label>
+                    <div class="row">
+                        @foreach($formOptions['platforms'] as $value => $label)
+                            <div class="col-md-4 col-lg-3">
+                                <div class="custom-control custom-checkbox mb-2">
+                                    <input type="checkbox" class="custom-control-input" name="platforms[]" id="platform_{{ \Illuminate\Support\Str::slug($value) }}" value="{{ $value }}" @checked(in_array($value, $selectedPlatforms, true))>
+                                    <label class="custom-control-label" for="platform_{{ \Illuminate\Support\Str::slug($value) }}">{{ $label }}</label>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Markets / Asset Classes</label>
+                    <div class="row">
+                        @foreach($formOptions['markets'] as $value => $label)
+                            <div class="col-md-4 col-lg-3">
+                                <div class="custom-control custom-checkbox mb-2">
+                                    <input type="checkbox" class="custom-control-input" name="markets[]" id="market_{{ $value }}" value="{{ $value }}" @checked(in_array($value, $selectedMarkets, true))>
+                                    <label class="custom-control-label" for="market_{{ $value }}">{{ $label }}</label>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="account_types_combined">Account Type Labels</label>
+                    <input type="text" name="account_types_combined" id="account_types_combined" class="form-control"
+                           value="{{ old('account_types_combined', implode(', ', $selectedAccountTypes)) }}"
+                           placeholder="Standard, Raw ECN, Pro…">
+                    <small class="text-muted">Optional labels shown on the review page (separate from listing categories).</small>
+                </div>
+
+                <h6 class="text-primary font-weight-bold mb-3">Payment Methods</h6>
+                <div class="form-group">
+                    <label for="deposit_methods">Deposit Methods</label>
+                    <textarea name="deposit_methods" id="deposit_methods" class="form-control" rows="2">{{ old('deposit_methods', $broker->deposit_methods) }}</textarea>
+                </div>
+                <div class="form-group">
+                    <label for="withdrawal_method">Withdrawal Methods</label>
+                    <textarea name="withdrawal_method" id="withdrawal_method" class="form-control" rows="2">{{ old('withdrawal_method', $broker->withdrawal_method) }}</textarea>
+                </div>
+                <div class="form-group">
+                    <label for="payment_methods">Payment Summary</label>
+                    <textarea name="payment_methods" id="payment_methods" class="form-control" rows="2">{{ old('payment_methods', $broker->payment_methods) }}</textarea>
+                </div>
+
+                <h6 class="text-primary font-weight-bold mb-3">Tools &amp; Support</h6>
+                @foreach([
+                    'mobile_trading' => 'Mobile Trading',
+                    'web_trader' => 'Web Trader',
+                    'charting_tools' => 'Charting Tools',
+                    'social_trading' => 'Social / Copy Trading',
+                    'customer_support' => 'Customer Support',
+                    'educational_resources' => 'Educational Resources',
+                    'research_tools' => 'Research Tools',
+                    'news_and_analysis' => 'News & Analysis',
+                ] as $field => $label)
+                    <div class="form-group">
+                        <label for="{{ $field }}">{{ $label }}</label>
+                        <textarea name="{{ $field }}" id="{{ $field }}" class="form-control" rows="2">{{ old($field, $broker->{$field}) }}</textarea>
+                    </div>
+                @endforeach
+                <div class="row">
+                    @foreach(['vps_hosting' => 'VPS Hosting', 'economic_calendar' => 'Economic Calendar', 'account_managers' => 'Account Managers'] as $field => $label)
+                        <div class="col-md-4">
+                            <div class="custom-control custom-checkbox mb-2">
+                                <input type="hidden" name="{{ $field }}" value="0">
+                                <input type="checkbox" class="custom-control-input" name="{{ $field }}" id="{{ $field }}" value="1" @checked(old($field, $broker->{$field}))>
+                                <label class="custom-control-label" for="{{ $field }}">{{ $label }}</label>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- 4. SEO --}}
+    <div class="card tw-bg-white tw-rounded-2xl tw-border tw-border-slate-200/70 tw-overflow-hidden">
+        <div class="card-header tw-bg-slate-50 tw-border-b tw-border-slate-200/70 tw-px-6 tw-py-4" id="headingSeo">
+            <h5 class="mb-0">
+                <button class="btn btn-link collapsed tw-w-full tw-text-left tw-flex tw-items-center tw-gap-3 tw-font-extrabold tw-text-slate-900 hover:tw-underline" type="button" data-toggle="collapse" data-target="#collapseSeo">
+                    4. SEO
+                </button>
+            </h5>
+        </div>
+        <div id="collapseSeo" class="collapse" data-parent="#broker-accordion">
+            <div class="card-body tw-px-6 tw-py-5">
+                <p class="tw-mt-0 tw-mb-4 tw-text-xs tw-text-slate-600">
+                    Meta fields for search previews on broker review pages.
+                </p>
+                <div class="form-group">
+                    <label for="meta_title">Meta Title</label>
+                    <input type="text" name="meta_title" id="meta_title" class="form-control" value="{{ old('meta_title', $broker->meta_title) }}">
+                </div>
+                <div class="form-group">
+                    <label for="meta_description">Meta Description</label>
+                    <textarea name="meta_description" id="meta_description" class="form-control" rows="2">{{ old('meta_description', $broker->meta_description) }}</textarea>
+                </div>
+                <div class="form-group mb-0">
+                    <label for="meta_keyword">Meta Keywords</label>
+                    <textarea name="meta_keyword" id="meta_keyword" class="form-control" rows="2">{{ old('meta_keyword', $broker->meta_keyword) }}</textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- 5. Publish --}}
+    <div class="card tw-bg-white tw-rounded-2xl tw-border tw-border-slate-200/70 tw-overflow-hidden">
+        <div class="card-header tw-bg-slate-50 tw-border-b tw-border-slate-200/70 tw-px-6 tw-py-4" id="headingPublish">
+            <h5 class="mb-0">
+                <button class="btn btn-link collapsed tw-w-full tw-text-left tw-flex tw-items-center tw-gap-3 tw-font-extrabold tw-text-slate-900 hover:tw-underline" type="button" data-toggle="collapse" data-target="#collapsePublish">
+                    5. Publish
+                </button>
+            </h5>
+        </div>
+        <div id="collapsePublish" class="collapse" data-parent="#broker-accordion">
+            <div class="card-body tw-px-6 tw-py-5">
+                <p class="tw-mt-0 tw-mb-4 tw-text-xs tw-text-slate-600">
+                    Visibility, scores, editorial review copy, and credit assignments.
+                </p>
+
+                <h6 class="text-primary font-weight-bold mb-3">Visibility</h6>
+                <div class="row">
+                    <div class="col-md-4 form-group">
+                        <label for="top_broker">Top Broker Rank</label>
+                        <input type="number" name="top_broker" id="top_broker" class="form-control" min="0" max="100" value="{{ old('top_broker', $broker->top_broker) }}">
+                    </div>
+                    <div class="col-md-4 form-group d-flex align-items-end">
+                        <div class="custom-control custom-checkbox mb-3">
+                            <input type="hidden" name="featured_broker" value="0">
+                            <input type="checkbox" class="custom-control-input" name="featured_broker" id="featured_broker" value="1" @checked(old('featured_broker', $broker->featured_broker))>
+                            <label class="custom-control-label" for="featured_broker">Featured broker</label>
+                        </div>
+                    </div>
+                </div>
+
+                <h6 class="text-primary font-weight-bold mb-3">Scores</h6>
+                <div class="row">
+                    <div class="col-md-4 form-group">
+                        <label for="rating">Overall Rating (0–5)</label>
+                        <input type="number" step="0.01" min="0" max="5" name="rating" id="rating" class="form-control" value="{{ old('rating', $broker->rating) }}">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Category Scores (0–10)</label>
+                    <div class="row">
+                        @foreach($formOptions['categoryScores'] as $key => $label)
+                            <div class="col-md-4 form-group">
+                                <label for="category_scores_{{ $key }}" class="small">{{ $label }}</label>
+                                <input type="number" step="0.1" min="0" max="10" class="form-control form-control-sm"
+                                       name="category_scores[{{ $key }}]" id="category_scores_{{ $key }}"
+                                       value="{{ old('category_scores.' . $key, $categoryScores[$key] ?? '') }}">
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+
+                <h6 class="text-primary font-weight-bold mb-3">Review Content</h6>
+                <div class="form-group">
+                    <label for="verdict">Verdict</label>
+                    <textarea name="verdict" id="verdict" class="form-control" rows="3">{{ old('verdict', $broker->verdict) }}</textarea>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 form-group">
+                        <label for="pros">Pros</label>
+                        <textarea name="pros" id="pros" class="form-control snote" rows="6">{{ old('pros', $broker->pros) }}</textarea>
+                    </div>
+                    <div class="col-md-6 form-group">
+                        <label for="cons">Cons</label>
+                        <textarea name="cons" id="cons" class="form-control snote" rows="6">{{ old('cons', $broker->cons) }}</textarea>
+                    </div>
+                </div>
+
+                @include('admin.partials._editorial_fields', ['model' => $broker, 'editorialOptions' => $formOptions['editorialOptions'] ?? null])
+            </div>
+        </div>
+    </div>
+</div>
 
 <div class="tw-pt-2 tw-flex tw-flex-col sm:tw-flex-row sm:tw-items-center sm:tw-justify-between tw-gap-3">
     <div class="tw-flex tw-items-center tw-gap-3">

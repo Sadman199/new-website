@@ -156,7 +156,7 @@ class BrokerReviewJsonLd
         array $reviewStats,
         array $snapshot,
     ): array {
-        $image = self::imageUrl($broker->logo);
+        $image = $broker->ogShareImageUrl();
         $website = self::absolute($broker->url ?: $broker->visit_site);
         $description = self::plain($broker->short_description ?: $broker->description, 300);
 

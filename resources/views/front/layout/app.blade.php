@@ -12,6 +12,8 @@
         $seoDescription = trim($__env->yieldContent('meta_description')) ?: \App\Support\SiteTheme::defaultMetaDescription();
         $seoCanonical = trim($__env->yieldContent('canonical')) ?: url()->current();
         $seoOgImage = \App\Support\SiteTheme::ogImageUrl(trim($__env->yieldContent('og_image')) ?: null);
+        $seoOgImageWidth = trim($__env->yieldContent('og_image_width')) ?: null;
+        $seoOgImageHeight = trim($__env->yieldContent('og_image_height')) ?: null;
         $seoRobots = trim($__env->yieldContent('robots')) ?: 'index, follow';
         $seoSiteName = \App\Support\SiteTheme::siteName();
     @endphp
@@ -39,6 +41,12 @@
     <meta property="og:description" content="{{ $seoDescription }}">
     <meta property="og:image" content="{{ $seoOgImage }}">
     <meta property="og:image:alt" content="{{ $seoTitle }}">
+    @if($seoOgImageWidth)
+        <meta property="og:image:width" content="{{ $seoOgImageWidth }}">
+    @endif
+    @if($seoOgImageHeight)
+        <meta property="og:image:height" content="{{ $seoOgImageHeight }}">
+    @endif
 
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image">

@@ -5,7 +5,7 @@
 @section('canonical', route('scam_brokers'))
 
 @push('page-styles')
-    <link rel="stylesheet" href="{{ asset('css/scam-brokers-index.css') }}?v=2">
+    <link rel="stylesheet" href="{{ asset('css/scam-brokers-index.css') }}?v=3">
 @endpush
 
 @section('main_content')
@@ -24,6 +24,8 @@
                 Brokers flagged for fraud, missing regulation, blocked withdrawals, or regulator warnings.
                 Verify any broker here before you deposit.
             </p>
+
+            @include('front.partials.safety_hub_nav', ['activeHub' => 'list'])
 
             @include('front.partials.hero_metrics', [
                 'stats' => [
