@@ -1,9 +1,9 @@
 /* Bonus detail — BrokersCourt premium theme */
 .bbd-page {
-    --bbd-ocean: #007AAD;
-    --bbd-ocean-dark: #006694;
-    --bbd-midnight: #0C1D32;
-    --bbd-ice: #D9E2E9;
+    --bbd-ocean: var(--bc-primary, #007AAD);
+    --bbd-ocean-dark: var(--bc-primary-dark, #006694);
+    --bbd-midnight: var(--bc-dark, #0C1D32);
+    --bbd-ice: var(--bc-light, #D9E2E9);
     --bbd-off-white: #FFFBFC;
     --bbd-bg: #f4f6f9;
     --bbd-surface: #ffffff;

@@ -1,3 +1,21 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss/base";
+@import "bootstrap/dist/css/bootstrap-grid.css";
+@import "bootstrap/dist/css/bootstrap-utilities.css";
+
+@import "./tokens.css";
+@import "./base.css";
+@import "./layout/page.css";
+
+@import "../../public/css/navbar.css";
+@import "../../public/css/mega-footer.css";
+@import "../../public/css/site-theme-bridge.css";
+@import "../../public/css/country-drawer.css";
+
+@import "./components/buttons.css";
+@import "./components/badges.css";
+@import "./components/broker-card.css";
+
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
+
+@import "./utilities.css";

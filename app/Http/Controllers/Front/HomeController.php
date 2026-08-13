@@ -111,7 +111,7 @@ class HomeController extends Controller
 
         $countrySlug = app(CountryBrokersService::class)->resolvePreferredCountry()['slug'] ?? 'global';
 
-        $brokerSentiment = Cache::remember("homepage_broker_sentiment_v3_{$countrySlug}", 3600, function () use ($countrySlug) {
+        $brokerSentiment = Cache::remember("homepage_broker_sentiment_v4_{$countrySlug}", 3600, function () use ($countrySlug) {
             return app(BrokerPopularityService::class)->forHomepage($countrySlug);
         });
 

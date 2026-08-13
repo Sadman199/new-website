@@ -64,7 +64,7 @@ class AdminAuthorController extends Controller
 
         $subject = 'Your account is created to the website';
         $message = 'Hi, your account is created successfully and now you can login to our system from the front end login page. Please go to this link: <br><br>';
-        $message .= '<a href="' . route('login') . '">Click on this link</a>';
+        $message .= '<a href="' . route('author_login') . '">Click on this link</a>';
         $message .= '<br><br>Please see your password here and after login, change that immediately:<br>';
         $message .= e($request->password);
 

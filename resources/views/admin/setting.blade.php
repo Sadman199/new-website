@@ -52,8 +52,8 @@
                                     <div class="row">
                                         <div class="col-md-6">
                                             <div class="form-group">
-                                                <label class="font-weight-bold">Video Item Total <span class="text-danger">*</span></label>
-                                                <input type="number" name="video_total" class="form-control" value="{{ old('video_total', $setting_data->video_total ?? '') }}" required>
+                                                <label class="font-weight-bold">Video Item Total</label>
+                                                <input type="number" name="video_total" class="form-control" value="{{ old('video_total', $setting_data->video_total ?? '6') }}" min="0" max="100">
                                             </div>
                                             <div class="form-group">
                                                 <label class="font-weight-bold">Video Item Status</label>
@@ -68,34 +68,51 @@
                                 <!-- Logo & Favicon Tab -->
                                 <div class="tab-pane fade" id="logo" role="tabpanel" aria-labelledby="logo-tab">
                                     <h6 class="mb-3 font-weight-bold text-muted">Logo & Favicon Settings</h6>
+                                    <p class="text-muted small mb-4">Upload a new image to replace the current asset. Preview updates instantly before you save.</p>
                                     <div class="row">
                                         <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label class="font-weight-bold">Existing Logo</label>
-                                                <div class="mb-3">
-                                                    <img src="{{ asset('uploads/'.$setting_data->logo) }}" alt="Logo" class="img-fluid rounded" style="max-height: 80px;">
+                                            <div class="bc-upload-card mb-4">
+                                                <label class="font-weight-bold d-block mb-2">Site logo</label>
+                                                <div class="bc-upload-preview bc-upload-preview--logo" id="logoPreviewWrap">
+                                                    <img
+                                                        id="logoPreview"
+                                                        src="{{ \App\Support\SiteTheme::logoUrl() }}"
+                                                        alt="Current logo"
+                                                        data-original="{{ \App\Support\SiteTheme::logoUrl() }}"
+                                                    >
+                                                    <span class="bc-upload-preview__empty d-none" id="logoPreviewEmpty">No logo selected</span>
                                                 </div>
-                                            </div>
-                                            <div class="form-group">
-                                                <label class="font-weight-bold">Change Logo</label>
-                                                <div class="custom-file">
-                                                    <input type="file" class="custom-file-input" id="logo" name="logo">
-                                                    <label class="custom-file-label" for="logo">Choose file</label>
+                                                <div class="custom-file mt-3">
+                                                    <input type="file" class="custom-file-input bc-image-input" id="logo" name="logo" accept="image/png,image/jpeg,image/jpg,image/gif,image/webp,image/svg+xml,.svg">
+                                                    <label class="custom-file-label" for="logo" data-default="Choose logo…">Choose logo…</label>
+                                                </div>
+                                                <small class="form-text text-muted">PNG, JPG, WEBP, GIF, or SVG. Max 4MB.</small>
+                                                <div class="custom-control custom-checkbox mt-2">
+                                                    <input type="checkbox" class="custom-control-input bc-remove-upload" id="remove_logo" name="remove_logo" value="1" data-target="logo">
+                                                    <label class="custom-control-label" for="remove_logo">Reset to default logo</label>
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label class="font-weight-bold">Existing Favicon</label>
-                                                <div class="mb-3">
-                                                    <img src="{{ asset('uploads/'.$setting_data->favicon) }}" alt="Favicon" class="img-fluid rounded" style="max-height: 30px;">
+                                            <div class="bc-upload-card mb-4">
+                                                <label class="font-weight-bold d-block mb-2">Favicon</label>
+                                                <div class="bc-upload-preview bc-upload-preview--favicon" id="faviconPreviewWrap">
+                                                    <img
+                                                        id="faviconPreview"
+                                                        src="{{ \App\Support\SiteTheme::faviconUrl() }}"
+                                                        alt="Current favicon"
+                                                        data-original="{{ \App\Support\SiteTheme::faviconUrl() }}"
+                                                    >
+                                                    <span class="bc-upload-preview__empty d-none" id="faviconPreviewEmpty">No favicon selected</span>
                                                 </div>
-                                            </div>
-                                            <div class="form-group">
-                                                <label class="font-weight-bold">Change Favicon</label>
-                                                <div class="custom-file">
-                                                    <input type="file" class="custom-file-input" id="favicon" name="favicon">
-                                                    <label class="custom-file-label" for="favicon">Choose file</label>
+                                                <div class="custom-file mt-3">
+                                                    <input type="file" class="custom-file-input bc-image-input" id="favicon" name="favicon" accept="image/png,image/jpeg,image/jpg,image/gif,image/webp,image/x-icon,.ico">
+                                                    <label class="custom-file-label" for="favicon" data-default="Choose favicon…">Choose favicon…</label>
+                                                </div>
+                                                <small class="form-text text-muted">PNG, JPG, WEBP, GIF, or ICO. Max 2MB. Ideal size 32×32 or 64×64.</small>
+                                                <div class="custom-control custom-checkbox mt-2">
+                                                    <input type="checkbox" class="custom-control-input bc-remove-upload" id="remove_favicon" name="remove_favicon" value="1" data-target="favicon">
+                                                    <label class="custom-control-label" for="remove_favicon">Reset to default favicon</label>
                                                 </div>
                                             </div>
                                         </div>
@@ -109,22 +126,22 @@
                                             <div class="form-group">
                                                 <label class="font-weight-bold">Date Status</label>
                                                 <select name="top_bar_date_status" class="form-control custom-select">
-                                                    <option value="Show" @if($setting_data->top_bar_date_status == 'Show') selected @endif>Show</option>
-                                                    <option value="Hide" @if($setting_data->top_bar_date_status == 'Hide') selected @endif>Hide</option>
+                                                    <option value="Show" @if(($setting_data->top_bar_date_status ?? 'Show') == 'Show') selected @endif>Show</option>
+                                                    <option value="Hide" @if(($setting_data->top_bar_date_status ?? '') == 'Hide') selected @endif>Hide</option>
                                                 </select>
                                             </div>
                                             <div class="form-group">
                                                 <label class="font-weight-bold">Email Status</label>
                                                 <select name="top_bar_email_status" class="form-control custom-select">
-                                                    <option value="Show" @if($setting_data->top_bar_email_status == 'Show') selected @endif>Show</option>
-                                                    <option value="Hide" @if($setting_data->top_bar_email_status == 'Hide') selected @endif>Hide</option>
+                                                    <option value="Show" @if(($setting_data->top_bar_email_status ?? 'Show') == 'Show') selected @endif>Show</option>
+                                                    <option value="Hide" @if(($setting_data->top_bar_email_status ?? '') == 'Hide') selected @endif>Hide</option>
                                                 </select>
                                             </div>
                                         </div>
                                         <div class="col-md-6">
                                             <div class="form-group">
-                                                <label class="font-weight-bold">Email Address <span class="text-danger">*</span></label>
-                                                <input type="email" name="top_bar_email" class="form-control" value="{{ old('top_bar_email', $setting_data->top_bar_email) }}" placeholder="Enter email address" required>
+                                                <label class="font-weight-bold">Email Address</label>
+                                                <input type="email" name="top_bar_email" class="form-control" value="{{ old('top_bar_email', $setting_data->top_bar_email ?? 'info@brokerscourt.com') }}" placeholder="Enter email address">
                                             </div>
                                         </div>
                                     </div>
@@ -257,15 +274,15 @@
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label class="font-weight-bold">Analytics ID</label>
-                                                <input type="text" name="analytic_id" class="form-control" value="{{ old('analytic_id', $setting_data->analytic_id) }}" placeholder="e.g., UA-XXXXX-Y">
+                                                <input type="text" name="analytic_id" class="form-control" value="{{ old('analytic_id', $setting_data->analytic_id ?? '') }}" placeholder="e.g., UA-XXXXX-Y">
                                             </div>
                                         </div>
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label class="font-weight-bold">Status</label>
                                                 <select name="analytic_status" class="form-control custom-select">
-                                                    <option value="Show" @if($setting_data->analytic_status == 'Show') selected @endif>Show</option>
-                                                    <option value="Hide" @if($setting_data->analytic_status == 'Hide') selected @endif>Hide</option>
+                                                    <option value="Show" @if(($setting_data->analytic_status ?? 'Hide') == 'Show') selected @endif>Show</option>
+                                                    <option value="Hide" @if(($setting_data->analytic_status ?? 'Hide') == 'Hide') selected @endif>Hide</option>
                                                 </select>
                                             </div>
                                         </div>
@@ -276,7 +293,7 @@
                                     <h6 class="mb-3 font-weight-bold text-muted">Disqus Comment Settings</h6>
                                     <div class="form-group">
                                         <label class="font-weight-bold">Disqus Code</label>
-                                        <textarea name="disqus_code" class="form-control" rows="8" placeholder="Enter Disqus code">{{ old('disqus_code', $setting_data->disqus_code) }}</textarea>
+                                        <textarea name="disqus_code" class="form-control" rows="8" placeholder="Enter Disqus code">{{ old('disqus_code', $setting_data->disqus_code ?? '') }}</textarea>
                                     </div>
                                 </div>
                                 <!-- Google Sign-In Tab -->
@@ -326,6 +343,41 @@
         border-radius: 8px;
         background: #fff;
         cursor: pointer;
+    }
+    .bc-upload-card {
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 1.25rem;
+        background: #f8fafc;
+        height: 100%;
+    }
+    .bc-upload-preview {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 120px;
+        padding: 1rem;
+        border: 1px dashed #cbd5e1;
+        border-radius: 10px;
+        background: #fff;
+        overflow: hidden;
+    }
+    .bc-upload-preview--favicon {
+        min-height: 96px;
+    }
+    .bc-upload-preview img {
+        max-width: 100%;
+        max-height: 88px;
+        width: auto;
+        height: auto;
+        object-fit: contain;
+    }
+    .bc-upload-preview--favicon img {
+        max-height: 48px;
+    }
+    .bc-upload-preview__empty {
+        color: #94a3b8;
+        font-size: 0.875rem;
     }
 </style>
 <script>
@@ -386,6 +438,84 @@
                 if (!input) return;
                 input.value = defaults[name];
                 syncColorField(input);
+            });
+        });
+
+        function bindImagePreview(inputId, previewId, emptyId) {
+            var input = document.getElementById(inputId);
+            var preview = document.getElementById(previewId);
+            var empty = document.getElementById(emptyId);
+            if (!input || !preview) return;
+
+            var label = input.nextElementSibling;
+            var objectUrl = null;
+
+            input.addEventListener('change', function () {
+                var remove = document.getElementById('remove_' + inputId);
+                if (remove) remove.checked = false;
+
+                var file = input.files && input.files[0];
+                if (label) {
+                    label.textContent = file ? file.name : (label.getAttribute('data-default') || 'Choose file…');
+                }
+
+                if (objectUrl) {
+                    URL.revokeObjectURL(objectUrl);
+                    objectUrl = null;
+                }
+
+                if (!file) {
+                    preview.src = preview.getAttribute('data-original') || '';
+                    preview.classList.remove('d-none');
+                    if (empty) empty.classList.add('d-none');
+                    return;
+                }
+
+                if (!file.type || file.type.indexOf('image/') !== 0) {
+                    preview.classList.add('d-none');
+                    if (empty) {
+                        empty.textContent = 'Selected file is not an image';
+                        empty.classList.remove('d-none');
+                    }
+                    return;
+                }
+
+                objectUrl = URL.createObjectURL(file);
+                preview.src = objectUrl;
+                preview.classList.remove('d-none');
+                if (empty) empty.classList.add('d-none');
+            });
+        }
+
+        bindImagePreview('logo', 'logoPreview', 'logoPreviewEmpty');
+        bindImagePreview('favicon', 'faviconPreview', 'faviconPreviewEmpty');
+
+        document.querySelectorAll('.bc-remove-upload').forEach(function (checkbox) {
+            checkbox.addEventListener('change', function () {
+                var target = checkbox.getAttribute('data-target');
+                var input = document.getElementById(target);
+                var preview = document.getElementById(target + 'Preview');
+                var empty = document.getElementById(target + 'PreviewEmpty');
+                var label = input ? input.nextElementSibling : null;
+
+                if (checkbox.checked) {
+                    if (input) {
+                        input.value = '';
+                        if (label) label.textContent = label.getAttribute('data-default') || 'Choose file…';
+                    }
+                    if (preview) {
+                        preview.classList.add('d-none');
+                        preview.removeAttribute('src');
+                    }
+                    if (empty) {
+                        empty.textContent = 'Will reset to default on save';
+                        empty.classList.remove('d-none');
+                    }
+                } else if (preview) {
+                    preview.src = preview.getAttribute('data-original') || '';
+                    preview.classList.remove('d-none');
+                    if (empty) empty.classList.add('d-none');
+                }
             });
         });
     })();

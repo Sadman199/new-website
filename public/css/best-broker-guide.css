@@ -12,13 +12,13 @@
 }
 
 .bbg-page {
-    --bbg-ocean: #007AAD;
-    --bbg-ocean-dark: #006694;
-    --bbg-midnight: #0C1D32;
-    --bbg-ice: #D9E2E9;
-    --bbg-off-white: #FFFBFC;
-    --bbg-bg: #f4f6f9;
-    --bbg-surface: #ffffff;
+    --bbg-ocean: var(--bc-primary, #007AAD);
+    --bbg-ocean-dark: var(--bc-primary-dark, #006694);
+    --bbg-midnight: var(--bc-dark, #0C1D32);
+    --bbg-ice: var(--bc-ice, #D9E2E9);
+    --bbg-off-white: var(--bc-white, #FFFBFC);
+    --bbg-bg: var(--bc-bg, #f4f6f9);
+    --bbg-surface: var(--bc-surface, #ffffff);
     --bbg-border: rgba(217, 226, 233, 0.95);
     --bbg-muted: #64748b;
     --bbg-text: #0C1D32;

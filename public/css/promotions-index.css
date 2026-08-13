@@ -1,9 +1,9 @@
 /* Broker promos index — BrokersCourt premium theme */
 .bpr-page {
-    --bpr-ocean: #007AAD;
-    --bpr-ocean-dark: #006694;
-    --bpr-midnight: #0C1D32;
-    --bpr-ice: #D9E2E9;
+    --bpr-ocean: var(--bc-primary, #007AAD);
+    --bpr-ocean-dark: var(--bc-primary-dark, #006694);
+    --bpr-midnight: var(--bc-dark, #0C1D32);
+    --bpr-ice: var(--bc-light, #D9E2E9);
     --bpr-off-white: #FFFBFC;
     --bpr-bg: #f4f6f9;
     --bpr-surface: #ffffff;

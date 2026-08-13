@@ -9,7 +9,7 @@
 
 @push('head')
     <link rel="stylesheet" href="{{ asset('css/best-broker-guide.css') }}?v=7">
-    <link rel="stylesheet" href="{{ asset('css/broker-review.css') }}?v=17">
+    <link rel="stylesheet" href="{{ asset('css/broker-review.css') }}?v=18">
 @endpush
 
 @push('json_ld')

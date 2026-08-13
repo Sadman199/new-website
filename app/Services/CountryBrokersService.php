@@ -114,7 +114,7 @@ class CountryBrokersService
             return null;
         }
 
-        return route('broker_by_country', ['country' => $meta['name']]);
+        return route('brokers.best', ['slug' => $slug]);
     }
 
     /** @return Collection<int, Broker> */

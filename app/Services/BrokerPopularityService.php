@@ -8,7 +8,9 @@ use App\Support\BrokerTaxonomy;
 
 class BrokerPopularityService
 {
-    private const GRID_SIZE = 9;
+    private const RECOMMENDED_SIZE = 5;
+
+    private const SCAM_SIZE = 4;
 
     private const LEADERBOARD_SIZE = 6;
 
@@ -51,7 +53,7 @@ class BrokerPopularityService
         $countryBrokers = $countryService->headquartersQueryForSlug($countrySlug)
             ->orderByDesc('top_broker')
             ->orderByDesc('rating')
-            ->take(self::GRID_SIZE)
+            ->take(self::RECOMMENDED_SIZE)
             ->get();
 
         if ($countryBrokers->isNotEmpty()) {
@@ -71,7 +73,7 @@ class BrokerPopularityService
             ->where('is_scam', false)
             ->where('top_broker', '>', 0)
             ->orderByDesc('top_broker')
-            ->take(self::GRID_SIZE)
+            ->take(self::RECOMMENDED_SIZE)
             ->get()
             ->map(fn (Broker $broker) => $this->formatBroker(
                 $broker,
@@ -86,7 +88,7 @@ class BrokerPopularityService
             ->where('is_scam', true)
             ->orderByDesc('scam_reported_date')
             ->orderBy('name')
-            ->take(self::GRID_SIZE)
+            ->take(self::SCAM_SIZE)
             ->get()
             ->values()
             ->map(fn (Broker $broker, int $index) => $this->formatBroker(

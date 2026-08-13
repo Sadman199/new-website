@@ -5,11 +5,16 @@
 
 <style>
     #propFirmsMegaMenu {
-        --nav-ocean: #007AAD;
-        --nav-ice: #D9E2E9;
-        --nav-off-white: #FFFBFC;
-        --nav-midnight: #0C1D32;
-        --nav-border: rgba(217, 226, 233, 0.14);
+        --nav-ocean: var(--bc-primary, #007AAD);
+        --nav-off-white: var(--bc-white, #FFFBFC);
+        --nav-midnight: var(--bc-dark, #0C1D32);
+        --nav-menu-bg: var(--nav-off-white);
+        --nav-menu-text: var(--nav-midnight);
+        --nav-menu-muted: #64748b;
+        --nav-menu-border: #e2e8f0;
+        --nav-menu-surface: #f8fafc;
+        --nav-menu-hover: #eef2f7;
+        --nav-border: var(--nav-menu-border);
     }
     #propFirmsMegaMenu .pf-nav-inner {
         position: relative;
@@ -23,14 +28,12 @@
         gap: 14px;
     }
     #propFirmsMegaMenu .pf-nav-card {
-        background: rgba(19, 40, 67, 0.72);
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
-        border: 1px solid var(--nav-border);
+        background: var(--nav-menu-bg);
+        border: 1px solid var(--nav-menu-border);
         border-radius: 16px;
         padding: 18px 16px;
         min-width: 0;
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.22);
+        box-shadow: none;
     }
     #propFirmsMegaMenu .pf-nav-head {
         display: flex;
@@ -45,8 +48,8 @@
         width: 32px;
         height: 32px;
         border-radius: 10px;
-        background: rgba(0, 122, 173, 0.18);
-        border: 1px solid rgba(0, 122, 173, 0.35);
+        background: rgba(0, 122, 173, 0.1);
+        border: 1px solid rgba(0, 122, 173, 0.22);
         color: var(--nav-ocean);
         flex-shrink: 0;
     }
@@ -57,7 +60,7 @@
         font-weight: 700;
         letter-spacing: 0.08em;
         text-transform: uppercase;
-        color: rgba(217, 226, 233, 0.72);
+        color: var(--nav-menu-muted);
     }
     #propFirmsMegaMenu .pf-nav-firm {
         display: flex;
@@ -66,21 +69,25 @@
         padding: 9px 10px;
         margin-bottom: 6px;
         border-radius: 12px;
-        background: rgba(12, 29, 50, 0.45);
-        border: 1px solid var(--nav-border);
+        background: var(--nav-menu-surface);
+        border: 1px solid var(--nav-menu-border);
         text-decoration: none;
         transition: all 0.2s ease;
     }
     #propFirmsMegaMenu .pf-nav-firm:hover {
-        background: rgba(0, 122, 173, 0.16);
-        border-color: rgba(0, 122, 173, 0.35);
-        transform: translateY(-1px);
+        background: var(--nav-menu-hover);
+        border-color: #cbd5e1;
+        transform: none;
+    }
+    #propFirmsMegaMenu .pf-nav-firm:hover .pf-nav-firm-name {
+        color: var(--nav-menu-text);
     }
     #propFirmsMegaMenu .pf-nav-firm-logo {
         width: 36px;
         height: 36px;
         border-radius: 10px;
-        background: rgba(255, 255, 255, 0.06);
+        background: #fff;
+        border: 1px solid var(--nav-menu-border);
         display: flex;
         align-items: center;
         justify-content: center;
@@ -92,7 +99,7 @@
         flex: 1;
         font-size: 13px;
         font-weight: 600;
-        color: var(--nav-off-white);
+        color: var(--nav-menu-text);
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -117,18 +124,18 @@
         padding: 6px 11px;
         font-size: 12.5px;
         font-weight: 500;
-        color: var(--nav-ice);
-        background: rgba(12, 29, 50, 0.55);
-        border: 1px solid var(--nav-border);
+        color: var(--nav-menu-text);
+        background: var(--nav-menu-surface);
+        border: 1px solid var(--nav-menu-border);
         border-radius: 999px;
         text-decoration: none;
         transition: all 0.18s ease;
         white-space: nowrap;
     }
     #propFirmsMegaMenu .pf-nav-chip:hover {
-        color: var(--nav-off-white);
-        background: rgba(0, 122, 173, 0.22);
-        border-color: rgba(0, 122, 173, 0.45);
+        color: var(--nav-menu-text);
+        background: var(--nav-menu-hover);
+        border-color: #cbd5e1;
     }
     #propFirmsMegaMenu .pf-nav-links {
         display: grid;
@@ -139,14 +146,14 @@
         padding: 7px 10px;
         font-size: 13px;
         font-weight: 500;
-        color: var(--nav-ice);
+        color: var(--nav-menu-text);
         text-decoration: none;
         border-radius: 8px;
         transition: all 0.15s;
     }
     #propFirmsMegaMenu .pf-nav-link:hover {
-        color: var(--nav-off-white);
-        background: rgba(0, 122, 173, 0.16);
+        color: var(--nav-menu-text);
+        background: var(--nav-menu-hover);
     }
     #propFirmsMegaMenu .pf-nav-bottom {
         display: flex;
@@ -156,13 +163,13 @@
         margin-top: 14px;
         padding: 14px 18px;
         border-radius: 14px;
-        background: rgba(12, 29, 50, 0.55);
-        border: 1px solid var(--nav-border);
+        background: var(--nav-menu-surface);
+        border: 1px solid var(--nav-menu-border);
     }
     #propFirmsMegaMenu .pf-nav-bottom p {
         margin: 0;
         font-size: 13px;
-        color: rgba(217, 226, 233, 0.78);
+        color: var(--nav-menu-muted);
     }
     #propFirmsMegaMenu .pf-nav-btn {
         display: inline-flex;
@@ -170,11 +177,11 @@
         padding: 9px 18px;
         font-size: 13px;
         font-weight: 700;
-        color: var(--nav-off-white);
+        color: #fff;
         background: var(--nav-ocean);
         border-radius: 999px;
         text-decoration: none;
-        box-shadow: 0 8px 24px rgba(0, 122, 173, 0.35);
+        box-shadow: 0 8px 24px rgba(0, 122, 173, 0.25);
         transition: transform 0.15s, background 0.15s;
         flex-shrink: 0;
     }
@@ -188,7 +195,7 @@
         color: var(--nav-ocean);
         text-decoration: none;
     }
-    #propFirmsMegaMenu .pf-nav-footer-link:hover { color: #33a3d4; }
+    #propFirmsMegaMenu .pf-nav-footer-link:hover { color: #006694; }
     @media (max-width: 1279px) {
         #propFirmsMegaMenu .pf-nav-grid {
             grid-template-columns: 1fr 1fr;

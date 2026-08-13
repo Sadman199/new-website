@@ -1,6 +1,6 @@
 <section class="bc-trust-section" id="community-sentiment" aria-labelledby="bcTrustTitle">
     @php $t = $site_t ?? fn (string $key, ?string $default = null) => $default ?? $key; @endphp
-    <div class="bc-container bc-trust-section__container">
+    <div class="container bc-trust-section__container">
         <header class="bc-trust-section__head">
             <div class="bc-trust-section__intro">
                 <p class="bc-trust-section__eyebrow">
@@ -37,7 +37,7 @@
                                 </div>
                                 <a href="{{ route('scam_brokers') }}" class="bc-trust-zone__link">All warnings</a>
                             </header>
-                            <div class="bc-trust-card-grid bc-trust-card-grid--alert">
+                            <div class="bc-trust-list bc-trust-list--alert">
                                 @foreach($sentimentScam as $item)
                                     @include('front.homepage.inc.broker_trust_scam_card', ['item' => $item])
                                 @endforeach

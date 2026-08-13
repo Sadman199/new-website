@@ -1,9 +1,9 @@
 /* Blog post detail — BrokersCourt premium theme */
 .bpd-page {
-    --bpd-ocean: #007AAD;
-    --bpd-ocean-dark: #006694;
-    --bpd-midnight: #0C1D32;
-    --bpd-ice: #D9E2E9;
+    --bpd-ocean: var(--bc-primary, #007AAD);
+    --bpd-ocean-dark: var(--bc-primary-dark, #006694);
+    --bpd-midnight: var(--bc-dark, #0C1D32);
+    --bpd-ice: var(--bc-light, #D9E2E9);
     --bpd-off-white: #FFFBFC;
     --bpd-bg: #f4f6f9;
     --bpd-surface: #ffffff;

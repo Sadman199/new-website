@@ -6,7 +6,7 @@
     --bsc-border: rgba(0, 122, 173, 0.22);
     --bsc-text: #e8f1f8;
     --bsc-muted: #b8c9d9;
-    --bsc-ocean: #007AAD;
+    --bsc-ocean: var(--bc-primary, #007AAD);
     --bsc-cyan: #22d3ee;
     --bsc-green: #22c55e;
     --bsc-amber: #eab308;

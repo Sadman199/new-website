@@ -1,9 +1,9 @@
 /* Best brokers hub — BrokersCourt premium theme */
 .bbh-page {
-    --bbh-ocean: #007AAD;
-    --bbh-ocean-dark: #006694;
-    --bbh-midnight: #0C1D32;
-    --bbh-ice: #D9E2E9;
+    --bbh-ocean: var(--bc-primary, #007AAD);
+    --bbh-ocean-dark: var(--bc-primary-dark, #006694);
+    --bbh-midnight: var(--bc-dark, #0C1D32);
+    --bbh-ice: var(--bc-light, #D9E2E9);
     --bbh-off-white: #FFFBFC;
     --bbh-bg: #f4f6f9;
     --bbh-surface: #ffffff;

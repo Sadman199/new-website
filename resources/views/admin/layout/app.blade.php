@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no" name="viewport">
-    <link rel="icon" type="image/png" href="{{ asset('uploads/favicon.png') }}">
+    <link rel="icon" type="image/png" href="{{ \App\Support\SiteTheme::faviconUrl() }}">
     <title>Admin Panel</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
@@ -14,7 +14,11 @@
             theme: {
                 extend: {
                     colors: {
-                        brand: { DEFAULT: '#007AAD', dark: '#0C1D32', light: '#D9E2E9' }
+                        brand: {
+                            DEFAULT: '{{ \App\Support\SiteTheme::primary() }}',
+                            dark: '{{ \App\Support\SiteTheme::dark() }}',
+                            light: '{{ \App\Support\SiteTheme::light() }}'
+                        }
                     }
                 }
             }

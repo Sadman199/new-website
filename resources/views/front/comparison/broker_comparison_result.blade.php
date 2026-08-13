@@ -12,7 +12,7 @@
 @endpush
 
 @push('head')
-    <link rel="stylesheet" href="{{ asset('css/broker-compare.css') }}?v=6">
+    <link rel="stylesheet" href="{{ asset('css/broker-compare.css') }}?v=7">
 @endpush
 
 @section('main_content')
@@ -28,7 +28,7 @@
     @include('front.comparison.partials.result_score_bars')
     @include('front.comparison.partials.result_promos')
 
-    <div class="bc-compare-wrap">
+    <div class="container">
         @if(!empty($popularComparisons))
             <section class="bc-compare-popular" aria-label="Popular comparisons">
                 <p class="bc-compare-popular__label">More comparisons</p>
@@ -43,7 +43,7 @@
         @endif
 
         <div class="bc-result-shell">
-            <div class="bc-result-layout">
+            <div class="row g-0 bc-result-layout">
                 @include('front.comparison.partials.result_sidebar')
                 @include('front.comparison.partials.result_sections')
             </div>
@@ -55,5 +55,5 @@
 @endsection
 
 @push('scripts')
-    <script src="{{ asset('js/broker-compare.js') }}?v=7" defer></script>
+    <script src="{{ asset('js/broker-compare.js') }}?v=8" defer></script>
 @endpush

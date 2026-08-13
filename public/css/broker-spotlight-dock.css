@@ -1,8 +1,8 @@
 /* ── Floating broker spotlight dock ── */
 .bc-spotlight-dock {
-    --bsd-ocean: #007AAD;
-    --bsd-midnight: #0C1D32;
-    --bsd-ice: #D9E2E9;
+    --bsd-ocean: var(--bc-primary, #007AAD);
+    --bsd-midnight: var(--bc-dark, #0C1D32);
+    --bsd-ice: var(--bc-light, #D9E2E9);
 
     position: fixed;
     left: 1rem;

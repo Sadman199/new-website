@@ -1,11 +1,11 @@
 /* Trading tools — BrokersCourt dark ocean theme */
 .tt-page {
-    --tt-ocean: #007AAD;
+    --tt-ocean: var(--bc-primary, #007AAD);
     --tt-ocean-light: #33a3d4;
-    --tt-ocean-dark: #006694;
-    --tt-midnight: #0C1D32;
+    --tt-ocean-dark: var(--bc-primary-dark, #006694);
+    --tt-midnight: var(--bc-dark, #0C1D32);
     --tt-bg-mid: #0f2744;
-    --tt-ice: #D9E2E9;
+    --tt-ice: var(--bc-light, #D9E2E9);
     --tt-off-white: #FFFBFC;
     --tt-muted: rgba(217, 226, 233, 0.62);
     --tt-dim: rgba(217, 226, 233, 0.38);

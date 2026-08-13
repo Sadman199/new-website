@@ -1,9 +1,9 @@
 /* Blog index — BrokersCourt premium theme */
 .bli-page {
-    --bli-ocean: #007AAD;
-    --bli-ocean-dark: #006694;
-    --bli-midnight: #0C1D32;
-    --bli-ice: #D9E2E9;
+    --bli-ocean: var(--bc-primary, #007AAD);
+    --bli-ocean-dark: var(--bc-primary-dark, #006694);
+    --bli-midnight: var(--bc-dark, #0C1D32);
+    --bli-ice: var(--bc-light, #D9E2E9);
     --bli-off-white: #FFFBFC;
     --bli-bg: #f4f6f9;
     --bli-surface: #ffffff;

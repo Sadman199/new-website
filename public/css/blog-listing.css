@@ -1,0 +1,353 @@
+/* Shared blog listing pages — latest/popular news, category, tags */
+.bll-page {
+    --bll-ocean: var(--bc-primary, #007AAD);
+    --bll-accent: #eab308;
+    --bll-text: var(--bc-dark, #0C1D32);
+    --bll-muted: #64748b;
+    --bll-border: #e5e7eb;
+    --bll-surface: #fff;
+    --bll-chip: #f3f4f6;
+    background: var(--bc-bg, #f4f6f9);
+    color: var(--bll-text);
+    min-height: 100vh;
+    padding-bottom: 3rem;
+}
+
+.bll-hero {
+    background: var(--bll-surface);
+    border-bottom: 1px solid var(--bll-border);
+    padding: 5.5rem 0 1.75rem;
+}
+
+.bll-hero__row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.bll-hero__title {
+    margin: 0;
+    font-size: clamp(1.5rem, 3vw, 1.875rem);
+    font-weight: 700;
+    color: #1f2937;
+}
+
+.bll-hero__accent {
+    color: var(--bll-accent);
+}
+
+.bll-breadcrumb {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background: var(--bll-chip);
+    border-radius: 999px;
+    font-size: 0.875rem;
+    list-style: none;
+    margin: 0;
+}
+
+.bll-breadcrumb a {
+    color: #4b5563;
+    text-decoration: none;
+}
+
+.bll-breadcrumb a:hover {
+    color: #111827;
+}
+
+.bll-breadcrumb__sep {
+    font-size: 0.7rem;
+    color: #9ca3af;
+}
+
+.bll-breadcrumb__current {
+    color: #374151;
+    font-weight: 500;
+}
+
+.bll-body {
+    padding-top: 3rem;
+}
+
+.bll-empty {
+    margin: 0;
+    padding: 2rem 0;
+    text-align: center;
+    color: var(--bll-muted);
+}
+
+.bll-pagination {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 0.25rem;
+    margin-top: 2rem;
+    padding-bottom: 3rem;
+}
+
+.bll-page-link,
+.bll-page-link--disabled,
+.bll-page-link--current {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 2rem;
+    padding: 0.25rem 0.75rem;
+    border-radius: 0.375rem;
+    font-size: 0.875rem;
+    text-decoration: none;
+}
+
+.bll-page-link {
+    color: #fff;
+    font-weight: 600;
+    background: linear-gradient(90deg, #eab308, #ca8a04);
+}
+
+.bll-page-link:hover {
+    background: linear-gradient(90deg, #ca8a04, #a16207);
+    color: #fff;
+}
+
+.bll-page-link--ghost {
+    color: #374151;
+    background: transparent;
+}
+
+.bll-page-link--ghost:hover {
+    background: #fefce8;
+    color: #374151;
+}
+
+.bll-page-link--current {
+    color: #ca8a04;
+    font-weight: 700;
+    background: #fff;
+    border: 1px solid #eab308;
+}
+
+.bll-page-link--disabled {
+    color: #9ca3af;
+    cursor: not-allowed;
+}
+
+.bll-sidebar {
+    position: sticky;
+    top: 6rem;
+}
+
+/* Compact news card used by listing pages */
+.nc-card {
+    background: #1f2937;
+    border: 1px solid #374151;
+    border-radius: var(--bc-radius-md, 12px);
+    padding: 0.75rem;
+    height: 100%;
+    transition: background 0.2s ease;
+}
+
+.nc-card:hover {
+    background: #273549;
+}
+
+.nc-card__inner {
+    display: flex;
+    gap: 0.75rem;
+}
+
+.nc-card__media {
+    flex-shrink: 0;
+    width: 5rem;
+}
+
+.nc-card__media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 0.25rem;
+    display: block;
+    aspect-ratio: 1 / 1;
+}
+
+.nc-card__body {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.nc-card__badge {
+    display: inline-block;
+    margin-bottom: 0.25rem;
+    padding: 0.125rem 0.5rem;
+    font-size: 0.75rem;
+    line-height: 1.25;
+    color: #d1d5db;
+    background: #374151;
+    border: 1px solid #374151;
+    border-radius: 0.25rem;
+}
+
+.nc-card__title {
+    margin: 0 0 0.25rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    line-height: 1.3;
+    color: #fff;
+}
+
+.nc-card__title a {
+    color: inherit;
+    text-decoration: none;
+}
+
+.nc-card__title a:hover {
+    color: #60a5fa;
+}
+
+.nc-card__meta {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 0.75rem;
+    color: #9ca3af;
+}
+
+.nc-card__meta-author {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Horizontal tag listing card */
+.bll-tag-card {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    background: #fff;
+    border: 1px solid #f3f4f6;
+    border-radius: var(--bc-radius-md, 12px);
+    overflow: hidden;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+    transition: box-shadow 0.2s ease;
+}
+
+.bll-tag-card:hover {
+    box-shadow: 0 4px 14px rgba(15, 23, 42, 0.08);
+}
+
+@media (min-width: 576px) {
+    .bll-tag-card {
+        flex-direction: row;
+    }
+}
+
+.bll-tag-card__media {
+    position: relative;
+    width: 100%;
+    min-height: 9rem;
+}
+
+@media (min-width: 576px) {
+    .bll-tag-card__media {
+        width: 40%;
+        min-height: auto;
+    }
+}
+
+.bll-tag-card__media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.bll-tag-card__badge {
+    position: absolute;
+    top: 0.75rem;
+    left: 0.75rem;
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #1f2937;
+    background: #fefce8;
+    border: 1px solid #eab308;
+    border-radius: 999px;
+}
+
+.bll-tag-card__body {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    padding: 1rem;
+}
+
+@media (min-width: 576px) {
+    .bll-tag-card__body {
+        width: 60%;
+    }
+}
+
+.bll-tag-card__title {
+    margin: 0 0 0.5rem;
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: #111827;
+}
+
+.bll-tag-card__title a {
+    color: inherit;
+    text-decoration: none;
+}
+
+.bll-tag-card__title a:hover {
+    color: #1d4ed8;
+}
+
+.bll-tag-card__excerpt {
+    margin: 0 0 0.75rem;
+    font-size: 0.875rem;
+    line-height: 1.4;
+    color: #4b5563;
+}
+
+.bll-tag-card__footer {
+    margin-top: auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+}
+
+.bll-tag-card__meta {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 0.75rem;
+    color: #6b7280;
+}
+
+.bll-tag-card__author {
+    font-weight: 500;
+    color: #374151;
+}
+
+.bll-tag-card__index {
+    font-size: 0.75rem;
+    font-weight: 500;
+    padding: 0.25rem 0.5rem;
+    border-radius: 999px;
+}
+
+.bll-tag-card__index--odd {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.bll-tag-card__index--even {
+    background: #dbeafe;
+    color: #1e40af;
+}

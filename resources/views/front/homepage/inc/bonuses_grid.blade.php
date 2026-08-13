@@ -7,7 +7,7 @@
 
 @if($promotions->isNotEmpty())
 <section class="bc-section bc-promos" id="active-promotions">
-    <div class="bc-container">
+    <div class="container">
         <div class="bc-promos__head">
             <div class="bc-promos__intro">
                 <p class="bc-promos__eyebrow">Bonuses &amp; offers</p>

@@ -2,6 +2,7 @@
     @php
         $t = $site_t ?? fn (string $key, ?string $default = null) => $default ?? $key;
         $countryName = $preferredCountry['name'] ?? 'your country';
+        $recommended = $sentimentRecommended->values();
     @endphp
     <section id="bcTrustRecommendedZone" class="bc-trust-zone bc-trust-zone--recommended" aria-labelledby="bcTrustRecTitle">
         <header class="bc-trust-zone__head">
@@ -20,11 +21,14 @@
                     </p>
                 </div>
             </div>
-            <span class="bc-trust-zone__count" id="bcTrustRecCount">{{ $sentimentRecommended->count() }}</span>
+            <span class="bc-trust-zone__count" id="bcTrustRecCount">{{ $recommended->count() }}</span>
         </header>
-        <div class="bc-trust-card-grid" id="bcTrustRecGrid">
-            @foreach($sentimentRecommended as $item)
-                @include('front.homepage.inc.broker_trust_recommend_card', ['item' => $item])
+        <div class="bc-trust-list" id="bcTrustRecGrid">
+            @foreach($recommended as $index => $item)
+                @include('front.homepage.inc.broker_trust_recommend_card', [
+                    'item' => $item,
+                    'featured' => $index === 0,
+                ])
             @endforeach
         </div>
     </section>

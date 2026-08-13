@@ -1,0 +1,43 @@
+.broker-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.2rem 0.5rem;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    color: #fff;
+    background: var(--bc-primary);
+    border-radius: 999px;
+    line-height: 1.2;
+}
+
+.broker-badge--match {
+    background: var(--bc-success);
+}
+
+.broker-badge--warning {
+    background: var(--bc-warning);
+}
+
+.broker-badge--muted {
+    color: var(--bc-muted);
+    background: var(--bc-bg);
+}
+
+.bc-expiry-badge {
+    display: inline-flex;
+    align-items: center;
+    font-weight: 700;
+    line-height: 1.2;
+    white-space: nowrap;
+}
+
+.bc-expiry-badge--pill {
+    padding: 0.15rem 0.5rem;
+    font-size: 0.5625rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    border-radius: 999px;
+    border: 1px solid transparent;
+}

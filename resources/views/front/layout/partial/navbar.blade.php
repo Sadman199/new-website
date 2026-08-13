@@ -12,45 +12,42 @@ $countryShortcode = $preferredCountry['shortcode'] ?? BrokerTaxonomy::countrySho
 $popularReviewBrokers = ($popularReviewBrokers ?? collect())->take(10);
 @endphp
 
-    <link rel="stylesheet" href="{{ asset('css/navbar.css') }}?v=1" data-bc-global>
-
-
 <nav class="fixed top-0 inset-x-0" id="navbar">
     <div class="bc-nav-bar" id="bcNavBar">
-    <div class="max-w-7xl mx-auto px-4 lg:px-6">
-        <div class="flex items-center gap-2 h-16 min-w-0" id="navBarRow">
+    <div class="container">
+        <div id="navBarRow">
 
-            <a href="{{ route('home') }}" class="flex-shrink-0">
+            <a href="{{ route('home') }}" class="bc-nav-logo">
                 <img src="{{ \App\Support\SiteTheme::logoUrl() }}" alt="{{ \App\Support\SiteTheme::siteName() }}" class="bc-site-logo">
             </a>
 
             {{-- Desktop nav --}}
-            <div class="hidden lg:flex items-center gap-0.5 flex-1 min-w-0 justify-center bc-nav-desktop">
+            <div class="bc-nav-desktop">
                 <a href="{{ route('home') }}" class="bc-nav-link">Home</a>
 
                 {{-- Best brokers trigger --}}
-                <div class="relative" id="brokersNavGroup">
+                <div class="bc-nav-group" id="brokersNavGroup">
                     <button type="button" id="brokersButton" class="bc-nav-link brokers-trigger" aria-expanded="false" aria-controls="brokersMegaMenu">
                         Best brokers
-                        <svg class="w-4 h-4 chevron-icon transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                        <svg class="chevron-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
                     </button>
                 </div>
 
                 {{-- Prop firms mega menu --}}
-                <div class="relative" id="propFirmsNavGroup">
+                <div class="bc-nav-group" id="propFirmsNavGroup">
                     <button type="button" id="propFirmsButton" class="bc-nav-link @if(Request::is('prop-firms*')) bc-nav-active @endif" aria-expanded="false" aria-controls="propFirmsMegaMenu">
                         Prop firms
-                        <svg class="w-4 h-4 pf-chevron transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                        <svg class="pf-chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
                     </button>
                 </div>
 
                 {{-- Broker reviews mega (hover) --}}
-                <div class="relative" id="reviewsNavGroup">
+                <div class="bc-nav-group" id="reviewsNavGroup">
                     <a href="{{ route('broker.reviews.index') }}" id="reviewsNavLink" class="bc-nav-link reviews-trigger" data-bc-nav-warm>
                         Broker reviews
-                        <svg class="w-4 h-4 reviews-chevron transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                        <svg class="reviews-chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
                     </a>
-                    <div id="reviewsMegaMenu" class="hidden absolute left-0 top-full pt-2">
+                    <div id="reviewsMegaMenu" class="is-hidden bc-nav-flyout">
                         <div class="bc-reviews-mega-panel">
                             <div class="bc-reviews-mega-grid">
                                 <div class="bc-reviews-mega-col">
@@ -82,12 +79,12 @@ $popularReviewBrokers = ($popularReviewBrokers ?? collect())->take(10);
                     </div>
                 </div>
 
-                <div class="relative" id="toolsNavGroup">
+                <div class="bc-nav-group" id="toolsNavGroup">
                     <button type="button" id="toolsButton" class="bc-nav-link tools-trigger" aria-expanded="false" aria-controls="toolsMenu">
                         Tools
-                        <svg class="w-4 h-4 tools-chevron transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                        <svg class="tools-chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
                     </button>
-                    <div id="toolsMenu" class="bc-nav-dropdown hidden" aria-labelledby="toolsButton">
+                    <div id="toolsMenu" class="bc-nav-dropdown is-hidden" aria-labelledby="toolsButton">
                         <div class="bc-nav-dropdown-panel">
                             <a href="{{ route('promotions.index') }}" class="bc-nav-dropdown-link">Broker Promos</a>
                             <a href="{{ route('prop_firms.index') }}" class="bc-nav-dropdown-link">Prop Firms</a>
@@ -102,14 +99,14 @@ $popularReviewBrokers = ($popularReviewBrokers ?? collect())->take(10);
                 <a href="{{ route('awards.index') }}" class="bc-nav-link" data-bc-nav-warm>Awards</a>
                 <a href="{{ route('blog') }}" class="bc-nav-link">Blog</a>
 
-                <div class="relative" id="companyNavGroup">
+                <div class="bc-nav-group" id="companyNavGroup">
                     <button type="button" id="companyButton" class="bc-nav-link company-trigger" aria-expanded="false">
                         About
-                        <svg class="w-4 h-4 company-chevron transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                        <svg class="company-chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
                     </button>
-                    <div id="companyMenu" class="company-menu hidden absolute left-0 top-full w-56">
-                        <div class="bg-white border border-gray-200 shadow-xl rounded-xl">
-                            <a href="{{ route('about.us') }}" class="bc-mega-link">{{ $t('nav.about_us') }}</a>
+                    <div id="companyMenu" class="company-menu bc-nav-dropdown is-hidden" aria-labelledby="companyButton">
+                        <div class="bc-nav-dropdown-panel">
+                            <a href="{{ route('about') }}" class="bc-mega-link">{{ $t('nav.about_us') }}</a>
                             <a href="{{ route('authors') }}" class="bc-mega-link">{{ $t('nav.our_team') }}</a>
                             <a href="{{ route('methodology') }}" class="bc-mega-link">{{ $t('nav.methodology') }}</a>
                             <a href="{{ route('contact') }}" class="bc-mega-link">{{ $t('nav.contact_us') }}</a>
@@ -132,7 +129,7 @@ $popularReviewBrokers = ($popularReviewBrokers ?? collect())->take(10);
                     <span class="bc-country-nav-label" id="countryNavLabel">{{ $countryShortcode }}</span>
                 </button>
 
-                <div class="bc-search-wrap hidden lg:flex" id="desktopSearchWrap">
+                <div class="bc-search-wrap" id="desktopSearchWrap">
                     <button type="button" id="desktopSearchToggle" class="bc-nav-icon-btn" aria-label="{{ $t('nav.search_brokers') }}" aria-expanded="false">
                         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
                     </button>
@@ -153,40 +150,40 @@ $popularReviewBrokers = ($popularReviewBrokers ?? collect())->take(10);
                     </div>
                 </div>
 
-                <a href="{{ route('find_my_broker') }}" class="hidden lg:inline-flex bc-btn-primary flex-shrink-0">{{ $t('nav.find_broker') }}</a>
+                <a href="{{ route('find_my_broker') }}" class="bc-btn-primary bc-nav-find">{{ $t('nav.find_broker') }}</a>
 
                 @auth('web')
                     @include('front.layout.partial.notification-bell')
-                    <div class="relative hidden lg:block" id="bcAccountMenu">
-                        <button type="button" id="bcAccountMenuBtn" class="flex items-center gap-2 pl-1 pr-2 py-1 rounded-full hover:bg-gray-100 transition" aria-label="Account menu" aria-expanded="false" aria-controls="bcAccountMenuPanel">
-                            <img src="{{ auth()->user()->avatar_url }}" alt="{{ auth()->user()->name }}" class="w-8 h-8 rounded-full object-cover border border-gray-200" width="32" height="32">
-                            <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                    <div class="bc-nav-account" id="bcAccountMenu">
+                        <button type="button" id="bcAccountMenuBtn" class="bc-nav-account__btn" aria-label="Account menu" aria-expanded="false" aria-controls="bcAccountMenuPanel">
+                            <img src="{{ auth()->user()->avatar_url }}" alt="{{ auth()->user()->name }}" class="bc-nav-account__avatar" width="32" height="32">
+                            <svg class="bc-nav-account__chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
                         </button>
-                        <div id="bcAccountMenuPanel" class="absolute right-0 top-full mt-2 w-60 bg-white border border-gray-200 rounded-xl shadow-xl py-2 z-[1060]" hidden>
-                            <div class="px-4 py-2 border-b border-gray-100">
-                                <p class="text-sm font-semibold text-gray-800 truncate flex items-center gap-1">
+                        <div id="bcAccountMenuPanel" class="bc-nav-account__panel" hidden>
+                            <div class="bc-nav-account__head">
+                                <p class="bc-nav-account__name">
                                     {{ auth()->user()->name }}
-                                    @if(auth()->user()->is_verified)<i class="fas fa-check-circle text-blue-500 text-xs" title="Verified"></i>@endif
+                                    @if(auth()->user()->is_verified)<i class="fas fa-check-circle bc-nav-account__verified" title="Verified"></i>@endif
                                 </p>
-                                <p class="text-xs text-gray-400 truncate">{{ auth()->user()->email }}</p>
+                                <p class="bc-nav-account__email">{{ auth()->user()->email }}</p>
                             </div>
-                            <a href="{{ route('user.profile') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"><i class="fas fa-user-circle mr-2 text-gray-400"></i>My profile</a>
-                            <a href="{{ route('user.profile', ['tab' => 'overview']) }}#ua-saved" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"><i class="fas fa-bookmark mr-2 text-gray-400"></i>Saved brokers</a>
-                            <a href="{{ route('user.profile', ['tab' => 'overview']) }}#ua-notifications" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"><i class="fas fa-bell mr-2 text-gray-400"></i>Notifications</a>
-                            <a href="{{ route('user.profile.edit') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"><i class="fas fa-pen mr-2 text-gray-400"></i>Edit profile</a>
-                            <form action="{{ route('user.logout') }}" method="POST" class="border-t border-gray-100 mt-1 pt-1">
+                            <a href="{{ route('user.profile') }}" class="bc-nav-account__link"><i class="fas fa-user-circle"></i>My profile</a>
+                            <a href="{{ route('user.profile', ['tab' => 'overview']) }}#ua-saved" class="bc-nav-account__link"><i class="fas fa-bookmark"></i>Saved brokers</a>
+                            <a href="{{ route('user.profile', ['tab' => 'overview']) }}#ua-notifications" class="bc-nav-account__link"><i class="fas fa-bell"></i>Notifications</a>
+                            <a href="{{ route('user.profile.edit') }}" class="bc-nav-account__link"><i class="fas fa-pen"></i>Edit profile</a>
+                            <form action="{{ route('user.logout') }}" method="POST" class="bc-nav-account__logout">
                                 @csrf
-                                <button type="submit" class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50"><i class="fas fa-sign-out-alt mr-2"></i>Log out</button>
+                                <button type="submit" class="bc-nav-account__link bc-nav-account__link--danger"><i class="fas fa-sign-out-alt"></i>Log out</button>
                             </form>
                         </div>
                     </div>
                 @else
-                    <a href="{{ route('user.login') }}" class="hidden lg:inline-flex bc-nav-icon-btn" aria-label="Log in" title="Log in">
+                    <a href="{{ route('user.login') }}" class="bc-nav-icon-btn bc-nav-login" aria-label="Log in" title="Log in">
                         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
                     </a>
                 @endauth
 
-                <button type="button" id="mobileMenuButton" class="lg:hidden bc-nav-icon-btn" aria-label="Menu">
+                <button type="button" id="mobileMenuButton" class="bc-nav-icon-btn" aria-label="Menu">
                     <svg id="menuIconOpen" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
                     <svg id="menuIconClose" class="is-hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true" style="display:none"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                 </button>
@@ -194,7 +191,7 @@ $popularReviewBrokers = ($popularReviewBrokers ?? collect())->take(10);
         </div>
 
         {{-- Mobile search bar --}}
-        <div class="bc-mobile-search-row lg:hidden" id="mobileSearchRow">
+        <div class="bc-mobile-search-row" id="mobileSearchRow">
             <form action="{{ route('search') }}" method="GET" class="bc-search-form" id="navSearchFormMobile" role="search">
                 <div class="bc-search-field">
                     <input type="search"
@@ -228,10 +225,10 @@ $popularReviewBrokers = ($popularReviewBrokers ?? collect())->take(10);
                     @foreach($topRatedBrokers->take(5) as $index => $broker)
                         <a href="{{ route('broker_detail', ['slug' => BrokerController::reviewSlugFor($broker)]) }}" class="bc-broker-row">
                             <span class="bc-broker-rank">{{ $index + 1 }}</span>
-                            <div class="w-9 h-9 rounded-xl border border-white bg-white flex items-center justify-center overflow-hidden flex-shrink-0 shadow-sm">
-                                @if($broker->logo)<img src="{{ asset($broker->logo) }}" alt="" class="w-7 h-7 object-contain" loading="lazy" decoding="async" width="28" height="28">@endif
+                            <div class="bc-broker-row__logo">
+                                @if($broker->logo)<img src="{{ asset($broker->logo) }}" alt="" class="bc-broker-row__logo-img" loading="lazy" decoding="async" width="28" height="28">@endif
                             </div>
-                            <span class="flex-1 text-sm font-semibold text-gray-800 truncate">{{ $broker->name }}</span>
+                            <span class="bc-broker-row__name">{{ $broker->name }}</span>
                             <span class="bc-score">? {{ number_format($broker->rating, 1) }}</span>
                         </a>
                     @endforeach
@@ -288,7 +285,7 @@ $popularReviewBrokers = ($popularReviewBrokers ?? collect())->take(10);
             </div>
             <div class="bc-mega-bottom">
                 <p>Independent comparisons ? find your ideal broker in seconds.</p>
-                <div class="flex items-center gap-4 flex-shrink-0">
+                <div class="bc-mega-bottom__actions">
                     <a href="{{ route('methodology') }}" class="bc-mega-footer" style="margin:0;padding:0;border:none;">Our methodology ?</a>
                     <a href="{{ route('brokers.best.index') }}" class="bc-btn-primary">Explore all brokers</a>
                 </div>
@@ -297,17 +294,17 @@ $popularReviewBrokers = ($popularReviewBrokers ?? collect())->take(10);
     </div>
 
     {{-- Mobile menu --}}
-    <div id="mobileMenu" class="lg:hidden hidden border-t border-gray-200 shadow-lg">
+    <div id="mobileMenu" class="is-hidden bc-mobile-menu">
         <div class="bc-mobile-nav-inner">
             <a href="{{ route('home') }}" class="bc-mobile-nav-link">Home</a>
 
             <div class="mobile-accordion">
-                <button type="button" class="mobile-accordion-btn font-semibold" data-target="mob-prop-firms">
+                <button type="button" class="mobile-accordion-btn" data-target="mob-prop-firms">
                     <span>Prop firms</span>
-                    <svg class="w-4 h-4 accordion-chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                    <svg class="accordion-chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
                 </button>
-                <div id="mob-prop-firms" class="hidden bc-mobile-subpanel">
-                    <a href="{{ route('prop_firms.index') }}" class="bc-mobile-nav-link bc-mobile-nav-link--child font-semibold">All prop firms</a>
+                <div id="mob-prop-firms" class="is-hidden bc-mobile-subpanel">
+                    <a href="{{ route('prop_firms.index') }}" class="bc-mobile-nav-link bc-mobile-nav-link--child">All prop firms</a>
                     @foreach(($propFirmNav['categories'] ?? collect()) as $cat)
                         <a href="{{ route('prop_firms.category', $cat->slug) }}" class="bc-mobile-nav-link bc-mobile-nav-link--child">{{ $cat->name }}</a>
                     @endforeach
@@ -317,11 +314,11 @@ $popularReviewBrokers = ($popularReviewBrokers ?? collect())->take(10);
             </div>
 
             <div class="mobile-accordion">
-                <button type="button" class="mobile-accordion-btn font-semibold" data-target="mob-best-categories">
+                <button type="button" class="mobile-accordion-btn" data-target="mob-best-categories">
                     <span>Best brokers by category</span>
-                    <svg class="w-4 h-4 accordion-chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                    <svg class="accordion-chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
                 </button>
-                <div id="mob-best-categories" class="hidden bc-mobile-subpanel">
+                <div id="mob-best-categories" class="is-hidden bc-mobile-subpanel">
                     @foreach($brokerCategories as $slug => $name)
                         <a href="{{ route('brokers.best', ['slug' => $slug]) }}" class="bc-mobile-nav-link bc-mobile-nav-link--child">{{ $name }}</a>
                     @endforeach
@@ -329,11 +326,11 @@ $popularReviewBrokers = ($popularReviewBrokers ?? collect())->take(10);
             </div>
 
             <div class="mobile-accordion">
-                <button type="button" class="mobile-accordion-btn font-semibold" data-target="mob-best-countries">
+                <button type="button" class="mobile-accordion-btn" data-target="mob-best-countries">
                     <span>Best brokers by country</span>
-                    <svg class="w-4 h-4 accordion-chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                    <svg class="accordion-chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
                 </button>
-                <div id="mob-best-countries" class="hidden bc-mobile-subpanel">
+                <div id="mob-best-countries" class="is-hidden bc-mobile-subpanel">
                     @foreach($listedCountries as $slug => $country)
                         <a href="{{ route('brokers.best', ['slug' => $slug]) }}" class="bc-mobile-nav-link bc-mobile-nav-link--child">{{ $country['flag'] }} {{ $country['name'] }}</a>
                     @endforeach
@@ -342,11 +339,11 @@ $popularReviewBrokers = ($popularReviewBrokers ?? collect())->take(10);
             </div>
 
             <div class="mobile-accordion">
-                <button type="button" class="mobile-accordion-btn font-semibold" data-target="mob-reviews">
+                <button type="button" class="mobile-accordion-btn" data-target="mob-reviews">
                     <span>Broker reviews</span>
-                    <svg class="w-4 h-4 accordion-chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                    <svg class="accordion-chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
                 </button>
-                <div id="mob-reviews" class="hidden bc-mobile-subpanel">
+                <div id="mob-reviews" class="is-hidden bc-mobile-subpanel">
                     <div class="bc-mobile-reviews-grid">
                         <div>
                             <p class="bc-mobile-subtitle">Popular reviews</p>
@@ -373,11 +370,11 @@ $popularReviewBrokers = ($popularReviewBrokers ?? collect())->take(10);
             </div>
 
             <div class="mobile-accordion">
-                <button type="button" class="mobile-accordion-btn font-semibold" data-target="mob-tools">
+                <button type="button" class="mobile-accordion-btn" data-target="mob-tools">
                     <span>Tools</span>
-                    <svg class="w-4 h-4 accordion-chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                    <svg class="accordion-chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
                 </button>
-                <div id="mob-tools" class="hidden bc-mobile-subpanel">
+                <div id="mob-tools" class="is-hidden bc-mobile-subpanel">
                     <a href="{{ route('promotions.index') }}" class="bc-mobile-nav-link bc-mobile-nav-link--child">Broker Promos</a>
                     <a href="{{ route('broker.comparison') }}" class="bc-mobile-nav-link bc-mobile-nav-link--child">Compare Brokers</a>
                     <a href="{{ route('broker.scam_checker') }}" class="bc-mobile-nav-link bc-mobile-nav-link--child" style="color:#f87171;">Scam Checker</a>
@@ -390,7 +387,7 @@ $popularReviewBrokers = ($popularReviewBrokers ?? collect())->take(10);
 
             <a href="{{ route('awards.index') }}" class="bc-mobile-nav-link">Awards</a>
             <a href="{{ route('blog') }}" class="bc-mobile-nav-link">Blog</a>
-            <a href="{{ route('about.us') }}" class="bc-mobile-nav-link">{{ $t('nav.about_us') }}</a>
+            <a href="{{ route('about') }}" class="bc-mobile-nav-link">{{ $t('nav.about_us') }}</a>
             <a href="{{ route('authors') }}" class="bc-mobile-nav-link">Our team</a>
             <a href="{{ route('methodology') }}" class="bc-mobile-nav-link">Our methodology</a>
             <a href="{{ route('contact') }}" class="bc-mobile-nav-link">Contact us</a>
@@ -406,14 +403,14 @@ $popularReviewBrokers = ($popularReviewBrokers ?? collect())->take(10);
 
             <div class="bc-mobile-auth">
                 @auth('web')
-                    <div class="flex items-center gap-3 px-1 pb-2">
-                        <img src="{{ auth()->user()->avatar_url }}" alt="{{ auth()->user()->name }}" class="w-9 h-9 rounded-full object-cover border border-gray-200">
+                    <div class="bc-mobile-auth__user">
+                        <img src="{{ auth()->user()->avatar_url }}" alt="{{ auth()->user()->name }}" class="bc-mobile-auth__avatar">
                         <div>
-                            <p class="text-sm font-semibold text-gray-800 flex items-center gap-1">
+                            <p class="bc-mobile-auth__name">
                                 {{ auth()->user()->name }}
-                                @if(auth()->user()->is_verified)<i class="fas fa-check-circle text-blue-500 text-xs"></i>@endif
+                                @if(auth()->user()->is_verified)<i class="fas fa-check-circle bc-mobile-auth__verified"></i>@endif
                             </p>
-                            <p class="text-xs text-gray-400">{{ auth()->user()->email }}</p>
+                            <p class="bc-mobile-auth__email">{{ auth()->user()->email }}</p>
                         </div>
                     </div>
                     <a href="{{ route('user.profile') }}" class="bc-mobile-nav-link">My profile</a>
@@ -421,10 +418,10 @@ $popularReviewBrokers = ($popularReviewBrokers ?? collect())->take(10);
                     <a href="{{ route('user.profile', ['tab' => 'overview']) }}#ua-notifications" class="bc-mobile-nav-link">Notifications</a>
                     <form action="{{ route('user.logout') }}" method="POST">
                         @csrf
-                        <button type="submit" class="bc-mobile-nav-link w-full text-left text-red-600">Log out</button>
+                        <button type="submit" class="bc-mobile-nav-link bc-mobile-auth__logout">Log out</button>
                     </form>
                 @else
-                    <a href="{{ route('user.login') }}" class="bc-mobile-nav-link font-semibold flex items-center gap-2" aria-label="Log in">
+                    <a href="{{ route('user.login') }}" class="bc-mobile-nav-link bc-mobile-auth__login" aria-label="Log in">
                         <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
                         Log in
                     </a>
@@ -437,4 +434,4 @@ $popularReviewBrokers = ($popularReviewBrokers ?? collect())->take(10);
 
 @include('front.layout.partial.country-drawer')
 
-<script src="{{ asset('js/navbar.js') }}?v=3" defer></script>
+<script src="{{ asset('js/navbar.js') }}?v=4" defer></script>

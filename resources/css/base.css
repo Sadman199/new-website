@@ -1,0 +1,30 @@
+html {
+    overflow-x: clip;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+    margin: 0;
+    font-family: var(--bc-font);
+    color: var(--bc-text);
+    background: var(--bc-bg);
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: var(--bc-font);
+    letter-spacing: -0.02em;
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+}
+
+#bc-page-root {
+    min-height: 40vh;
+}
+
+#bc-page-root:focus {
+    outline: none;
+}

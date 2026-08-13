@@ -6,7 +6,7 @@
 @section('canonical', route('user.profile'))
 
 @push('page-styles')
-    <link rel="stylesheet" href="{{ asset('css/user-account.css') }}?v=8">
+    <link rel="stylesheet" href="{{ asset('css/user-account.css') }}?v=9">
 @endpush
 
 @section('main_content')
@@ -37,6 +37,7 @@
     $settingsUrl = route('user.profile', ['tab' => 'settings']);
 @endphp
 <div class="ua-root" @if($scrollTo) data-ua-scroll="{{ $scrollTo }}" @endif>
+    <div class="container">
     <div class="ua-wrap ua-wrap--profile">
 
         @include('front.account._alerts')
@@ -65,7 +66,7 @@
         </div>
 
         <div class="ua-quick-actions" aria-label="Quick actions">
-            <a href="{{ route('all_brokers') }}" class="ua-quick-action"><i class="fas fa-star"></i> Write a review</a>
+            <a href="{{ route('broker.reviews.index') }}" class="ua-quick-action"><i class="fas fa-star"></i> Write a review</a>
             <a href="{{ route('find_my_broker') }}" class="ua-quick-action"><i class="fas fa-search"></i> Find my broker</a>
             <a href="{{ route('broker.comparison') }}" class="ua-quick-action"><i class="fas fa-columns"></i> Compare brokers</a>
             <a href="{{ $overviewUrl }}#ua-saved" class="ua-quick-action"><i class="fas fa-bookmark"></i> Saved brokers</a>
@@ -143,7 +144,7 @@
                             @forelse($reviews as $review)
                                 <article class="ua-review-item">
                                     <div class="ua-review-icon"><i class="fas fa-building"></i></div>
-                                    <div class="flex-1 min-w-0">
+                                    <div class="ua-fill">
                                         <div class="ua-review-head">
                                             <h3 class="ua-review-title">{{ $review->broker->name ?? 'Broker' }}</h3>
                                             @if($review->status == 1)
@@ -177,7 +178,7 @@
                                 <div class="ua-empty">
                                     <i class="fas fa-comment-slash"></i>
                                     <p>You haven't written any reviews yet.</p>
-                                    <a href="{{ route('all_brokers') }}" class="ua-link">Browse brokers to review →</a>
+                                    <a href="{{ route('broker.reviews.index') }}" class="ua-link">Browse brokers to review →</a>
                                 </div>
                             @endforelse
                         </div>
@@ -275,7 +276,7 @@
                                             <i class="fas fa-clock"></i>
                                         @endif
                                     </div>
-                                    <div class="flex-1 min-w-0">
+                                    <div class="ua-fill">
                                         <div class="ua-notification-head">
                                             <h3 class="ua-notification-title">{{ $notification->title }}</h3>
                                             @unless($notification->isUnread())
@@ -441,6 +442,7 @@
                 @endif
             </div>
         </div>
+    </div>
     </div>
 </div>
 @endsection

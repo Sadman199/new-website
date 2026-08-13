@@ -6,11 +6,12 @@
 @section('canonical', route('user.profile.edit'))
 
 @push('page-styles')
-    <link rel="stylesheet" href="{{ asset('css/user-account.css') }}?v=1">
+    <link rel="stylesheet" href="{{ asset('css/user-account.css') }}?v=9">
 @endpush
 
 @section('main_content')
 <div class="ua-root">
+    <div class="container">
     <div class="ua-wrap ua-wrap--profile">
         <a href="{{ route('user.profile') }}" class="ua-back"><i class="fas fa-arrow-left"></i> Back to profile</a>
 
@@ -28,7 +29,7 @@
 
                     <div class="ua-field">
                         <label>Profile photo</label>
-                        <div style="display:flex;align-items:center;gap:1rem;flex-wrap:wrap;">
+                        <div class="d-flex flex-wrap align-items-center gap-3">
                             <img src="{{ $user->avatar_url }}" alt="{{ $user->name }}" class="ua-profile-avatar" style="margin:0;width:4rem;height:4rem;">
                             <input type="file" name="avatar" id="avatar" accept="image/jpeg,image/png,image/webp,image/gif" class="ua-file">
                         </div>
@@ -63,7 +64,7 @@
                         @error('bio')<p class="ua-error"><i class="fas fa-exclamation-circle"></i> {{ $message }}</p>@enderror
                     </div>
 
-                    <div style="display:flex;flex-wrap:wrap;gap:0.65rem;align-items:center;">
+                    <div class="d-flex flex-wrap align-items-center gap-2">
                         <button type="submit" class="ua-btn ua-btn--primary">
                             <i class="fas fa-save"></i> Save changes
                         </button>
@@ -72,6 +73,7 @@
                 </form>
             </div>
         </div>
+    </div>
     </div>
 </div>
 @endsection

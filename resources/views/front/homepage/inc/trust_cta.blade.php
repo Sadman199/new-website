@@ -1,5 +1,5 @@
 <section class="bc-cta">
-    <div class="bc-container bc-cta__inner">
+    <div class="container bc-cta__inner">
         <div>
             <h2 class="bc-cta__title">Not sure where to start?</h2>
             <p class="bc-cta__text">Use our advanced filter to match brokers by regulation, deposit, platform, and more — or compare up to three side-by-side.</p>

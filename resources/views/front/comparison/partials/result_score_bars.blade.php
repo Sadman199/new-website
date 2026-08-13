@@ -1,6 +1,6 @@
 @if(!empty($comparison['score_bars']))
 <section class="bc-result-scores" id="bc-result-scores" aria-label="Category score comparison">
-    <div class="bc-compare-wrap">
+    <div class="container">
         <header class="bc-result-scores__head">
             <h2 class="bc-result-scores__title">Category scores</h2>
             <p class="bc-result-scores__sub">Editorial scores out of 10 — higher is better.</p>

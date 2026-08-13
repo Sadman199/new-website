@@ -1,8 +1,8 @@
 /* Scam broker detail — BrokersCourt warning dossier */
 .sbd-page {
-    --sbd-ocean: #007AAD;
-    --sbd-midnight: #0C1D32;
-    --sbd-ice: #D9E2E9;
+    --sbd-ocean: var(--bc-primary, #007AAD);
+    --sbd-midnight: var(--bc-dark, #0C1D32);
+    --sbd-ice: var(--bc-light, #D9E2E9);
     --sbd-off-white: #FFFBFC;
     --sbd-bg: #f4f6f9;
     --sbd-surface: #ffffff;

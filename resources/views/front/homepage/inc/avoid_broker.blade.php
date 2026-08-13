@@ -1,5 +1,5 @@
 <section class="bc-home-section bc-home-section--white">
-    <div class="bc-home-container">
+    <div class="container">
         <div class="bc-home-section__head">
             <div>
                 <h2 class="bc-home-section__title">Explore Broker Categories</h2>

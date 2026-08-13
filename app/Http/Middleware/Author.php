@@ -9,7 +9,7 @@ class Author extends Middleware
     protected function redirectTo($request)
     {
         if (! $request->expectsJson()) {
-            return route('login');
+            return route('author_login');
         }
     }
 }

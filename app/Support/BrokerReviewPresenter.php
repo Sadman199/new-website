@@ -272,11 +272,10 @@ class BrokerReviewPresenter
                 ? ['label' => 'Max leverage', 'value' => strip_tags((string) ($broker->leverage ?: $firstAccount->leverage_label))]
                 : null,
             $spreads ? ['label' => 'Spreads', 'value' => strip_tags((string) $spreads)] : null,
-            $platforms ? ['label' => 'Platforms', 'value' => implode(', ', array_slice($platforms, 0, 3))] : null,
-            $accountTypes ? ['label' => 'Accounts', 'value' => implode(', ', array_slice($accountTypes, 0, 3))] : null,
+            $platforms ? ['label' => 'Platforms', 'value' => implode(', ', array_slice($platforms, 0, 2))] : null,
+            $accountTypes ? ['label' => 'Accounts', 'value' => implode(', ', array_slice($accountTypes, 0, 2))] : null,
             $broker->year_founded ? ['label' => 'Founded', 'value' => (string) $broker->year_founded] : null,
             $broker->country ? ['label' => 'Headquarters', 'value' => strip_tags($broker->country)] : null,
-            $countries ? ['label' => 'Available in', 'value' => implode(', ', array_slice($countries, 0, 3))] : null,
         ]));
 
         return [

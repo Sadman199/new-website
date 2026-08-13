@@ -7,7 +7,7 @@
 
 @if($brokers->isNotEmpty())
     <section class="bc-country-strip" aria-labelledby="bcCountryStripTitle">
-        <div class="bc-container bc-country-strip__container">
+        <div class="container bc-country-strip__container">
             <div class="bc-country-strip__head">
                 <div class="bc-country-strip__intro">
                     <span class="bc-country-strip__flag" aria-hidden="true">

@@ -36,7 +36,7 @@
                 <div class="bv-section__head">
                     <span class="bv-section__num">5</span>
                     <span class="bv-section__title">Broker Rankings</span>
-                    <a href="{{ route('all_brokers') }}" class="bv-section__link">View all ›</a>
+                    <a href="{{ route('find_my_broker') }}" class="bv-section__link">View all ›</a>
                 </div>
                 <div class="bv-table-head">
                     <span></span>

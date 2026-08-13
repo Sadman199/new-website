@@ -1,0 +1,51 @@
+.bc-scroll-top {
+    position: fixed;
+    bottom: 1.5rem;
+    right: 1.5rem;
+    z-index: 40;
+    width: 2.75rem;
+    height: 2.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    border-radius: 50%;
+    color: #fff;
+    background: var(--bc-primary);
+    box-shadow: var(--bc-shadow);
+    cursor: pointer;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translateY(0.5rem);
+    transition: opacity var(--bc-transition), visibility var(--bc-transition), transform var(--bc-transition), background var(--bc-transition);
+}
+
+.bc-scroll-top.is-visible {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: translateY(0);
+}
+
+.bc-scroll-top:hover {
+    background: var(--bc-primary-dark);
+}
+
+/* BrokersCourt hide utility — navbar.js and frontend scripts use this instead of Tailwind .hidden */
+.is-hidden {
+    display: none !important;
+}
+
+/* Kept for leftover Blade/HTML that still uses Tailwind's class name until those pages migrate */
+.hidden {
+    display: none !important;
+}
+
+.overflow-hidden {
+    overflow: hidden !important;
+}
+
+.rotate-180 {
+    transform: rotate(180deg);
+}

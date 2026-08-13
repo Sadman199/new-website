@@ -50,14 +50,14 @@ class LoginController extends Controller
         if(Auth::guard('author')->attempt($credential)) {
             return redirect()->route('author_home');
         } else {
-            return redirect()->route('login')->with('error', 'Information is not correct!');
+            return redirect()->route('author_login')->with('error', 'Information is not correct!');
         }
     }
 
     public function logout()
     {
         Auth::guard('author')->logout();
-        return redirect()->route('login');
+        return redirect()->route('author_login');
     }
 
     public function forget_password()
@@ -93,7 +93,7 @@ class LoginController extends Controller
 
         \Mail::to($request->email)->send(new Websitemail($subject,$message));
 
-        return redirect()->route('login')->with('success',SUCCESS_FORGET_PASSWORD);
+        return redirect()->route('author_login')->with('success',SUCCESS_FORGET_PASSWORD);
 
     }
 
@@ -102,7 +102,7 @@ class LoginController extends Controller
         Helpers::read_json();
         $author_data = Author::where('token',$token)->where('email',$email)->first();
         if(!$author_data) {
-            return redirect()->route('login');
+            return redirect()->route('author_login');
         }
 
         return view('front.reset_password', compact('token','email'));
@@ -126,7 +126,7 @@ class LoginController extends Controller
         $author_data->token = '';
         $author_data->update();
 
-        return redirect()->route('login')->with('success', SUCCESS_RESET_PASSWORD);
+        return redirect()->route('author_login')->with('success', SUCCESS_RESET_PASSWORD);
 
     }
 }

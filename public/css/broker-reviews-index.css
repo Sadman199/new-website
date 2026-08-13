@@ -1,9 +1,9 @@
 /* Broker reviews index — BrokersCourt premium theme */
 .bri-page {
-    --bri-ocean: #007AAD;
-    --bri-ocean-dark: #006694;
-    --bri-midnight: #0C1D32;
-    --bri-ice: #D9E2E9;
+    --bri-ocean: var(--bc-primary, #007AAD);
+    --bri-ocean-dark: var(--bc-primary-dark, #006694);
+    --bri-midnight: var(--bc-dark, #0C1D32);
+    --bri-ice: var(--bc-light, #D9E2E9);
     --bri-off-white: #FFFBFC;
     --bri-bg: #f4f6f9;
     --bri-surface: #ffffff;
@@ -26,8 +26,7 @@
 }
 
 .bri-wrap {
-    width: min(100% - 2rem, 80rem);
-    margin: 0 auto;
+    /* width comes from shared .container / layout tokens */
 }
 
 /* Hero */
@@ -104,20 +103,7 @@
     line-height: 1.55;
 }
 
-/* Layout */
-.bri-layout {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr);
-    gap: 1.25rem;
-    align-items: start;
-}
-
-@media (min-width: 1024px) {
-    .bri-layout {
-        grid-template-columns: 16rem minmax(0, 1fr);
-        gap: 2rem;
-    }
-}
+/* Layout uses Bootstrap .row / .col-* */
 
 /* Filters */
 .bri-filters {
@@ -424,275 +410,7 @@
     }
 }
 
-/* Cards — aligned with insight / best-broker cards */
-.bri-card {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    min-width: 0;
-    height: 100%;
-    min-height: 18rem;
-    background: var(--bri-surface);
-    border: 1px solid var(--bri-ice);
-    border-radius: 1rem;
-    padding: 1.125rem;
-    box-shadow: 0 2px 10px rgba(12, 29, 50, 0.04);
-    transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
-}
-
-.bri-card:hover {
-    transform: translateY(-3px);
-    border-color: rgba(0, 122, 173, 0.22);
-    box-shadow: 0 10px 24px rgba(12, 29, 50, 0.08);
-}
-
-.bri-card.is-hidden {
-    display: none;
-}
-
-.bri-card__body {
-    display: flex;
-    flex-direction: column;
-    gap: 0.875rem;
-    min-width: 0;
-    flex: 1;
-}
-
-.bri-card__header {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    min-width: 0;
-}
-
-.bri-card__logo {
-    width: 3rem;
-    height: 3rem;
-    flex-shrink: 0;
-    border-radius: 0.625rem;
-    overflow: hidden;
-    background: rgba(217, 226, 233, 0.35);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-decoration: none;
-    transition: transform 0.2s ease;
-}
-
-.bri-card:hover .bri-card__logo {
-    transform: scale(1.03);
-}
-
-.bri-card__logo img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    padding: 0.35rem;
-}
-
-.bri-card__logo-fallback {
-    font-size: 1rem;
-    font-weight: 800;
-    color: var(--bri-ocean);
-}
-
-.bri-card__identity {
-    min-width: 0;
-    flex: 1;
-}
-
-.bri-card__name {
-    display: block;
-    margin: 0 0 0.375rem;
-    font-size: 1.0625rem;
-    font-weight: 700;
-    line-height: 1.3;
-    color: var(--bri-text);
-    text-decoration: none;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    transition: color 0.15s ease;
-}
-
-.bri-card__name:hover {
-    color: var(--bri-ocean);
-}
-
-.bri-card__badges {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 0.375rem;
-}
-
-.bri-card__rating {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.25rem;
-    padding: 0.2rem 0.5rem;
-    font-size: 0.8125rem;
-    font-weight: 700;
-    line-height: 1;
-    color: var(--bri-ocean);
-    background: rgba(0, 122, 173, 0.08);
-    border-radius: 999px;
-}
-
-.bri-card__rating span {
-    font-size: 0.6875rem;
-    font-weight: 600;
-    color: var(--bri-muted);
-}
-
-.bri-card__star {
-    width: 0.75rem;
-    height: 0.75rem;
-    color: var(--bri-ocean);
-}
-
-.bri-card__award {
-    display: inline-flex;
-    align-items: center;
-    padding: 0.2rem 0.5rem;
-    border-radius: 999px;
-    background: rgba(0, 122, 173, 0.06);
-    font-size: 0.625rem;
-    font-weight: 700;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-    color: var(--bri-muted);
-    text-decoration: none;
-    transition: color 0.15s ease, background 0.15s ease;
-}
-
-.bri-card__award:hover {
-    color: var(--bri-ocean);
-    background: rgba(0, 122, 173, 0.12);
-}
-
-.bri-card__tagline {
-    margin: 0;
-    font-size: 0.875rem;
-    font-weight: 500;
-    line-height: 1.5;
-    color: #475569;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-}
-
-/* Metrics grid */
-.bri-metrics {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 0.625rem;
-    padding: 0.75rem;
-    border-radius: 0.75rem;
-    background: rgba(244, 246, 249, 0.85);
-}
-
-.bri-metric {
-    min-width: 0;
-}
-
-.bri-metric__head {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: 0.375rem;
-    margin-bottom: 0.375rem;
-}
-
-.bri-metric__label {
-    font-size: 0.6875rem;
-    font-weight: 600;
-    color: var(--bri-muted);
-    line-height: 1.25;
-}
-
-.bri-metric__value {
-    font-size: 0.75rem;
-    font-weight: 700;
-    color: var(--bri-ocean);
-    white-space: nowrap;
-}
-
-.bri-metric__bar {
-    height: 0.3125rem;
-    border-radius: 999px;
-    background: rgba(217, 226, 233, 0.85);
-    overflow: hidden;
-}
-
-.bri-metric__fill {
-    height: 100%;
-    border-radius: inherit;
-    background: linear-gradient(90deg, var(--bri-ocean), rgba(0, 122, 173, 0.55));
-    transition: width 0.4s ease;
-}
-
-.bri-card__regulation {
-    margin: 0;
-    font-size: 0.75rem;
-    line-height: 1.45;
-    color: var(--bri-muted);
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-}
-
-/* Footer actions */
-.bri-card__footer {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    margin-top: 1rem;
-    padding-top: 1rem;
-    border-top: 1px solid rgba(217, 226, 233, 0.65);
-}
-
-.bri-btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.375rem;
-    width: 100%;
-    min-height: 2.5rem;
-    padding: 0.5rem 1rem;
-    font-size: 0.875rem;
-    font-weight: 600;
-    text-decoration: none;
-    border-radius: 0.625rem;
-    border: 1px solid transparent;
-    transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
-}
-
-.bri-btn--primary {
-    color: #fff;
-    background: var(--bri-ocean);
-    border-color: var(--bri-ocean);
-}
-
-.bri-btn--primary:hover {
-    color: #fff;
-    background: var(--bri-ocean-dark);
-    border-color: var(--bri-ocean-dark);
-}
-
-.bri-btn--ghost {
-    color: var(--bri-text);
-    background: transparent;
-    border-color: var(--bri-border);
-}
-
-.bri-btn--ghost:hover {
-    color: var(--bri-ocean);
-    border-color: rgba(0, 122, 173, 0.28);
-    background: rgba(0, 122, 173, 0.04);
-}
+/* Cards replaced by <x-broker.card> / .broker-card */
 
 /* Empty state */
 .bri-empty {
@@ -715,27 +433,11 @@
     .bri-wrap {
         width: min(100% - 1.25rem, 80rem);
     }
-
-    .bri-card {
-        padding: 1rem;
-        min-height: 0;
-    }
-
-    .bri-metrics {
-        grid-template-columns: 1fr;
-    }
 }
 
 @media (prefers-reduced-motion: reduce) {
-    .bri-card,
     .bri-filters,
-    .bri-filters-backdrop,
-    .bri-metric__fill,
-    .bri-card__logo {
+    .bri-filters-backdrop {
         transition: none;
-    }
-
-    .bri-card:hover {
-        transform: none;
     }
 }

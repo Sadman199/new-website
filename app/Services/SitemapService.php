@@ -64,7 +64,6 @@ class SitemapService
         $this->push($urls, route('find_my_broker'), $now, 'weekly', '0.8');
         $this->push($urls, route('broker.comparison'), $now, 'weekly', '0.8');
         $this->push($urls, route('promotions.index'), $now, 'daily', '0.8');
-        $this->push($urls, route('all_brokers'), $now, 'weekly', '0.7');
         $this->push($urls, route('scam_brokers'), $now, 'weekly', '0.7');
         $this->push($urls, route('broker.scam_checker'), $now, 'weekly', '0.6');
         $this->push($urls, route('regulated_brokers'), $now, 'weekly', '0.6');
@@ -170,7 +169,6 @@ class SitemapService
             }
 
             $this->push($urls, route('brokers.best', ['slug' => $slug]), $now, 'weekly', '0.7');
-            $this->push($urls, route('broker_by_country', ['country' => $slug]), $now, 'weekly', '0.6');
         }
     }
 

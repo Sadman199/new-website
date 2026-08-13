@@ -1,5 +1,5 @@
 <section class="bc-home-section">
-    <div class="bc-home-container">
+    <div class="container">
         <div class="bc-home-section__head">
             <div>
                 <h2 class="bc-home-section__title">Trading Promotions &amp; Offers</h2>

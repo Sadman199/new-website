@@ -54,7 +54,7 @@ class HomePersonalizationService
             'showSavedStrip' => $user && $savedCards->isNotEmpty(),
             'showCountryStrip' => $countryBrokers->isNotEmpty(),
             'showPromosSection' => $promotionCards->isNotEmpty(),
-            'countryBrokersUrl' => $this->countryBrokers->brokersPageUrl($countrySlug) ?? route('all_brokers'),
+            'countryBrokersUrl' => $this->countryBrokers->brokersPageUrl($countrySlug) ?? route('find_my_broker'),
         ];
     }
 

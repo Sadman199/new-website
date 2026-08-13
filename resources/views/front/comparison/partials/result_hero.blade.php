@@ -5,7 +5,7 @@
 @endphp
 
 <header class="bc-compare-hero bc-result-hero">
-    <div class="bc-compare-wrap">
+    <div class="container">
         <nav class="bc-compare-breadcrumb" aria-label="Breadcrumb">
             <a href="{{ route('home') }}">Home</a>
             <span aria-hidden="true">/</span>

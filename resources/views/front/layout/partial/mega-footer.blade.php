@@ -3,8 +3,10 @@
 
     {{-- Quick-action CTA band --}}
     <section class="mf-cta" aria-label="Quick actions">
-        <div class="mf-wrap mf-cta__grid">
+        <div class="container">
+            <div class="row g-3">
             @foreach($footer['cta'] as $item)
+                <div class="col-12 col-md-4">
                 <a href="{{ $item['url'] }}" class="mf-cta__card {{ !empty($item['primary']) ? 'is-primary' : '' }}">
                     <span class="mf-cta__icon" aria-hidden="true"><i class="{{ $item['icon'] }}"></i></span>
                     <span class="mf-cta__text">
@@ -13,13 +15,15 @@
                     </span>
                     <span class="mf-cta__arrow" aria-hidden="true"><i class="fas fa-arrow-right"></i></span>
                 </a>
+                </div>
             @endforeach
+            </div>
         </div>
     </section>
 
     {{-- Mega link grid --}}
     <section class="mf-main">
-        <div class="mf-wrap">
+        <div class="container">
             <div class="mf-mega">
                 {{-- Brand panel --}}
                 <div class="mf-panel mf-panel--brand">
@@ -135,21 +139,23 @@
 
     {{-- Disclosures --}}
     <section class="mf-disclosures" aria-label="Legal disclosures">
-        <div class="mf-wrap mf-disclosures__grid">
-            <article class="mf-disclosures__card">
-                <h4 class="mf-disclosures__title"><i class="fas fa-exclamation-triangle"></i> Risk disclaimer</h4>
-                <p>{{ $footer['disclaimer'] }}</p>
-            </article>
-            <article class="mf-disclosures__card">
-                <h4 class="mf-disclosures__title"><i class="fas fa-handshake"></i> Affiliate disclosure</h4>
-                <p>{{ $footer['affiliate'] }}</p>
-            </article>
+        <div class="container">
+            <div class="row g-4">
+                <article class="col-12 col-lg-6 mf-disclosures__card">
+                    <h4 class="mf-disclosures__title"><i class="fas fa-exclamation-triangle"></i> Risk disclaimer</h4>
+                    <p>{{ $footer['disclaimer'] }}</p>
+                </article>
+                <article class="col-12 col-lg-6 mf-disclosures__card">
+                    <h4 class="mf-disclosures__title"><i class="fas fa-handshake"></i> Affiliate disclosure</h4>
+                    <p>{{ $footer['affiliate'] }}</p>
+                </article>
+            </div>
         </div>
     </section>
 
     {{-- Bottom bar --}}
     <div class="mf-bottom">
-        <div class="mf-wrap mf-bottom__inner">
+        <div class="container mf-bottom__inner">
             <p class="mf-bottom__copy">{{ \App\Support\SiteTheme::footerCopyright() ?? ('© ' . date('Y') . ' ' . $footer['brand']['name'] . '. All rights reserved.') }}</p>
             <nav class="mf-bottom__legal" aria-label="Legal">
                 @foreach($footer['legal'] as $link)

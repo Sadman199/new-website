@@ -12,7 +12,7 @@
 @section('main_content')
 <div class="fmb-page">
     <header class="fmb-hero">
-        <div class="fmb-wrap">
+        <div class="container">
             <nav class="fmb-breadcrumb" aria-label="Breadcrumb">
                 <a href="{{ route('home') }}">Home</a>
                 <span aria-hidden="true">/</span>
@@ -46,7 +46,7 @@
         </div>
     </header>
 
-    <div class="fmb-wrap" id="fmb-app" data-endpoint="{{ route('find_my_broker') }}" data-compare-base="{{ url('/brokers/compare') }}">
+    <div class="container" id="fmb-app" data-endpoint="{{ route('find_my_broker') }}" data-compare-base="{{ url('/brokers/compare') }}">
         @if(!empty($quickPresets))
             <section class="fmb-presets" aria-label="Popular searches">
                 <p class="fmb-presets__label">Popular searches</p>
@@ -63,8 +63,8 @@
             </section>
         @endif
 
-        <div class="fmb-layout">
-            <aside class="fmb-filters fmb-filters--desktop" aria-label="Filter brokers">
+        <div class="row g-4">
+            <aside class="col-12 col-lg-3 fmb-filters fmb-filters--desktop" aria-label="Filter brokers">
                 <div class="fmb-filters__shell">
                     <div class="fmb-filters__head">
                         <h2 class="fmb-filters__title">Refine results</h2>
@@ -76,7 +76,7 @@
                 </div>
             </aside>
 
-            <div class="fmb-main">
+            <div class="col-12 col-lg-9 fmb-main">
                 <div class="fmb-mobile-bar">
                     <button type="button" class="fmb-mobile-filter-btn" id="fmb-open-filters">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">

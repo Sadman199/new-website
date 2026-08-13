@@ -1,5 +1,5 @@
 <section class="bc-markets" id="live-markets" aria-labelledby="bcMarketsTitle">
-    <div class="bc-container bc-markets__container">
+    <div class="container bc-markets__container">
         <header class="bc-markets__head">
             <div class="bc-markets__intro">
                 <p class="bc-markets__eyebrow">

@@ -5,13 +5,13 @@
 @section('canonical', route('broker.comparison'))
 
 @push('head')
-    <link rel="stylesheet" href="{{ asset('css/broker-compare.css') }}?v=6">
+    <link rel="stylesheet" href="{{ asset('css/broker-compare.css') }}?v=7">
 @endpush
 
 @section('main_content')
 <div class="bc-compare-page">
     <header class="bc-compare-hero">
-        <div class="bc-compare-wrap">
+        <div class="container">
             <nav class="bc-compare-breadcrumb" aria-label="Breadcrumb">
                 <a href="{{ route('home') }}">Home</a>
                 <span aria-hidden="true">/</span>
@@ -23,7 +23,7 @@
         </div>
     </header>
 
-    <div class="bc-compare-wrap">
+    <div class="container">
         @if(!empty($popularComparisons))
             <section class="bc-compare-popular" aria-label="Popular comparisons">
                 <p class="bc-compare-popular__label">Popular comparisons</p>
@@ -135,5 +135,5 @@
         pairBase: @json(url('/brokers/compare'))
     };
 </script>
-<script src="{{ asset('js/broker-compare.js') }}?v=7"></script>
+<script src="{{ asset('js/broker-compare.js') }}?v=8"></script>
 @endpush

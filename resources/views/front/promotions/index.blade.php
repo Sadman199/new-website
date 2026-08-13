@@ -20,7 +20,7 @@
      data-active-sort="{{ $activeSort }}"
      data-featured-only="{{ $featuredOnly ? '1' : '0' }}">
     <header class="bpr-hero">
-        <div class="bpr-wrap">
+        <div class="container">
             <nav class="bpr-breadcrumb" aria-label="Breadcrumb">
                 <a href="{{ route('home') }}">Home</a>
                 <span aria-hidden="true">/</span>
@@ -46,7 +46,7 @@
         </div>
     </header>
 
-    <div class="bpr-wrap">
+    <div class="container">
         @include('front.promotions.partials.promo_toolbar')
 
         @if(!$featuredOnly && $activeTab === \App\Services\PromotionsIndexService::TAB_ALL)

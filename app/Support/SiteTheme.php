@@ -18,6 +18,41 @@ class SiteTheme
         });
     }
 
+    public static function forgetCache(): void
+    {
+        Cache::forget('site_setting_v1');
+    }
+
+    public static function defaultAttributes(): array
+    {
+        return [
+            'video_total' => '6',
+            'video_status' => 'Show',
+            'logo' => 'logo.png',
+            'favicon' => 'favicon.png',
+            'top_bar_date_status' => 'Show',
+            'top_bar_email' => 'info@brokerscourt.com',
+            'top_bar_email_status' => 'Show',
+            'theme_color_1' => self::DEFAULT_PRIMARY,
+            'theme_color_2' => self::DEFAULT_DARK,
+            'theme_color_3' => self::DEFAULT_LIGHT,
+            'site_name' => 'BrokersCourt',
+            'site_tagline' => 'Independent broker reviews, comparisons, and trading education.',
+            'contact_phone' => '+44 7577 309951',
+            'footer_copyright' => null,
+            'default_meta_description' => self::defaultMetaDescription(),
+            'maintenance_mode' => 'Hide',
+            'maintenance_message' => null,
+            'show_broker_spotlight' => 'Show',
+            'show_quick_access_drawer' => 'Show',
+            'analytic_id' => '',
+            'analytic_status' => 'Hide',
+            'disqus_code' => '',
+            'google_client_id' => null,
+            'google_client_secret' => null,
+        ];
+    }
+
     public static function primary(): string
     {
         return self::normalizeHex(self::setting()?->theme_color_1, self::DEFAULT_PRIMARY);
@@ -49,15 +84,73 @@ class SiteTheme
         $dark = self::dark();
         $light = self::light();
 
+        $primaryDark = self::primaryDark();
+        $primaryLight = self::primaryLight();
+        $primaryRgb = self::toRgbString($primary);
+
+        // Core tokens + aliases used by page CSS so admin brand colors propagate site-wide.
         return [
             '--bc-primary' => $primary,
-            '--bc-primary-dark' => self::primaryDark(),
-            '--bc-primary-light' => self::primaryLight(),
+            '--bc-primary-dark' => $primaryDark,
+            '--bc-primary-light' => $primaryLight,
             '--bc-dark' => $dark,
             '--bc-light' => $light,
-            '--bc-primary-rgb' => self::toRgbString($primary),
+            '--bc-ice' => $light,
+            '--bc-white' => '#FFFBFC',
+            '--bc-bg' => '#f4f6f9',
+            '--bc-surface' => '#ffffff',
+            '--bc-text' => $dark,
+            '--bc-muted' => '#64748b',
+            '--bc-border' => '#e2e8f0',
+            '--bc-primary-soft' => 'rgba(' . $primaryRgb . ', 0.1)',
+            '--bc-accent' => $primaryLight,
+            '--bc-shadow' => '0 1px 3px rgba(15, 23, 42, 0.06), 0 8px 24px rgba(15, 23, 42, 0.06)',
+            '--bc-shadow-lg' => '0 4px 6px rgba(15, 23, 42, 0.04), 0 20px 40px rgba(15, 23, 42, 0.08)',
+            '--bc-radius-sm' => '8px',
+            '--bc-radius-md' => '12px',
+            '--bc-radius-lg' => '16px',
+            '--bc-radius' => '12px',
+            '--bc-container' => '1320px',
+            '--bc-section-spacing' => '80px',
+            '--bc-nav-height' => '4rem',
+            '--bc-transition' => '0.2s ease',
+            '--bc-font' => "Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
+            '--bc-primary-rgb' => $primaryRgb,
             '--bc-dark-rgb' => self::toRgbString($dark),
             '--bc-light-rgb' => self::toRgbString($light),
+
+            '--hero-ocean' => $primary,
+            '--hero-ocean-dark' => $primaryDark,
+            '--picks-ocean' => $primary,
+            '--trust-ocean' => $primary,
+            '--trust-ocean-dark' => $primaryDark,
+            '--insights-ocean' => $primary,
+            '--explore-ocean' => $primary,
+            '--explore-ocean-dark' => $primaryDark,
+            '--match-ocean' => $primary,
+            '--nav-ocean' => $primary,
+            '--mf-ocean' => $primary,
+            '--awd-ocean' => $primary,
+            '--cmp-ocean' => $primary,
+            '--sbi-ocean' => $primary,
+            '--sbd-ocean' => $primary,
+            '--bpd-ocean' => $primary,
+            '--bli-ocean' => $primary,
+            '--bpr-ocean' => $primary,
+            '--cms-ocean' => $primary,
+            '--br-ocean' => $primary,
+            '--bsd-ocean' => $primary,
+            '--tt-ocean' => $primary,
+            '--pf-ocean' => $primary,
+            '--bsc-ocean' => $primary,
+            '--bbd-ocean' => $primary,
+            '--aui-ocean' => $primary,
+            '--bri-ocean' => $primary,
+            '--mk-ocean' => $primary,
+            '--brb-ocean' => $primary,
+            '--bbh-ocean' => $primary,
+            '--cti-ocean' => $primary,
+            '--ts-ocean' => $primary,
         ];
     }
 
@@ -137,20 +230,26 @@ class SiteTheme
 
     public static function logoUrl(): string
     {
-        $logo = trim((string) (self::setting()?->logo ?? ''));
-
-        return $logo !== ''
-            ? asset('uploads/' . ltrim($logo, '/'))
-            : asset('uploads/logo.png');
+        return self::uploadUrl(self::setting()?->logo, 'logo.png');
     }
 
     public static function faviconUrl(): string
     {
-        $favicon = trim((string) (self::setting()?->favicon ?? ''));
+        return self::uploadUrl(self::setting()?->favicon, 'favicon.png');
+    }
 
-        return $favicon !== ''
-            ? asset('uploads/' . ltrim($favicon, '/'))
-            : asset('uploads/favicon.png');
+    public static function uploadUrl(?string $filename, string $fallback): string
+    {
+        $filename = trim((string) $filename);
+        if ($filename === '' || str_contains($filename, '..') || str_contains($filename, '/') || str_contains($filename, '\\')) {
+            $filename = $fallback;
+        }
+
+        $relative = 'uploads/' . ltrim($filename, '/');
+        $absolute = public_path($relative);
+        $version = is_file($absolute) ? (string) filemtime($absolute) : (string) (self::setting()?->updated_at?->timestamp ?? time());
+
+        return asset($relative) . '?v=' . $version;
     }
 
     public static function ogImageUrl(?string $override = null): string

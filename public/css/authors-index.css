@@ -1,9 +1,9 @@
 /* Authors — BrokersCourt dark ocean theme */
 .aui-page {
-    --aui-ocean: #007AAD;
+    --aui-ocean: var(--bc-primary, #007AAD);
     --aui-ocean-light: #33a3d4;
-    --aui-midnight: #0C1D32;
-    --aui-ice: #D9E2E9;
+    --aui-midnight: var(--bc-dark, #0C1D32);
+    --aui-ice: var(--bc-light, #D9E2E9);
     --aui-off-white: #FFFBFC;
     --aui-bg: #f4f6f9;
     --aui-muted: #64748b;

@@ -5,7 +5,7 @@
 
 @if(!empty($p['isAuthenticated']) && $user)
 <section class="bc-home-personal bc-home-personal--welcome" aria-label="Welcome back">
-    <div class="bc-container">
+    <div class="container">
         <div class="bc-home-personal__banner">
             <div>
                 <p class="bc-home-personal__eyebrow">Welcome back, {{ $user->name }}</p>
@@ -23,7 +23,7 @@
 
 @if(!empty($p['showSavedStrip']))
 <section class="bc-home-personal" aria-label="Your saved brokers">
-    <div class="bc-container">
+    <div class="container">
         <div class="bc-home-personal__head">
             <h2 class="bc-home-personal__section-title">Your saved brokers</h2>
             <a href="{{ route('user.profile', ['tab' => 'overview']) }}#ua-saved" class="bc-home-personal__link">View all →</a>
@@ -53,12 +53,12 @@
 
 @if(!empty($p['showCountryStrip']))
 <section class="bc-home-personal bc-home-personal--country" aria-label="Brokers in your country">
-    <div class="bc-container">
+    <div class="container">
         <div class="bc-home-personal__head">
             <h2 class="bc-home-personal__section-title">
                 Top brokers in {{ $p['preferredCountry']['flag'] ?? '🌍' }} {{ $p['preferredCountry']['name'] ?? 'your region' }}
             </h2>
-            <a href="{{ $p['countryBrokersUrl'] ?? route('all_brokers') }}" class="bc-home-personal__link">See all →</a>
+            <a href="{{ $p['countryBrokersUrl'] ?? route('find_my_broker') }}" class="bc-home-personal__link">See all →</a>
         </div>
         <div class="bc-home-personal__cards">
             @foreach($p['countryBrokerCards'] as $broker)

@@ -6,9 +6,9 @@
 }
 
 .bc-insight-card {
-    --insights-ocean: #007AAD;
-    --insights-midnight: #0C1D32;
-    --insights-ice: #D9E2E9;
+    --insights-ocean: var(--bc-primary, #007AAD);
+    --insights-midnight: var(--bc-dark, #0C1D32);
+    --insights-ice: var(--bc-light, #D9E2E9);
     --insights-muted: #64748b;
 
     min-width: 0;

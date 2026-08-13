@@ -7,7 +7,7 @@
     </div>
     <div class="td-field">
         <label>Direction</label>
-        <div class="flex gap-2" data-dir-group>
+        <div data-dir-group>
             <input type="hidden" data-field="direction" value="buy">
             <button type="button" class="dir-btn active-buy" data-dir="buy">Buy</button>
             <button type="button" class="dir-btn" data-dir="sell">Sell</button>

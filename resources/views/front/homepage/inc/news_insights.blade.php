@@ -10,7 +10,7 @@
         ->values();
 @endphp
 <section class="bc-insights" id="news-insights" aria-labelledby="bcInsightsTitle">
-    <div class="bc-container bc-insights__container">
+    <div class="container bc-insights__container">
         <header class="bc-insights__head">
             <div class="bc-insights__intro">
                 <p class="bc-insights__eyebrow">

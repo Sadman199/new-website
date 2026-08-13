@@ -1,5 +1,5 @@
 @if(!empty($editorialTeam))
-<section class="bc-container pb-4">
+<section class="bc-container container pb-4">
     <div class="bc-editorial-team">
         <div class="bc-editorial-team__head">
             <h2 class="bc-editorial-team__title">Reviewed by our editorial team</h2>

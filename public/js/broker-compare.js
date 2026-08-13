@@ -487,13 +487,13 @@
         var rows = currentRows();
         var uniqueRows = dedupeRows(rows);
 
-        var headHtml = '<th class="bc-compare-matrix__metric" scope="col">Metric</th>' + selected.map(function (b) {
+        var headHtml = '<th class="compare-table__cell bc-compare-matrix__metric" scope="col">Metric</th>' + selected.map(function (b) {
             var logo = b.logo
                 ? '<img src="' + escapeAttr(b.logo) + '" alt="" loading="lazy" decoding="async">'
                 : '<span>' + escapeHtml(b.name.charAt(0)) + '</span>';
             var score = b.rating !== null ? numberFormat(b.rating, 1) : '—';
             return (
-                '<th><div class="bc-compare-matrix__broker-head">' +
+                '<th class="compare-table__cell compare-table__broker" scope="col"><div class="bc-compare-matrix__broker-head">' +
                 '<div class="bc-compare-matrix__broker-logo">' + logo + '</div>' +
                 '<div class="bc-compare-matrix__broker-name">' + escapeHtml(b.name) + '</div>' +
                 '<div class="bc-compare-matrix__broker-score">' + score + '</div>' +
@@ -511,18 +511,19 @@
             });
             var cells = values.map(function (val, i) {
                 var cls = cellClass(row.key, val, i === bestIndex, allSame);
-                return '<td class="' + cls + '" data-broker="' + escapeAttr(selected[i].name) + '">' + escapeHtml(String(val)) + '</td>';
+                return '<td class="compare-table__cell ' + cls + '" data-broker="' + escapeAttr(selected[i].name) + '">' + escapeHtml(String(val)) + '</td>';
             }).join('');
-            return '<tr class="' + (allSame ? 'is-same' : 'is-diff') + '">' +
-                '<th class="bc-compare-matrix__metric" scope="row">' + escapeHtml(row.label) + '</th>' +
+            return '<tr class="compare-table__row ' + (allSame ? 'is-same' : 'is-diff') + '">' +
+                '<th class="compare-table__cell bc-compare-matrix__metric" scope="row">' + escapeHtml(row.label) + '</th>' +
                 cells + '</tr>';
         }).join('');
 
         els.matrixWrap.innerHTML =
-            '<table class="bc-compare-matrix">' +
-            '<thead><tr>' + headHtml + '</tr></thead>' +
+            '<div class="compare-table-wrap">' +
+            '<table class="compare-table bc-compare-matrix">' +
+            '<thead class="compare-table__header"><tr class="compare-table__row">' + headHtml + '</tr></thead>' +
             '<tbody>' + bodyHtml + '</tbody>' +
-            '</table>';
+            '</table></div>';
     }
 
     function dedupeRows(rows) {

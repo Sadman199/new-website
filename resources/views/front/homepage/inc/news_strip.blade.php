@@ -1,6 +1,6 @@
 @if(isset($popularNewsData) && $popularNewsData->count() > 0)
 <section class="bc-home-news">
-    <div class="bc-home-container bc-home-news__inner">
+    <div class="container bc-home-news__inner">
         <span class="bc-home-news__label">Latest</span>
         <div class="bc-home-news__track">
             @foreach($popularNewsData as $item)

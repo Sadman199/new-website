@@ -1,11 +1,11 @@
 /* Contact — BrokersCourt dark ocean theme (matches trading-tools) */
 .cti-page {
-    --cti-ocean: #007AAD;
+    --cti-ocean: var(--bc-primary, #007AAD);
     --cti-ocean-light: #33a3d4;
-    --cti-ocean-dark: #006694;
-    --cti-midnight: #0C1D32;
+    --cti-ocean-dark: var(--bc-primary-dark, #006694);
+    --cti-midnight: var(--bc-dark, #0C1D32);
     --cti-bg-mid: #0f2744;
-    --cti-ice: #D9E2E9;
+    --cti-ice: var(--bc-light, #D9E2E9);
     --cti-off-white: #FFFBFC;
     --cti-muted: rgba(217, 226, 233, 0.62);
     --cti-dim: rgba(217, 226, 233, 0.38);

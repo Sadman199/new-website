@@ -1,0 +1,37 @@
+/* Shared page shell — Bootstrap owns .container / .row / .col-* */
+
+.container,
+.container-sm,
+.container-md,
+.container-lg,
+.container-xl,
+.container-xxl {
+    max-width: var(--bc-container);
+}
+
+.bc-container,
+.bc-home-container,
+.fmb-wrap,
+.bri-wrap,
+.mf-wrap,
+.bc-compare-wrap,
+.bli-wrap,
+.bpr-wrap,
+.cti-wrap,
+.abt-wrap,
+.bbg-container {
+    width: 100%;
+    max-width: var(--bc-container);
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: calc(var(--bs-gutter-x, 1.5rem) * 0.5);
+    padding-right: calc(var(--bs-gutter-x, 1.5rem) * 0.5);
+}
+
+.page-section {
+    padding-block: clamp(2.5rem, 5vw, var(--bc-section-spacing));
+}
+
+.page-section--tight {
+    padding-block: 1.5rem;
+}

@@ -1,6 +1,6 @@
 <section class="bc-picks-section" id="top-brokers" aria-labelledby="bcPicksTitle">
     @php $t = $site_t ?? fn (string $key, ?string $default = null) => $default ?? $key; @endphp
-    <div class="bc-container bc-picks-section__container">
+    <div class="container bc-picks-section__container">
         <header class="bc-picks-section__head">
             <div class="bc-picks-section__intro">
                 <p class="bc-picks-section__eyebrow">

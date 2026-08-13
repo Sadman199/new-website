@@ -27,6 +27,10 @@ class RedirectIfAuthenticated
                     return redirect()->route('admin_home');
                 }
 
+                if ($guard === 'author') {
+                    return redirect()->route('author_home');
+                }
+
                 return redirect(RouteServiceProvider::HOME);
             }
         }

@@ -1,0 +1,37 @@
+:root {
+    --bc-primary: #007AAD;
+    --bc-primary-dark: #006694;
+    --bc-primary-light: #33a3d4;
+    --bc-dark: #0C1D32;
+    --bc-ice: var(--bc-light, #D9E2E9);
+    --bc-light: #D9E2E9;
+    --bc-white: #FFFBFC;
+    --bc-bg: #f4f6f9;
+    --bc-surface: #ffffff;
+    --bc-text: #0C1D32;
+    --bc-muted: #64748b;
+    --bc-border: #e2e8f0;
+    --bc-success: #059669;
+    --bc-danger: #dc2626;
+    --bc-warning: #c2410c;
+
+    --bc-radius-sm: 8px;
+    --bc-radius-md: 12px;
+    --bc-radius-lg: 16px;
+    --bc-radius: 12px;
+    --bc-primary-soft: rgba(0, 122, 173, 0.1);
+    --bc-accent: #0ea5e9;
+
+    --bc-container: 1320px;
+    --bc-section-spacing: 80px;
+    --bc-nav-height: 4rem;
+    --bc-transition: 0.2s ease;
+
+    --bc-shadow: 0 1px 3px rgba(15, 23, 42, 0.06), 0 8px 24px rgba(15, 23, 42, 0.06);
+    --bc-shadow-lg: 0 4px 6px rgba(15, 23, 42, 0.04), 0 20px 40px rgba(15, 23, 42, 0.08);
+
+    --bc-font: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    --bc-primary-rgb: 0, 122, 173;
+    --bc-dark-rgb: 12, 29, 50;
+    --bc-light-rgb: 217, 226, 233;
+}

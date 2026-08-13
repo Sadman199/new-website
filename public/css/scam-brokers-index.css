@@ -1,8 +1,8 @@
 /* Scam brokers — BrokersCourt dark warning theme */
 .sbi-page {
-    --sbi-ocean: #007AAD;
-    --sbi-midnight: #0C1D32;
-    --sbi-ice: #D9E2E9;
+    --sbi-ocean: var(--bc-primary, #007AAD);
+    --sbi-midnight: var(--bc-dark, #0C1D32);
+    --sbi-ice: var(--bc-light, #D9E2E9);
     --sbi-off-white: #FFFBFC;
     --sbi-bg: #f4f6f9;
     --sbi-surface: #ffffff;

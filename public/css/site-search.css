@@ -1,11 +1,11 @@
 /* Site search results — BrokersCourt premium theme */
 .ssr-page {
-    --ssr-ocean: #007AAD;
-    --ssr-ocean-light: #33a3d4;
-    --ssr-midnight: #0C1D32;
-    --ssr-ice: #D9E2E9;
-    --ssr-off-white: #FFFBFC;
-    --ssr-bg: #f4f6f9;
+    --ssr-ocean: var(--bc-primary, #007AAD);
+    --ssr-ocean-light: var(--bc-primary-light, #33a3d4);
+    --ssr-midnight: var(--bc-dark, #0C1D32);
+    --ssr-ice: var(--bc-ice, #D9E2E9);
+    --ssr-off-white: var(--bc-white, #FFFBFC);
+    --ssr-bg: var(--bc-bg, #f4f6f9);
     --ssr-surface: #ffffff;
     --ssr-border: rgba(217, 226, 233, 0.95);
     --ssr-muted: #64748b;
@@ -24,8 +24,7 @@
 }
 
 .ssr-wrap {
-    width: min(100% - 2rem, 80rem);
-    margin: 0 auto;
+    /* Bootstrap .container owns width; keep local page hooks */
 }
 
 .ssr-hero {

@@ -2,12 +2,12 @@
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Syne:wght@600;700;800&display=swap');
 
 .pf-root {
-    --pf-ocean: #007AAD;
-    --pf-ocean-dark: #006694;
+    --pf-ocean: var(--bc-primary, #007AAD);
+    --pf-ocean-dark: var(--bc-primary-dark, #006694);
     --pf-ocean-light: #33a3d4;
-    --pf-midnight: #0C1D32;
+    --pf-midnight: var(--bc-dark, #0C1D32);
     --pf-bg-mid: #0f2744;
-    --pf-ice: #D9E2E9;
+    --pf-ice: var(--bc-light, #D9E2E9);
     --pf-off-white: #FFFBFC;
     --pf-bg: #0C1D32;
     --pf-surface: #132843;

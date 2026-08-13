@@ -152,6 +152,8 @@ class AuthorEditorialRolesTest extends TestCase
         return SubCategory::create([
             'sub_category_name' => 'Forex',
             'slug' => 'forex',
+            'show_on_menu' => 'Show',
+            'sub_category_order' => 1,
             'category_id' => $categoryId,
             'language_id' => $this->makeLanguageId(),
         ])->id;

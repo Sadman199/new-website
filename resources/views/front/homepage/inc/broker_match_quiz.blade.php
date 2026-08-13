@@ -10,7 +10,7 @@
          data-broker-count="{{ $brokerTotal }}"
          data-config='@json(['steps' => $matchSteps, 'options' => $matchOptions])'>
     <div class="bc-match__glow" aria-hidden="true"></div>
-    <div class="bc-container">
+    <div class="container">
         <div class="bc-match__shell">
             <aside class="bc-match__aside">
                 <p class="bc-match__eyebrow">

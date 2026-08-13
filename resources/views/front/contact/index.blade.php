@@ -12,7 +12,7 @@
 <div class="cti-page">
     <header class="cti-hero">
         <div class="cti-hero__bg" aria-hidden="true"></div>
-        <div class="cti-wrap">
+        <div class="container cti-wrap">
             <nav class="cti-breadcrumb" aria-label="Breadcrumb">
                 <a href="{{ route('home') }}">Home</a>
                 <span aria-hidden="true">/</span>
@@ -41,7 +41,7 @@
     </header>
 
     <div class="cti-body">
-        <div class="cti-wrap">
+        <div class="container cti-wrap">
             @if(session('success'))
                 <div class="cti-alert cti-alert--success" role="status">
                     {{ session('success') }}

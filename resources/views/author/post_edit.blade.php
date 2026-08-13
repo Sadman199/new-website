@@ -61,7 +61,11 @@
                                     <tr>
                                         <td>{{ $item->tag_name }}</td>
                                         <td>
-                                            <a href="{{ route('author_post_delete_tag', [$item->id,$post_single->id]) }}" onClick="return confirm('Are you sure?');">Delete</a>
+                                            <form action="{{ route('author_post_delete_tag', [$item->id,$post_single->id]) }}" method="post" class="d-inline" onsubmit="return confirm('Are you sure?');">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn btn-link text-danger p-0">Delete</button>
+                                            </form>
                                         </td>
                                     </tr>
                                 @endforeach

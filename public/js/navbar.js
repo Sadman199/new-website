@@ -74,7 +74,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function closeReviewsMenu() {
-        reviewsMenu?.classList.add('hidden');
+        reviewsMenu?.classList.add('is-hidden');
         setActive(reviewsLink, false);
     }
 
@@ -85,18 +85,18 @@ document.addEventListener('DOMContentLoaded', function () {
         closeToolsMenu();
         closeSearchPanel();
         closeCountryDrawer();
-        reviewsMenu?.classList.remove('hidden');
+        reviewsMenu?.classList.remove('is-hidden');
         setActive(reviewsLink, true);
     }
 
     function closeCompanyMenu() {
-        companyMenu?.classList.add('hidden');
+        companyMenu?.classList.add('is-hidden');
         setActive(companyBtn, false);
         companyBtn?.setAttribute('aria-expanded', 'false');
     }
 
     function closeToolsMenu() {
-        toolsMenu?.classList.add('hidden');
+        toolsMenu?.classList.add('is-hidden');
         setActive(toolsBtn, false);
         toolsBtn?.setAttribute('aria-expanded', 'false');
     }
@@ -108,7 +108,7 @@ document.addEventListener('DOMContentLoaded', function () {
         closeCompanyMenu();
         closeSearchPanel();
         closeCountryDrawer();
-        toolsMenu?.classList.remove('hidden');
+        toolsMenu?.classList.remove('is-hidden');
         setActive(toolsBtn, true);
         toolsBtn?.setAttribute('aria-expanded', 'true');
     }
@@ -120,20 +120,20 @@ document.addEventListener('DOMContentLoaded', function () {
         closeToolsMenu();
         closeSearchPanel();
         closeCountryDrawer();
-        companyMenu?.classList.remove('hidden');
+        companyMenu?.classList.remove('is-hidden');
         setActive(companyBtn, true);
         companyBtn?.setAttribute('aria-expanded', 'true');
     }
 
     function closeMobileMenu() {
-        mobileMenu?.classList.add('hidden');
+        mobileMenu?.classList.add('is-hidden');
         bcNavBar?.classList.remove('bc-nav-bar--menu-open');
         if (menuIconOpen) {
-            menuIconOpen.classList.remove('is-hidden', 'hidden');
+            menuIconOpen.classList.remove('is-hidden');
             menuIconOpen.style.display = 'block';
         }
         if (menuIconClose) {
-            menuIconClose.classList.add('is-hidden', 'hidden');
+            menuIconClose.classList.add('is-hidden');
             menuIconClose.style.display = 'none';
         }
         document.body.classList.remove('overflow-hidden');
@@ -253,33 +253,33 @@ document.addEventListener('DOMContentLoaded', function () {
 
     companyBtn?.addEventListener('click', function (e) {
         e.preventDefault();
-        companyMenu?.classList.contains('hidden') ? openCompanyMenu() : closeCompanyMenu();
+        companyMenu?.classList.contains('is-hidden') ? openCompanyMenu() : closeCompanyMenu();
     });
 
     toolsBtn?.addEventListener('click', function (e) {
         e.preventDefault();
-        toolsMenu?.classList.contains('hidden') ? openToolsMenu() : closeToolsMenu();
+        toolsMenu?.classList.contains('is-hidden') ? openToolsMenu() : closeToolsMenu();
     });
 
     reviewsLink?.addEventListener('click', function (e) {
         if (window.matchMedia('(min-width: 1024px)').matches && e.target.closest('.reviews-chevron, svg')) {
             e.preventDefault();
-            reviewsMenu?.classList.contains('hidden') ? openReviewsMenu() : closeReviewsMenu();
+            reviewsMenu?.classList.contains('is-hidden') ? openReviewsMenu() : closeReviewsMenu();
         }
     });
 
     mobileBtn?.addEventListener('click', function () {
-        const open = mobileMenu?.classList.contains('hidden');
+        const open = mobileMenu?.classList.contains('is-hidden');
         closeBrokersMenu(); closePropFirmsMenu(); closeReviewsMenu(); closeCompanyMenu(); closeToolsMenu(); closeSearchPanel(); closeCountryDrawer();
         if (open) {
-            mobileMenu?.classList.remove('hidden');
+            mobileMenu?.classList.remove('is-hidden');
             bcNavBar?.classList.add('bc-nav-bar--menu-open');
             if (menuIconOpen) {
-                menuIconOpen.classList.add('is-hidden', 'hidden');
+                menuIconOpen.classList.add('is-hidden');
                 menuIconOpen.style.display = 'none';
             }
             if (menuIconClose) {
-                menuIconClose.classList.remove('is-hidden', 'hidden');
+                menuIconClose.classList.remove('is-hidden');
                 menuIconClose.style.display = 'block';
             }
             document.body.classList.add('overflow-hidden');
@@ -339,14 +339,14 @@ document.addEventListener('DOMContentLoaded', function () {
         btn.addEventListener('click', function () {
             const target = document.getElementById(btn.dataset.target);
             const chevron = btn.querySelector('.accordion-chevron');
-            const isOpen = !target.classList.contains('hidden');
+            const isOpen = !target.classList.contains('is-hidden');
             document.querySelectorAll('.mobile-accordion [id^="mob-"]').forEach(function (el) {
-                if (el.id !== btn.dataset.target) el.classList.add('hidden');
+                if (el.id !== btn.dataset.target) el.classList.add('is-hidden');
             });
             document.querySelectorAll('.accordion-chevron').forEach(function (c) {
                 if (c !== chevron) c.classList.remove('rotate-180');
             });
-            target.classList.toggle('hidden', isOpen);
+            target.classList.toggle('is-hidden', isOpen);
             chevron?.classList.toggle('rotate-180', !isOpen);
         });
     });

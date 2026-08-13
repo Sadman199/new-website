@@ -44,7 +44,11 @@
                                     <td>{{ $row->rLanguage->name }}</td>
                                     <td class="pt_10 pb_10">
                                         <a href="{{ route('author_post_edit',$row->id) }}" class="btn btn-primary">Edit</a>
-                                        <a href="{{ route('author_post_delete',$row->id) }}" class="btn btn-danger" onClick="return confirm('Are you sure?');">Delete</a>
+                                        <form action="{{ route('author_post_delete',$row->id) }}" method="post" class="d-inline" onsubmit="return confirm('Are you sure?');">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-danger">Delete</button>
+                                        </form>
                                     </td>
                                 </tr>
                                 @endforeach

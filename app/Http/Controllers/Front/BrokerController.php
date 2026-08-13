@@ -108,7 +108,15 @@ class BrokerController extends Controller
 
     public function reviewDetail($slug)
     {
-        return $this->detail($this->resolveReviewSlug($slug));
+        $brokerSlug = $this->resolveReviewSlug($slug);
+        $broker = Broker::where('slug', $brokerSlug)->firstOrFail();
+        $canonical = self::reviewSlugFor($broker);
+
+        if ($slug !== $canonical) {
+            return redirect()->route('broker_detail', ['slug' => $canonical], 301);
+        }
+
+        return $this->detail($brokerSlug);
     }
 
     public static function reviewSlugFor(Broker $broker): string

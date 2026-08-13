@@ -3,6 +3,7 @@
     $guidePage = $reviewPageMeta ?? ['updated_at' => '', 'updated_relative' => null];
     $snapshot = $snapshot ?? \App\Support\BrokerReviewPresenter::decisionSnapshot($broker, $reviewStats ?? []);
     $guides = $publishedGuides ?? collect();
+    $facts = $snapshot['facts'] ?? [];
 @endphp
 
 <header class="bbg-hero br-hero{{ $snapshot['is_scam'] ? ' br-hero--scam' : '' }}" id="gettingstarted">
@@ -44,7 +45,7 @@
                     <h1 class="bbg-hero__title">{{ $broker->title ?: $broker->name . ' Review' }}</h1>
 
                     @if($broker->short_description)
-                        <p class="br-hero__subtitle">{!! Str::limit(strip_tags($broker->short_description), 180) !!}</p>
+                        <p class="br-hero__subtitle">{!! Str::limit(strip_tags($broker->short_description), 160) !!}</p>
                     @endif
 
                     <div class="br-hero__badges">
@@ -82,41 +83,45 @@
             </div>
         </div>
 
-        @if(!empty($snapshot['facts']))
+        @if(!empty($facts))
             <dl class="br-hero__facts" aria-label="Key trading conditions">
-                @foreach($snapshot['facts'] as $fact)
+                @foreach($facts as $fact)
                     <div class="br-hero__fact">
                         <dt>{{ $fact['label'] }}</dt>
-                        <dd>{{ $fact['value'] }}</dd>
+                        <dd title="{{ $fact['value'] }}">{{ $fact['value'] }}</dd>
                     </div>
                 @endforeach
             </dl>
         @endif
 
-        @include('front.brokers.partials.decision_ctas', [
-            'broker' => $broker,
-            'snapshot' => $snapshot,
-            'variant' => 'hero',
-        ])
+        <div class="br-hero__cta-block">
+            @include('front.brokers.partials.decision_ctas', [
+                'broker' => $broker,
+                'snapshot' => $snapshot,
+                'variant' => 'hero',
+            ])
+        </div>
 
-        @include('front.brokers.partials.country_context_hero', [
-            'variant' => 'inline',
-            'context' => 'review',
-            'brokerName' => $broker->name,
-        ])
+        <div class="br-hero__footer">
+            @include('front.brokers.partials.country_context_hero', [
+                'variant' => 'inline',
+                'context' => 'review',
+                'brokerName' => $broker->name,
+            ])
 
-        @include('front.brokers.partials.best_guide_hero_author', [
-            'editorialTeam' => $editorialTeam ?? [],
-            'guidePage' => $guidePage,
-        ])
+            @include('front.brokers.partials.best_guide_hero_author', [
+                'editorialTeam' => $editorialTeam ?? [],
+                'guidePage' => $guidePage,
+            ])
 
-        @if($guides->isNotEmpty())
-            <nav class="br-hero__guides" aria-label="Related guides">
-                <span class="br-hero__guides-label">Guides</span>
-                @foreach($guides->take(4) as $guide)
-                    <a href="{{ app(\App\Services\BrokerGuideService::class)->publicUrl($guide) }}">{{ $guide->title }}</a>
-                @endforeach
-            </nav>
-        @endif
+            @if($guides->isNotEmpty())
+                <nav class="br-hero__guides" aria-label="Related guides">
+                    <span class="br-hero__guides-label">Guides</span>
+                    @foreach($guides->take(4) as $guide)
+                        <a href="{{ app(\App\Services\BrokerGuideService::class)->publicUrl($guide) }}">{{ $guide->title }}</a>
+                    @endforeach
+                </nav>
+            @endif
+        </div>
     </div>
 </header>

@@ -1,11 +1,11 @@
 /* BrokersCourt CMS pages — matches contact / promotions dark-hero system */
 .cms-page {
-    --cms-ocean: #007AAD;
+    --cms-ocean: var(--bc-primary, #007AAD);
     --cms-ocean-light: #33a3d4;
-    --cms-ocean-dark: #006694;
-    --cms-midnight: #0C1D32;
+    --cms-ocean-dark: var(--bc-primary-dark, #006694);
+    --cms-midnight: var(--bc-dark, #0C1D32);
     --cms-bg-mid: #0f2744;
-    --cms-ice: #D9E2E9;
+    --cms-ice: var(--bc-light, #D9E2E9);
     --cms-off-white: #FFFBFC;
     --cms-muted: rgba(217, 226, 233, 0.62);
     --cms-dim: rgba(217, 226, 233, 0.38);

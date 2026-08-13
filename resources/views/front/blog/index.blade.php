@@ -12,7 +12,7 @@
 @section('main_content')
 <div class="bli-page">
     <header class="bli-hero">
-        <div class="bli-wrap">
+        <div class="container">
             <nav class="bli-breadcrumb" aria-label="Breadcrumb">
                 <a href="{{ route('home') }}">Home</a>
                 <span aria-hidden="true">/</span>
@@ -36,7 +36,7 @@
         </div>
     </header>
 
-    <div class="bli-wrap">
+    <div class="container">
         <nav class="bli-tabs" aria-label="Blog subcategories" id="bliTabs">
             <div class="bli-tabs__scroll">
                 @foreach($tabs as $tab)

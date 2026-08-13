@@ -660,7 +660,7 @@ class SiteSearchService
                 'keywords' => ['about', 'company', 'team', 'mission'],
                 'excerpt' => 'Learn about BrokersCourt and our editorial mission.',
                 'meta' => 'Company',
-                'url' => route('about.us'),
+                'url' => route('about'),
             ],
             [
                 'title' => 'Awards',

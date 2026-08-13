@@ -1,12 +1,12 @@
 /* Find My Broker — BrokersCourt premium theme */
 .fmb-page {
-    --fmb-ocean: #007AAD;
-    --fmb-ocean-dark: #006694;
-    --fmb-midnight: #0C1D32;
-    --fmb-ice: #D9E2E9;
-    --fmb-off-white: #FFFBFC;
-    --fmb-bg: #f4f6f9;
-    --fmb-surface: #ffffff;
+    --fmb-ocean: var(--bc-primary, #007AAD);
+    --fmb-ocean-dark: var(--bc-primary-dark, #006694);
+    --fmb-midnight: var(--bc-dark, #0C1D32);
+    --fmb-ice: var(--bc-ice, #D9E2E9);
+    --fmb-off-white: var(--bc-white, #FFFBFC);
+    --fmb-bg: var(--bc-bg, #f4f6f9);
+    --fmb-surface: var(--bc-surface, #ffffff);
     --fmb-border: rgba(217, 226, 233, 0.95);
     --fmb-muted: #64748b;
     --fmb-text: #0C1D32;
@@ -26,14 +26,7 @@
 }
 
 .fmb-wrap {
-    width: min(100% - 2rem, 80rem);
-    margin: 0 auto;
-}
-
-@media (min-width: 1024px) {
-    .fmb-wrap {
-        width: min(100% - 3rem, 80rem);
-    }
+    /* width comes from shared .container / layout tokens */
 }
 
 /* Hero */
@@ -148,16 +141,6 @@
     color: var(--fmb-muted);
 }
 
-.fmb-card.is-best-match {
-    border-color: rgba(0, 122, 173, 0.38);
-    box-shadow: 0 8px 28px rgba(0, 122, 173, 0.12);
-}
-
-.fmb-card__badge--match {
-    background: #0f766e;
-}
-
-
 /* Quick presets */
 .fmb-presets {
     margin-bottom: 1.25rem;
@@ -207,19 +190,7 @@
     flex-shrink: 0;
 }
 
-/* Layout */
-.fmb-layout {
-    display: grid;
-    grid-template-columns: 17.5rem 1fr;
-    gap: 1.25rem;
-    align-items: start;
-}
-
-@media (max-width: 1023px) {
-    .fmb-layout {
-        grid-template-columns: 1fr;
-    }
-}
+/* Layout uses Bootstrap .row / .col-* */
 
 /* Filters sidebar */
 .fmb-filters {
@@ -765,288 +736,11 @@
     transition: opacity 0.2s ease;
 }
 
-/* Broker cards */
+/* Broker results */
 .fmb-grid {
     display: flex;
     flex-direction: column;
     gap: 1rem;
-}
-
-.fmb-card {
-    display: grid;
-    grid-template-columns: auto 1fr auto;
-    gap: 1.25rem;
-    align-items: center;
-    position: relative;
-    padding: 1.25rem;
-    background: var(--fmb-surface);
-    border: 1px solid var(--fmb-border);
-    border-radius: 1rem;
-    box-shadow: 0 6px 22px rgba(12, 29, 50, 0.05);
-    transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
-}
-
-.fmb-card:hover {
-    border-color: rgba(0, 122, 173, 0.22);
-    box-shadow: 0 10px 32px rgba(0, 122, 173, 0.1);
-    transform: translateY(-2px);
-}
-
-.fmb-card.is-featured,
-.fmb-card.is-best-match {
-    border-color: rgba(0, 122, 173, 0.28);
-    background: linear-gradient(135deg, #fff 0%, rgba(0, 122, 173, 0.03) 100%);
-}
-
-.fmb-card__compare {
-    position: absolute;
-    top: 0.875rem;
-    right: 0.875rem;
-    z-index: 2;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.375rem;
-    padding: 0.3125rem 0.625rem;
-    font-size: 0.6875rem;
-    font-weight: 700;
-    letter-spacing: 0.02em;
-    text-transform: uppercase;
-    color: var(--fmb-muted);
-    background: rgba(255, 255, 255, 0.92);
-    border: 1px solid var(--fmb-border);
-    border-radius: 999px;
-    cursor: pointer;
-    user-select: none;
-    transition: border-color 0.18s ease, color 0.18s ease, background 0.18s ease;
-}
-
-.fmb-card__compare:has(input:checked) {
-    color: var(--fmb-ocean);
-    border-color: rgba(0, 122, 173, 0.35);
-    background: rgba(0, 122, 173, 0.08);
-}
-
-.fmb-card__compare-input {
-    width: 0.875rem;
-    height: 0.875rem;
-    margin: 0;
-    accent-color: var(--fmb-ocean);
-    cursor: pointer;
-}
-
-.fmb-card__compare-input:disabled {
-    opacity: 0.35;
-    cursor: not-allowed;
-}
-
-@media (max-width: 900px) {
-    .fmb-card {
-        grid-template-columns: 1fr;
-        gap: 1rem;
-    }
-}
-
-.fmb-card__brand {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.625rem;
-    min-width: 6.5rem;
-}
-
-.fmb-card__logo {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 4.5rem;
-    height: 4.5rem;
-    border: 1px solid var(--fmb-border);
-    border-radius: 0.875rem;
-    background: #fff;
-    overflow: hidden;
-    text-decoration: none;
-}
-
-.fmb-card__logo img {
-    max-width: 100%;
-    max-height: 100%;
-    object-fit: contain;
-    padding: 0.35rem;
-}
-
-.fmb-card__logo-fallback {
-    font-size: 1.375rem;
-    font-weight: 800;
-    color: var(--fmb-ocean);
-}
-
-.fmb-card__rank {
-    font-size: 0.6875rem;
-    font-weight: 700;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-    color: var(--fmb-muted);
-}
-
-.fmb-card__main {
-    min-width: 0;
-}
-
-.fmb-card__head {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 0.5rem 0.75rem;
-    margin-bottom: 0.375rem;
-}
-
-.fmb-card__name {
-    font-size: 1.0625rem;
-    font-weight: 700;
-    color: var(--fmb-text);
-    text-decoration: none;
-    transition: color 0.18s ease;
-}
-
-.fmb-card__name:hover {
-    color: var(--fmb-ocean);
-}
-
-.fmb-card__rating {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.25rem;
-    padding: 0.2rem 0.5rem;
-    font-size: 0.8125rem;
-    font-weight: 700;
-    color: var(--fmb-ocean);
-    background: rgba(0, 122, 173, 0.08);
-    border-radius: 999px;
-}
-
-.fmb-card__rating svg {
-    width: 0.875rem;
-    height: 0.875rem;
-}
-
-.fmb-card__badge {
-    display: inline-flex;
-    padding: 0.2rem 0.5rem;
-    font-size: 0.6875rem;
-    font-weight: 700;
-    letter-spacing: 0.03em;
-    text-transform: uppercase;
-    color: #fff;
-    background: var(--fmb-ocean);
-    border-radius: 999px;
-}
-
-.fmb-card__tagline {
-    margin: 0 0 0.75rem;
-    font-size: 0.8125rem;
-    line-height: 1.45;
-    color: var(--fmb-muted);
-}
-
-.fmb-card__metrics {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 0.5rem;
-}
-
-@media (max-width: 640px) {
-    .fmb-card__metrics {
-        grid-template-columns: repeat(2, 1fr);
-    }
-}
-
-.fmb-card__metric {
-    padding: 0.5rem 0.625rem;
-    background: #fafbfc;
-    border: 1px solid rgba(217, 226, 233, 0.65);
-    border-radius: 0.5rem;
-}
-
-.fmb-card__metric-label {
-    display: block;
-    margin-bottom: 0.125rem;
-    font-size: 0.625rem;
-    font-weight: 600;
-    letter-spacing: 0.03em;
-    text-transform: uppercase;
-    color: var(--fmb-muted);
-}
-
-.fmb-card__metric-value {
-    font-size: 0.8125rem;
-    font-weight: 700;
-    color: var(--fmb-text);
-    line-height: 1.3;
-}
-
-.fmb-card__performance {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 0.5rem;
-    margin-top: 0.75rem;
-}
-
-@media (min-width: 901px) {
-    .fmb-card__performance {
-        display: none;
-    }
-}
-
-.fmb-card__perf {
-    padding: 0.4375rem 0.5rem;
-    background: rgba(0, 122, 173, 0.04);
-    border-radius: 0.4375rem;
-}
-
-.fmb-card__perf-head {
-    display: flex;
-    justify-content: space-between;
-    gap: 0.25rem;
-    margin-bottom: 0.25rem;
-    font-size: 0.6875rem;
-}
-
-.fmb-card__perf-label {
-    color: var(--fmb-muted);
-}
-
-.fmb-card__perf-value {
-    font-weight: 700;
-    color: var(--fmb-text);
-}
-
-.fmb-card__perf-bar {
-    height: 0.25rem;
-    background: rgba(217, 226, 233, 0.65);
-    border-radius: 999px;
-    overflow: hidden;
-}
-
-.fmb-card__perf-fill {
-    height: 100%;
-    background: linear-gradient(90deg, var(--fmb-ocean) 0%, #059669 100%);
-    border-radius: 999px;
-}
-
-.fmb-card__actions {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    min-width: 9.5rem;
-    padding-top: 1.75rem;
-}
-
-@media (max-width: 900px) {
-    .fmb-card__actions {
-        flex-direction: row;
-        flex-wrap: wrap;
-        min-width: 0;
-    }
 }
 
 .fmb-btn {
@@ -1102,20 +796,6 @@
 .fmb-btn svg {
     width: 0.875rem;
     height: 0.875rem;
-}
-
-.fmb-card__disclaimer {
-    margin: 0.375rem 0 0;
-    font-size: 0.6875rem;
-    color: var(--fmb-muted);
-    text-align: center;
-}
-
-@media (max-width: 900px) {
-    .fmb-card__disclaimer {
-        width: 100%;
-        text-align: left;
-    }
 }
 
 /* Empty state */
@@ -1238,13 +918,13 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-    .fmb-card,
+    .broker-card,
     .fmb-preset,
     .fmb-btn {
         transition: none;
     }
 
-    .fmb-card:hover,
+    .broker-card:hover,
     .fmb-preset:hover,
     .fmb-btn--primary:hover {
         transform: none;

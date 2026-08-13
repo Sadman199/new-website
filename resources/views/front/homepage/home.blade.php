@@ -5,15 +5,14 @@
 
 @push('head')
     <link rel="stylesheet" href="{{ asset('css/insight-cards.css') }}?v=1">
-    <link rel="stylesheet" href="{{ asset('css/broker-match-quiz.css') }}?v=6">
-    <link rel="stylesheet" href="{{ asset('css/homepage.css') }}?v=39">
+    <link rel="stylesheet" href="{{ asset('css/broker-match-quiz.css') }}?v=8">
+    <link rel="stylesheet" href="{{ asset('css/homepage.css') }}?v=46">
 @endpush
 
 @section('main_content')
 <div class="bc-home">
     @include('front.homepage.inc.hero_search')
     @include('front.homepage.inc.personalized_home')
-
     @include('front.homepage.inc.broker_picks')
     @include('front.homepage.inc.broker_match_quiz')
     @include('front.homepage.inc.broker_sentiment')

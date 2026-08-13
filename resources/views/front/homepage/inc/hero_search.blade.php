@@ -1,7 +1,7 @@
 <section class="bc-hero">
     <div class="bc-hero__bg" aria-hidden="true"></div>
 
-    <div class="bc-container bc-hero__container">
+    <div class="container bc-hero__container">
         <div class="bc-hero__inner">
             <header class="bc-hero__intro">
                 <p class="bc-hero__eyebrow">

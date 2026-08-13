@@ -17,9 +17,12 @@
                         <a href="{{ route('author_profile') }}" class="dropdown-item has-icon">
                             <i class="far fa-user"></i> Edit Profile
                         </a>
-                        <a href="{{ route('logout') }}" class="dropdown-item has-icon text-danger">
-                            <i class="fas fa-sign-out-alt"></i> Logout
-                        </a>
+                        <form action="{{ route('author_logout') }}" method="post" class="px-2">
+                            @csrf
+                            <button type="submit" class="dropdown-item has-icon text-danger">
+                                <i class="fas fa-sign-out-alt"></i> Logout
+                            </button>
+                        </form>
                     </div>
                 </li>
             </ul>

@@ -43,7 +43,7 @@
     </header>
 
     <div class="tt-body">
-        <div class="tt-wrap">
+        <div class="container tt-wrap">
             <div class="tt-hub">
                 @foreach($tools as $tool)
                     <a href="{{ route('trading.tools.show', ['slug' => $tool->route_slug]) }}" class="tt-hub-card">

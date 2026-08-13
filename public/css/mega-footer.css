@@ -12,11 +12,11 @@
 }
 
 .mf-footer {
-    --mf-ocean: #007AAD;
+    --mf-ocean: var(--bc-primary, #007AAD);
     --mf-ocean-light: #33a3d4;
-    --mf-ice: #D9E2E9;
+    --mf-ice: var(--bc-light, #D9E2E9);
     --mf-off-white: #FFFBFC;
-    --mf-midnight: #0C1D32;
+    --mf-midnight: var(--bc-dark, #0C1D32);
     --mf-bg-mid: #0f2744;
     --mf-text: var(--mf-off-white);
     --mf-muted: rgba(217, 226, 233, 0.68);
@@ -61,6 +61,8 @@
     display: flex;
     align-items: center;
     gap: 0.875rem;
+    width: 100%;
+    height: 100%;
     padding: 1rem 1.125rem;
     border-radius: 0.875rem;
     background: var(--mf-surface);

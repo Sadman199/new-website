@@ -1,8 +1,8 @@
 /* ── Tools & resources side sheet (right only) ── */
 .bc-tools-trigger {
-    --ts-ocean: #007AAD;
-    --ts-midnight: #0C1D32;
-    --ts-ice: #D9E2E9;
+    --ts-ocean: var(--bc-primary, #007AAD);
+    --ts-midnight: var(--bc-dark, #0C1D32);
+    --ts-ice: var(--bc-light, #D9E2E9);
 
     position: fixed;
     top: 50%;

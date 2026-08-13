@@ -1,10 +1,10 @@
 /* Awards index — BrokersCourt dark ocean hall of fame */
 .awd-page {
-    --awd-ocean: #007AAD;
+    --awd-ocean: var(--bc-primary, #007AAD);
     --awd-ocean-light: #33a3d4;
-    --awd-midnight: #0C1D32;
+    --awd-midnight: var(--bc-dark, #0C1D32);
     --awd-bg-mid: #0f2744;
-    --awd-ice: #D9E2E9;
+    --awd-ice: var(--bc-light, #D9E2E9);
     --awd-off-white: #FFFBFC;
     --awd-muted: rgba(217, 226, 233, 0.62);
     --awd-dim: rgba(217, 226, 233, 0.38);
@@ -865,26 +865,16 @@ body:has(.awd-page) {
     --bri-bg: transparent;
 }
 
-.awd-bri .bri-card {
+.awd-bri .broker-card {
     background: var(--bri-surface);
     border-color: var(--bri-border);
     box-shadow: none;
 }
 
-.awd-bri .bri-card:hover {
+.awd-bri .broker-card:hover {
     transform: none;
     box-shadow: none;
     border-color: rgba(0, 122, 173, 0.28);
-}
-
-.awd-bri .bri-card__logo {
-    background: rgba(12, 29, 50, 0.55);
-    border: 1px solid var(--bri-border);
-}
-
-.awd-bri .bri-card__regulation,
-.awd-bri .bri-card__tagline {
-    color: var(--awd-muted);
 }
 
 .awd-bri .bri-metric__label {

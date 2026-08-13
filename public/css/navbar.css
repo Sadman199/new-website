@@ -2,12 +2,22 @@
     #navbar {
         --nav-ocean: var(--bc-primary, #007AAD);
         --nav-ice: var(--bc-light, #D9E2E9);
-        --nav-off-white: #FFFBFC;
+        --nav-off-white: var(--bc-white, #FFFBFC);
         --nav-midnight: var(--bc-dark, #0C1D32);
         --nav-panel: #132843;
         --nav-border: rgba(217, 226, 233, 0.14);
+        --nav-menu-bg: var(--nav-off-white);
+        --nav-menu-text: var(--nav-midnight);
+        --nav-menu-muted: #64748b;
+        --nav-menu-border: #e2e8f0;
+        --nav-menu-surface: #f8fafc;
+        --nav-menu-hover: #eef2f7;
         --bc-nav-height: 4rem;
 
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
         z-index: 1050;
         background: var(--nav-midnight);
         box-shadow: none;
@@ -23,6 +33,9 @@
         background: var(--nav-midnight);
     }
     .web_menu { overflow: visible; }
+    .bc-nav-logo {
+        flex-shrink: 0;
+    }
     .bc-site-logo {
         display: block;
         height: 40px;
@@ -62,6 +75,7 @@
         cursor: pointer;
         text-align: left;
         font: inherit;
+        font-weight: 600;
         color: var(--nav-ice);
         border-radius: 8px;
         transition: color 0.15s, background 0.15s;
@@ -241,9 +255,9 @@
         right: 0;
         top: 100%;
         z-index: 1045;
-        background: linear-gradient(180deg, #0f2744 0%, var(--nav-midnight) 100%);
-        border-top: 1px solid var(--nav-border);
-        box-shadow: 0 24px 48px -16px rgba(0, 0, 0, 0.55);
+        background: var(--nav-menu-bg);
+        border-top: 1px solid var(--nav-menu-border);
+        box-shadow: 0 24px 48px -16px rgba(15, 23, 42, 0.18);
         opacity: 0;
         visibility: hidden;
         transform: translateY(-8px);
@@ -283,13 +297,11 @@
     }
     #brokersMegaMenu .bc-glass-card,
     #propFirmsMegaMenu .bc-glass-card {
-        background: rgba(19, 40, 67, 0.72);
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
-        border: 1px solid var(--nav-border);
+        background: var(--nav-menu-bg);
+        border: 1px solid var(--nav-menu-border);
         border-radius: 16px;
         padding: 18px 16px;
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.22);
+        box-shadow: none;
         min-width: 0;
     }
     #brokersMegaMenu .bc-mega-icon,
@@ -300,8 +312,8 @@
         width: 32px;
         height: 32px;
         border-radius: 10px;
-        background: rgba(0, 122, 173, 0.18);
-        border: 1px solid rgba(0, 122, 173, 0.35);
+        background: rgba(0, 122, 173, 0.1);
+        border: 1px solid rgba(0, 122, 173, 0.22);
         color: var(--nav-ocean);
         flex-shrink: 0;
     }
@@ -324,7 +336,7 @@
         font-weight: 700;
         letter-spacing: 0.08em;
         text-transform: uppercase;
-        color: rgba(217, 226, 233, 0.72);
+        color: var(--nav-menu-muted);
     }
     #brokersMegaMenu .bc-chip-wrap,
     #propFirmsMegaMenu .bc-chip-wrap {
@@ -341,9 +353,9 @@
         padding: 6px 11px;
         font-size: 12.5px;
         font-weight: 500;
-        color: var(--nav-ice);
-        background: rgba(12, 29, 50, 0.55);
-        border: 1px solid var(--nav-border);
+        color: var(--nav-menu-text);
+        background: var(--nav-menu-surface);
+        border: 1px solid var(--nav-menu-border);
         border-radius: 999px;
         text-decoration: none;
         transition: all 0.2s ease;
@@ -374,12 +386,13 @@
         color: #64748b;
     }
     #brokersMegaMenu .bc-chip-link:hover,
-    #propFirmsMegaMenu .bc-chip-link:hover {
-        color: var(--nav-off-white);
-        background: rgba(0, 122, 173, 0.22);
-        border-color: rgba(0, 122, 173, 0.45);
-        box-shadow: 0 4px 14px rgba(0, 122, 173, 0.18);
-        transform: translateY(-1px);
+    #propFirmsMegaMenu .bc-chip-link:hover,
+    #reviewsMegaMenu .bc-chip-link:hover {
+        color: var(--nav-menu-text);
+        background: var(--nav-menu-hover);
+        border-color: #cbd5e1;
+        box-shadow: none;
+        transform: none;
     }
     #brokersMegaMenu .bc-link-list,
     #propFirmsMegaMenu .bc-link-list {
@@ -394,12 +407,12 @@
         font-size: 13px;
         border-radius: 8px;
         background: transparent;
-        color: var(--nav-ice);
+        color: var(--nav-menu-text);
     }
     #brokersMegaMenu .bc-link-list .bc-mega-link:hover,
     #propFirmsMegaMenu .bc-link-list .bc-mega-link:hover {
-        background: rgba(0, 122, 173, 0.16);
-        color: var(--nav-off-white);
+        background: var(--nav-menu-hover);
+        color: var(--nav-menu-text);
     }
     #brokersMegaMenu .bc-broker-row,
     #propFirmsMegaMenu .bc-broker-row {
@@ -411,15 +424,21 @@
         padding: 9px 10px;
         margin: 0 0 6px;
         border-radius: 12px;
-        background: rgba(12, 29, 50, 0.45);
-        border: 1px solid var(--nav-border);
+        background: var(--nav-menu-surface);
+        border: 1px solid var(--nav-menu-border);
     }
     #brokersMegaMenu .bc-broker-row:hover,
     #propFirmsMegaMenu .bc-broker-row:hover {
-        background: rgba(0, 122, 173, 0.16);
-        border-color: rgba(0, 122, 173, 0.35);
-        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.22);
-        transform: translateY(-1px);
+        background: var(--nav-menu-hover);
+        border-color: #cbd5e1;
+        box-shadow: none;
+        transform: none;
+    }
+    #brokersMegaMenu .bc-broker-row:hover .bc-broker-row__name,
+    #propFirmsMegaMenu .bc-broker-row:hover .bc-broker-row__name,
+    #brokersMegaMenu .bc-broker-row:hover span.flex-1,
+    #propFirmsMegaMenu .bc-broker-row:hover span.flex-1 {
+        color: var(--nav-menu-text);
     }
     #brokersMegaMenu .bc-broker-rank,
     #propFirmsMegaMenu .bc-broker-rank {
@@ -431,7 +450,7 @@
         font-size: 11px;
         font-weight: 700;
         color: var(--nav-ocean);
-        background: rgba(0, 122, 173, 0.18);
+        background: rgba(0, 122, 173, 0.1);
         border-radius: 7px;
         flex-shrink: 0;
     }
@@ -444,14 +463,14 @@
         margin-top: 14px;
         padding: 14px 18px;
         border-radius: 14px;
-        background: rgba(12, 29, 50, 0.55);
-        border: 1px solid var(--nav-border);
+        background: var(--nav-menu-surface);
+        border: 1px solid var(--nav-menu-border);
     }
     #brokersMegaMenu .bc-mega-bottom p,
     #propFirmsMegaMenu .bc-mega-bottom p {
         margin: 0;
         font-size: 13px;
-        color: rgba(217, 226, 233, 0.78);
+        color: var(--nav-menu-muted);
     }
     #brokersMegaMenu .bc-mega-bottom .bc-btn-primary,
     #propFirmsMegaMenu .bc-mega-bottom .bc-btn-primary {
@@ -518,9 +537,9 @@
         min-width: 13rem;
     }
     .bc-nav-dropdown-panel {
-        background: var(--nav-panel);
-        border: 1px solid var(--nav-border);
-        box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45);
+        background: var(--nav-menu-bg);
+        border: 1px solid var(--nav-menu-border);
+        box-shadow: 0 16px 40px rgba(15, 23, 42, 0.14);
         border-radius: 0.75rem;
         padding: 0.375rem 0;
         overflow: hidden;
@@ -530,29 +549,55 @@
         padding: 0.625rem 1rem;
         font-size: 0.875rem;
         font-weight: 500;
-        color: var(--nav-ice);
+        color: var(--nav-menu-text);
         text-decoration: none;
         transition: color 0.15s, background 0.15s;
     }
     .bc-nav-dropdown-link:hover {
-        color: var(--nav-off-white);
-        background: rgba(0, 122, 173, 0.18);
+        color: var(--nav-menu-text);
+        background: var(--nav-menu-hover);
     }
     .bc-nav-dropdown-link--danger {
-        color: #f87171;
+        color: #dc2626;
     }
     .bc-nav-dropdown-link--danger:hover {
-        color: #fecaca;
-        background: rgba(248, 113, 113, 0.14);
+        color: #b91c1c;
+        background: #fef2f2;
     }
     #companyMenu > div {
-        background: var(--nav-panel) !important;
-        border-color: var(--nav-border) !important;
-        box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45) !important;
+        background: var(--nav-menu-bg) !important;
+        border-color: var(--nav-menu-border) !important;
+        box-shadow: 0 16px 40px rgba(15, 23, 42, 0.14) !important;
         padding: 12px;
     }
     .bc-nav-desktop {
+        display: none;
+        align-items: center;
+        justify-content: center;
+        flex: 1;
+        min-width: 0;
+        gap: 0.125rem;
         overflow: visible;
+    }
+    .bc-nav-find,
+    .bc-nav-login {
+        display: none;
+        flex-shrink: 0;
+    }
+    @media (min-width: 1024px) {
+        .bc-nav-desktop {
+            display: flex;
+        }
+        .bc-nav-find,
+        .bc-nav-login {
+            display: inline-flex;
+        }
+    }
+    .bc-nav-link svg,
+    .mobile-accordion-btn svg {
+        width: 1rem;
+        height: 1rem;
+        flex-shrink: 0;
     }
     .bc-nav-desktop > .relative,
     .bc-nav-desktop > a.bc-nav-link {
@@ -612,6 +657,11 @@
         align-self: center;
     }
     #navBarRow {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        height: var(--bc-nav-height, 4rem);
+        min-width: 0;
         position: relative;
     }
     .bc-search-wrap {
@@ -702,7 +752,7 @@
         font-weight: 700;
         letter-spacing: 0.06em;
         text-transform: uppercase;
-        color: rgba(217, 226, 233, 0.72);
+        color: var(--nav-menu-muted);
         margin-bottom: 12px;
     }
     .bc-mega-link {
@@ -710,14 +760,14 @@
         padding: 7px 10px;
         margin: 0 -10px;
         font-size: 14px;
-        color: var(--nav-ice);
+        color: var(--nav-menu-text);
         border-radius: 6px;
         transition: color 0.15s, background 0.15s;
         text-decoration: none;
     }
     .bc-mega-link:hover {
-        color: var(--nav-off-white);
-        background: rgba(0, 122, 173, 0.16);
+        color: var(--nav-menu-text);
+        background: var(--nav-menu-hover);
     }
     .bc-mega-footer {
         display: inline-flex;
@@ -725,13 +775,13 @@
         gap: 6px;
         margin-top: 16px;
         padding-top: 12px;
-        border-top: 1px solid var(--nav-border);
+        border-top: 1px solid var(--nav-menu-border);
         font-size: 14px;
         font-weight: 600;
         color: var(--nav-ocean);
         text-decoration: none;
     }
-    .bc-mega-footer:hover { color: #33a3d4; }
+    .bc-mega-footer:hover { color: #006694; }
     .bc-btn-primary {
         display: inline-flex;
         align-items: center;
@@ -773,52 +823,74 @@
         padding-bottom: 10px;
     }
     #reviewsMegaMenu {
-        transform: translateX(-18%);
+        transform: translateX(-8%);
     }
     #reviewsMegaMenu .bc-reviews-mega-panel {
-        background: var(--nav-panel);
-        border: 1px solid var(--nav-border);
-        box-shadow: 0 24px 48px -16px rgba(0, 0, 0, 0.55);
-        border-radius: 14px;
-        padding: 18px 18px 14px;
-        min-width: 42rem;
+        background: var(--nav-menu-bg);
+        border: 1px solid var(--nav-menu-border);
+        box-shadow: 0 24px 48px -16px rgba(15, 23, 42, 0.18);
+        border-radius: 12px;
+        padding: 12px 14px 10px;
         width: max-content;
-        max-width: min(46rem, calc(100vw - 2rem));
+        max-width: min(34rem, calc(100vw - 2rem));
     }
     #reviewsMegaMenu .bc-reviews-mega-grid {
         display: grid;
-        grid-template-columns: minmax(13rem, 1fr) minmax(16rem, 1.15fr);
-        gap: 1.25rem;
+        grid-template-columns: max-content minmax(11rem, 15rem);
+        gap: 0.75rem 1rem;
         align-items: start;
     }
     #reviewsMegaMenu .bc-reviews-mega-col {
         min-width: 0;
+        width: max-content;
+        max-width: 100%;
     }
     #reviewsMegaMenu .bc-reviews-mega-col + .bc-reviews-mega-col {
-        border-left: 1px solid var(--nav-border);
-        padding-left: 1.25rem;
+        border-left: 1px solid var(--nav-menu-border);
+        padding-left: 1rem;
+        width: auto;
+        min-width: 11rem;
     }
     #reviewsMegaMenu .bc-mega-title {
-        margin-bottom: 10px;
+        margin-bottom: 6px;
+        color: var(--nav-menu-muted);
     }
     #reviewsMegaMenu .bc-link-list {
         display: flex;
         flex-direction: column;
-        gap: 1px;
+        gap: 0;
     }
     #reviewsMegaMenu .bc-mega-link {
         margin: 0;
-        padding: 7px 10px;
+        padding: 5px 8px;
+        color: var(--nav-menu-text);
+        border-radius: 6px;
+    }
+    #reviewsMegaMenu .bc-mega-link:hover {
+        color: var(--nav-menu-text);
+        background: var(--nav-menu-hover);
     }
     #reviewsMegaMenu .bc-chip-wrap {
         display: flex;
         flex-wrap: wrap;
-        gap: 7px;
+        gap: 6px;
+        max-width: 15rem;
+    }
+    #reviewsMegaMenu .bc-chip-link {
+        color: var(--nav-menu-text);
+        background: var(--nav-menu-surface);
+        border-color: var(--nav-menu-border);
+    }
+    #reviewsMegaMenu .bc-chip-link:hover {
+        color: var(--nav-menu-text);
+        background: var(--nav-menu-hover);
+        border-color: #cbd5e1;
+        box-shadow: none;
     }
     #reviewsMegaMenu .bc-mega-footer {
-        margin-top: 14px;
-        padding-top: 12px;
-        border-top: 1px solid var(--nav-border);
+        margin-top: 10px;
+        padding-top: 8px;
+        border-top: 1px solid var(--nav-menu-border);
         width: 100%;
     }
     @media (max-width: 1023px) {
@@ -884,10 +956,15 @@
         text-decoration: none;
         transition: background 0.15s;
     }
-    .bc-broker-row:hover { background: rgba(0, 122, 173, 0.12); }
+    .bc-broker-row:hover {
+        background: var(--nav-menu-hover);
+    }
+    .bc-broker-row:hover .bc-broker-row__name {
+        color: var(--nav-menu-text);
+    }
     #brokersMegaMenu .bc-broker-row span.flex-1,
     #propFirmsMegaMenu .bc-broker-row span.flex-1 {
-        color: var(--nav-off-white);
+        color: var(--nav-menu-text);
     }
     #mobileMenu.border-t {
         border-color: var(--nav-border) !important;
@@ -906,4 +983,216 @@
         background: #ecfdf5;
         border-radius: 6px;
         flex-shrink: 0;
+    }
+    .bc-nav-group {
+        position: relative;
+        flex-shrink: 0;
+    }
+    .bc-nav-flyout {
+        position: absolute;
+        left: 0;
+        top: 100%;
+        padding-top: 0.5rem;
+    }
+    .bc-search-wrap {
+        display: none !important;
+    }
+    @media (min-width: 1024px) {
+        .bc-search-wrap {
+            display: inline-flex !important;
+        }
+        #mobileMenu,
+        .bc-mobile-menu {
+            display: none !important;
+        }
+    }
+    .bc-mobile-menu {
+        border-top: 1px solid var(--nav-border);
+        box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35);
+    }
+    .bc-nav-account {
+        position: relative;
+        display: none;
+        flex-shrink: 0;
+    }
+    @media (min-width: 1024px) {
+        .bc-nav-account {
+            display: block;
+        }
+    }
+    .bc-nav-account__btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.25rem 0.5rem 0.25rem 0.25rem;
+        border: none;
+        border-radius: 999px;
+        background: transparent;
+        cursor: pointer;
+        color: var(--nav-ice);
+    }
+    .bc-nav-account__btn:hover {
+        background: rgba(217, 226, 233, 0.08);
+    }
+    .bc-nav-account__avatar {
+        width: 2rem;
+        height: 2rem;
+        border-radius: 999px;
+        object-fit: cover;
+        border: 1px solid var(--nav-border);
+    }
+    .bc-nav-account__chevron {
+        width: 1rem;
+        height: 1rem;
+        color: rgba(217, 226, 233, 0.7);
+    }
+    .bc-nav-account__panel {
+        position: absolute;
+        right: 0;
+        top: 100%;
+        margin-top: 0.5rem;
+        width: 15rem;
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        border-radius: 0.75rem;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.18);
+        padding: 0.5rem 0;
+        z-index: 1060;
+    }
+    .bc-nav-account__head {
+        padding: 0.5rem 1rem;
+        border-bottom: 1px solid #f3f4f6;
+    }
+    .bc-nav-account__name {
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: #1f2937;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+    .bc-nav-account__verified {
+        color: #3b82f6;
+        font-size: 0.75rem;
+    }
+    .bc-nav-account__email {
+        margin: 0;
+        font-size: 0.75rem;
+        color: #9ca3af;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+    .bc-nav-account__link {
+        display: block;
+        width: 100%;
+        padding: 0.5rem 1rem;
+        font-size: 0.875rem;
+        color: #374151;
+        text-align: left;
+        text-decoration: none;
+        background: transparent;
+        border: none;
+        cursor: pointer;
+    }
+    .bc-nav-account__link i {
+        margin-right: 0.5rem;
+        color: #9ca3af;
+    }
+    .bc-nav-account__link:hover {
+        background: var(--nav-menu-hover, #eef2f7);
+        color: #111827;
+    }
+    .bc-nav-account__link--danger {
+        color: #dc2626;
+    }
+    .bc-nav-account__link--danger:hover {
+        background: #fef2f2;
+        color: #dc2626;
+    }
+    .bc-nav-account__logout {
+        margin-top: 0.25rem;
+        padding-top: 0.25rem;
+        border-top: 1px solid #f3f4f6;
+    }
+    .bc-broker-row__logo {
+        width: 2.25rem;
+        height: 2.25rem;
+        border-radius: 0.75rem;
+        border: 1px solid #fff;
+        background: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        flex-shrink: 0;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+    }
+    .bc-broker-row__logo-img {
+        width: 1.75rem;
+        height: 1.75rem;
+        object-fit: contain;
+    }
+    .bc-broker-row__name {
+        flex: 1;
+        min-width: 0;
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: var(--nav-menu-text);
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+    .bc-mega-bottom__actions {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        flex-shrink: 0;
+    }
+    .bc-mobile-auth__user {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0 0.25rem 0.5rem;
+    }
+    .bc-mobile-auth__avatar {
+        width: 2.25rem;
+        height: 2.25rem;
+        border-radius: 999px;
+        object-fit: cover;
+        border: 1px solid var(--nav-border);
+        flex-shrink: 0;
+    }
+    .bc-mobile-auth__name {
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: var(--nav-ice);
+    }
+    .bc-mobile-auth__verified {
+        color: #60a5fa;
+        font-size: 0.75rem;
+    }
+    .bc-mobile-auth__email {
+        margin: 0;
+        font-size: 0.75rem;
+        color: rgba(217, 226, 233, 0.55);
+    }
+    .bc-mobile-auth__login {
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    .bc-mobile-auth__logout {
+        width: 100%;
+        text-align: left;
+        color: #f87171;
     }

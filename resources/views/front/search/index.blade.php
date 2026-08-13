@@ -41,7 +41,7 @@
 
 <div class="ssr-page">
     <header class="ssr-hero">
-        <div class="ssr-wrap">
+        <div class="container ssr-wrap">
             <nav class="ssr-breadcrumb" aria-label="Breadcrumb">
                 <a href="{{ route('home') }}">Home</a>
                 <span aria-hidden="true">/</span>
@@ -95,7 +95,7 @@
         </div>
     </header>
 
-    <div class="ssr-wrap">
+    <div class="container ssr-wrap">
         @if($query !== '' && ($counts['all'] ?? 0) > 0)
             <div class="ssr-toolbar">
                 <nav class="ssr-filters" aria-label="Filter results by type">

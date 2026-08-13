@@ -1,11 +1,11 @@
 /* Homepage — Live market widgets (TradingView) */
 .bc-markets {
-    --mk-ocean: #007AAD;
+    --mk-ocean: var(--bc-primary, #007AAD);
     --mk-ocean-light: #33a3d4;
-    --mk-midnight: #0C1D32;
+    --mk-midnight: var(--bc-dark, #0C1D32);
     --mk-bg-mid: #0f2744;
     --mk-surface: #132843;
-    --mk-ice: #D9E2E9;
+    --mk-ice: var(--bc-light, #D9E2E9);
     --mk-off-white: #FFFBFC;
     --mk-muted: rgba(217, 226, 233, 0.62);
     --mk-dim: rgba(217, 226, 233, 0.38);

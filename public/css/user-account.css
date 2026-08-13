@@ -1,12 +1,12 @@
 /* User account — login, register, profile (BrokersCourt dark theme) */
 .ua-root {
-    --ua-ocean: #007AAD;
-    --ua-ocean-dark: #006694;
-    --ua-ocean-light: #33a3d4;
-    --ua-midnight: #0C1D32;
+    --ua-ocean: var(--bc-primary, #007AAD);
+    --ua-ocean-dark: var(--bc-primary-dark, #006694);
+    --ua-ocean-light: var(--bc-primary-light, #33a3d4);
+    --ua-midnight: var(--bc-dark, #0C1D32);
     --ua-bg-mid: #0f2744;
-    --ua-ice: #D9E2E9;
-    --ua-off-white: #FFFBFC;
+    --ua-ice: var(--bc-ice, #D9E2E9);
+    --ua-off-white: var(--bc-white, #FFFBFC);
     --ua-text: var(--ua-off-white);
     --ua-muted: rgba(217, 226, 233, 0.72);
     --ua-dim: rgba(217, 226, 233, 0.48);
@@ -613,6 +613,11 @@ a.ua-quick-action {
 
 @media (min-width: 1024px) {
     .ua-nav--desktop { display: flex; }
+}
+
+.ua-fill {
+    flex: 1 1 auto;
+    min-width: 0;
 }
 
 .ua-review-item {

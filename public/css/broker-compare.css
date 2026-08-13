@@ -1,9 +1,9 @@
 /* BrokersCourt comparison tool — premium theme */
 .bc-compare-page {
-    --cmp-ocean: #007AAD;
-    --cmp-ocean-dark: #006694;
-    --cmp-midnight: #0C1D32;
-    --cmp-ice: #D9E2E9;
+    --cmp-ocean: var(--bc-primary, #007AAD);
+    --cmp-ocean-dark: var(--bc-primary-dark, #006694);
+    --cmp-midnight: var(--bc-dark, #0C1D32);
+    --cmp-ice: var(--bc-light, #D9E2E9);
     --cmp-off-white: #FFFBFC;
     --cmp-bg: #f4f6f9;
     --cmp-surface: #ffffff;
@@ -1030,15 +1030,26 @@
 }
 
 .bc-result-layout {
-    display: grid;
-    grid-template-columns: 15rem 1fr;
-    gap: 0;
     align-items: start;
 }
 
+.bc-result-layout > .bc-result-sidebar {
+    flex: 0 0 15rem;
+    width: 15rem;
+    max-width: 15rem;
+}
+
+.bc-result-layout > .bc-result-main {
+    flex: 1 1 0;
+    min-width: 0;
+}
+
 @media (max-width: 960px) {
-    .bc-result-layout {
-        grid-template-columns: 1fr;
+    .bc-result-layout > .bc-result-sidebar,
+    .bc-result-layout > .bc-result-main {
+        flex: 1 1 100%;
+        width: 100%;
+        max-width: 100%;
     }
 }
 
@@ -1176,8 +1187,10 @@
     color: var(--cmp-text);
 }
 
-.bc-result-table-wrap {
+.bc-result-table-wrap,
+.compare-table-wrap {
     overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
 }
 
 .bc-result-table {
@@ -1554,4 +1567,18 @@
     font-size: 0.75rem;
     font-weight: 700;
     color: var(--cmp-ocean);
+}
+
+/* Reusable comparison table hooks — visual rules stay on .bc-result-table / .bc-compare-matrix */
+.compare-table__header,
+.compare-table__row,
+.compare-table__cell,
+.compare-table__broker {
+    box-sizing: border-box;
+}
+
+.compare-table__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
 }

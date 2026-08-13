@@ -1,9 +1,9 @@
 /* Best regulated brokers — BrokersCourt premium theme */
 .brb-page {
-    --brb-ocean: #007AAD;
-    --brb-ocean-dark: #006694;
-    --brb-midnight: #0C1D32;
-    --brb-ice: #D9E2E9;
+    --brb-ocean: var(--bc-primary, #007AAD);
+    --brb-ocean-dark: var(--bc-primary-dark, #006694);
+    --brb-midnight: var(--bc-dark, #0C1D32);
+    --brb-ice: var(--bc-light, #D9E2E9);
     --brb-off-white: #FFFBFC;
     --brb-bg: #f4f6f9;
     --brb-surface: #ffffff;

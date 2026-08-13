@@ -6,11 +6,12 @@
 @section('canonical', route('user.login'))
 
 @push('page-styles')
-    <link rel="stylesheet" href="{{ asset('css/user-account.css') }}?v=4">
+    <link rel="stylesheet" href="{{ asset('css/user-account.css') }}?v=9">
 @endpush
 
 @section('main_content')
 <div class="ua-root">
+    <div class="container">
     <div class="ua-wrap ua-wrap--narrow">
         <div class="ua-auth-card">
             <div class="ua-auth-head">
@@ -60,6 +61,7 @@
                 <a href="{{ route('user.register') }}" class="ua-link">Create one free</a>
             </p>
         </div>
+    </div>
     </div>
 </div>
 @include('front.auth.partials.google_scripts')

@@ -5,7 +5,7 @@
 
 @if($leftPromo || $rightPromo)
 <section class="bc-result-promos" id="bc-result-promos" aria-label="Active promotions">
-    <div class="bc-compare-wrap">
+    <div class="container">
         <header class="bc-result-promos__head">
             <h2 class="bc-result-promos__title">Active promotions</h2>
             <p class="bc-result-promos__sub">Live bonus offers from our promotions database.</p>

@@ -1,11 +1,11 @@
 <section class="bc-home-section">
-    <div class="bc-home-container">
+    <div class="container">
         <div class="bc-home-section__head">
             <div>
                 <h2 class="bc-home-section__title">Broker Rankings</h2>
                 <p class="bc-home-section__sub">Latest top-rated brokers on BrokersCourt</p>
             </div>
-            <a href="{{ route('all_brokers') }}" class="bc-home-section__link">
+            <a href="{{ route('find_my_broker') }}" class="bc-home-section__link">
                 View all brokers <i class="fas fa-arrow-right"></i>
             </a>
         </div>

@@ -10,7 +10,7 @@
 
 @section('main_content')
 <section class="abt-page">
-    <div class="abt-wrap">
+    <div class="container abt-wrap">
         <header class="abt-hero">
             <h1 class="abt-hero__title">About Us</h1>
             <p class="abt-hero__meta">Last updated: May 19, 2025</p>

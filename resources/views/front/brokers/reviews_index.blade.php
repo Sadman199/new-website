@@ -11,7 +11,7 @@
 @section('main_content')
 <div class="bri-page">
     <header class="bri-hero">
-        <div class="bri-wrap">
+        <div class="container">
             <nav class="bri-breadcrumb" aria-label="Breadcrumb">
                 <a href="{{ route('home') }}">Home</a>
                 <span aria-hidden="true">/</span>
@@ -29,9 +29,9 @@
         </div>
     </header>
 
-    <div class="bri-wrap">
-        <div class="bri-layout">
-            <aside class="bri-filters" id="briFiltersPanel" aria-label="Filter brokers">
+    <div class="container">
+        <div class="row g-4">
+            <aside class="col-12 col-lg-3 bri-filters" id="briFiltersPanel" aria-label="Filter brokers">
                 <div class="bri-filters__inner">
                     <div class="bri-filters__head">
                         <h2 class="bri-filters__title">Filters</h2>
@@ -68,7 +68,7 @@
                 </div>
             </aside>
 
-            <div class="bri-main">
+            <div class="col-12 col-lg-9 bri-main">
                 <div class="bri-main__toolbar">
                     <div class="bri-main__toolbar-text">
                         <h2 class="bri-main__heading">

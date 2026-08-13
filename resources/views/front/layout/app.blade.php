@@ -58,6 +58,10 @@
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="{{ \App\Support\SiteTheme::faviconUrl() }}">
 
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
     <!-- Optimized CSS -->
     <link href="{{ mix('css/app.css') }}" rel="stylesheet" data-bc-global>
     <link rel="dns-prefetch" href="https://www.googletagmanager.com">
@@ -67,7 +71,6 @@
     @include('front.layout.partials.site-theme')
     @include('front.layout.styles')
     @include('front.layout.scripts')
-    <link rel="stylesheet" href="{{ asset('css/country-drawer.css') }}?v=3" data-bc-global>
     @if($showCountryBrokersStrip ?? false)
         <link rel="stylesheet" href="{{ asset('css/country-brokers.css') }}?v=3">
     @endif
