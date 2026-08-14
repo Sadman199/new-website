@@ -11,7 +11,7 @@
 @endpush
 
 @push('page-styles')
-    <link rel="stylesheet" href="{{ asset('css/promotions-index.css') }}?v=14">
+    <link rel="stylesheet" href="{{ asset('css/promotions-index.css') }}?v=16">
 @endpush
 
 @section('main_content')
@@ -37,7 +37,6 @@
             <p class="bpr-hero__subtitle">Deposit bonuses, contests, and cashback from regulated brokers — sorted and refreshed from our live database.</p>
 
             @include('front.brokers.partials.country_context_hero', [
-                'variant' => 'inline',
                 'eyebrow' => 'Viewing offers for your region',
                 'title'   => 'Offers available in {country}',
             ])

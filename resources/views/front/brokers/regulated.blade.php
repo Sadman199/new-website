@@ -5,7 +5,7 @@
 @section('canonical', route('regulated_brokers'))
 
 @push('page-styles')
-    <link rel="stylesheet" href="{{ asset('css/regulated-brokers-index.css') }}?v=5">
+    <link rel="stylesheet" href="{{ asset('css/regulated-brokers-index.css') }}?v=8">
 @endpush
 
 @section('main_content')
@@ -27,14 +27,6 @@
 
             @include('front.brokers.partials.country_context_hero')
 
-            @include('front.partials.hero_metrics', [
-                'stats' => [
-                    ['label' => 'Regulated brokers', 'value' => $stats['regulated_count'], 'tone' => 'highlight'],
-                    ['label' => 'Tier 1 brokers', 'value' => $stats['tier_one_count']],
-                    ['label' => 'Investor protection', 'value' => $stats['investor_protection_count']],
-                    ['label' => 'Avg. rating /5', 'value' => number_format($stats['average_rating'], 1)],
-                ],
-            ])
         </div>
     </header>
 
@@ -136,5 +128,5 @@
 @endsection
 
 @push('scripts')
-<script src="{{ asset('js/regulated-brokers-index.js') }}?v=2"></script>
+<script src="{{ asset('js/regulated-brokers-index.js') }}?v=2" defer></script>
 @endpush

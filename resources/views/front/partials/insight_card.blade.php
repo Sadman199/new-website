@@ -8,7 +8,7 @@
     <a href="{{ $url }}" class="bc-insight-card__link">
         <div class="bc-insight-card__media" style="--bc-insight-gradient: {{ $gradient }}">
             @if(!empty($photo))
-                <img src="{{ $photo }}" alt="" loading="lazy">
+                <img src="{{ $photo }}" alt="" loading="lazy" decoding="async">
             @endif
             <span class="bc-insight-card__badge">{{ $category }}</span>
         </div>
@@ -25,7 +25,7 @@
             <div class="bc-insight-card__author">
                 <span class="bc-insight-card__avatar" aria-hidden="true">
                     @if(!empty($authorPhoto))
-                        <img src="{{ $authorPhoto }}" alt="">
+                        <img src="{{ $authorPhoto }}" alt="" loading="lazy" decoding="async">
                     @else
                         <span>{{ strtoupper(substr($authorName, 0, 1)) }}</span>
                     @endif

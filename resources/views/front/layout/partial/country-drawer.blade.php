@@ -58,17 +58,23 @@
                            aria-label="{{ $t('drawer.country_search') }}">
                 </div>
 
-                <div class="bc-country-drawer-list" role="listbox" aria-label="{{ $t('drawer.country_title') }}">
-                    @foreach($sortedCountries as $slug => $country)
-                        @php
-                            $brokerCount = (int) ($country['broker_count'] ?? 0);
-                            $isSelected = $preferredSlug === $slug;
-                        @endphp
-                        <form action="{{ route('front_country') }}" method="POST" class="bc-country-option-form">
-                            @csrf
-                            <input type="hidden" name="country" value="{{ $slug }}">
+                <form id="countryDrawerForm"
+                      action="{{ route('front_country') }}"
+                      method="POST"
+                      class="bc-country-drawer-form">
+                    @csrf
+                    <input type="hidden" name="country" id="countryDrawerValue" value="{{ $preferredSlug }}">
+
+                    <div class="bc-country-drawer-list" role="listbox" aria-label="{{ $t('drawer.country_title') }}">
+                        @foreach($sortedCountries as $slug => $country)
+                            @php
+                                $brokerCount = (int) ($country['broker_count'] ?? 0);
+                                $isSelected = $preferredSlug === $slug;
+                            @endphp
                             <button type="submit"
                                     class="bc-country-option {{ $isSelected ? 'is-selected' : '' }}"
+                                    name="country_choice"
+                                    value="{{ $slug }}"
                                     data-country="{{ $slug }}"
                                     data-name="{{ $country['name'] }}"
                                     data-code="{{ $country['code'] ?? '' }}"
@@ -92,9 +98,9 @@
                                 </span>
                                 <span class="bc-country-option-check" aria-hidden="true"></span>
                             </button>
-                        </form>
-                    @endforeach
-                </div>
+                        @endforeach
+                    </div>
+                </form>
 
                 <p id="countryDrawerEmpty" class="bc-country-drawer-empty is-hidden" role="status">{{ $t('drawer.country_empty') }}</p>
             </section>

@@ -1,7 +1,18 @@
 /* Prop Firm detail page */
 .pf-detail__hero {
-    padding: 5.5rem 0 2rem;
+    position: relative;
+    overflow: hidden;
+    padding: calc(var(--bc-nav-height, 5.5rem) + 2.25rem) 0 2rem;
     border-bottom: 1px solid var(--pf-border);
+    background:
+        radial-gradient(ellipse 60% 80% at 20% 0%, rgba(232, 130, 42, 0.22) 0%, transparent 60%),
+        radial-gradient(ellipse 50% 70% at 82% 20%, rgba(251, 198, 92, 0.14) 0%, transparent 62%),
+        linear-gradient(180deg, #14171d 0%, var(--pf-midnight) 100%);
+}
+
+.pf-detail__hero > * {
+    position: relative;
+    z-index: 1;
 }
 
 .pf-detail__hero-grid {
@@ -84,7 +95,7 @@
 
 .pf-detail__stat {
     padding: 0.875rem 1rem;
-    background: rgba(12, 29, 50, 0.45);
+    background: rgba(255, 255, 255, 0.05);
     border: 1px solid var(--pf-border);
     border-radius: var(--pf-radius);
 }
@@ -265,5 +276,5 @@
 
 .pf-related__card:hover {
     transform: translateY(-2px);
-    border-color: rgba(0, 122, 173, 0.35);
+    border-color: rgba(232, 130, 42, 0.35);
 }

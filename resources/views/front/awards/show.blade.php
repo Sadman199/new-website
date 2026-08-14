@@ -5,8 +5,8 @@
 @section('canonical', route('awards.show', ['award' => $routeSlug]))
 
 @push('page-styles')
-    <link rel="stylesheet" href="{{ asset('css/awards-index.css') }}?v=4">
-    <link rel="stylesheet" href="{{ asset('css/broker-reviews-index.css') }}?v=6">
+    <link rel="stylesheet" href="{{ asset('css/awards-index.css') }}?v=6">
+    <link rel="stylesheet" href="{{ asset('css/broker-reviews-index.css') }}?v=8">
 @endpush
 
 @section('main_content')
@@ -36,14 +36,6 @@
                 </div>
             </div>
 
-            @include('front.partials.hero_metrics', [
-                'cols' => 3,
-                'stats' => [
-                    ['label' => 'Matching brokers', 'value' => number_format($totalBrokers)],
-                    ['label' => 'Award year', 'value' => date('Y'), 'tone' => 'highlight'],
-                    ['label' => 'Updated from', 'value' => 'Live data'],
-                ],
-            ])
         </div>
     </header>
 

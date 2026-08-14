@@ -3,7 +3,6 @@
     $guidePage = $reviewPageMeta ?? ['updated_at' => '', 'updated_relative' => null];
     $snapshot = $snapshot ?? \App\Support\BrokerReviewPresenter::decisionSnapshot($broker, $reviewStats ?? []);
     $guides = $publishedGuides ?? collect();
-    $facts = $snapshot['facts'] ?? [];
 @endphp
 
 <header class="bbg-hero br-hero{{ $snapshot['is_scam'] ? ' br-hero--scam' : '' }}" id="gettingstarted">
@@ -83,17 +82,6 @@
             </div>
         </div>
 
-        @if(!empty($facts))
-            <dl class="br-hero__facts" aria-label="Key trading conditions">
-                @foreach($facts as $fact)
-                    <div class="br-hero__fact">
-                        <dt>{{ $fact['label'] }}</dt>
-                        <dd title="{{ $fact['value'] }}">{{ $fact['value'] }}</dd>
-                    </div>
-                @endforeach
-            </dl>
-        @endif
-
         <div class="br-hero__cta-block">
             @include('front.brokers.partials.decision_ctas', [
                 'broker' => $broker,
@@ -104,7 +92,6 @@
 
         <div class="br-hero__footer">
             @include('front.brokers.partials.country_context_hero', [
-                'variant' => 'inline',
                 'context' => 'review',
                 'brokerName' => $broker->name,
             ])

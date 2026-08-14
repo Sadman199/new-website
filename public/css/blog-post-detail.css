@@ -31,13 +31,11 @@
 
 /* Hero — shares bbg-hero editorial author styles from best-broker-guide.css */
 .bpd-hero {
-    background: var(--bpd-midnight);
-    border-bottom: 1px solid rgba(217, 226, 233, 0.1);
+    background: #ffffff;
+    border-bottom: 1px solid #e2e8f0;
     padding: 5.5rem 0 2rem;
     margin-bottom: 1.5rem;
-    background-image:
-        radial-gradient(ellipse 70% 55% at 50% -15%, rgba(0, 122, 173, 0.28) 0%, transparent 58%),
-        linear-gradient(180deg, #0f2744 0%, var(--bpd-midnight) 100%);
+    background-image: none;
 }
 
 .bpd-breadcrumb {
@@ -47,16 +45,16 @@
     gap: 0.4rem;
     margin-bottom: 1rem;
     font-size: 0.8125rem;
-    color: rgba(217, 226, 233, 0.55);
+    color: #64748b;
 }
 
 .bpd-breadcrumb a {
-    color: rgba(217, 226, 233, 0.78);
+    color: #64748b;
     text-decoration: none;
 }
 
 .bpd-breadcrumb a:hover {
-    color: var(--bpd-off-white);
+    color: var(--bc-primary, #007AAD);
 }
 
 .bpd-hero__eyebrow {
@@ -80,7 +78,7 @@
     font-size: clamp(1.625rem, 4vw, 2.375rem);
     font-weight: 800;
     letter-spacing: -0.03em;
-    color: var(--bpd-off-white);
+    color: var(--bc-dark, #0C1D32);
     line-height: 1.2;
 }
 

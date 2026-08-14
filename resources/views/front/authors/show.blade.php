@@ -5,7 +5,7 @@
 @section('canonical', $author['profile_url'])
 
 @push('page-styles')
-    <link rel="stylesheet" href="{{ asset('css/authors-index.css') }}?v=3">
+    <link rel="stylesheet" href="{{ asset('css/authors-index.css') }}?v=4">
 @endpush
 
 @section('main_content')

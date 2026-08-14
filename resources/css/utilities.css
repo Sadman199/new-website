@@ -37,10 +37,8 @@
     display: none !important;
 }
 
-/* Kept for leftover Blade/HTML that still uses Tailwind's class name until those pages migrate */
-.hidden {
-    display: none !important;
-}
+/* Do NOT override Tailwind's .hidden here — a !important rule breaks
+   responsive pairs like `hidden lg:flex` / `hidden md:table-cell`. */
 
 .overflow-hidden {
     overflow: hidden !important;
@@ -49,3 +47,4 @@
 .rotate-180 {
     transform: rotate(180deg);
 }
+

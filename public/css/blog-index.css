@@ -1,21 +1,45 @@
 /* Blog index — BrokersCourt premium theme */
 .bli-page {
-    --bli-ocean: var(--bc-primary, #007AAD);
-    --bli-ocean-dark: var(--bc-primary-dark, #006694);
-    --bli-midnight: var(--bc-dark, #0C1D32);
-    --bli-ice: var(--bc-light, #D9E2E9);
-    --bli-off-white: #FFFBFC;
-    --bli-bg: #f4f6f9;
-    --bli-surface: #ffffff;
-    --bli-border: rgba(217, 226, 233, 0.95);
-    --bli-muted: #64748b;
-    --bli-text: #0C1D32;
+    --bli-ocean: #e8822a;
+    --bli-ocean-dark: #c46a16;
+    --bli-ocean-light: #f5a623;
+    --bli-midnight: #1c1e24;
+    --bli-ice: #e8e2d9;
+    --bli-off-white: #fffdfb;
+    --bli-surface: rgba(255, 255, 255, 0.78);
+    --bli-border: rgba(226, 220, 210, 0.95);
+    --bli-muted: #6b7280;
+    --bli-text: #1c1e24;
+    --bc-primary: #e8822a;
+    --bc-primary-dark: #c46a16;
+    --bc-primary-light: #f5a623;
+    --bc-primary-rgb: 232, 130, 42;
+    --bc-dark: #1c1e24;
+    --bc-text: #1c1e24;
 
-    background: var(--bli-bg);
+    position: relative;
+    background: linear-gradient(160deg, #f6f7f9 0%, #eef0f3 40%, #f9f3ea 100%);
     color: var(--bli-text);
     min-height: 100vh;
     padding-bottom: 3rem;
     overflow-x: clip;
+}
+
+/* Page-wide warm glow, mirrors the hero blobs */
+.bli-page::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    background:
+        radial-gradient(ellipse 45% 22% at 88% 14%, rgba(245, 166, 35, 0.14) 0%, transparent 60%),
+        radial-gradient(ellipse 40% 20% at 6% 52%, rgba(255, 214, 130, 0.14) 0%, transparent 60%);
+}
+
+.bli-page > * {
+    position: relative;
+    z-index: 1;
 }
 
 .bli-page *,
@@ -29,15 +53,22 @@
     margin: 0 auto;
 }
 
-/* Hero — dark theme */
+/* Hero — glass blobs over a warm light gradient */
 .bli-hero {
-    background: var(--bli-midnight);
-    border-bottom: 1px solid rgba(217, 226, 233, 0.1);
-    padding: 5.5rem 0 2rem;
+    position: relative;
+    overflow: hidden;
+    padding: calc(var(--bc-nav-height, 5.5rem) + 2.75rem) 0 2rem;
     margin-bottom: 1.5rem;
-    background-image:
-        radial-gradient(ellipse 70% 55% at 50% -15%, rgba(0, 122, 173, 0.28) 0%, transparent 58%),
-        linear-gradient(180deg, #0f2744 0%, var(--bli-midnight) 100%);
+    background:
+        radial-gradient(ellipse 46% 62% at 88% 6%, rgba(245, 166, 35, 0.26) 0%, transparent 62%),
+        radial-gradient(ellipse 40% 58% at 3% 44%, rgba(255, 214, 130, 0.28) 0%, transparent 62%),
+        radial-gradient(ellipse 42% 50% at 62% 96%, rgba(232, 130, 42, 0.12) 0%, transparent 62%);
+    border-bottom: 1px solid rgba(232, 130, 42, 0.14);
+}
+
+.bli-hero > * {
+    position: relative;
+    z-index: 1;
 }
 
 .bli-breadcrumb {
@@ -47,16 +78,16 @@
     gap: 0.4rem;
     margin-bottom: 1rem;
     font-size: 0.8125rem;
-    color: rgba(217, 226, 233, 0.55);
+    color: #6b7280;
 }
 
 .bli-breadcrumb a {
-    color: rgba(217, 226, 233, 0.78);
+    color: #6b7280;
     text-decoration: none;
 }
 
 .bli-breadcrumb a:hover {
-    color: var(--bli-off-white);
+    color: var(--bc-primary, #e8822a);
 }
 
 .bli-hero__eyebrow {
@@ -69,9 +100,12 @@
     letter-spacing: 0.06em;
     text-transform: uppercase;
     color: var(--bli-ocean);
-    background: rgba(0, 122, 173, 0.12);
-    border: 1px solid rgba(0, 122, 173, 0.22);
+    background: rgba(255, 255, 255, 0.55);
+    border: 1px solid rgba(255, 255, 255, 0.7);
     border-radius: 999px;
+    box-shadow: 0 8px 24px rgba(60, 50, 40, 0.06);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
 }
 
 .bli-hero__title {
@@ -80,7 +114,7 @@
     font-size: clamp(1.75rem, 4vw, 2.375rem);
     font-weight: 800;
     letter-spacing: -0.03em;
-    color: var(--bli-off-white);
+    color: var(--bc-dark, #1c1e24);
     line-height: 1.15;
 }
 
@@ -93,7 +127,7 @@
     max-width: 38rem;
     font-size: clamp(0.9375rem, 2vw, 1.0625rem);
     font-weight: 500;
-    color: rgba(217, 226, 233, 0.82);
+    color: #6b7280;
     line-height: 1.55;
 }
 
@@ -104,7 +138,7 @@
     border: 1px solid var(--bli-border);
     border-radius: 0.75rem;
     background: var(--bli-surface);
-    box-shadow: 0 1px 3px rgba(12, 29, 50, 0.05);
+    box-shadow: 0 1px 3px rgba(60, 50, 40, 0.05);
 }
 
 .bli-tabs__scroll {
@@ -144,15 +178,15 @@
 
 .bli-tab:hover {
     color: var(--bli-text);
-    background: rgba(217, 226, 233, 0.35);
+    background: rgba(226, 220, 210, 0.35);
     border-color: var(--bli-border);
 }
 
 .bli-tab.is-active {
     color: var(--bli-midnight);
-    background: rgba(0, 122, 173, 0.08);
-    border-color: rgba(0, 122, 173, 0.28);
-    box-shadow: 0 1px 2px rgba(0, 122, 173, 0.12);
+    background: rgba(232, 130, 42, 0.08);
+    border-color: rgba(232, 130, 42, 0.28);
+    box-shadow: 0 1px 2px rgba(232, 130, 42, 0.12);
 }
 
 .bli-tab__count {
@@ -162,14 +196,14 @@
     min-width: 1.375rem;
     padding: 0.1rem 0.4rem;
     border-radius: 999px;
-    background: rgba(217, 226, 233, 0.55);
+    background: rgba(226, 220, 210, 0.55);
     color: var(--bli-muted);
     font-size: 0.6875rem;
     font-weight: 700;
 }
 
 .bli-tab.is-active .bli-tab__count {
-    background: rgba(0, 122, 173, 0.14);
+    background: rgba(232, 130, 42, 0.14);
     color: var(--bli-ocean-dark);
 }
 
@@ -184,14 +218,14 @@
     border-radius: 0.625rem;
     background: var(--bli-surface);
     overflow: hidden;
-    box-shadow: 0 1px 2px rgba(12, 29, 50, 0.04);
+    box-shadow: 0 1px 2px rgba(60, 50, 40, 0.04);
 }
 
 .bli-ticker__badge {
     flex-shrink: 0;
     padding: 0.2rem 0.55rem;
     border-radius: 0.25rem;
-    background: var(--bli-ocean);
+    background: var(--bli-ocean-dark);
     color: var(--bli-off-white);
     font-size: 0.6875rem;
     font-weight: 800;
@@ -303,7 +337,7 @@
     border: 1px solid var(--bli-border);
     border-radius: 0.625rem;
     background: var(--bli-surface);
-    box-shadow: 0 1px 2px rgba(12, 29, 50, 0.04);
+    box-shadow: 0 1px 2px rgba(60, 50, 40, 0.04);
 }
 
 .bli-trust__icon {
@@ -314,7 +348,7 @@
     height: 2rem;
     margin-bottom: 0.625rem;
     border-radius: 0.5rem;
-    background: rgba(0, 122, 173, 0.08);
+    background: rgba(232, 130, 42, 0.08);
     color: var(--bli-ocean);
 }
 

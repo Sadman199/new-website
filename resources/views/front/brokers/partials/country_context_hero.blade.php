@@ -5,7 +5,8 @@
 @php
     use Illuminate\Support\Str;
 
-    $variant = $variant ?? '';
+    // The compact inline strip is the shared look for every page that shows this banner.
+    $variant = 'inline';
     $context = $context ?? 'listing';
     $ctx = $pageCountry ?? $preferredCountry ?? null;
     $slug = $ctx['slug'] ?? 'global';
@@ -16,7 +17,7 @@
 
 @if($shouldShow && $ctx)
     @once
-        <link rel="stylesheet" href="{{ asset('css/broker-country-hero.css') }}?v=2">
+        <link rel="stylesheet" href="{{ asset('css/broker-country-hero.css') }}?v=6">
     @endonce
     @php
         $countryName = $ctx['name'] ?? 'your region';

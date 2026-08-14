@@ -3,74 +3,33 @@ html {
     overflow-x: clip;
 }
 
-.bc-btn-primary,
+/* Prefer token-driven buttons; keep soft aliases for Bootstrap .btn-primary */
 .btn-primary,
-.ua-btn--primary,
 .mf-cta__card.is-primary {
-    background: var(--bc-primary, #007AAD) !important;
-    border-color: var(--bc-primary, #007AAD) !important;
-}
-
-#scrollToTopBtn {
-    position: fixed;
-    bottom: 1.5rem;
-    right: 1.5rem;
-    z-index: 40;
-    width: 2.75rem;
-    height: 2.75rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: none;
-    border-radius: 50%;
+    background: var(--bc-primary);
+    border-color: var(--bc-primary);
     color: #fff;
-    background: var(--bc-primary, #007AAD);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    cursor: pointer;
-    opacity: 0;
-    visibility: hidden;
-    pointer-events: none;
-    transform: translateY(0.5rem);
-    transition: opacity 0.2s ease, visibility 0.2s ease, transform 0.2s ease, background 0.2s ease;
 }
 
-#scrollToTopBtn.is-visible {
-    opacity: 1;
-    visibility: visible;
-    pointer-events: auto;
-    transform: translateY(0);
+.btn-primary:hover {
+    background: var(--bc-primary-dark);
+    border-color: var(--bc-primary-dark);
+    color: #fff;
 }
 
-#scrollToTopBtn:hover {
-    background: var(--bc-primary-dark, #006694);
+#scrollToTopBtn,
+.bc-scroll-top {
+    background: var(--bc-primary);
 }
 
-.bc-btn-primary:hover,
-.btn-primary:hover,
-.ua-btn--primary:hover {
-    background: var(--bc-primary-dark, #006694) !important;
-    border-color: var(--bc-primary-dark, #006694) !important;
+#scrollToTopBtn:hover,
+.bc-scroll-top:hover {
+    background: var(--bc-primary-dark);
 }
 
-a.ua-link,
 .mf-cta__card.is-primary .mf-cta__arrow,
 .text-primary {
-    color: var(--bc-primary, #007AAD) !important;
-}
-
-.ua-root,
-.pf-root {
-    --ua-ocean: var(--bc-primary, #007AAD);
-    --ua-ocean-dark: var(--bc-primary-dark, #006694);
-    --ua-ocean-light: var(--bc-primary-light, #33a3d4);
-    --ua-midnight: var(--bc-dark, #0C1D32);
-    --ua-ice: var(--bc-light, #D9E2E9);
-    --pf-ocean: var(--bc-primary, #007AAD);
-    --pf-ocean-dark: var(--bc-primary-dark, #006694);
-    --pf-ocean-light: var(--bc-primary-light, #33a3d4);
-    --pf-midnight: var(--bc-dark, #0C1D32);
-    --pf-ice: var(--bc-light, #D9E2E9);
-    --pf-bg: var(--bc-dark, #0C1D32);
+    color: var(--bc-primary);
 }
 
 /* Expiry badges — shared across promotions, homepage, broker reviews */
@@ -110,9 +69,9 @@ a.ua-link,
 }
 
 .bc-expiry-badge--normal {
-    color: #0369a1;
-    background: rgba(0, 122, 173, 0.08);
-    border-color: rgba(0, 122, 173, 0.14);
+    color: #c46a16;
+    background: rgba(232, 130, 42, 0.08);
+    border-color: rgba(232, 130, 42, 0.14);
 }
 
 .bc-expiry-fact--urgent,

@@ -69,7 +69,7 @@
     padding: 0;
     font-size: 0.75rem;
     font-weight: 600;
-    color: var(--bc-primary, #007AAD);
+    color: #e8822a;
     cursor: pointer;
 }
 
@@ -112,11 +112,11 @@
 }
 
 .bc-notify-link.is-unread {
-    background: rgba(0, 122, 173, 0.05);
+    background: rgba(232, 130, 42, 0.06);
 }
 
 .bc-notify-link.is-unread:hover {
-    background: rgba(0, 122, 173, 0.08);
+    background: rgba(232, 130, 42, 0.1);
 }
 
 .bc-notify-title {
@@ -157,7 +157,7 @@
 .bc-notify-foot a {
     font-size: 0.8125rem;
     font-weight: 600;
-    color: var(--bc-primary, #007AAD);
+    color: #e8822a;
     text-decoration: none;
 }
 

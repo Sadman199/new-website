@@ -7,10 +7,10 @@
 @section('og_image_width', $guide->broker ? (string) \App\Services\BrokerOgImageService::WIDTH : '')
 @section('og_image_height', $guide->broker ? (string) \App\Services\BrokerOgImageService::HEIGHT : '')
 
-@push('head')
-    <link rel="stylesheet" href="{{ asset('css/best-broker-guide.css') }}?v=6">
-    <link rel="stylesheet" href="{{ asset('css/broker-review.css') }}?v=12">
-    <link rel="stylesheet" href="{{ asset('css/broker-guide-page.css') }}?v=1">
+@push('page-styles')
+    <link rel="stylesheet" href="{{ asset('css/best-broker-guide.css') }}?v=11">
+    <link rel="stylesheet" href="{{ asset('css/broker-review.css') }}?v=23">
+    <link rel="stylesheet" href="{{ asset('css/broker-guide-page.css') }}?v=2">
 @endpush
 
 @section('main_content')

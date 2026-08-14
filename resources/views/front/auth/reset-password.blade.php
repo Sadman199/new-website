@@ -6,7 +6,7 @@
 @section('canonical', route('user.password.reset', ['token' => $token]))
 
 @push('page-styles')
-    <link rel="stylesheet" href="{{ asset('css/user-account.css') }}?v=9">
+    <link rel="stylesheet" href="{{ asset('css/user-account.css') }}?v=11">
 @endpush
 
 @section('main_content')

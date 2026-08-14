@@ -3,6 +3,12 @@
         <div>
             <h2 class="bbg-scoreboard__title">Top broker scores</h2>
             <p class="bbg-scoreboard__meta">{{ count($guidePage['entries']) }} brokers ranked · {{ $guidePage['updated_at'] }}</p>
+            @if(($guidePage['country_matches'] ?? 0) > 0)
+                <p class="bbg-scoreboard__country">
+                    <span class="bbg-country-flag" aria-hidden="true">{{ $guidePage['country']['flag'] }}</span>
+                    {{ $guidePage['country_matches'] }} {{ Str::plural('broker', $guidePage['country_matches']) }} on this list available in {{ $guidePage['country']['name'] }}
+                </p>
+            @endif
         </div>
         <div class="bbg-scoreboard__nav">
             <button type="button" class="bbg-scoreboard__btn" data-bbg-carousel-prev aria-label="Previous brokers">
@@ -20,6 +26,9 @@
                class="bbg-score-card @if($entry['rank'] === 1) bbg-score-card--featured @endif">
                 @if($entry['rank'] === 1)
                     <span class="bbg-score-card__badge">Top pick</span>
+                @endif
+                @if($entry['in_country'] ?? false)
+                    <span class="bbg-score-card__country" title="Available in {{ $guidePage['country']['name'] }}">{{ $guidePage['country']['flag'] }}</span>
                 @endif
                 <span class="bbg-score-card__rank">#{{ $entry['rank'] }}</span>
                 <div class="bbg-score-card__logo">
@@ -114,7 +123,12 @@
                     <img src="{{ $entry['logo_url'] }}" alt="" loading="lazy" decoding="async">
                 @endif
                 <div>
-                    <h2 class="bbg-broker-card__title">{{ $entry['broker']->name }}</h2>
+                    <h2 class="bbg-broker-card__title">
+                        {{ $entry['broker']->name }}
+                        @if($entry['in_country'] ?? false)
+                            <span class="bbg-country-pill">{{ $guidePage['country']['flag'] }} Available in {{ $guidePage['country']['name'] }}</span>
+                        @endif
+                    </h2>
                     <p class="bbg-broker-card__score">{{ $entry['score_label'] }}: {{ number_format($entry['score'], 1) }}/5</p>
                 </div>
             </div>

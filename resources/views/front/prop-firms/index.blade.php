@@ -5,8 +5,8 @@
 @section('canonical', route('prop_firms.index'))
 
 @push('page-styles')
-    <link rel="stylesheet" href="{{ asset('css/prop-firms-design-system.css') }}?v=3">
-    <link rel="stylesheet" href="{{ asset('css/prop-firms-index.css') }}?v=4">
+    <link rel="stylesheet" href="{{ asset('css/prop-firms-design-system.css') }}?v=5">
+    <link rel="stylesheet" href="{{ asset('css/prop-firms-index.css') }}?v=6">
 @endpush
 
 @section('main_content')
@@ -26,14 +26,6 @@
             <h1 class="pf-index__title pf-display">Find your next <span>prop firm</span></h1>
             <p class="pf-index__lead">Compare evaluation programs, funding limits, profit splits, and platform features — curated for serious prop traders.</p>
 
-            @include('front.partials.hero_metrics', [
-                'stats' => [
-                    ['label' => 'Active firms', 'value' => $stats['total'], 'tone' => 'highlight'],
-                    ['label' => 'Featured', 'value' => $stats['featured']],
-                    ['label' => 'Verified', 'value' => $stats['verified']],
-                    ['label' => 'Categories', 'value' => $stats['categories']],
-                ],
-            ])
         </div>
     </header>
 

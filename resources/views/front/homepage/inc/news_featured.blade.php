@@ -8,7 +8,7 @@
                     <a href="{{ route('news_detail', ['subcategory_slug' => $item->rSubCategory->slug, 'post_slug' => $item->slug]) }}" class="bv-news__card">
                         <div class="bv-news__card-img">
                             @if($item->post_photo)
-                                <img src="{{ asset('uploads/'.$item->post_photo) }}" alt="">
+                                <img src="{{ asset('uploads/'.$item->post_photo) }}" alt="" loading="lazy" decoding="async">
                             @else
                                 <i class="fas fa-newspaper"></i>
                             @endif
@@ -45,7 +45,7 @@
                     <a href="{{ route('news_detail', ['subcategory_slug' => $item->rSubCategory->slug, 'post_slug' => $item->slug]) }}" class="bv-news__card">
                         <div class="bv-news__card-img">
                             @if($item->post_photo)
-                                <img src="{{ asset('uploads/'.$item->post_photo) }}" alt="">
+                                <img src="{{ asset('uploads/'.$item->post_photo) }}" alt="" loading="lazy" decoding="async">
                             @else
                                 <i class="fas fa-newspaper"></i>
                             @endif

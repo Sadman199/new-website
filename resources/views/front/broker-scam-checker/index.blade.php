@@ -10,7 +10,7 @@
 @section('canonical', route('broker.scam_checker'))
 
 @push('page-styles')
-    <link rel="stylesheet" href="{{ asset('css/broker-scam-checker.css') }}?v=4">
+    <link rel="stylesheet" href="{{ asset('css/broker-scam-checker.css') }}?v=6">
 @endpush
 
 @section('main_content')

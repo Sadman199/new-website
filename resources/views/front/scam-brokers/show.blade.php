@@ -8,7 +8,7 @@
 @section('og_image_height', (string) \App\Services\BrokerOgImageService::HEIGHT)
 
 @push('page-styles')
-    <link rel="stylesheet" href="{{ asset('css/scam-broker-detail.css') }}?v=3">
+    <link rel="stylesheet" href="{{ asset('css/scam-broker-detail.css') }}?v=6">
 @endpush
 
 @section('main_content')
@@ -72,30 +72,6 @@
                     <span class="sbd-hero__verdict-risk sbd-hero__verdict-risk--{{ $hero['risk_level'] }}">{{ ucfirst($hero['risk_level']) }} risk</span>
                 </div>
             </div>
-
-            @include('front.partials.hero_metrics', [
-                'stats' => array_values(array_filter([
-                    [
-                        'label' => 'Scam reported',
-                        'value_html' => $hero['reported_date']
-                            ? '<time datetime="'.$hero['reported_iso'].'">'.$hero['reported_date'].'</time>'
-                            : 'Under review',
-                        'tone' => 'primary',
-                    ],
-                    $hero['days_since_report'] !== null ? [
-                        'label' => 'On watchlist',
-                        'value' => $hero['days_since_report'].' days',
-                    ] : null,
-                    [
-                        'label' => 'Flagged brokers',
-                        'value' => number_format($scamCount),
-                    ],
-                    $detail['reports']['count'] > 0 ? [
-                        'label' => 'User reports',
-                        'value' => number_format($detail['reports']['count']),
-                    ] : null,
-                ])),
-            ])
 
             @if(!empty($hero['warning_tags']))
                 <div class="sbd-hero__tags">

@@ -229,7 +229,7 @@ $popularReviewBrokers = ($popularReviewBrokers ?? collect())->take(10);
                                 @if($broker->logo)<img src="{{ asset($broker->logo) }}" alt="" class="bc-broker-row__logo-img" loading="lazy" decoding="async" width="28" height="28">@endif
                             </div>
                             <span class="bc-broker-row__name">{{ $broker->name }}</span>
-                            <span class="bc-score">? {{ number_format($broker->rating, 1) }}</span>
+                            <span class="bc-score">★ {{ number_format($broker->rating, 1) }}</span>
                         </a>
                     @endforeach
                 </div>
@@ -284,9 +284,9 @@ $popularReviewBrokers = ($popularReviewBrokers ?? collect())->take(10);
                 </div>
             </div>
             <div class="bc-mega-bottom">
-                <p>Independent comparisons ? find your ideal broker in seconds.</p>
+                <p>Independent comparisons — find your ideal broker in seconds.</p>
                 <div class="bc-mega-bottom__actions">
-                    <a href="{{ route('methodology') }}" class="bc-mega-footer" style="margin:0;padding:0;border:none;">Our methodology ?</a>
+                    <a href="{{ route('methodology') }}" class="bc-mega-footer" style="margin:0;padding:0;border:none;">Our methodology →</a>
                     <a href="{{ route('brokers.best.index') }}" class="bc-btn-primary">Explore all brokers</a>
                 </div>
             </div>

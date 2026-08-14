@@ -14,10 +14,10 @@
         @foreach($global_sidebar_top_ad as $row)
             <div class="mb-4 last:mb-0 group relative">
                 @if($row->sidebar_ad_url == '')
-                    <img src="{{ asset('uploads/'.$row->sidebar_ad) }}" alt="Octa Bonus Offer" class="w-full rounded-lg border border-gray-200">
+                    <img src="{{ asset('uploads/'.$row->sidebar_ad) }}" alt="Octa Bonus Offer" class="w-full rounded-lg border border-gray-200" loading="lazy" decoding="async">
                 @else
                     <a href="{{ $row->sidebar_ad_url }}" target="_blank" rel="noopener noreferrer">
-                        <img src="{{ asset('uploads/'.$row->sidebar_ad) }}" alt="Octa Bonus Offer" class="w-full rounded-lg border border-gray-200 transition-transform duration-300 group-hover:scale-[1.02]">
+                        <img src="{{ asset('uploads/'.$row->sidebar_ad) }}" alt="Octa Bonus Offer" class="w-full rounded-lg border border-gray-200 transition-transform duration-300 group-hover:scale-[1.02]" loading="lazy" decoding="async">
                         <div class="absolute inset-0 bg-black/5 group-hover:bg-black/10 transition-colors duration-300 rounded-lg"></div>
                     </a>
                 @endif

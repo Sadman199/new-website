@@ -367,10 +367,15 @@
 
 /* Targeted strip on high-intent pages */
 .bc-country-strip {
+    --cs-orange: #e8822a;
+    --cs-orange-light: #f5a623;
+
     padding: 2rem 0 2.5rem;
-    background: linear-gradient(135deg, var(--bc-dark, #0C1D32) 0%, #0f2744 100%);
-    color: var(--bc-light, #D9E2E9);
-    border-top: 3px solid var(--bc-primary, #007AAD);
+    background:
+        radial-gradient(ellipse 60% 100% at 15% 0%, rgba(232, 130, 42, 0.14) 0%, transparent 62%),
+        linear-gradient(135deg, #12151a 0%, #0b0d12 100%);
+    color: #e8e2d9;
+    border-top: 1px solid rgba(232, 130, 42, 0.35);
 }
 
 .bc-country-strip__container {
@@ -401,8 +406,8 @@
     width: 2.5rem;
     height: 2.5rem;
     border-radius: 999px;
-    background: rgba(var(--bc-primary-rgb, 0, 122, 173), 0.2);
-    border: 1px solid rgba(var(--bc-primary-rgb, 0, 122, 173), 0.35);
+    background: rgba(232, 130, 42, 0.2);
+    border: 1px solid rgba(232, 130, 42, 0.35);
 }
 
 .bc-country-strip__title {
@@ -415,7 +420,7 @@
 .bc-country-strip__sub {
     margin: 0;
     font-size: 0.8125rem;
-    color: rgba(var(--bc-light-rgb, 217, 226, 233), 0.85);
+    color: rgba(240, 236, 230, 0.85);
 }
 
 .bc-country-strip__actions {
@@ -427,7 +432,7 @@
 .bc-country-strip__link {
     font-size: 0.875rem;
     font-weight: 700;
-    color: var(--bc-primary-light, #33a3d4);
+    color: var(--cs-orange-light);
     text-decoration: none;
 }
 
@@ -438,9 +443,9 @@
 
 .bc-country-strip__change {
     padding: 0.5rem 0.875rem;
-    border: 1px solid rgba(var(--bc-primary-rgb, 0, 122, 173), 0.45);
+    border: 1px solid rgba(232, 130, 42, 0.45);
     border-radius: 999px;
-    background: rgba(var(--bc-primary-rgb, 0, 122, 173), 0.12);
+    background: rgba(232, 130, 42, 0.12);
     color: #fff;
     font-size: 0.8125rem;
     font-weight: 600;
@@ -448,8 +453,8 @@
 }
 
 .bc-country-strip__change:hover {
-    background: var(--bc-primary, #007AAD);
-    border-color: var(--bc-primary, #007AAD);
+    background: var(--cs-orange);
+    border-color: var(--cs-orange);
 }
 
 .bc-country-strip__grid {
@@ -471,7 +476,7 @@
 
 .bc-country-strip .bc-country-mini {
     background: rgba(255, 255, 255, 0.04);
-    border-color: rgba(var(--bc-light-rgb, 217, 226, 233), 0.12);
+    border-color: rgba(240, 236, 230, 0.12);
 }
 
 .bc-country-strip .bc-country-mini__name {
@@ -479,15 +484,15 @@
 }
 
 .bc-country-strip .bc-country-mini__name:hover {
-    color: var(--bc-primary-light, #33a3d4);
+    color: var(--cs-orange-light);
 }
 
 .bc-country-strip .bc-country-mini__meta {
-    color: rgba(var(--bc-light-rgb, 217, 226, 233), 0.75);
+    color: rgba(240, 236, 230, 0.75);
 }
 
 .bc-country-strip .bc-country-mini__hq {
-    color: var(--bc-primary-light, #33a3d4);
+    color: var(--cs-orange-light);
 }
 
 .bc-country-strip .bc-country-mini__logo {
@@ -495,9 +500,14 @@
 }
 
 .bc-country-strip .bc-country-mini__cta {
-    background: var(--bc-primary, #007AAD);
+    color: #fff;
+    background: rgba(232, 130, 42, 0.18);
+    border: 1px solid rgba(232, 130, 42, 0.42);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
 }
 
 .bc-country-strip .bc-country-mini__cta:hover {
-    background: var(--bc-primary-dark, #006694);
+    background: rgba(232, 130, 42, 0.3);
+    border-color: rgba(232, 130, 42, 0.6);
 }

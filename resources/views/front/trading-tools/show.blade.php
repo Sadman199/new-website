@@ -5,7 +5,7 @@
 @section('canonical', route('trading.tools.show', ['slug' => $slug]))
 
 @push('page-styles')
-    <link rel="stylesheet" href="{{ asset('css/trading-tools.css') }}?v=2">
+    <link rel="stylesheet" href="{{ asset('css/trading-tools.css') }}?v=6">
 @endpush
 
 @section('main_content')
@@ -85,5 +85,5 @@
 @endsection
 
 @push('scripts')
-<script src="{{ asset('js/trading-tools.js') }}?v=2"></script>
+<script src="{{ asset('js/trading-tools.js') }}?v=2" defer></script>
 @endpush

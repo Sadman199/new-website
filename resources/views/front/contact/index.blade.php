@@ -5,7 +5,7 @@
 @section('canonical', route('contact'))
 
 @push('page-styles')
-    <link rel="stylesheet" href="{{ asset('css/contact-index.css') }}?v=3">
+    <link rel="stylesheet" href="{{ asset('css/contact-index.css') }}?v=4">
 @endpush
 
 @section('main_content')
@@ -30,13 +30,6 @@
                 <p class="cti-hero__subtitle">{!! strip_tags($page['detail'], '<p><br><strong><em>') !!}</p>
             @endif
 
-            @include('front.partials.hero_metrics', [
-                'stats' => collect($stats)->map(fn ($stat, $index) => [
-                    'label' => $stat['label'],
-                    'value' => $stat['value'],
-                    'tone' => $index === 0 ? 'highlight' : null,
-                ])->values()->all(),
-            ])
         </div>
     </header>
 

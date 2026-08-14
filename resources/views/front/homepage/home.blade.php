@@ -3,10 +3,10 @@
 @section('meta_description', 'Independent broker research and comparison. Filter ' . ($brokerCount ?? 10) . '+ forex brokers by regulation, cost, leverage, and platform — read expert reviews and find your match.')
 @section('canonical', route('home'))
 
-@push('head')
-    <link rel="stylesheet" href="{{ asset('css/insight-cards.css') }}?v=1">
-    <link rel="stylesheet" href="{{ asset('css/broker-match-quiz.css') }}?v=8">
-    <link rel="stylesheet" href="{{ asset('css/homepage.css') }}?v=46">
+@push('page-styles')
+    <link rel="stylesheet" href="{{ asset('css/insight-cards.css') }}?v=3">
+    <link rel="stylesheet" href="{{ asset('css/broker-match-quiz.css') }}?v=13">
+    <link rel="stylesheet" href="{{ asset('css/homepage.css') }}?v=56">
 @endpush
 
 @section('main_content')
@@ -17,11 +17,11 @@
     @include('front.homepage.inc.broker_match_quiz')
     @include('front.homepage.inc.broker_sentiment')
     @include('front.homepage.inc.news_insights')
-    @include('front.homepage.inc.explore_categories')
+    @include('front.homepage.inc.award_winners')
 </div>
 @endsection
 
 @push('scripts')
-<script src="{{ asset('js/homepage.js') }}?v=14"></script>
-<script src="{{ asset('js/broker-match-quiz.js') }}?v=6"></script>
+<script src="{{ asset('js/homepage.js') }}?v=15" defer></script>
+<script src="{{ asset('js/broker-match-quiz.js') }}?v=6" defer></script>
 @endpush

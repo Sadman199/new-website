@@ -1,20 +1,22 @@
 <link rel="stylesheet" href="{{ asset('dist/css/bootstrap.min.css') }}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
-    <link rel="stylesheet" href="{{ asset('dist/css/select2.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('dist/css/bootstrap-datepicker.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('dist/css/bootstrap-timepicker.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('dist/css/bootstrap-tagsinput.css') }}">
-    <link rel="stylesheet" href="{{ asset('dist/css/duotone-dark.css') }}">
-    <link rel="stylesheet" href="{{ asset('dist/css/dataTables.bootstrap4.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('dist/css/iziToast.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('dist/css/fontawesome-iconpicker.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('dist/css/bootstrap4-toggle.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('dist/css/summernote-bs4.css') }}">
-    <link rel="stylesheet" href="{{ asset('dist/css/style.css') }}">
-    <link rel="stylesheet" href="{{ asset('dist/css/components.css') }}">
-    <link rel="stylesheet" href="{{ asset('dist/css/spacing.css') }}">
-    <link rel="stylesheet" href="{{ asset('dist/css/custom.css') }}">
-    <style id="admin-site-theme-vars">{!! \App\Support\SiteTheme::cssBlock() !!}</style>
-    <link rel="stylesheet" href="{{ asset('css/admin-sidebar.css') }}?v=4">
-    <link rel="stylesheet" href="{{ asset('css/admin-shell.css') }}?v=1">
-    <link rel="stylesheet" href="{{ asset('css/admin-dashboard.css') }}?v=2">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
+<link rel="stylesheet" href="{{ asset('dist/css/select2.min.css') }}">
+<link rel="stylesheet" href="{{ asset('dist/css/bootstrap-datepicker.min.css') }}">
+<link rel="stylesheet" href="{{ asset('dist/css/bootstrap-timepicker.min.css') }}">
+<link rel="stylesheet" href="{{ asset('dist/css/bootstrap-tagsinput.css') }}">
+<link rel="stylesheet" href="{{ asset('dist/css/duotone-dark.css') }}">
+<link rel="stylesheet" href="{{ asset('dist/css/dataTables.bootstrap4.min.css') }}">
+<link rel="stylesheet" href="{{ asset('dist/css/iziToast.min.css') }}">
+<link rel="stylesheet" href="{{ asset('dist/css/fontawesome-iconpicker.min.css') }}">
+<link rel="stylesheet" href="{{ asset('dist/css/bootstrap4-toggle.min.css') }}">
+<link rel="stylesheet" href="{{ asset('dist/css/summernote-bs4.css') }}">
+<link rel="stylesheet" href="{{ asset('dist/css/style.css') }}">
+<link rel="stylesheet" href="{{ asset('dist/css/components.css') }}">
+<link rel="stylesheet" href="{{ asset('dist/css/spacing.css') }}">
+<link rel="stylesheet" href="{{ asset('dist/css/custom.css') }}">
+<style id="admin-site-theme-vars">{!! \App\Support\SiteTheme::cssBlock() !!}</style>
+<link rel="stylesheet" href="{{ asset('css/admin-sidebar.css') }}?v=5">
+<link rel="stylesheet" href="{{ asset('css/admin-shell.css') }}?v=2">
+@hasSection('dashboard_page')
+    <link rel="stylesheet" href="{{ asset('css/admin-dashboard.css') }}?v=3">
+@endif

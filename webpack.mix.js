@@ -7,3 +7,8 @@ mix.postCss('resources/css/app.css', 'public/css', [
 ]).options({
     processCssUrls: false,
 });
+
+mix.postCss('resources/css/admin-tw.css', 'public/css', [
+    require('tailwindcss')('./tailwind.admin.config.js'),
+    require('autoprefixer'),
+]);

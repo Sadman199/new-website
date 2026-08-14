@@ -16,7 +16,7 @@
     <div class="flex items-center p-4">
         <div class="flex-shrink-0 h-16 w-16 bg-gray-100 overflow-hidden border border-gray-200 rounded-md">
             @if ($bonus->feature_image)
-                <img src="{{ asset($bonus->feature_image) }}" alt="{{ $bonus->title }}" class="h-full w-full object-contain p-2">
+                <img src="{{ asset($bonus->feature_image) }}" alt="{{ $bonus->title }}" class="h-full w-full object-contain p-2" width="64" height="64" loading="lazy" decoding="async">
             @else
                 <div class="h-full w-full flex items-center justify-center text-gray-400">
                     <i class="fas fa-building text-2xl"></i>

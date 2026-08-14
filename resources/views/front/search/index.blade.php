@@ -7,8 +7,8 @@
 @section('robots', 'noindex, follow')
 @section('canonical', route('search'))
 
-@push('head')
-    <link rel="stylesheet" href="{{ asset('css/site-search.css') }}?v=2">
+@push('page-styles')
+    <link rel="stylesheet" href="{{ asset('css/site-search.css') }}?v=5">
 @endpush
 
 @section('main_content')

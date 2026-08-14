@@ -5,7 +5,7 @@
 @section('canonical', route('trading.tools'))
 
 @push('page-styles')
-    <link rel="stylesheet" href="{{ asset('css/trading-tools.css') }}?v=4">
+    <link rel="stylesheet" href="{{ asset('css/trading-tools.css') }}?v=6">
 @endpush
 
 @section('main_content')
@@ -31,14 +31,6 @@
                 Fibonacci levels, currency conversion, and live market data — each with its own dedicated page.
             </p>
 
-            @include('front.partials.hero_metrics', [
-                'stats' => [
-                    ['label' => 'Tools', 'value' => $tools->count(), 'tone' => 'highlight'],
-                    ['label' => 'Results', 'value' => 'Instant'],
-                    ['label' => 'Cost', 'value' => 'Free'],
-                    ['label' => 'Updated', 'value' => date('Y')],
-                ],
-            ])
         </div>
     </header>
 

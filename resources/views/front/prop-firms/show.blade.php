@@ -8,8 +8,8 @@
 @section('og_image', $firm->og_image ?: ($firm->logo ?: ''))
 
 @push('page-styles')
-    <link rel="stylesheet" href="{{ asset('css/prop-firms-design-system.css') }}?v=3">
-    <link rel="stylesheet" href="{{ asset('css/prop-firm-detail.css') }}?v=3">
+    <link rel="stylesheet" href="{{ asset('css/prop-firms-design-system.css') }}?v=5">
+    <link rel="stylesheet" href="{{ asset('css/prop-firm-detail.css') }}?v=5">
 @endpush
 
 @section('main_content')

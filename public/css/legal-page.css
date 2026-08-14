@@ -1,15 +1,15 @@
 /* Shared legal pages — privacy, terms, disclaimer, methodology */
 .legal-page {
-    --legal-bg: var(--bc-dark, #0C1D32);
-    --legal-mid: #0f2744;
-    --legal-panel: rgba(19, 40, 67, 0.72);
-    --legal-border: rgba(217, 226, 233, 0.16);
-    --legal-text: rgba(217, 226, 233, 0.92);
-    --legal-muted: rgba(217, 226, 233, 0.72);
-    --legal-title: #9ca3af;
+    --legal-bg: #ffffff;
+    --legal-mid: #ffffff;
+    --legal-panel: #ffffff;
+    --legal-border: #e2e8f0;
+    --legal-text: #334155;
+    --legal-muted: #64748b;
+    --legal-title: #0C1D32;
     min-height: 100vh;
     padding: 5.5rem 0 3rem;
-    background: linear-gradient(180deg, var(--legal-mid) 0%, var(--legal-bg) 100%);
+    background: #f4f6f9;
     color: var(--legal-text);
     position: relative;
     overflow: hidden;

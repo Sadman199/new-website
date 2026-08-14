@@ -20,7 +20,7 @@
                     <td class="py-4 pl-6 pr-4">
                         <div class="flex items-center space-x-4">
                             <div class="flex-shrink-0 h-12 w-12 rounded-md border border-gray-200 bg-white p-1 shadow-sm">
-                                <img src="{{ asset($broker->logo) }}" alt="{{ $broker->name }}" class="h-full w-full object-contain">
+                                <img src="{{ asset($broker->logo) }}" alt="{{ $broker->name }}" class="h-full w-full object-contain" width="48" height="48" loading="lazy" decoding="async">
                             </div>
                             <div class="min-w-0">
                                 <div class="flex items-center">

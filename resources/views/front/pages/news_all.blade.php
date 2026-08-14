@@ -3,7 +3,7 @@
 @section('meta_description', 'Dive into ' . strtolower($section_title) . ' and stay updated with the most insightful articles and forex trends on BrokersCourt.')
 
 @push('page-styles')
-    <link rel="stylesheet" href="{{ asset('css/blog-listing.css') }}?v=1">
+    <link rel="stylesheet" href="{{ asset('css/blog-listing.css') }}?v=2">
 @endpush
 
 @section('main_content')

@@ -1,27 +1,52 @@
-/* Trading tools — BrokersCourt dark ocean theme */
+/* Trading tools — BrokersCourt warm light-glass theme */
 .tt-page {
-    --tt-ocean: var(--bc-primary, #007AAD);
-    --tt-ocean-light: #33a3d4;
-    --tt-ocean-dark: var(--bc-primary-dark, #006694);
-    --tt-midnight: var(--bc-dark, #0C1D32);
-    --tt-bg-mid: #0f2744;
-    --tt-ice: var(--bc-light, #D9E2E9);
-    --tt-off-white: #FFFBFC;
-    --tt-muted: rgba(217, 226, 233, 0.62);
-    --tt-dim: rgba(217, 226, 233, 0.38);
-    --tt-border: rgba(217, 226, 233, 0.12);
-    --tt-border-strong: rgba(217, 226, 233, 0.2);
-    --tt-surface: rgba(19, 40, 67, 0.82);
-    --tt-surface-solid: #132843;
-    --tt-success: #34d399;
-    --tt-danger: #f87171;
+    --tt-ocean: #e8822a;
+    --tt-ocean-light: #f5a623;
+    --tt-ocean-dark: #c46a16;
+    --tt-midnight: #1c1e24;
+    --tt-bg-mid: rgba(255, 255, 255, 0.78);
+    --tt-ice: #e8e2d9;
+    --tt-off-white: #1c1e24;
+    --tt-muted: #6b7280;
+    --tt-dim: #8b8f98;
+    --tt-border: rgba(226, 220, 210, 0.95);
+    --tt-border-strong: rgba(232, 130, 42, 0.28);
+    --tt-surface: rgba(255, 255, 255, 0.78);
+    --tt-surface-solid: rgba(255, 255, 255, 0.9);
+    --tt-glass: rgba(255, 255, 255, 0.62);
+    --tt-success: #059669;
+    --tt-danger: #dc2626;
     --tt-radius: 14px;
     --tt-radius-lg: 18px;
+    --bc-primary: #e8822a;
+    --bc-primary-dark: #c46a16;
+    --bc-primary-light: #f5a623;
+    --bc-primary-rgb: 232, 130, 42;
+    --bc-dark: #1c1e24;
+    --bc-text: #1c1e24;
 
+    position: relative;
     min-height: 100vh;
-    background: var(--tt-midnight);
-    color: var(--tt-off-white);
+    background: linear-gradient(160deg, #f6f7f9 0%, #eef0f3 40%, #f9f3ea 100%);
+    color: var(--tt-midnight);
     padding-bottom: 3rem;
+}
+
+/* Page-wide warm glow, mirrors the hero blobs */
+.tt-page::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    background:
+        radial-gradient(ellipse 45% 22% at 88% 14%, rgba(245, 166, 35, 0.14) 0%, transparent 60%),
+        radial-gradient(ellipse 40% 20% at 6% 52%, rgba(255, 214, 130, 0.14) 0%, transparent 60%);
+}
+
+.tt-page > * {
+    position: relative;
+    z-index: 1;
 }
 
 .tt-page *,
@@ -31,7 +56,7 @@
 }
 
 body:has(.tt-page) {
-    background: var(--tt-midnight);
+    background: #f6f7f9;
 }
 
 .tt-wrap {
@@ -45,19 +70,39 @@ body:has(.tt-page) {
     }
 }
 
-/* Hero */
+/* Frosted surfaces shared by the hub cards, dashboard and tool panels */
+.tt-dashboard,
+.tt-tool,
+.tt-sidebar,
+.tt-hub-card,
+.tt-results-panel,
+.tt-markets-embed {
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    box-shadow: 0 12px 32px -18px rgba(60, 50, 40, 0.35);
+}
+
+/* Hero — glass blobs over a warm light gradient */
 .tt-hero {
     position: relative;
     overflow: hidden;
-    padding: 5.25rem 0 2rem;
-    border-bottom: 1px solid var(--tt-border);
+    padding: calc(var(--bc-nav-height, 5.5rem) + 2.75rem) 0 2.25rem;
+    border-bottom: 1px solid rgba(232, 130, 42, 0.14);
+}
+
+.tt-hero > * {
+    position: relative;
+    z-index: 1;
 }
 
 .tt-hero__bg {
     position: absolute;
     inset: 0;
     pointer-events: none;
-    background: linear-gradient(180deg, var(--tt-bg-mid) 0%, var(--tt-midnight) 100%);
+    background:
+        radial-gradient(ellipse 46% 62% at 88% 6%, rgba(245, 166, 35, 0.26) 0%, transparent 62%),
+        radial-gradient(ellipse 40% 58% at 3% 44%, rgba(255, 214, 130, 0.28) 0%, transparent 62%),
+        radial-gradient(ellipse 42% 50% at 62% 96%, rgba(232, 130, 42, 0.12) 0%, transparent 62%);
 }
 
 .tt-breadcrumb {
@@ -73,13 +118,13 @@ body:has(.tt-page) {
 }
 
 .tt-breadcrumb a {
-    color: rgba(217, 226, 233, 0.72);
+    color: #6b7280;
     text-decoration: none;
     transition: color 0.18s ease;
 }
 
 .tt-breadcrumb a:hover {
-    color: var(--tt-off-white);
+    color: var(--bc-primary, #e8822a);
 }
 
 .tt-hero__eyebrow {
@@ -94,9 +139,12 @@ body:has(.tt-page) {
     font-weight: 700;
     letter-spacing: 0.06em;
     text-transform: uppercase;
-    color: var(--tt-ocean-light);
-    background: rgba(0, 122, 173, 0.12);
-    border: 1px solid rgba(0, 122, 173, 0.22);
+    color: var(--tt-ocean);
+    background: rgba(255, 255, 255, 0.55);
+    border: 1px solid rgba(255, 255, 255, 0.7);
+    box-shadow: 0 8px 24px rgba(60, 50, 40, 0.06);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
     border-radius: 999px;
 }
 
@@ -114,11 +162,11 @@ body:has(.tt-page) {
     font-weight: 800;
     letter-spacing: -0.03em;
     line-height: 1.12;
-    color: var(--tt-off-white);
+    color: var(--bc-dark, #1c1e24);
 }
 
 .tt-hero__accent {
-    color: var(--tt-ocean-light);
+    color: var(--tt-ocean);
 }
 
 .tt-hero__subtitle {
@@ -147,7 +195,7 @@ body:has(.tt-page) {
 /* Tabs */
 .tt-tabs {
     border-bottom: 1px solid var(--tt-border);
-    background: rgba(12, 29, 50, 0.45);
+    background: rgba(255, 255, 255, 0.62);
     overflow-x: auto;
     scrollbar-width: none;
 }
@@ -181,24 +229,24 @@ body:has(.tt-page) {
 }
 
 .tt-tab i {
-    color: var(--tt-ocean-light);
+    color: var(--tt-ocean);
     font-size: 0.875rem;
 }
 
 .tt-tab:hover {
     color: var(--tt-off-white);
-    background: rgba(255, 255, 255, 0.04);
+    background: rgba(232, 130, 42, 0.06);
     border-color: var(--tt-border);
 }
 
 .tt-tab.is-active {
     color: var(--tt-off-white);
-    background: rgba(0, 122, 173, 0.14);
-    border-color: rgba(0, 122, 173, 0.32);
+    background: rgba(232, 130, 42, 0.14);
+    border-color: rgba(232, 130, 42, 0.32);
 }
 
 .tt-tab.is-active i {
-    color: var(--tt-ocean-light);
+    color: var(--tt-ocean);
 }
 
 /* Panels */
@@ -280,7 +328,7 @@ body:has(.tt-page) {
 .td-field input,
 .td-field select {
     width: 100%;
-    background: rgba(12, 29, 50, 0.65);
+    background: rgba(255, 255, 255, 0.85);
     border: 1px solid var(--tt-border-strong);
     border-radius: 10px;
     padding: 0.625rem 0.75rem;
@@ -296,8 +344,8 @@ body:has(.tt-page) {
 .td-field input:focus,
 .td-field select:focus {
     outline: none;
-    border-color: rgba(0, 122, 173, 0.55);
-    box-shadow: 0 0 0 3px rgba(0, 122, 173, 0.15);
+    border-color: rgba(232, 130, 42, 0.55);
+    box-shadow: 0 0 0 3px rgba(232, 130, 42, 0.15);
 }
 
 .td-field select option {
@@ -315,7 +363,7 @@ body:has(.tt-page) {
     padding: 0.625rem 0.75rem;
     border-radius: 10px;
     border: 1px solid var(--tt-border-strong);
-    background: rgba(12, 29, 50, 0.55);
+    background: rgba(255, 255, 255, 0.78);
     font-size: 0.8125rem;
     font-weight: 600;
     color: var(--tt-muted);
@@ -329,14 +377,14 @@ body:has(.tt-page) {
 }
 
 .dir-btn.active-buy {
-    background: rgba(52, 211, 153, 0.12);
-    border-color: rgba(52, 211, 153, 0.35);
+    background: rgba(5, 150, 105, 0.12);
+    border-color: rgba(5, 150, 105, 0.32);
     color: var(--tt-success);
 }
 
 .dir-btn.active-sell {
-    background: rgba(248, 113, 113, 0.12);
-    border-color: rgba(248, 113, 113, 0.35);
+    background: rgba(220, 38, 38, 0.1);
+    border-color: rgba(220, 38, 38, 0.28);
     color: var(--tt-danger);
 }
 
@@ -350,11 +398,14 @@ body:has(.tt-page) {
     font-size: 0.875rem;
     font-weight: 700;
     color: var(--tt-off-white);
-    background: var(--tt-ocean);
-    border: none;
+    background: rgba(232, 130, 42, 0.16);
+    border: 1px solid rgba(232, 130, 42, 0.4);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    box-shadow: 0 8px 24px rgba(60, 50, 40, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.7);
     border-radius: 10px;
     cursor: pointer;
-    transition: background 0.18s ease, transform 0.22s ease;
+    transition: background 0.18s ease, border-color 0.18s ease, transform 0.22s ease;
 }
 
 @media (min-width: 640px) {
@@ -364,7 +415,8 @@ body:has(.tt-page) {
 }
 
 .tt-calc-btn:hover {
-    background: var(--tt-ocean-dark);
+    background: rgba(232, 130, 42, 0.26);
+    border-color: rgba(232, 130, 42, 0.62);
     transform: translateY(-2px);
 }
 
@@ -374,7 +426,7 @@ body:has(.tt-page) {
 
 /* Results */
 .tt-results-panel {
-    background: rgba(12, 29, 50, 0.72);
+    background: rgba(255, 255, 255, 0.9);
     border: 1px solid var(--tt-border);
     border-radius: var(--tt-radius);
     padding: 1.125rem;
@@ -403,7 +455,7 @@ body:has(.tt-page) {
     font-weight: 700;
     letter-spacing: 0.06em;
     text-transform: uppercase;
-    color: var(--tt-ocean-light);
+    color: var(--tt-ocean);
 }
 
 .tt-status {
@@ -521,8 +573,8 @@ body:has(.tt-page) {
 }
 
 .tt-hub-card:hover {
-    border-color: rgba(0, 122, 173, 0.35);
-    background: rgba(19, 40, 67, 0.95);
+    border-color: rgba(232, 130, 42, 0.35);
+    background: rgba(255, 255, 255, 0.92);
     transform: translateY(-2px);
 }
 
@@ -534,9 +586,9 @@ body:has(.tt-page) {
     align-items: center;
     justify-content: center;
     border-radius: 0.625rem;
-    background: rgba(0, 122, 173, 0.14);
-    border: 1px solid rgba(0, 122, 173, 0.24);
-    color: var(--tt-ocean-light);
+    background: rgba(232, 130, 42, 0.14);
+    border: 1px solid rgba(232, 130, 42, 0.24);
+    color: var(--tt-ocean);
     font-size: 1rem;
 }
 
@@ -572,7 +624,7 @@ body:has(.tt-page) {
 }
 
 .tt-hub-card:hover .tt-hub-card__arrow {
-    color: var(--tt-ocean-light);
+    color: var(--tt-ocean);
 }
 
 /* Hub featured row — converter + live markets */
@@ -611,7 +663,7 @@ body:has(.tt-page) {
     margin-top: 0.75rem;
     font-size: 0.8125rem;
     font-weight: 700;
-    color: var(--tt-ocean-light);
+    color: var(--tt-ocean);
 }
 
 .tt-hub-card--featured:hover .tt-hub-card__cta {
@@ -624,7 +676,7 @@ body:has(.tt-page) {
     flex-direction: column;
     height: 100%;
     padding: 1.125rem;
-    background: rgba(19, 40, 67, 0.72);
+    background: rgba(255, 255, 255, 0.78);
     border: 1px solid var(--tt-border);
     border-radius: var(--tt-radius);
 }
@@ -642,7 +694,7 @@ body:has(.tt-page) {
     font-weight: 700;
     letter-spacing: 0.06em;
     text-transform: uppercase;
-    color: var(--tt-ocean-light);
+    color: var(--tt-ocean);
 }
 
 .tt-markets-embed__title {
@@ -751,20 +803,20 @@ body:has(.tt-page) {
 .tt-sidebar__link i {
     width: 1rem;
     text-align: center;
-    color: var(--tt-ocean-light);
+    color: var(--tt-ocean);
     font-size: 0.8125rem;
 }
 
 .tt-sidebar__link:hover {
     color: var(--tt-off-white);
-    background: rgba(255, 255, 255, 0.04);
+    background: rgba(232, 130, 42, 0.06);
     border-color: var(--tt-border);
 }
 
 .tt-sidebar__link.is-active {
     color: var(--tt-off-white);
-    background: rgba(0, 122, 173, 0.14);
-    border-color: rgba(0, 122, 173, 0.28);
+    background: rgba(232, 130, 42, 0.14);
+    border-color: rgba(232, 130, 42, 0.28);
 }
 
 .tt-sidebar__back {
@@ -774,7 +826,7 @@ body:has(.tt-page) {
     border-top: 1px solid var(--tt-border);
     font-size: 0.8125rem;
     font-weight: 600;
-    color: var(--tt-ocean-light);
+    color: var(--tt-ocean);
     text-decoration: none;
 }
 

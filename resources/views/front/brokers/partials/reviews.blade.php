@@ -5,9 +5,15 @@
             <p class="br-section__desc">Real trader feedback about {{ $broker->name }}</p>
         </div>
         <div class="br-section__body">
+            @php $averageRating = (float) ($reviewStats['average'] ?: 0); @endphp
             <div class="br-comments-summary">
                 <div class="br-comments-summary__score">
                     <span class="br-comments-summary__value">{{ $reviewStats['average'] ?: '—' }}</span>
+                    <span class="br-comments-summary__stars" aria-hidden="true">
+                        @for($i = 1; $i <= 5; $i++)
+                            <span class="{{ $i <= round($averageRating) ? 'is-on' : '' }}">&#9733;</span>
+                        @endfor
+                    </span>
                     <span class="br-comments-summary__label">Average rating (out of 5)</span>
                 </div>
                 <div class="br-comments-summary__meta">

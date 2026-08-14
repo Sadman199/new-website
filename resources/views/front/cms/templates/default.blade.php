@@ -5,7 +5,7 @@
 @section('canonical', route('cms_page.show', ['slug' => $page->slug]))
 
 @push('page-styles')
-    <link rel="stylesheet" href="{{ asset('css/cms-pages.css') }}?v=2">
+    <link rel="stylesheet" href="{{ asset('css/cms-pages.css') }}?v=3">
 @endpush
 
 @section('main_content')

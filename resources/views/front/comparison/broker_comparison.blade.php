@@ -4,8 +4,8 @@
 @section('meta_description', 'Compare up to 3 forex brokers side by side. Review regulation, spreads, platforms, deposit methods, and ratings to find the best broker for your trading style.')
 @section('canonical', route('broker.comparison'))
 
-@push('head')
-    <link rel="stylesheet" href="{{ asset('css/broker-compare.css') }}?v=7">
+@push('page-styles')
+    <link rel="stylesheet" href="{{ asset('css/broker-compare.css') }}?v=9">
 @endpush
 
 @section('main_content')
@@ -135,5 +135,5 @@
         pairBase: @json(url('/brokers/compare'))
     };
 </script>
-<script src="{{ asset('js/broker-compare.js') }}?v=8"></script>
+<script src="{{ asset('js/broker-compare.js') }}?v=8" defer></script>
 @endpush

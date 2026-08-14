@@ -23,7 +23,7 @@
                             @endif
                         </div>
                         <h3 class="br-compare-card__name">{{ $compare_broker->name }}</h3>
-                        <p class="br-compare-card__status">{{ $isRegulated ? 'Regulated' : 'Unregulated' }}</p>
+                        <p class="br-compare-card__status br-compare-card__status--{{ $isRegulated ? 'safe' : 'risk' }}">{{ $isRegulated ? 'Regulated' : 'Unregulated' }}</p>
                         <p class="br-compare-card__score">{{ number_format($compare_broker->rating, 1) }}</p>
                     </a>
                 @endforeach

@@ -4,23 +4,23 @@
     --cti-ocean-light: #33a3d4;
     --cti-ocean-dark: var(--bc-primary-dark, #006694);
     --cti-midnight: var(--bc-dark, #0C1D32);
-    --cti-bg-mid: #0f2744;
+    --cti-bg-mid: #ffffff;
     --cti-ice: var(--bc-light, #D9E2E9);
-    --cti-off-white: #FFFBFC;
-    --cti-muted: rgba(217, 226, 233, 0.62);
-    --cti-dim: rgba(217, 226, 233, 0.38);
-    --cti-border: rgba(217, 226, 233, 0.12);
-    --cti-border-strong: rgba(217, 226, 233, 0.2);
-    --cti-surface: rgba(19, 40, 67, 0.82);
-    --cti-surface-solid: #132843;
-    --cti-success: #34d399;
-    --cti-danger: #f87171;
+    --cti-off-white: #0C1D32;
+    --cti-muted: #64748b;
+    --cti-dim: #94a3b8;
+    --cti-border: #e2e8f0;
+    --cti-border-strong: #cbd5e1;
+    --cti-surface: #ffffff;
+    --cti-surface-solid: #ffffff;
+    --cti-success: #059669;
+    --cti-danger: #dc2626;
     --cti-radius: 14px;
     --cti-radius-lg: 18px;
 
     min-height: 100vh;
-    background: var(--cti-midnight);
-    color: var(--cti-off-white);
+    background: #f4f6f9;
+    color: var(--cti-midnight);
     padding-bottom: 3rem;
 }
 
@@ -31,7 +31,7 @@
 }
 
 body:has(.cti-page) {
-    background: var(--cti-midnight);
+    background: #f4f6f9;
 }
 
 .cti-wrap {
@@ -57,9 +57,7 @@ body:has(.cti-page) {
     position: absolute;
     inset: 0;
     pointer-events: none;
-    background:
-        radial-gradient(ellipse 70% 55% at 50% -15%, rgba(0, 122, 173, 0.28) 0%, transparent 58%),
-        linear-gradient(180deg, var(--cti-bg-mid) 0%, var(--cti-midnight) 100%);
+    background: #ffffff;
 }
 
 .cti-breadcrumb {
@@ -75,13 +73,13 @@ body:has(.cti-page) {
 }
 
 .cti-breadcrumb a {
-    color: rgba(217, 226, 233, 0.72);
+    color: #64748b;
     text-decoration: none;
     transition: color 0.18s ease;
 }
 
 .cti-breadcrumb a:hover {
-    color: var(--cti-off-white);
+    color: var(--bc-primary, #007AAD);
 }
 
 .cti-hero__eyebrow {
@@ -116,7 +114,7 @@ body:has(.cti-page) {
     font-weight: 800;
     letter-spacing: -0.03em;
     line-height: 1.12;
-    color: var(--cti-off-white);
+    color: var(--bc-dark, #0C1D32);
 }
 
 .cti-hero__accent {

@@ -12,6 +12,9 @@ use Illuminate\Support\Collection;
 
 class BestBrokerGuideService
 {
+    /** Below this many tagged matches the guide ranks the whole database instead. */
+    private const MIN_TAGGED_ENTRIES = 3;
+
     /** @return array<string, mixed>|null */
     public function build(string $slug, ?Collection $brokers = null): ?array
     {
@@ -22,6 +25,13 @@ class BestBrokerGuideService
         }
 
         $brokers = $brokers ?? BrokerListingFilter::brokersFor($slug);
+        $rankedFromAll = false;
+
+        if ($brokers->count() < self::MIN_TAGGED_ENTRIES) {
+            $brokers = Broker::query()->where('is_scam', false)->get();
+            $rankedFromAll = true;
+        }
+
         $preferredCountry = BrokerTaxonomy::resolvePreferredCountry();
         $year = (int) date('Y');
         $month = now()->format('F');
@@ -42,7 +52,9 @@ class BestBrokerGuideService
         $guide = $this->replaceTokens($guide, $replacements);
         $scoreLabel = $guide['score_label'] ?? 'Overall score';
 
-        $entries = $ranked->map(function (Broker $broker, int $index) use ($guide, $scoreLabel, $slug) {
+        $countrySlug = $preferredCountry['slug'] !== 'global' ? $preferredCountry['slug'] : null;
+
+        $entries = $ranked->map(function (Broker $broker, int $index) use ($guide, $scoreLabel, $slug, $countrySlug) {
             $rank = $index + 1;
             $metrics = BestBrokerGuideMetrics::values($broker, $slug, $guide['type']);
             $isWinner = $rank === 1;
@@ -50,6 +62,7 @@ class BestBrokerGuideService
             return [
                 'rank' => $rank,
                 'broker' => $broker,
+                'in_country' => $countrySlug !== null && BrokerListingFilter::matches($broker, $countrySlug),
                 'score' => BestBrokerGuideMetrics::guideScore($broker, $slug, $guide['type']),
                 'score_label' => $scoreLabel,
                 'metrics' => $metrics,
@@ -87,6 +100,8 @@ class BestBrokerGuideService
             'label' => BrokerListingFilter::labelFor($slug),
             'guide' => $guide,
             'country' => $preferredCountry,
+            'country_matches' => $entries->where('in_country', true)->count(),
+            'ranked_from_all' => $rankedFromAll,
             'updated_at' => now()->format('F j, Y'),
             'entries' => $entries,
             'winner' => $entries->first(),

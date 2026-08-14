@@ -15,21 +15,21 @@ class BlogIndexService
 
     /** @var array<int, string> */
     public const INSIGHT_GRADIENTS = [
-        'linear-gradient(135deg, #007AAD 0%, #0C1D32 100%)',
-        'linear-gradient(135deg, #1e5f8a 0%, #007AAD 100%)',
-        'linear-gradient(135deg, #0C1D32 0%, #334155 100%)',
-        'linear-gradient(135deg, #007AAD 0%, #33a3d1 100%)',
-        'linear-gradient(135deg, #475569 0%, #0C1D32 100%)',
-        'linear-gradient(135deg, #D9E2E9 0%, #007AAD 100%)',
+        'linear-gradient(135deg, #e8822a 0%, #1c1e24 100%)',
+        'linear-gradient(135deg, #c46a16 0%, #f5a623 100%)',
+        'linear-gradient(135deg, #1c1e24 0%, #44403c 100%)',
+        'linear-gradient(135deg, #e8822a 0%, #fbc65c 100%)',
+        'linear-gradient(135deg, #57534e 0%, #1c1e24 100%)',
+        'linear-gradient(135deg, #d9a978 0%, #c46a16 100%)',
     ];
 
     /** @var array<int, string> */
     private const BADGE_COLORS = [
-        'markets' => '#16a34a',
-        'broker' => '#2563eb',
-        'analysis' => '#0891b2',
-        'regulation' => '#9333ea',
-        'default' => '#64748b',
+        'markets' => '#0f7a52',
+        'broker' => '#c46a16',
+        'analysis' => '#a1651c',
+        'regulation' => '#8a5a2b',
+        'default' => '#6b7280',
     ];
 
     public function resolveLanguageId(): int

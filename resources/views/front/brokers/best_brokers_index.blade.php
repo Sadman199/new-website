@@ -4,8 +4,8 @@
 @section('meta_description', 'Explore editor-picked best broker rankings by trading style, platform, asset class, and country. Find the ideal broker for your goals.')
 @section('canonical', route('brokers.best.index'))
 
-@push('head')
-    <link rel="stylesheet" href="{{ asset('css/best-brokers-index.css') }}?v=5">
+@push('page-styles')
+    <link rel="stylesheet" href="{{ asset('css/best-brokers-index.css') }}?v=7">
 @endpush
 
 @section('main_content')

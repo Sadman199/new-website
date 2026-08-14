@@ -6,8 +6,9 @@
     font-weight: 700;
     letter-spacing: 0.03em;
     text-transform: uppercase;
-    color: #fff;
-    background: var(--bc-primary);
+    color: var(--bc-text);
+    background: rgba(var(--bc-primary-rgb), 0.16);
+    border: 1px solid rgba(var(--bc-primary-rgb), 0.32);
     border-radius: 999px;
     line-height: 1.2;
 }

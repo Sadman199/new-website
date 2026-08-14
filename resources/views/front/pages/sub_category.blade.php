@@ -4,7 +4,7 @@
 @section('canonical', route('category', ['slug' => $sub_category_data->slug]))
 
 @push('page-styles')
-    <link rel="stylesheet" href="{{ asset('css/blog-listing.css') }}?v=1">
+    <link rel="stylesheet" href="{{ asset('css/blog-listing.css') }}?v=2">
 @endpush
 
 @section('main_content')

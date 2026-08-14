@@ -4,7 +4,7 @@
 @section('canonical', route('methodology'))
 
 @push('page-styles')
-    <link rel="stylesheet" href="{{ asset('css/legal-page.css') }}?v=1">
+    <link rel="stylesheet" href="{{ asset('css/legal-page.css') }}?v=2">
 @endpush
 
 @section('main_content')

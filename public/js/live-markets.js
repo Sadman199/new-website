@@ -2,10 +2,10 @@
     'use strict';
 
     var THEME = {
-        colorTheme: 'dark',
+        colorTheme: 'light',
         isTransparent: true,
         locale: 'en',
-        backgroundColor: '#132843',
+        backgroundColor: '#ffffff',
     };
 
     var WIDGETS = {

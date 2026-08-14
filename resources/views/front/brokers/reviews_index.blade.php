@@ -4,8 +4,8 @@
 @section('meta_description', 'Browse independent forex broker reviews. Compare fees, regulation, platforms, and safety scores to find the right broker for your trading style.')
 @section('canonical', route('broker.reviews.index'))
 
-@push('head')
-    <link rel="stylesheet" href="{{ asset('css/broker-reviews-index.css') }}?v=6">
+@push('page-styles')
+    <link rel="stylesheet" href="{{ asset('css/broker-reviews-index.css') }}?v=8">
 @endpush
 
 @section('main_content')
@@ -104,5 +104,5 @@
 @endsection
 
 @push('scripts')
-<script src="{{ asset('js/broker-reviews-index.js') }}?v=6"></script>
+<script src="{{ asset('js/broker-reviews-index.js') }}?v=6" defer></script>
 @endpush

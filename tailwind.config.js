@@ -5,6 +5,7 @@ module.exports = {
       './resources/**/*.blade.php',
       './resources/**/*.js',
       './app/**/*.php',
+      './public/js/**/*.js',
     ],
   },
   darkMode: false,

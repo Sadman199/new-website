@@ -1,40 +1,41 @@
-/* User account — login, register, profile (BrokersCourt dark theme) */
+/* User account — login, register, profile (BrokersCourt warm dark-glass theme) */
 .ua-root {
-    --ua-ocean: var(--bc-primary, #007AAD);
-    --ua-ocean-dark: var(--bc-primary-dark, #006694);
-    --ua-ocean-light: var(--bc-primary-light, #33a3d4);
-    --ua-midnight: var(--bc-dark, #0C1D32);
-    --ua-bg-mid: #0f2744;
-    --ua-ice: var(--bc-ice, #D9E2E9);
-    --ua-off-white: var(--bc-white, #FFFBFC);
+    --ua-ocean: #e8822a;
+    --ua-ocean-dark: #c46a16;
+    --ua-ocean-light: #f5a623;
+    --ua-gold: #fbc65c;
+    --ua-midnight: #0b0d12;
+    --ua-bg-mid: #12151a;
+    --ua-ice: #e8e2d9;
+    --ua-off-white: #f7f5f2;
     --ua-text: var(--ua-off-white);
-    --ua-muted: rgba(217, 226, 233, 0.72);
-    --ua-dim: rgba(217, 226, 233, 0.48);
-    --ua-border: rgba(217, 226, 233, 0.14);
-    --ua-border-strong: rgba(217, 226, 233, 0.22);
-    --ua-surface: rgba(19, 40, 67, 0.82);
-    --ua-surface-solid: #132843;
-    --ua-success: #34d399;
-    --ua-success-soft: rgba(52, 211, 153, 0.12);
+    --ua-muted: rgba(240, 236, 230, 0.66);
+    --ua-dim: rgba(240, 236, 230, 0.42);
+    --ua-border: rgba(255, 255, 255, 0.08);
+    --ua-border-strong: rgba(255, 255, 255, 0.16);
+    --ua-surface: rgba(255, 255, 255, 0.05);
+    --ua-surface-solid: #14171d;
+    --ua-success: #4ade80;
+    --ua-success-soft: rgba(74, 222, 128, 0.12);
     --ua-danger: #f87171;
     --ua-danger-soft: rgba(248, 113, 113, 0.12);
-    --ua-warning: #fbbf24;
-    --ua-warning-soft: rgba(251, 191, 36, 0.12);
+    --ua-warning: #fbc65c;
+    --ua-warning-soft: rgba(251, 198, 92, 0.12);
     --ua-radius: 14px;
     --ua-radius-lg: 18px;
-    --ua-shadow: 0 24px 48px -16px rgba(0, 0, 0, 0.55);
+    --ua-shadow: 0 24px 48px -16px rgba(0, 0, 0, 0.6);
 
     min-height: 100vh;
-    padding: 5.5rem 1rem 3rem;
-    background: var(--ua-midnight);
-    background-image:
-        radial-gradient(ellipse 75% 55% at 50% -10%, rgba(0, 122, 173, 0.2) 0%, transparent 58%),
-        linear-gradient(180deg, var(--ua-bg-mid) 0%, var(--ua-midnight) 100%);
+    padding: calc(var(--bc-nav-height, 5.5rem) + 2rem) 1rem 3rem;
+    background:
+        radial-gradient(circle at 12% -5%, rgba(232, 130, 42, 0.16) 0%, transparent 45%),
+        radial-gradient(circle at 88% 8%, rgba(251, 198, 92, 0.1) 0%, transparent 42%),
+        var(--ua-midnight);
     color: var(--ua-text);
 }
 
 body:has(.ua-root) {
-    background: var(--ua-midnight);
+    background: #0b0d12;
 }
 
 .ua-root *,
@@ -51,6 +52,10 @@ body:has(.ua-root) {
 .ua-wrap--narrow {
     width: min(100%, 28rem);
     margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: calc(100vh - var(--bc-nav-height, 5.5rem) - 9rem);
 }
 
 .ua-wrap--profile {
@@ -58,11 +63,121 @@ body:has(.ua-root) {
     margin: 0 auto;
 }
 
-/* Auth card */
-.ua-auth-card {
-    background: var(--ua-surface);
+/* Auth layout — pitch on the left, form card on the right */
+.ua-auth-shell {
+    display: grid;
+    gap: 2.5rem;
+    align-items: center;
+    width: min(100%, 66rem);
+    margin: 0 auto;
+    min-height: calc(100vh - var(--bc-nav-height, 5.5rem) - 9rem);
+}
+
+@media (min-width: 960px) {
+    .ua-auth-shell {
+        grid-template-columns: minmax(0, 1fr) 27rem;
+        gap: 4rem;
+    }
+}
+
+.ua-auth-aside {
+    display: none;
+}
+
+@media (min-width: 960px) {
+    .ua-auth-aside { display: block; }
+}
+
+.ua-auth-aside__eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    margin: 0 0 1.25rem;
+    padding: 0.3rem 0.75rem;
+    font-size: 0.625rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ua-ocean-light);
+    background: rgba(232, 130, 42, 0.14);
+    border: 1px solid rgba(232, 130, 42, 0.28);
+    border-radius: 999px;
     backdrop-filter: blur(14px);
     -webkit-backdrop-filter: blur(14px);
+}
+
+.ua-auth-aside__title {
+    margin: 0 0 0.85rem;
+    font-size: clamp(1.75rem, 3.4vw, 2.5rem);
+    font-weight: 800;
+    line-height: 1.12;
+    letter-spacing: -0.03em;
+    color: var(--ua-off-white);
+}
+
+.ua-auth-aside__title span {
+    background: linear-gradient(135deg, var(--ua-gold), var(--ua-ocean-light) 55%, var(--ua-ocean));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+.ua-auth-aside__lead {
+    max-width: 32rem;
+    margin: 0 0 2rem;
+    font-size: 1rem;
+    line-height: 1.65;
+    color: var(--ua-muted);
+}
+
+.ua-auth-points {
+    display: grid;
+    gap: 0.75rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.ua-auth-points li {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 0.85rem 1rem;
+    font-size: 0.9375rem;
+    color: var(--ua-muted);
+    background: var(--ua-surface);
+    border: 1px solid var(--ua-border);
+    border-radius: var(--ua-radius);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+}
+
+.ua-auth-points i {
+    flex-shrink: 0;
+    width: 1.85rem;
+    height: 1.85rem;
+    display: grid;
+    place-items: center;
+    font-size: 0.8125rem;
+    color: var(--ua-ocean-light);
+    background: rgba(232, 130, 42, 0.14);
+    border: 1px solid rgba(232, 130, 42, 0.24);
+    border-radius: 9px;
+}
+
+.ua-auth-points strong {
+    display: block;
+    margin-bottom: 0.1rem;
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: var(--ua-off-white);
+}
+
+/* Auth card */
+.ua-auth-card {
+    background: linear-gradient(165deg, rgba(255, 255, 255, 0.07) 0%, rgba(255, 255, 255, 0.035) 100%);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
     border: 1px solid var(--ua-border);
     border-radius: var(--ua-radius-lg);
     box-shadow: var(--ua-shadow);
@@ -86,8 +201,8 @@ body:has(.ua-root) {
     align-items: center;
     justify-content: center;
     border-radius: 14px;
-    background: rgba(0, 122, 173, 0.16);
-    border: 1px solid rgba(0, 122, 173, 0.28);
+    background: rgba(232, 130, 42, 0.16);
+    border: 1px solid rgba(232, 130, 42, 0.28);
     color: var(--ua-ocean-light);
     font-size: 1.35rem;
 }
@@ -152,7 +267,7 @@ body:has(.ua-root) {
     font-family: inherit;
     font-size: 0.9375rem;
     color: var(--ua-off-white);
-    background: rgba(12, 29, 50, 0.85);
+    background: rgba(255, 255, 255, 0.05);
     border: 1px solid var(--ua-border);
     border-radius: 10px;
     outline: none;
@@ -179,9 +294,9 @@ body:has(.ua-root) {
 .ua-input:focus,
 .ua-textarea:focus,
 .ua-select:focus {
-    border-color: rgba(0, 122, 173, 0.55);
-    box-shadow: 0 0 0 3px rgba(0, 122, 173, 0.18);
-    background: rgba(12, 29, 50, 0.95);
+    border-color: rgba(232, 130, 42, 0.55);
+    box-shadow: 0 0 0 3px rgba(232, 130, 42, 0.18);
+    background: rgba(255, 255, 255, 0.08);
 }
 
 .ua-input.is-error,
@@ -193,7 +308,7 @@ body:has(.ua-root) {
 .ua-input:disabled {
     opacity: 0.65;
     cursor: not-allowed;
-    background: rgba(12, 29, 50, 0.5);
+    background: rgba(255, 255, 255, 0.03);
 }
 
 .ua-hint {
@@ -244,25 +359,30 @@ body:has(.ua-root) {
 
 .ua-btn:hover { transform: translateY(-1px); }
 
+/* Warm glass instead of a solid orange fill */
 .ua-btn--primary {
     color: var(--ua-off-white);
-    background: var(--ua-ocean);
-    box-shadow: 0 8px 24px rgba(0, 122, 173, 0.32);
+    background: rgba(232, 130, 42, 0.2);
+    border-color: rgba(232, 130, 42, 0.45);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    box-shadow: 0 8px 24px rgba(232, 130, 42, 0.22);
 }
 
 .ua-btn--primary:hover {
-    background: var(--ua-ocean-dark);
+    background: rgba(232, 130, 42, 0.32);
+    border-color: rgba(232, 130, 42, 0.7);
 }
 
 .ua-btn--ghost {
     color: var(--ua-ice);
-    background: rgba(12, 29, 50, 0.55);
+    background: rgba(255, 255, 255, 0.05);
     border-color: var(--ua-border);
 }
 
 .ua-btn--ghost:hover {
-    background: rgba(0, 122, 173, 0.14);
-    border-color: rgba(0, 122, 173, 0.35);
+    background: rgba(232, 130, 42, 0.14);
+    border-color: rgba(232, 130, 42, 0.35);
 }
 
 .ua-btn--danger {
@@ -279,14 +399,14 @@ body:has(.ua-root) {
 
 .ua-btn--google {
     color: var(--ua-off-white);
-    background: rgba(12, 29, 50, 0.72);
+    background: rgba(255, 255, 255, 0.06);
     border-color: var(--ua-border-strong);
     box-shadow: none;
 }
 
 .ua-btn--google:hover {
-    background: rgba(12, 29, 50, 0.92);
-    border-color: rgba(217, 226, 233, 0.28);
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(232, 226, 217, 0.28);
     transform: translateY(-1px);
 }
 
@@ -364,7 +484,7 @@ body:has(.ua-root) {
 .ua-alert--success {
     color: #a7f3d0;
     background: var(--ua-success-soft);
-    border-color: rgba(52, 211, 153, 0.28);
+    border-color: rgba(74, 222, 128, 0.28);
 }
 
 .ua-alert--error {
@@ -401,7 +521,7 @@ body:has(.ua-root) {
 
 .ua-profile-hero {
     height: 72px;
-    background: linear-gradient(135deg, rgba(0, 122, 173, 0.45) 0%, rgba(15, 39, 68, 0.9) 100%);
+    background: linear-gradient(135deg, rgba(232, 130, 42, 0.45) 0%, rgba(20, 23, 29, 0.92) 100%);
 }
 
 .ua-profile-user {
@@ -448,14 +568,14 @@ body:has(.ua-root) {
 
 .ua-badge--verified {
     color: var(--ua-ocean-light);
-    background: rgba(0, 122, 173, 0.14);
-    border: 1px solid rgba(0, 122, 173, 0.28);
+    background: rgba(232, 130, 42, 0.14);
+    border: 1px solid rgba(232, 130, 42, 0.28);
 }
 
 .ua-badge--pending {
     color: var(--ua-warning);
     background: var(--ua-warning-soft);
-    border: 1px solid rgba(251, 191, 36, 0.28);
+    border: 1px solid rgba(251, 198, 92, 0.28);
 }
 
 .ua-nav {
@@ -494,7 +614,7 @@ a.ua-quick-action {
 .ua-nav__link:hover,
 .ua-nav__link.is-active {
     color: var(--ua-off-white);
-    background: rgba(0, 122, 173, 0.16);
+    background: rgba(232, 130, 42, 0.16);
 }
 
 .ua-nav__link.is-active {
@@ -514,7 +634,7 @@ a.ua-quick-action {
 
 .ua-stat {
     padding: 0.75rem 0.85rem;
-    background: rgba(12, 29, 50, 0.45);
+    background: rgba(255, 255, 255, 0.04);
     border: 1px solid var(--ua-border);
     border-radius: 12px;
     text-align: center;
@@ -598,7 +718,7 @@ a.ua-quick-action {
     font-size: 0.8125rem;
     font-weight: 600;
     color: var(--ua-muted);
-    background: rgba(12, 29, 50, 0.55);
+    background: rgba(255, 255, 255, 0.05);
     border: 1px solid var(--ua-border);
     border-radius: 999px;
     cursor: pointer;
@@ -607,8 +727,8 @@ a.ua-quick-action {
 
 .ua-tabs-mobile__btn.is-active {
     color: var(--ua-off-white);
-    background: rgba(0, 122, 173, 0.22);
-    border-color: rgba(0, 122, 173, 0.4);
+    background: rgba(232, 130, 42, 0.22);
+    border-color: rgba(232, 130, 42, 0.4);
 }
 
 @media (min-width: 1024px) {
@@ -637,7 +757,7 @@ a.ua-quick-action {
     align-items: center;
     justify-content: center;
     border-radius: 10px;
-    background: rgba(12, 29, 50, 0.55);
+    background: rgba(255, 255, 255, 0.05);
     border: 1px solid var(--ua-border);
     color: var(--ua-ocean-light);
 }
@@ -734,7 +854,7 @@ a.ua-quick-action {
     flex-shrink: 0;
     border-radius: 50%;
     background: var(--ua-ocean);
-    box-shadow: 0 0 0 4px rgba(0, 122, 173, 0.15);
+    box-shadow: 0 0 0 4px rgba(232, 130, 42, 0.15);
 }
 
 .ua-activity-label {
@@ -882,7 +1002,7 @@ a.ua-quick-action {
     margin-left: 0.35rem;
     border-radius: 999px;
     background: var(--ua-danger);
-    color: #fff;
+    color: #2b1111;
     font-size: 0.625rem;
     font-weight: 700;
     line-height: 1;
@@ -901,7 +1021,7 @@ a.ua-quick-action {
 }
 
 .ua-notification-item.is-unread {
-    background: rgba(0, 122, 173, 0.08);
+    background: rgba(232, 130, 42, 0.08);
 }
 
 .ua-notification-icon {
@@ -911,13 +1031,13 @@ a.ua-quick-action {
     align-items: center;
     justify-content: center;
     border-radius: 999px;
-    background: rgba(0, 122, 173, 0.14);
+    background: rgba(232, 130, 42, 0.14);
     color: var(--ua-ocean-light);
     flex-shrink: 0;
 }
 
 .ua-notification-item.is-unread .ua-notification-icon {
-    background: rgba(0, 122, 173, 0.22);
+    background: rgba(232, 130, 42, 0.22);
 }
 
 .ua-notification-head {
@@ -989,8 +1109,8 @@ a.ua-quick-action {
 }
 
 .ua-quick-action:hover {
-    background: rgba(0, 122, 173, 0.14);
-    border-color: rgba(0, 122, 173, 0.28);
+    background: rgba(232, 130, 42, 0.14);
+    border-color: rgba(232, 130, 42, 0.28);
 }
 
 .ua-saved-item {

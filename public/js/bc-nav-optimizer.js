@@ -1,6 +1,7 @@
 /**
- * BrokersCourt — quiet link prefetch (no progress bar, no overlay).
- * Warms a few high-traffic routes in the background after idle.
+ * BrokersCourt — quiet asset warm-up (no progress bar, no overlay).
+ * Does NOT prefetch full HTML documents (that wasted ~500KB+ idle bandwidth).
+ * Optionally warms CSS/JS for high-traffic nav targets on hover/focus intent.
  */
 (function (window, document) {
     'use strict';
@@ -9,15 +10,22 @@
         return;
     }
 
-    var prefetched = Object.create(null);
+    var warmed = Object.create(null);
 
-    var EXCLUDE = [
-        /^\/admin(?:\/|$)/i,
-        /^\/login(?:\/|$)/i,
-        /^\/register(?:\/|$)/i,
-        /^\/logout(?:\/|$)/i,
-        /^\/auth\//i,
-    ];
+    var ROUTE_ASSETS = {
+        '/broker-reviews': [
+            '/css/broker-reviews-index.css',
+            '/js/broker-reviews-index.js'
+        ],
+        '/awards': [
+            '/css/awards-index.css',
+            '/js/awards-index.js'
+        ],
+        '/trading-tools': [
+            '/css/trading-tools.css',
+            '/js/trading-tools.js'
+        ]
+    };
 
     function slowConnection() {
         if (!('connection' in navigator)) {
@@ -27,68 +35,61 @@
         return conn.saveData || conn.effectiveType === 'slow-2g' || conn.effectiveType === '2g';
     }
 
-    function isPrefetchable(url) {
-        try {
-            var parsed = new URL(url, window.location.origin);
-            if (parsed.origin !== window.location.origin) {
-                return false;
-            }
-            return !EXCLUDE.some(function (pattern) {
-                return pattern.test(parsed.pathname);
-            });
-        } catch (error) {
-            return false;
-        }
-    }
-
-    function prefetch(url) {
-        if (slowConnection()) {
+    function warmAsset(href) {
+        if (slowConnection() || warmed[href]) {
             return;
         }
-
-        var normalized;
-        try {
-            var parsed = new URL(url, window.location.origin);
-            parsed.hash = '';
-            normalized = parsed.href;
-        } catch (error) {
-            return;
-        }
-
-        if (prefetched[normalized] || normalized === window.location.href.split('#')[0]) {
-            return;
-        }
-
-        prefetched[normalized] = true;
+        warmed[href] = true;
 
         var link = document.createElement('link');
         link.rel = 'prefetch';
-        link.href = normalized;
-        link.as = 'document';
+        link.href = href;
+        if (/\.css(\?|$)/i.test(href)) {
+            link.as = 'style';
+        } else if (/\.js(\?|$)/i.test(href)) {
+            link.as = 'script';
+        }
         document.head.appendChild(link);
     }
 
-    function warmMarkedRoutes() {
-        document.querySelectorAll('[data-bc-nav-warm]').forEach(function (node) {
-            var href = node.getAttribute('href') || node.getAttribute('data-bc-nav-warm');
-            if (href && isPrefetchable(href)) {
-                prefetch(href);
+    function assetsForHref(href) {
+        try {
+            var parsed = new URL(href, window.location.origin);
+            if (parsed.origin !== window.location.origin) {
+                return [];
             }
+            var path = parsed.pathname.replace(/\/$/, '') || '/';
+            return ROUTE_ASSETS[path] || [];
+        } catch (error) {
+            return [];
+        }
+    }
+
+    function warmFromNode(node) {
+        var href = node.getAttribute('href') || node.getAttribute('data-bc-nav-warm');
+        if (!href) {
+            return;
+        }
+        assetsForHref(href).forEach(warmAsset);
+    }
+
+    function bindIntentWarm() {
+        document.querySelectorAll('[data-bc-nav-warm]').forEach(function (node) {
+            var once = function () {
+                warmFromNode(node);
+                node.removeEventListener('mouseenter', once);
+                node.removeEventListener('focus', once);
+                node.removeEventListener('touchstart', once);
+            };
+            node.addEventListener('mouseenter', once, { passive: true });
+            node.addEventListener('focus', once, { passive: true });
+            node.addEventListener('touchstart', once, { passive: true });
         });
     }
 
     function init() {
-        var run = function () {
-            warmMarkedRoutes();
-        };
-
-        if ('requestIdleCallback' in window) {
-            window.requestIdleCallback(run, { timeout: 2500 });
-        } else {
-            window.setTimeout(run, 1500);
-        }
-
-        window.__bcNavPrefetch = { prefetch: prefetch };
+        bindIntentWarm();
+        window.__bcNavPrefetch = { warmAsset: warmAsset };
     }
 
     window.bcOnNavigate = function (callback) {

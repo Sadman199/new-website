@@ -5,7 +5,7 @@
 @endphp
 
 @once
-    <link rel="stylesheet" href="{{ asset('css/hero-metrics.css') }}?v=2">
+    <link rel="stylesheet" href="{{ asset('css/hero-metrics.css') }}?v=3">
 @endonce
 
 @if(count($stats))

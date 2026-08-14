@@ -5,7 +5,7 @@
 @section('canonical', route('awards.index'))
 
 @push('page-styles')
-    <link rel="stylesheet" href="{{ asset('css/awards-index.css') }}?v=4">
+    <link rel="stylesheet" href="{{ asset('css/awards-index.css') }}?v=6">
 @endpush
 
 @section('main_content')
@@ -44,14 +44,6 @@
                 </div>
             </div>
 
-            @include('front.partials.hero_metrics', [
-                'stats' => [
-                    ['label' => 'Brokers reviewed', 'value' => number_format($stats['total_brokers'])],
-                    ['label' => 'Featured picks', 'value' => number_format($stats['featured_brokers'])],
-                    ['label' => 'Award categories', 'value' => $stats['award_categories'], 'tone' => 'highlight'],
-                    ['label' => 'Avg. rating /5', 'value' => number_format($stats['average_rating'], 1)],
-                ],
-            ])
         </div>
     </header>
 
@@ -152,5 +144,5 @@
 @endsection
 
 @push('scripts')
-<script src="{{ asset('js/awards-index.js') }}?v=2"></script>
+<script src="{{ asset('js/awards-index.js') }}?v=2" defer></script>
 @endpush

@@ -32,6 +32,9 @@
 
         <div class="bc-tools-sheet__body">
             <form class="bc-tools-sheet__search" action="{{ route('search') }}" method="GET" role="search">
+                <span class="bc-tools-sheet__search-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="7"/><path stroke-linecap="round" d="m20 20-3.5-3.5"/></svg>
+                </span>
                 <input type="search"
                        class="bc-tools-sheet__input"
                        name="q"
@@ -97,10 +100,13 @@
                 </a>
             </div>
 
+        </div>
+
+        <footer class="bc-tools-sheet__foot">
             <a href="{{ route('broker.comparison') }}" class="bc-tools-sheet__cta">
                 Compare brokers now
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3"/></svg>
             </a>
-        </div>
+        </footer>
     </aside>
 </div>

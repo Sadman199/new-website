@@ -119,5 +119,5 @@
 @endsection
 
 @push('styles')
-<link rel="stylesheet" href="{{ asset('css/cms-page-builder.css') }}?v=2">
+<link rel="stylesheet" href="{{ asset('css/cms-page-builder.css') }}?v=3">
 @endpush

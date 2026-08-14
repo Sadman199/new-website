@@ -11,8 +11,8 @@
     <script type="application/ld+json">@json($comparisonJsonLd)</script>
 @endpush
 
-@push('head')
-    <link rel="stylesheet" href="{{ asset('css/broker-compare.css') }}?v=7">
+@push('page-styles')
+    <link rel="stylesheet" href="{{ asset('css/broker-compare.css') }}?v=9">
 @endpush
 
 @section('main_content')

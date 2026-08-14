@@ -5,7 +5,7 @@
 @section('canonical', route('scam_brokers'))
 
 @push('page-styles')
-    <link rel="stylesheet" href="{{ asset('css/scam-brokers-index.css') }}?v=3">
+    <link rel="stylesheet" href="{{ asset('css/scam-brokers-index.css') }}?v=7">
 @endpush
 
 @section('main_content')
@@ -27,14 +27,6 @@
 
             @include('front.partials.safety_hub_nav', ['activeHub' => 'list'])
 
-            @include('front.partials.hero_metrics', [
-                'stats' => [
-                    ['label' => 'Flagged brokers', 'value' => $stats['scam_count'], 'tone' => 'primary'],
-                    ['label' => 'No regulation', 'value' => $stats['no_regulation_count']],
-                    ['label' => 'Withdrawal issues', 'value' => $stats['withdrawal_issues_count']],
-                    ['label' => 'Reported in '.date('Y'), 'value' => $stats['reported_this_year']],
-                ],
-            ])
         </div>
     </header>
 
@@ -161,5 +153,5 @@
 @endsection
 
 @push('scripts')
-<script src="{{ asset('js/scam-brokers-index.js') }}?v=2"></script>
+<script src="{{ asset('js/scam-brokers-index.js') }}?v=2" defer></script>
 @endpush

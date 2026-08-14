@@ -1,41 +1,42 @@
-/* Prop Firms — layout preserved, BrokersCourt ocean / midnight colors */
+/* Prop Firms — layout preserved, BrokersCourt warm dark-glass theme */
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Syne:wght@600;700;800&display=swap');
 
 .pf-root {
-    --pf-ocean: var(--bc-primary, #007AAD);
-    --pf-ocean-dark: var(--bc-primary-dark, #006694);
-    --pf-ocean-light: #33a3d4;
-    --pf-midnight: var(--bc-dark, #0C1D32);
-    --pf-bg-mid: #0f2744;
-    --pf-ice: var(--bc-light, #D9E2E9);
-    --pf-off-white: #FFFBFC;
-    --pf-bg: #0C1D32;
-    --pf-surface: #132843;
-    --pf-elevated: #1a3352;
-    --pf-panel: #132843;
-    --pf-border: rgba(217, 226, 233, 0.14);
-    --pf-border-strong: rgba(217, 226, 233, 0.22);
+    --pf-ocean: #e8822a;
+    --pf-ocean-dark: #c46a16;
+    --pf-ocean-light: #f5a623;
+    --pf-gold: #fbc65c;
+    --pf-midnight: #0b0d12;
+    --pf-bg-mid: #12151a;
+    --pf-ice: #e8e2d9;
+    --pf-off-white: #f7f5f2;
+    --pf-bg: #0b0d12;
+    --pf-surface: rgba(255, 255, 255, 0.05);
+    --pf-elevated: rgba(255, 255, 255, 0.08);
+    --pf-panel: #14171d;
+    --pf-border: rgba(255, 255, 255, 0.08);
+    --pf-border-strong: rgba(255, 255, 255, 0.16);
     --pf-text: var(--pf-off-white);
-    --pf-muted: rgba(217, 226, 233, 0.72);
-    --pf-dim: rgba(217, 226, 233, 0.48);
-    --pf-accent-soft: rgba(0, 122, 173, 0.14);
-    --pf-accent-glow: rgba(0, 122, 173, 0.35);
-    --pf-cyan: #38bdf8;
-    --pf-cyan-soft: rgba(56, 189, 248, 0.12);
-    --pf-emerald: #34d399;
-    --pf-emerald-soft: rgba(52, 211, 153, 0.12);
+    --pf-muted: rgba(240, 236, 230, 0.66);
+    --pf-dim: rgba(240, 236, 230, 0.42);
+    --pf-accent-soft: rgba(232, 130, 42, 0.14);
+    --pf-accent-glow: rgba(232, 130, 42, 0.28);
+    --pf-cyan: #fbc65c;
+    --pf-cyan-soft: rgba(251, 198, 92, 0.14);
+    --pf-emerald: #4ade80;
+    --pf-emerald-soft: rgba(74, 222, 128, 0.12);
     --pf-radius: 14px;
     --pf-radius-lg: 20px;
     --pf-font-display: 'Syne', system-ui, sans-serif;
     --pf-font-body: 'DM Sans', system-ui, sans-serif;
-    --pf-shadow: 0 24px 64px -24px rgba(0, 0, 0, 0.75);
+    --pf-shadow: 0 24px 48px -16px rgba(0, 0, 0, 0.6);
     --pf-shadow-accent: 0 12px 40px -12px var(--pf-accent-glow);
 
     font-family: var(--pf-font-body);
-    background: var(--pf-midnight);
-    background-image:
-        radial-gradient(ellipse 75% 55% at 50% -10%, rgba(0, 122, 173, 0.18) 0%, transparent 58%),
-        linear-gradient(180deg, var(--pf-bg-mid) 0%, var(--pf-midnight) 100%);
+    background:
+        radial-gradient(circle at 12% -5%, rgba(232, 130, 42, 0.16) 0%, transparent 45%),
+        radial-gradient(circle at 88% 8%, rgba(251, 198, 92, 0.1) 0%, transparent 42%),
+        var(--pf-midnight);
     color: var(--pf-text);
     min-height: 100vh;
     padding-bottom: 4rem;
@@ -49,19 +50,10 @@
     box-sizing: border-box;
 }
 
-.pf-root::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background:
-        radial-gradient(ellipse 60% 45% at 50% -5%, rgba(0, 122, 173, 0.1) 0%, transparent 55%),
-        radial-gradient(ellipse 40% 30% at 100% 20%, rgba(56, 189, 248, 0.06) 0%, transparent 50%);
-    pointer-events: none;
-    z-index: -1;
-}
+.pf-root::before { display: none; }
 
 body:has(.pf-root) {
-    background: var(--pf-midnight);
+    background: #0b0d12;
 }
 
 .pf-wrap {
@@ -90,8 +82,10 @@ body:has(.pf-root) {
     text-transform: uppercase;
     color: var(--pf-ocean-light);
     background: var(--pf-accent-soft);
-    border: 1px solid rgba(0, 122, 173, 0.28);
+    border: 1px solid rgba(232, 130, 42, 0.28);
     border-radius: 999px;
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
 }
 
 .pf-eyebrow svg {
@@ -116,26 +110,31 @@ body:has(.pf-root) {
 
 .pf-btn:hover { transform: translateY(-1px); }
 
+/* Warm glass instead of a solid orange fill */
 .pf-btn--gold {
     color: var(--pf-off-white);
-    background: var(--pf-ocean);
+    background: rgba(232, 130, 42, 0.2);
+    border-color: rgba(232, 130, 42, 0.45);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
     box-shadow: var(--pf-shadow-accent);
 }
 
 .pf-btn--gold:hover {
-    background: var(--pf-ocean-dark);
-    box-shadow: 0 16px 48px -10px rgba(0, 122, 173, 0.55);
+    background: rgba(232, 130, 42, 0.32);
+    border-color: rgba(232, 130, 42, 0.7);
+    box-shadow: 0 16px 48px -10px rgba(232, 130, 42, 0.45);
 }
 
 .pf-btn--ghost {
     color: var(--pf-text);
-    background: rgba(12, 29, 50, 0.55);
+    background: rgba(255, 255, 255, 0.05);
     border-color: var(--pf-border-strong);
 }
 
 .pf-btn--ghost:hover {
-    background: rgba(0, 122, 173, 0.16);
-    border-color: rgba(0, 122, 173, 0.35);
+    background: rgba(232, 130, 42, 0.16);
+    border-color: rgba(232, 130, 42, 0.35);
 }
 
 .pf-badge {
@@ -153,19 +152,19 @@ body:has(.pf-root) {
 .pf-badge--gold {
     color: var(--pf-ocean-light);
     background: var(--pf-accent-soft);
-    border: 1px solid rgba(0, 122, 173, 0.25);
+    border: 1px solid rgba(232, 130, 42, 0.25);
 }
 
 .pf-badge--cyan {
     color: var(--pf-cyan);
     background: var(--pf-cyan-soft);
-    border: 1px solid rgba(56, 189, 248, 0.22);
+    border: 1px solid rgba(251, 198, 92, 0.22);
 }
 
 .pf-badge--emerald {
     color: var(--pf-emerald);
     background: var(--pf-emerald-soft);
-    border: 1px solid rgba(52, 211, 153, 0.22);
+    border: 1px solid rgba(74, 222, 128, 0.22);
 }
 
 .pf-score {
@@ -175,21 +174,23 @@ body:has(.pf-root) {
     padding: 0.25rem 0.6rem;
     font-size: 0.8125rem;
     font-weight: 700;
-    color: #047857;
-    background: #ecfdf5;
-    border: 1px solid rgba(52, 211, 153, 0.25);
+    color: #4ade80;
+    background: rgba(74, 222, 128, 0.12);
+    border: 1px solid rgba(74, 222, 128, 0.25);
     border-radius: 8px;
 }
 
 .pf-card {
-    background: linear-gradient(165deg, rgba(19, 40, 67, 0.95) 0%, rgba(12, 29, 50, 0.98) 100%);
+    background: linear-gradient(165deg, rgba(255, 255, 255, 0.07) 0%, rgba(255, 255, 255, 0.035) 100%);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
     border: 1px solid var(--pf-border);
     border-radius: var(--pf-radius-lg);
     box-shadow: var(--pf-shadow);
 }
 
 .pf-card:hover {
-    border-color: rgba(0, 122, 173, 0.35);
+    border-color: rgba(232, 130, 42, 0.35);
 }
 
 .pf-section-title {
@@ -233,7 +234,7 @@ body:has(.pf-root) {
     font-family: var(--pf-font-body);
     font-size: 0.875rem;
     color: var(--pf-off-white);
-    background-color: rgba(12, 29, 50, 0.85);
+    background-color: rgba(255, 255, 255, 0.05);
     border: 1px solid var(--pf-border);
     border-radius: 10px;
     outline: none;
@@ -242,9 +243,9 @@ body:has(.pf-root) {
 
 .pf-input:focus,
 .pf-select:focus {
-    border-color: rgba(0, 122, 173, 0.55);
-    box-shadow: 0 0 0 3px rgba(0, 122, 173, 0.18);
-    background-color: rgba(12, 29, 50, 0.95);
+    border-color: rgba(232, 130, 42, 0.55);
+    box-shadow: 0 0 0 3px rgba(232, 130, 42, 0.18);
+    background-color: rgba(255, 255, 255, 0.08);
 }
 
 .pf-input::placeholder { color: var(--pf-dim); }
@@ -262,8 +263,8 @@ body:has(.pf-root) {
 
 .pf-select option,
 .pf-select optgroup {
-    background-color: #132843;
-    color: #FFFBFC;
+    background-color: #14171d;
+    color: #f7f5f2;
 }
 
 .pf-chip {
@@ -274,7 +275,7 @@ body:has(.pf-root) {
     font-weight: 500;
     color: var(--pf-muted);
     text-decoration: none;
-    background: rgba(12, 29, 50, 0.55);
+    background: rgba(255, 255, 255, 0.05);
     border: 1px solid var(--pf-border);
     border-radius: 999px;
     transition: all 0.18s ease;
@@ -284,7 +285,7 @@ body:has(.pf-root) {
 .pf-chip.is-active {
     color: var(--pf-ocean-light);
     background: var(--pf-accent-soft);
-    border-color: rgba(0, 122, 173, 0.35);
+    border-color: rgba(232, 130, 42, 0.35);
 }
 
 .pf-table-wrap {
@@ -312,13 +313,13 @@ body:has(.pf-root) {
     letter-spacing: 0.08em;
     text-transform: uppercase;
     color: var(--pf-dim);
-    background: rgba(12, 29, 50, 0.45);
+    background: rgba(255, 255, 255, 0.04);
 }
 
 .pf-table tr:last-child td { border-bottom: none; }
 
 .pf-table tbody tr:hover td {
-    background: rgba(0, 122, 173, 0.08);
+    background: rgba(232, 130, 42, 0.08);
 }
 
 .pf-verified { color: var(--pf-ocean-light); }
@@ -339,7 +340,7 @@ body:has(.pf-root) {
     font-weight: 600;
     color: var(--pf-ocean-light);
     background: var(--pf-accent-soft);
-    border: 1px solid rgba(0, 122, 173, 0.22);
+    border: 1px solid rgba(232, 130, 42, 0.22);
     border-radius: 999px;
 }
 

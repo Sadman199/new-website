@@ -10,6 +10,7 @@ use App\Models\Review;
 use App\Services\BrokerPopularityService;
 use App\Services\CountryBrokersService;
 use App\Services\GlobalViewDataService;
+use App\Support\AwardTaxonomy;
 use App\Support\BrokerMatchQuiz;
 use App\Support\FindMyBrokerFilters;
 use Illuminate\Support\Facades\Cache;
@@ -109,6 +110,38 @@ class HomeController extends Controller
                 ->get();
         });
 
+        $awardWinners = Cache::remember('homepage_award_winners_v1', 3600, function () {
+            $brokers = Broker::query()
+                ->where('is_scam', false)
+                ->orderByDesc('rating')
+                ->get();
+
+            $winners = [];
+
+            foreach (AwardTaxonomy::definitions() as $key => $definition) {
+                $matches = AwardTaxonomy::brokersFor($key, $brokers);
+                $winner = $matches->first();
+
+                if (! $winner) {
+                    continue;
+                }
+
+                $winners[] = [
+                    'award' => $definition['name'],
+                    'description' => $definition['description'],
+                    'award_url' => route('awards.show', ['award' => AwardTaxonomy::routeSlugFor($key)]),
+                    'contenders' => $matches->count(),
+                    'broker_name' => $winner->name,
+                    'broker_logo' => $winner->logo ? asset($winner->logo) : null,
+                    'broker_url' => route('broker_detail', $winner->slug),
+                    'broker_rating' => $winner->rating !== null ? round((float) $winner->rating, 1) : null,
+                    'broker_regulated' => $winner->isRegulated(),
+                ];
+            }
+
+            return array_slice($winners, 0, 6);
+        });
+
         $countrySlug = app(CountryBrokersService::class)->resolvePreferredCountry()['slug'] ?? 'global';
 
         $brokerSentiment = Cache::remember("homepage_broker_sentiment_v4_{$countrySlug}", 3600, function () use ($countrySlug) {
@@ -153,6 +186,7 @@ class HomeController extends Controller
             'quickFilterLinks' => $quickFilterLinks,
             'matchQuizConfig' => $matchQuizConfig,
             'personalization' => $personalization,
+            'awardWinners' => $awardWinners,
         ]);
     }
 

@@ -5,8 +5,8 @@
 @section('canonical', $canonicalUrl)
 @section('robots', $robots ?? 'index, follow')
 
-@push('head')
-    <link rel="stylesheet" href="{{ asset('css/find-my-broker.css') }}?v=4">
+@push('page-styles')
+    <link rel="stylesheet" href="{{ asset('css/find-my-broker.css') }}?v=6">
 @endpush
 
 @section('main_content')
@@ -33,16 +33,8 @@
                 <p class="fmb-hero__subtitle">Filter {{ number_format($pageStats['total']) }}+ reviewed brokers by deposit, regulation, platform, costs, and features — updated live from our database. Prefer questions? <a href="{{ route('home') }}#bcMatchQuiz" class="fmb-hero__quiz-link">Take the BrokerMatch quiz</a>.</p>
             @endif
 
-            @include('front.brokers.partials.country_context_hero', ['variant' => 'inline'])
+            @include('front.brokers.partials.country_context_hero')
 
-            @include('front.partials.hero_metrics', [
-                'stats' => [
-                    ['label' => 'In database', 'value' => number_format($pageStats['total'])],
-                    ['label' => 'Matching now', 'value' => number_format($total ?? $brokers->total()), 'tone' => 'match', 'id' => 'fmb-hero-match'],
-                    ['label' => 'Regulated', 'value' => number_format($pageStats['regulated'])],
-                    ['label' => 'Avg. rating', 'value' => $pageStats['avg_rating']],
-                ],
-            ])
         </div>
     </header>
 

@@ -1,22 +1,46 @@
-/* Broker reviews index — BrokersCourt premium theme */
+﻿/* Broker reviews index — BrokersCourt premium theme */
 .bri-page {
-    --bri-ocean: var(--bc-primary, #007AAD);
-    --bri-ocean-dark: var(--bc-primary-dark, #006694);
-    --bri-midnight: var(--bc-dark, #0C1D32);
-    --bri-ice: var(--bc-light, #D9E2E9);
-    --bri-off-white: #FFFBFC;
-    --bri-bg: #f4f6f9;
-    --bri-surface: #ffffff;
-    --bri-border: rgba(217, 226, 233, 0.95);
-    --bri-muted: #64748b;
-    --bri-text: #0C1D32;
+    --bri-ocean: #e8822a;
+    --bri-ocean-dark: #c46a16;
+    --bri-ocean-light: #f5a623;
+    --bri-midnight: #1c1e24;
+    --bri-ice: #e8e2d9;
+    --bri-off-white: #fffdfb;
+    --bri-surface: rgba(255, 255, 255, 0.78);
+    --bri-border: rgba(226, 220, 210, 0.95);
+    --bri-muted: #6b7280;
+    --bri-text: #1c1e24;
     --bri-nav-offset: 4.5rem;
+    --bc-primary: #e8822a;
+    --bc-primary-dark: #c46a16;
+    --bc-primary-light: #f5a623;
+    --bc-primary-rgb: 232, 130, 42;
+    --bc-dark: #1c1e24;
+    --bc-text: #1c1e24;
 
-    background: var(--bri-bg);
+    position: relative;
+    background: linear-gradient(160deg, #f6f7f9 0%, #eef0f3 40%, #f9f3ea 100%);
     color: var(--bri-text);
     min-height: 100vh;
     padding-bottom: 3rem;
     overflow-x: clip;
+}
+
+/* Page-wide warm glow, mirrors the hero blobs */
+.bri-page::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    background:
+        radial-gradient(ellipse 45% 22% at 88% 14%, rgba(245, 166, 35, 0.14) 0%, transparent 60%),
+        radial-gradient(ellipse 40% 20% at 6% 52%, rgba(255, 214, 130, 0.14) 0%, transparent 60%);
+}
+
+.bri-page > * {
+    position: relative;
+    z-index: 1;
 }
 
 .bri-page *,
@@ -29,15 +53,22 @@
     /* width comes from shared .container / layout tokens */
 }
 
-/* Hero */
+/* Hero — glass blobs over a warm light gradient */
 .bri-hero {
-    background: var(--bri-midnight);
-    border-bottom: 1px solid rgba(217, 226, 233, 0.1);
-    padding: 5.5rem 0 2rem;
+    position: relative;
+    overflow: hidden;
+    padding: calc(var(--bc-nav-height, 5.5rem) + 2.75rem) 0 2rem;
     margin-bottom: 1.5rem;
-    background-image:
-        radial-gradient(ellipse 70% 55% at 50% -15%, rgba(0, 122, 173, 0.28) 0%, transparent 58%),
-        linear-gradient(180deg, #0f2744 0%, var(--bri-midnight) 100%);
+    background:
+        radial-gradient(ellipse 46% 62% at 88% 6%, rgba(245, 166, 35, 0.26) 0%, transparent 62%),
+        radial-gradient(ellipse 40% 58% at 3% 44%, rgba(255, 214, 130, 0.28) 0%, transparent 62%),
+        radial-gradient(ellipse 42% 50% at 62% 96%, rgba(232, 130, 42, 0.12) 0%, transparent 62%);
+    border-bottom: 1px solid rgba(232, 130, 42, 0.14);
+}
+
+.bri-hero > * {
+    position: relative;
+    z-index: 1;
 }
 
 .bri-breadcrumb {
@@ -47,16 +78,16 @@
     gap: 0.4rem;
     margin-bottom: 1rem;
     font-size: 0.8125rem;
-    color: rgba(217, 226, 233, 0.55);
+    color: #6b7280;
 }
 
 .bri-breadcrumb a {
-    color: rgba(217, 226, 233, 0.78);
+    color: #6b7280;
     text-decoration: none;
 }
 
 .bri-breadcrumb a:hover {
-    color: var(--bri-off-white);
+    color: var(--bc-primary, #e8822a);
 }
 
 .bri-hero__eyebrow {
@@ -70,9 +101,12 @@
     letter-spacing: 0.06em;
     text-transform: uppercase;
     color: var(--bri-ocean);
-    background: rgba(0, 122, 173, 0.12);
-    border: 1px solid rgba(0, 122, 173, 0.22);
+    background: rgba(255, 255, 255, 0.55);
+    border: 1px solid rgba(255, 255, 255, 0.7);
     border-radius: 999px;
+    box-shadow: 0 8px 24px rgba(60, 50, 40, 0.06);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
 }
 
 .bri-hero__eyebrow svg {
@@ -86,7 +120,7 @@
     font-size: clamp(1.75rem, 4vw, 2.375rem);
     font-weight: 800;
     letter-spacing: -0.03em;
-    color: var(--bri-off-white);
+    color: var(--bc-dark, #1c1e24);
     line-height: 1.15;
 }
 
@@ -99,7 +133,7 @@
     max-width: 38rem;
     font-size: clamp(0.9375rem, 2vw, 1.0625rem);
     font-weight: 500;
-    color: rgba(217, 226, 233, 0.82);
+    color: #6b7280;
     line-height: 1.55;
 }
 
@@ -115,7 +149,7 @@
     border: 1px solid var(--bri-border);
     border-radius: 0.875rem;
     padding: 1.125rem;
-    box-shadow: 0 1px 3px rgba(12, 29, 50, 0.06);
+    box-shadow: 0 1px 3px rgba(60, 50, 40, 0.06);
 }
 
 @media (min-width: 1024px) {
@@ -185,7 +219,7 @@
 }
 
 .bri-filters__close:hover {
-    background: rgba(217, 226, 233, 0.35);
+    background: rgba(226, 220, 210, 0.35);
 }
 
 .bri-filters__close svg {
@@ -217,19 +251,19 @@
     border-radius: 0.5rem;
     font-size: 0.875rem;
     color: var(--bri-text);
-    background: rgba(217, 226, 233, 0.35);
+    background: rgba(226, 220, 210, 0.35);
     outline: none;
     transition: box-shadow 0.15s ease;
 }
 
 .bri-filters__search:focus {
-    box-shadow: inset 0 0 0 2px rgba(0, 122, 173, 0.35);
+    box-shadow: inset 0 0 0 2px rgba(232, 130, 42, 0.35);
 }
 
 .bri-filters__markets {
     margin-top: 0.875rem;
     padding-top: 0.875rem;
-    border-top: 1px solid rgba(217, 226, 233, 0.7);
+    border-top: 1px solid rgba(226, 220, 210, 0.7);
 }
 
 .bri-filters__markets-title {
@@ -255,7 +289,7 @@
     cursor: pointer;
     font-size: 0.8125rem;
     line-height: 1.35;
-    color: #475569;
+    color: #57534e;
     user-select: none;
     transition: color 0.15s ease;
 }
@@ -280,7 +314,7 @@
     font-size: 0.8125rem;
     font-weight: 600;
     color: var(--bri-muted);
-    background: rgba(217, 226, 233, 0.25);
+    background: rgba(226, 220, 210, 0.25);
     border: 0;
     border-radius: 0.5rem;
     cursor: pointer;
@@ -289,14 +323,14 @@
 
 .bri-filters__clear:hover {
     color: var(--bri-ocean);
-    background: rgba(0, 122, 173, 0.1);
+    background: rgba(232, 130, 42, 0.1);
 }
 
 .bri-filters-backdrop {
     position: fixed;
     inset: 0;
     z-index: 110;
-    background: rgba(12, 29, 50, 0.32);
+    background: rgba(60, 50, 40, 0.32);
     backdrop-filter: blur(2px);
     opacity: 1;
     transition: opacity 0.28s ease;
@@ -358,7 +392,7 @@
     background: var(--bri-surface);
     border: 1px solid var(--bri-border);
     border-radius: 999px;
-    box-shadow: 0 1px 3px rgba(12, 29, 50, 0.05);
+    box-shadow: 0 1px 3px rgba(60, 50, 40, 0.05);
     cursor: pointer;
     transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
 }
@@ -371,9 +405,9 @@
 
 .bri-main__filter-toggle:hover,
 .bri-main__filter-toggle[aria-expanded="true"] {
-    color: #fff;
-    background: var(--bri-ocean);
-    border-color: var(--bri-ocean);
+    color: var(--bri-text);
+    background: rgba(232, 130, 42, 0.16);
+    border-color: rgba(232, 130, 42, 0.45);
 }
 
 .bri-main__filter-toggle:hover svg,

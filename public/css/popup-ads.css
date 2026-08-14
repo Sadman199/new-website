@@ -1,0 +1,66 @@
+#bc-ad-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.72);
+    z-index: 99990;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    opacity: 0;
+    transition: opacity .25s ease;
+}
+#bc-ad-overlay.bc-ad-visible {
+    display: flex;
+    opacity: 1;
+}
+#bc-ad-modal {
+    position: relative;
+    background: #fff;
+    border-radius: 12px;
+    max-width: 560px;
+    width: 100%;
+    max-height: 90vh;
+    overflow: auto;
+    box-shadow: 0 25px 50px -12px rgba(0,0,0,.45);
+    transform: translateY(12px) scale(.98);
+    transition: transform .25s ease;
+}
+#bc-ad-overlay.bc-ad-visible #bc-ad-modal {
+    transform: translateY(0) scale(1);
+}
+#bc-ad-close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 36px;
+    height: 36px;
+    border: 0;
+    border-radius: 999px;
+    background: rgba(15,23,42,.85);
+    color: #fff;
+    font-size: 20px;
+    line-height: 1;
+    cursor: pointer;
+    z-index: 2;
+}
+#bc-ad-close:hover { background: #000; }
+.bc-ad-body { padding: 28px 24px 24px; text-align: center; }
+.bc-ad-body img { max-width: 100%; height: auto; border-radius: 8px; display: block; margin: 0 auto 14px; }
+.bc-ad-title { font-size: 1.35rem; font-weight: 700; color: #111827; margin: 0 0 8px; }
+.bc-ad-desc { color: #4b5563; font-size: .95rem; margin: 0 0 16px; line-height: 1.5; }
+.bc-ad-cta {
+    display: inline-block;
+    background: #f59e0b;
+    color: #111 !important;
+    font-weight: 700;
+    padding: 10px 22px;
+    border-radius: 8px;
+    text-decoration: none !important;
+}
+.bc-ad-cta:hover { background: #d97706; }
+.bc-ad-video { position: relative; padding-bottom: 56.25%; height: 0; margin-bottom: 14px; }
+.bc-ad-video iframe, .bc-ad-video video {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; border-radius: 8px;
+}
+.bc-ad-html { text-align: left; margin-bottom: 12px; }

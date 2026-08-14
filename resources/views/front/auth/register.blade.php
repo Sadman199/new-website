@@ -6,13 +6,38 @@
 @section('canonical', route('user.register'))
 
 @push('page-styles')
-    <link rel="stylesheet" href="{{ asset('css/user-account.css') }}?v=9">
+    <link rel="stylesheet" href="{{ asset('css/user-account.css') }}?v=11">
 @endpush
 
 @section('main_content')
 <div class="ua-root">
     <div class="container">
-    <div class="ua-wrap ua-wrap--narrow">
+    <div class="ua-auth-shell">
+        <aside class="ua-auth-aside">
+            <p class="ua-auth-aside__eyebrow">
+                <i class="fas fa-user-plus" aria-hidden="true"></i>
+                Free account
+            </p>
+            <h2 class="ua-auth-aside__title">Join traders who <span>review brokers</span></h2>
+            <p class="ua-auth-aside__lead">
+                Create a free account to rate the brokers you trade with, build your trader profile, and help others avoid bad ones.
+            </p>
+            <ul class="ua-auth-points">
+                <li>
+                    <i class="fas fa-edit" aria-hidden="true"></i>
+                    <span><strong>Write broker reviews</strong>Rate execution, fees, and withdrawals from experience.</span>
+                </li>
+                <li>
+                    <i class="fas fa-chart-line" aria-hidden="true"></i>
+                    <span><strong>Track your activity</strong>Every review and comparison stays on your profile.</span>
+                </li>
+                <li>
+                    <i class="fas fa-lock" aria-hidden="true"></i>
+                    <span><strong>Free and private</strong>No trading account needed, no data sold to brokers.</span>
+                </li>
+            </ul>
+        </aside>
+
         <div class="ua-auth-card">
             <div class="ua-auth-head">
                 <div class="ua-auth-icon"><i class="fas fa-user-plus" aria-hidden="true"></i></div>

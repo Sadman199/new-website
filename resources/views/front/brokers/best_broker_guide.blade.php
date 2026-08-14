@@ -9,9 +9,9 @@
 @section('meta_description', $metaDescription)
 @section('canonical', route('brokers.best', ['slug' => $guidePage['slug'] ?? request()->route('slug')]))
 
-@push('head')
-    <link rel="stylesheet" href="{{ asset('css/best-broker-guide.css') }}?v=6">
-    <link rel="stylesheet" href="{{ asset('css/insight-cards.css') }}?v=1">
+@push('page-styles')
+    <link rel="stylesheet" href="{{ asset('css/best-broker-guide.css') }}?v=11">
+    <link rel="stylesheet" href="{{ asset('css/insight-cards.css') }}?v=3">
 @endpush
 
 @section('main_content')

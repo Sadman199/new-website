@@ -7,9 +7,9 @@
 @section('og_image_width', (string) \App\Services\BrokerOgImageService::WIDTH)
 @section('og_image_height', (string) \App\Services\BrokerOgImageService::HEIGHT)
 
-@push('head')
-    <link rel="stylesheet" href="{{ asset('css/best-broker-guide.css') }}?v=7">
-    <link rel="stylesheet" href="{{ asset('css/broker-review.css') }}?v=18">
+@push('page-styles')
+    <link rel="stylesheet" href="{{ asset('css/best-broker-guide.css') }}?v=11">
+    <link rel="stylesheet" href="{{ asset('css/broker-review.css') }}?v=23">
 @endpush
 
 @push('json_ld')

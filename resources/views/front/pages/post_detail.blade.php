@@ -5,10 +5,10 @@
 @section('canonical', route('news_detail', ['subcategory_slug' => $post_detail->rSubCategory->slug ?? request()->route('subcategory_slug'), 'post_slug' => $post_detail->slug]))
 @section('og_image', $post_detail->post_photo ? 'uploads/'.$post_detail->post_photo : '')
 
-@push('head')
-    <link rel="stylesheet" href="{{ asset('css/best-broker-guide.css') }}?v=6">
-    <link rel="stylesheet" href="{{ asset('css/blog-post-detail.css') }}?v=2">
-    <link rel="stylesheet" href="{{ asset('css/insight-cards.css') }}?v=1">
+@push('page-styles')
+    <link rel="stylesheet" href="{{ asset('css/best-broker-guide.css') }}?v=11">
+    <link rel="stylesheet" href="{{ asset('css/blog-post-detail.css') }}?v=3">
+    <link rel="stylesheet" href="{{ asset('css/insight-cards.css') }}?v=3">
 @endpush
 
 @section('main_content')

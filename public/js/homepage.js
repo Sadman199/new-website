@@ -3,6 +3,7 @@
 
     document.addEventListener('DOMContentLoaded', function () {
         initHeroFilters();
+        initHeroSegment();
         initSearchForm();
         initFinderDropdowns();
         initPickTabs();
@@ -35,6 +36,62 @@
             });
             filterTriggers.forEach(function (el) {
                 el.disabled = !open;
+            });
+        });
+    }
+
+    function initHeroSegment() {
+        var form = document.getElementById('bcHomeSearchForm');
+        var buttons = document.querySelectorAll('[data-bc-hero-seg]');
+        if (!form || !buttons.length) return;
+
+        var brokerAction = form.getAttribute('data-broker-action') || form.action;
+        var propAction = form.getAttribute('data-prop-action') || form.action;
+        var brokerOnly = document.querySelectorAll('[data-bc-hero-broker-only]');
+        var input = document.getElementById('bcHeroBrokerName');
+
+        buttons.forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                var mode = btn.getAttribute('data-bc-hero-seg');
+                buttons.forEach(function (b) {
+                    b.classList.toggle('is-active', b === btn);
+                });
+
+                var isBrokers = mode !== 'props';
+                form.action = isBrokers ? brokerAction : propAction;
+
+                brokerOnly.forEach(function (el) {
+                    if (el.id === 'bcHeroFilters') {
+                        if (!isBrokers) {
+                            el.setAttribute('hidden', '');
+                            var toggle = document.getElementById('bcHeroFiltersToggle');
+                            if (toggle) {
+                                toggle.classList.remove('is-open');
+                                toggle.setAttribute('aria-expanded', 'false');
+                            }
+                            el.querySelectorAll('[data-bc-dropdown-input]').forEach(function (inputEl) {
+                                inputEl.disabled = true;
+                            });
+                            el.querySelectorAll('[data-bc-dropdown-trigger]').forEach(function (trigger) {
+                                trigger.disabled = true;
+                            });
+                            closeAllDropdowns();
+                        }
+                        return;
+                    }
+
+                    if (isBrokers) {
+                        el.hidden = false;
+                        el.removeAttribute('hidden');
+                    } else {
+                        el.hidden = true;
+                    }
+                });
+
+                if (input) {
+                    input.placeholder = isBrokers ? 'Search Your Broker' : 'Search prop firms';
+                    input.name = isBrokers ? 'q' : 'q';
+                }
             });
         });
     }

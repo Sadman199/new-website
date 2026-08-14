@@ -24,7 +24,7 @@
                             
                             <div class="relative">
                                 @if ($broker->logo)
-                                    <img src="{{ asset($broker->logo) }}" alt="{{ $broker->name }} Logo" class="w-12 h-12 object-contain">
+                                    <img src="{{ asset($broker->logo) }}" alt="{{ $broker->name }} Logo" class="w-12 h-12 object-contain" width="48" height="48" loading="lazy" decoding="async">
                                 @else
                                     <div class="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center border border-gray-200">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">

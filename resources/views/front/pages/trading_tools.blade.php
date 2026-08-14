@@ -4,7 +4,7 @@
 @section('meta_description', 'Free forex trading tools dashboard: pip, position size, profit/loss, margin, risk, pivot points, Fibonacci and currency converter — calculate results instantly.')
 
 @push('page-styles')
-    <link rel="stylesheet" href="{{ asset('css/trading-tools.css') }}?v=1">
+    <link rel="stylesheet" href="{{ asset('css/trading-tools.css') }}?v=6">
 @endpush
 
 @section('main_content')
@@ -35,14 +35,6 @@
                 Fibonacci levels, and currency conversion. Pick a tool, enter your values, and see results instantly.
             </p>
 
-            @include('front.partials.hero_metrics', [
-                'stats' => [
-                    ['label' => 'Calculators', 'value' => $toolCount, 'tone' => 'highlight'],
-                    ['label' => 'Results', 'value' => 'Instant'],
-                    ['label' => 'Cost', 'value' => 'Free'],
-                    ['label' => 'Updated', 'value' => date('Y')],
-                ],
-            ])
         </div>
     </header>
 
@@ -121,5 +113,5 @@
 @endsection
 
 @push('scripts')
-<script src="{{ asset('js/trading-tools.js') }}?v=1"></script>
+<script src="{{ asset('js/trading-tools.js') }}?v=1" defer></script>
 @endpush

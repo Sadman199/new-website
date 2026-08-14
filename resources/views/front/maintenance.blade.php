@@ -15,5 +15,5 @@
 @endsection
 
 @push('page-styles')
-    <link rel="stylesheet" href="{{ asset('css/user-account.css') }}?v=3">
+    <link rel="stylesheet" href="{{ asset('css/user-account.css') }}?v=4">
 @endpush

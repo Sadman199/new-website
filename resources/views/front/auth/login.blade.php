@@ -6,13 +6,38 @@
 @section('canonical', route('user.login'))
 
 @push('page-styles')
-    <link rel="stylesheet" href="{{ asset('css/user-account.css') }}?v=9">
+    <link rel="stylesheet" href="{{ asset('css/user-account.css') }}?v=11">
 @endpush
 
 @section('main_content')
 <div class="ua-root">
     <div class="container">
-    <div class="ua-wrap ua-wrap--narrow">
+    <div class="ua-auth-shell">
+        <aside class="ua-auth-aside">
+            <p class="ua-auth-aside__eyebrow">
+                <i class="fas fa-shield-alt" aria-hidden="true"></i>
+                Trader community
+            </p>
+            <h2 class="ua-auth-aside__title">Your broker research, <span>in one place</span></h2>
+            <p class="ua-auth-aside__lead">
+                Sign in to publish verified broker reviews, save the brokers you are comparing, and pick up where you left off.
+            </p>
+            <ul class="ua-auth-points">
+                <li>
+                    <i class="fas fa-star" aria-hidden="true"></i>
+                    <span><strong>Publish verified reviews</strong>Share your real trading experience with other traders.</span>
+                </li>
+                <li>
+                    <i class="fas fa-bookmark" aria-hidden="true"></i>
+                    <span><strong>Save your shortlist</strong>Keep the brokers and comparisons you care about.</span>
+                </li>
+                <li>
+                    <i class="fas fa-bell" aria-hidden="true"></i>
+                    <span><strong>Stay informed</strong>Get notified when a broker you follow is updated.</span>
+                </li>
+            </ul>
+        </aside>
+
         <div class="ua-auth-card">
             <div class="ua-auth-head">
                 <div class="ua-auth-icon"><i class="fas fa-sign-in-alt" aria-hidden="true"></i></div>

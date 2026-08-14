@@ -7,9 +7,11 @@ document.addEventListener('DOMContentLoaded', function () {
     var navLabel = document.getElementById('countryNavLabel');
     var searchInput = document.getElementById('countryDrawerSearch');
     var emptyState = document.getElementById('countryDrawerEmpty');
+    var countryForm = document.getElementById('countryDrawerForm');
+    var countryValue = document.getElementById('countryDrawerValue');
+    var countryOptions = drawer ? drawer.querySelectorAll('.bc-country-option') : [];
     var selected = drawer ? drawer.querySelector('.bc-country-option.is-selected') : null;
     var toast = document.getElementById('countrySuccessToast');
-    var countryForms = drawer ? drawer.querySelectorAll('.bc-country-option-form') : [];
     var recommendedUrl = drawer ? drawer.dataset.recommendedUrl : null;
     var csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
 
@@ -65,26 +67,25 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function markSelectedCountry(btn) {
-        drawer?.querySelectorAll('.bc-country-option').forEach(function (option) {
+        countryOptions.forEach(function (option) {
             var isMatch = option === btn;
             option.classList.toggle('is-selected', isMatch);
             option.setAttribute('aria-selected', isMatch ? 'true' : 'false');
         });
+        if (countryValue && btn) {
+            countryValue.value = btn.dataset.country || btn.value || '';
+        }
     }
 
     function filterCountries(query) {
         var normalized = (query || '').trim().toLowerCase();
         var visible = 0;
 
-        countryForms.forEach(function (form) {
-            var btn = form.querySelector('.bc-country-option');
-            if (!btn) {
-                return;
-            }
+        countryOptions.forEach(function (btn) {
             var name = (btn.dataset.name || '').toLowerCase();
             var code = (btn.dataset.shortcode || '').toLowerCase();
             var match = !normalized || name.indexOf(normalized) !== -1 || code.indexOf(normalized) !== -1;
-            form.classList.toggle('is-hidden', !match);
+            btn.classList.toggle('is-hidden', !match);
             if (match) {
                 visible += 1;
             }
@@ -134,10 +135,18 @@ document.addEventListener('DOMContentLoaded', function () {
             });
     }
 
-    function switchCountry(form, btn) {
-        var body = new FormData(form);
+    function switchCountry(btn) {
+        if (!countryForm || !btn) {
+            return Promise.reject();
+        }
 
-        return fetch(form.action, {
+        if (countryValue) {
+            countryValue.value = btn.dataset.country || btn.value || '';
+        }
+
+        var body = new FormData(countryForm);
+
+        return fetch(countryForm.action, {
             method: 'POST',
             body: body,
             headers: {
@@ -162,7 +171,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 showToast('Country updated! Recommended brokers refreshed for ' + (btn.dataset.name || 'your region') + '.');
             })
             .catch(function () {
-                form.submit();
+                countryForm.submit();
             });
     }
 
@@ -232,15 +241,16 @@ document.addEventListener('DOMContentLoaded', function () {
         filterCountries(searchInput.value);
     });
 
-    countryForms.forEach(function (form) {
-        form.addEventListener('submit', function (e) {
-            var btn = form.querySelector('.bc-country-option');
-            if (!btn) {
-                return;
-            }
-            e.preventDefault();
-            switchCountry(form, btn);
-        });
+    countryForm?.addEventListener('submit', function (e) {
+        var submitter = e.submitter || document.activeElement;
+        if (!submitter || !submitter.classList || !submitter.classList.contains('bc-country-option')) {
+            submitter = countryForm.querySelector('.bc-country-option.is-selected');
+        }
+        if (!submitter) {
+            return;
+        }
+        e.preventDefault();
+        switchCountry(submitter);
     });
 
     document.addEventListener('keydown', function (e) {

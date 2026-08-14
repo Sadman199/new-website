@@ -1,19 +1,24 @@
-/* Scam brokers — BrokersCourt dark warning theme */
+/* Scam brokers — high-alert hazard theme (deliberately distinct from the rest of the site) */
 .sbi-page {
-    --sbi-ocean: var(--bc-primary, #007AAD);
-    --sbi-midnight: var(--bc-dark, #0C1D32);
-    --sbi-ice: var(--bc-light, #D9E2E9);
-    --sbi-off-white: #FFFBFC;
-    --sbi-bg: #f4f6f9;
-    --sbi-surface: #ffffff;
-    --sbi-border: rgba(217, 226, 233, 0.95);
-    --sbi-muted: #64748b;
-    --sbi-text: #0C1D32;
-    --sbi-danger: #dc2626;
-    --sbi-danger-soft: rgba(220, 38, 38, 0.12);
-    --sbi-safe: #059669;
+    --sbi-void: #0a0a0c;
+    --sbi-surface: rgba(255, 255, 255, 0.045);
+    --sbi-surface-raised: rgba(255, 255, 255, 0.07);
+    --sbi-border: rgba(255, 255, 255, 0.09);
+    --sbi-border-danger: rgba(239, 68, 68, 0.32);
+    --sbi-text: #f6f2f1;
+    --sbi-muted: rgba(246, 242, 241, 0.62);
+    --sbi-dim: rgba(246, 242, 241, 0.4);
+    --sbi-danger: #ef4444;
+    --sbi-danger-bright: #f87171;
+    --sbi-danger-soft: rgba(239, 68, 68, 0.12);
+    --sbi-safe: #4ade80;
+    --sbi-amber: #fbbf24;
 
-    background: var(--sbi-bg);
+    position: relative;
+    background:
+        radial-gradient(ellipse 60% 40% at 50% -5%, rgba(239, 68, 68, 0.2) 0%, transparent 60%),
+        radial-gradient(ellipse 40% 30% at 90% 20%, rgba(190, 18, 60, 0.14) 0%, transparent 55%),
+        var(--sbi-void);
     color: var(--sbi-text);
     min-height: 100vh;
     padding-bottom: 3rem;
@@ -26,21 +31,25 @@
     box-sizing: border-box;
 }
 
+body:has(.sbi-page) {
+    background: #0a0a0c;
+}
+
 .sbi-wrap {
+    position: relative;
+    z-index: 1;
     width: min(100% - 2rem, 80rem);
     margin: 0 auto;
 }
 
 /* Hero */
 .sbi-hero {
-    background: var(--sbi-midnight);
-    border-bottom: 1px solid rgba(217, 226, 233, 0.1);
-    padding: 5.5rem 0 2rem;
-    margin-bottom: 1.5rem;
-    background-image:
-        radial-gradient(ellipse 70% 55% at 50% -15%, rgba(220, 38, 38, 0.22) 0%, transparent 58%),
-        radial-gradient(ellipse 40% 35% at 85% 20%, rgba(0, 122, 173, 0.14) 0%, transparent 55%),
-        linear-gradient(180deg, #1a1020 0%, var(--sbi-midnight) 100%);
+    position: relative;
+    padding: calc(var(--bc-nav-height, 5.5rem) + 3rem) 0 2.5rem;
+    margin-bottom: 1.75rem;
+    border-bottom: 1px solid var(--sbi-border-danger);
+    background:
+        radial-gradient(ellipse 50% 70% at 20% 100%, rgba(239, 68, 68, 0.12) 0%, transparent 60%);
 }
 
 .sbi-breadcrumb {
@@ -50,54 +59,77 @@
     gap: 0.4rem;
     margin-bottom: 1rem;
     font-size: 0.8125rem;
-    color: rgba(217, 226, 233, 0.55);
+    color: var(--sbi-dim);
 }
 
 .sbi-breadcrumb a {
-    color: rgba(217, 226, 233, 0.78);
+    color: var(--sbi-muted);
     text-decoration: none;
+    transition: color 0.15s;
 }
 
 .sbi-breadcrumb a:hover {
-    color: var(--sbi-off-white);
+    color: var(--sbi-danger-bright);
 }
 
 .sbi-hero__eyebrow {
     display: inline-flex;
     align-items: center;
-    margin: 0 0 0.625rem;
-    padding: 0.25rem 0.625rem;
-    font-size: 0.625rem;
-    font-weight: 700;
-    letter-spacing: 0.06em;
+    gap: 0.5rem;
+    margin: 0 0 0.75rem;
+    padding: 0.35rem 0.85rem;
+    font-size: 0.6875rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
     text-transform: uppercase;
-    color: #fca5a5;
-    background: rgba(220, 38, 38, 0.16);
-    border: 1px solid rgba(248, 113, 113, 0.28);
+    color: #fecaca;
+    background: rgba(239, 68, 68, 0.16);
+    border: 1px solid rgba(239, 68, 68, 0.45);
     border-radius: 999px;
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+}
+
+/* Pulsing alert dot in front of the eyebrow label */
+.sbi-hero__eyebrow::before {
+    content: '';
+    width: 0.45rem;
+    height: 0.45rem;
+    border-radius: 50%;
+    background: var(--sbi-danger);
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.25);
+    animation: sbi-pulse 1.8s ease-in-out infinite;
+}
+
+@keyframes sbi-pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(0.82); }
 }
 
 .sbi-hero__title {
-    margin: 0 0 0.75rem;
-    font-size: clamp(2rem, 4.5vw, 2.75rem);
+    margin: 0 0 0.625rem;
+    max-width: 42rem;
+    font-size: clamp(1.75rem, 4vw, 2.375rem);
     font-weight: 800;
     letter-spacing: -0.03em;
-    line-height: 1.08;
-    color: var(--sbi-off-white);
+    line-height: 1.15;
+    color: var(--sbi-text);
 }
 
 .sbi-hero__accent {
-    color: #f87171;
+    color: var(--sbi-danger-bright);
+    text-shadow: 0 0 32px rgba(239, 68, 68, 0.45);
 }
 
 .sbi-hero__subtitle {
     margin: 0 0 1.5rem;
     max-width: 42rem;
     font-size: clamp(1rem, 2.2vw, 1.125rem);
-    line-height: 1.55;
-    color: rgba(217, 226, 233, 0.78);
+    line-height: 1.6;
+    color: var(--sbi-muted);
 }
 
+/* Safety hub nav */
 .bc-safety-hub {
     display: flex;
     flex-wrap: wrap;
@@ -112,7 +144,7 @@
     font-weight: 700;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: rgba(217, 226, 233, 0.55);
+    color: var(--sbi-dim);
 }
 
 .bc-safety-hub__links {
@@ -126,9 +158,11 @@
     align-items: center;
     padding: 0.4rem 0.75rem;
     border-radius: 999px;
-    border: 1px solid rgba(217, 226, 233, 0.18);
-    background: rgba(12, 29, 50, 0.45);
-    color: rgba(217, 226, 233, 0.88);
+    border: 1px solid var(--sbi-border);
+    background: var(--sbi-surface);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    color: var(--sbi-muted);
     font-size: 0.8125rem;
     font-weight: 600;
     text-decoration: none;
@@ -137,26 +171,36 @@
 
 .bc-safety-hub__link:hover,
 .bc-safety-hub__link.is-active {
-    color: #fff;
-    border-color: rgba(248, 113, 113, 0.45);
-    background: rgba(248, 113, 113, 0.16);
+    color: var(--sbi-text);
+    border-color: rgba(239, 68, 68, 0.5);
+    background: rgba(239, 68, 68, 0.16);
 }
 
+/* Standing warning notice */
 .sbi-notice {
-    margin-bottom: 1.5rem;
-    padding: 0.875rem 1rem;
-    border-radius: 0.625rem;
-    background: #fff1f2;
-    border: 1px solid #fecdd3;
-    color: #9f1239;
+    position: relative;
+    margin-bottom: 1.75rem;
+    padding: 1rem 1.15rem 1rem 1.35rem;
+    border-radius: 0.75rem;
+    background: rgba(239, 68, 68, 0.08);
+    border: 1px solid var(--sbi-border-danger);
+    border-left: 4px solid var(--sbi-danger);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    color: rgba(254, 226, 226, 0.86);
     font-size: 0.875rem;
-    line-height: 1.55;
+    line-height: 1.6;
+}
+
+.sbi-notice strong {
+    color: #fecaca;
 }
 
 .sbi-notice a {
-    color: #be123c;
+    color: var(--sbi-danger-bright);
     font-weight: 700;
     text-decoration: underline;
+    text-underline-offset: 0.15em;
 }
 
 /* Layout */
@@ -180,54 +224,62 @@
     border: 1px solid var(--sbi-border);
     border-radius: 0.875rem;
     padding: 1.25rem;
-    box-shadow: 0 1px 3px rgba(12, 29, 50, 0.04);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    box-shadow: 0 18px 40px -22px rgba(0, 0, 0, 0.9);
 }
 
 @media (min-width: 1024px) {
     .sbi-sidebar {
         position: sticky;
-        top: 5.5rem;
+        top: calc(var(--bc-nav-height, 5.5rem) + 1rem);
     }
 }
 
 .sbi-sidebar__title {
     margin: 0 0 0.875rem;
-    font-size: 0.9375rem;
+    font-size: 0.75rem;
     font-weight: 800;
-    color: var(--sbi-text);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--sbi-dim);
 }
 
 .sbi-sidebar__search {
     width: 100%;
     height: 2.625rem;
     padding: 0 0.875rem;
-    border: 1px solid #cbd5e1;
+    border: 1px solid var(--sbi-border);
     border-radius: 0.5rem;
     font-size: 0.875rem;
     color: var(--sbi-text);
-    background: #fff;
+    background: rgba(255, 255, 255, 0.05);
     outline: none;
     transition: border-color 0.15s, box-shadow 0.15s;
 }
 
+.sbi-sidebar__search::placeholder {
+    color: var(--sbi-dim);
+}
+
 .sbi-sidebar__search:focus {
-    border-color: var(--sbi-danger);
-    box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.12);
+    border-color: rgba(239, 68, 68, 0.6);
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.18);
 }
 
 .sbi-filter-group {
     margin-top: 1.125rem;
     padding-top: 1.125rem;
-    border-top: 1px solid #f1f5f9;
+    border-top: 1px solid var(--sbi-border);
 }
 
 .sbi-filter-group__title {
     margin: 0 0 0.625rem;
     font-size: 0.6875rem;
     font-weight: 700;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.06em;
     text-transform: uppercase;
-    color: var(--sbi-muted);
+    color: var(--sbi-dim);
 }
 
 .sbi-filter-group__body {
@@ -242,8 +294,13 @@
     padding: 0.4rem 0;
     cursor: pointer;
     font-size: 0.8125rem;
-    color: #334155;
+    color: var(--sbi-muted);
     user-select: none;
+    transition: color 0.15s;
+}
+
+.sbi-filter-option:hover {
+    color: var(--sbi-text);
 }
 
 .sbi-filter-option input {
@@ -265,13 +322,13 @@
     font-size: 0.625rem;
     font-weight: 700;
     text-align: center;
-    color: var(--sbi-muted);
-    background: #f1f5f9;
+    color: var(--sbi-dim);
+    background: rgba(255, 255, 255, 0.06);
 }
 
 .sbi-filter-option input:checked ~ .sbi-filter-count {
-    color: #b91c1c;
-    background: #fee2e2;
+    color: #fecaca;
+    background: rgba(239, 68, 68, 0.22);
 }
 
 .sbi-sidebar__clear {
@@ -279,26 +336,27 @@
     width: 100%;
     margin-top: 1rem;
     padding: 0.6rem 0.875rem;
-    border: 1px solid #e2e8f0;
+    border: 1px solid var(--sbi-border);
     border-radius: 0.5rem;
-    background: #fff;
-    color: #475569;
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--sbi-muted);
     font-size: 0.8125rem;
     font-weight: 600;
     cursor: pointer;
-    transition: background 0.15s, border-color 0.15s;
+    transition: background 0.15s, border-color 0.15s, color 0.15s;
 }
 
 .sbi-sidebar__clear:hover {
-    background: #f8fafc;
-    border-color: #cbd5e1;
+    background: rgba(255, 255, 255, 0.09);
+    border-color: rgba(255, 255, 255, 0.18);
+    color: var(--sbi-text);
 }
 
 .sbi-sidebar__tools,
 .sbi-sidebar__links {
     margin-top: 1.125rem;
     padding-top: 1.125rem;
-    border-top: 1px solid #f1f5f9;
+    border-top: 1px solid var(--sbi-border);
 }
 
 .sbi-sidebar__tools-title,
@@ -306,9 +364,9 @@
     margin: 0 0 0.625rem;
     font-size: 0.6875rem;
     font-weight: 700;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.06em;
     text-transform: uppercase;
-    color: var(--sbi-muted);
+    color: var(--sbi-dim);
 }
 
 .sbi-checker {
@@ -322,45 +380,55 @@
     min-width: 0;
     height: 2.375rem;
     padding: 0 0.75rem;
-    border: 1px solid #cbd5e1;
+    border: 1px solid var(--sbi-border);
     border-radius: 0.5rem;
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--sbi-text);
     font-size: 0.8125rem;
     outline: none;
+    transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.sbi-checker__input::placeholder {
+    color: var(--sbi-dim);
 }
 
 .sbi-checker__input:focus {
-    border-color: var(--sbi-ocean);
-    box-shadow: 0 0 0 3px rgba(0, 122, 173, 0.12);
+    border-color: rgba(239, 68, 68, 0.6);
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.18);
 }
 
 .sbi-checker__btn {
     height: 2.375rem;
     padding: 0 0.875rem;
-    border: 0;
+    border: 1px solid rgba(239, 68, 68, 0.45);
     border-radius: 0.5rem;
-    background: var(--sbi-ocean);
-    color: #fff;
+    background: rgba(239, 68, 68, 0.2);
+    color: var(--sbi-text);
     font-size: 0.75rem;
     font-weight: 700;
     cursor: pointer;
     white-space: nowrap;
+    transition: background 0.15s, border-color 0.15s;
 }
 
 .sbi-checker__btn:hover {
-    background: #006694;
+    background: rgba(239, 68, 68, 0.34);
+    border-color: rgba(239, 68, 68, 0.7);
 }
 
 .sbi-sidebar__link {
     display: block;
     padding: 0.35rem 0;
-    color: #334155;
+    color: var(--sbi-muted);
     font-size: 0.8125rem;
     font-weight: 500;
     text-decoration: none;
+    transition: color 0.15s;
 }
 
 .sbi-sidebar__link:hover {
-    color: #b91c1c;
+    color: var(--sbi-danger-bright);
 }
 
 .sbi-sidebar__link--safe {
@@ -369,25 +437,32 @@
 }
 
 .sbi-sidebar__link--safe:hover {
-    color: #047857;
+    color: #86efac;
 }
 
 .sbi-sidebar__link--checker {
     font-weight: 600;
-    color: var(--sbi-ocean);
+    color: var(--sbi-danger-bright);
 }
 
 .sbi-sidebar__link--checker:hover {
-    color: #006694;
+    color: #fecaca;
 }
 
 /* Main */
 .sbi-main__head {
-    margin-bottom: 1rem;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.5rem 1rem;
+    margin-bottom: 1.15rem;
+    padding-bottom: 0.85rem;
+    border-bottom: 1px solid var(--sbi-border);
 }
 
 .sbi-main__heading {
-    margin: 0 0 0.25rem;
+    margin: 0;
     font-size: 1.125rem;
     font-weight: 800;
     color: var(--sbi-text);
@@ -395,8 +470,14 @@
 
 .sbi-results-count {
     margin: 0;
-    font-size: 0.8125rem;
-    color: var(--sbi-muted);
+    padding: 0.2rem 0.65rem;
+    border-radius: 999px;
+    background: rgba(239, 68, 68, 0.14);
+    border: 1px solid var(--sbi-border-danger);
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #fecaca;
+    white-space: nowrap;
 }
 
 .sbi-grid {
@@ -422,19 +503,23 @@
 
 /* Cards */
 .sbi-card {
+    position: relative;
     display: flex;
     flex-direction: column;
     background: var(--sbi-surface);
-    border: 1px solid #fecaca;
+    border: 1px solid var(--sbi-border-danger);
     border-radius: 0.875rem;
     overflow: hidden;
-    box-shadow: 0 1px 3px rgba(12, 29, 50, 0.04);
-    transition: box-shadow 0.15s, transform 0.15s;
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    box-shadow: 0 18px 40px -24px rgba(0, 0, 0, 0.95);
+    transition: box-shadow 0.18s, transform 0.18s, border-color 0.18s;
 }
 
 .sbi-card:hover {
-    box-shadow: 0 10px 28px rgba(185, 28, 28, 0.1);
-    transform: translateY(-1px);
+    border-color: rgba(239, 68, 68, 0.6);
+    box-shadow: 0 22px 48px -22px rgba(239, 68, 68, 0.45);
+    transform: translateY(-2px);
 }
 
 .sbi-card.is-hidden {
@@ -442,11 +527,12 @@
 }
 
 .sbi-card__head {
+    position: relative;
     display: flex;
     align-items: center;
     gap: 0.875rem;
-    padding: 1rem 1rem 0.75rem;
-    background: linear-gradient(180deg, #fff5f5 0%, #fff 100%);
+    padding: 1.15rem 1rem 0.85rem;
+    background: linear-gradient(180deg, rgba(239, 68, 68, 0.12) 0%, transparent 100%);
 }
 
 .sbi-card__logo {
@@ -456,9 +542,9 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 1px solid #e2e8f0;
+    border: 1px solid var(--sbi-border);
     border-radius: 0.625rem;
-    background: #f8fafc;
+    background: rgba(255, 255, 255, 0.06);
     overflow: hidden;
 }
 
@@ -467,13 +553,17 @@
     height: 2.25rem;
     object-fit: contain;
     filter: grayscale(1);
-    opacity: 0.85;
+    opacity: 0.65;
+}
+
+.sbi-card:hover .sbi-card__logo img {
+    opacity: 0.9;
 }
 
 .sbi-card__logo-fallback {
     font-size: 1.125rem;
     font-weight: 800;
-    color: #94a3b8;
+    color: var(--sbi-dim);
 }
 
 .sbi-card__identity {
@@ -489,23 +579,33 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    transition: color 0.15s;
 }
 
 .sbi-card__name:hover {
-    color: #b91c1c;
+    color: var(--sbi-danger-bright);
 }
 
 .sbi-card__badge {
     display: inline-flex;
-    margin-top: 0.25rem;
+    align-items: center;
+    gap: 0.3rem;
+    margin-top: 0.3rem;
     padding: 0.15rem 0.5rem;
     border-radius: 999px;
-    background: #fef2f2;
-    color: #b91c1c;
+    background: rgba(239, 68, 68, 0.18);
+    border: 1px solid rgba(239, 68, 68, 0.4);
+    color: #fecaca;
     font-size: 0.625rem;
-    font-weight: 700;
-    letter-spacing: 0.03em;
+    font-weight: 800;
+    letter-spacing: 0.06em;
     text-transform: uppercase;
+}
+
+.sbi-card__badge::before {
+    content: '⚠';
+    font-size: 0.6875rem;
+    line-height: 1;
 }
 
 .sbi-card__body {
@@ -518,8 +618,8 @@
 .sbi-card__reason {
     margin: 0 0 0.75rem;
     font-size: 0.8125rem;
-    line-height: 1.55;
-    color: #475569;
+    line-height: 1.6;
+    color: var(--sbi-muted);
     flex: 1;
 }
 
@@ -531,17 +631,18 @@
 }
 
 .sbi-card__tag {
-    padding: 0.15rem 0.45rem;
-    border-radius: 0.25rem;
-    background: #fff1f2;
-    color: #be123c;
+    padding: 0.15rem 0.5rem;
+    border-radius: 0.3rem;
+    background: rgba(239, 68, 68, 0.12);
+    border: 1px solid rgba(239, 68, 68, 0.26);
+    color: #fca5a5;
     font-size: 0.625rem;
     font-weight: 700;
 }
 
 .sbi-card__meta {
     display: grid;
-    gap: 0.35rem;
+    gap: 0.4rem;
     margin: 0 0 0.875rem;
     font-size: 0.8125rem;
 }
@@ -553,7 +654,7 @@
 }
 
 .sbi-card__meta-row dt {
-    color: var(--sbi-muted);
+    color: var(--sbi-dim);
     flex-shrink: 0;
 }
 
@@ -565,36 +666,38 @@
 }
 
 .sbi-card__meta-value--danger {
-    color: #b91c1c;
+    color: var(--sbi-danger-bright);
 }
 
 .sbi-card__actions {
     margin-top: auto;
     padding-top: 0.875rem;
-    border-top: 1px solid #f1f5f9;
+    border-top: 1px solid var(--sbi-border);
 }
 
 .sbi-card__cta {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 0.375rem;
+    gap: 0.4rem;
     width: 100%;
-    padding: 0.65rem 1rem;
+    padding: 0.7rem 1rem;
     border-radius: 0.5rem;
-    background: var(--sbi-midnight);
-    color: #fff;
+    background: rgba(239, 68, 68, 0.18);
+    border: 1px solid rgba(239, 68, 68, 0.42);
+    color: var(--sbi-text);
     font-size: 0.75rem;
-    font-weight: 700;
-    letter-spacing: 0.03em;
+    font-weight: 800;
+    letter-spacing: 0.06em;
     text-decoration: none;
     text-transform: uppercase;
-    transition: background 0.15s;
+    transition: background 0.15s, border-color 0.15s;
 }
 
 .sbi-card__cta:hover {
-    background: #152a45;
-    color: #fff;
+    background: rgba(239, 68, 68, 0.32);
+    border-color: rgba(239, 68, 68, 0.72);
+    color: var(--sbi-text);
 }
 
 /* Empty */
@@ -604,6 +707,8 @@
     background: var(--sbi-surface);
     border: 1px solid var(--sbi-border);
     border-radius: 0.875rem;
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
 }
 
 .sbi-empty__icon {
@@ -614,10 +719,11 @@
     align-items: center;
     justify-content: center;
     border-radius: 999px;
-    background: #fef2f2;
-    color: #b91c1c;
+    background: rgba(239, 68, 68, 0.16);
+    border: 1px solid rgba(239, 68, 68, 0.4);
+    color: var(--sbi-danger-bright);
     font-size: 1.25rem;
-    font-weight: 800;
+    font-weight: 900;
 }
 
 .sbi-empty__title {
@@ -645,6 +751,8 @@
     background: var(--sbi-surface);
     border: 1px solid var(--sbi-border);
     border-radius: 0.875rem;
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
 }
 
 .sbi-tips__title {
@@ -669,46 +777,55 @@
 .sbi-tip {
     padding: 1rem;
     border-radius: 0.625rem;
-    background: #fff5f5;
-    border: 1px solid #fecdd3;
+    background: rgba(239, 68, 68, 0.07);
+    border: 1px solid rgba(239, 68, 68, 0.22);
 }
 
 .sbi-tip__title {
     margin: 0 0 0.35rem;
     font-size: 0.875rem;
     font-weight: 800;
-    color: #881337;
+    color: #fecaca;
 }
 
 .sbi-tip__text {
     margin: 0;
     font-size: 0.8125rem;
-    line-height: 1.55;
-    color: #9f1239;
+    line-height: 1.6;
+    color: var(--sbi-muted);
 }
 
+/* The way out — deliberately the only green element on the page */
 .sbi-tips__cta {
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
-    margin-top: 1.125rem;
-    padding: 0.65rem 1.125rem;
+    margin-top: 1.25rem;
+    padding: 0.7rem 1.25rem;
     border-radius: 999px;
-    background: var(--sbi-safe);
-    color: #fff;
+    background: rgba(74, 222, 128, 0.16);
+    border: 1px solid rgba(74, 222, 128, 0.42);
+    color: #bbf7d0;
     font-size: 0.8125rem;
     font-weight: 700;
     text-decoration: none;
-    transition: background 0.15s;
+    transition: background 0.15s, border-color 0.15s, color 0.15s;
 }
 
 .sbi-tips__cta:hover {
-    background: #047857;
-    color: #fff;
+    background: rgba(74, 222, 128, 0.28);
+    border-color: rgba(74, 222, 128, 0.7);
+    color: #dcfce7;
 }
 
 @media (prefers-reduced-motion: reduce) {
-    .sbi-card {
+    .sbi-card,
+    .sbi-card:hover {
         transition: none;
+        transform: none;
+    }
+
+    .sbi-hero__eyebrow::before {
+        animation: none;
     }
 }

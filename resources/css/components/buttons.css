@@ -24,15 +24,15 @@
 .bc-btn--primary,
 .bc-btn-primary {
     color: #fff;
-    background: var(--bc-dark);
-    border-color: var(--bc-dark);
+    background: var(--bc-primary);
+    border-color: var(--bc-primary);
 }
 
 .bc-btn--primary:hover,
 .bc-btn-primary:hover {
     color: #fff;
-    background: var(--bc-primary);
-    border-color: var(--bc-primary);
+    background: var(--bc-primary-dark);
+    border-color: var(--bc-primary-dark);
     transform: translateY(-1px);
     text-decoration: none;
 }

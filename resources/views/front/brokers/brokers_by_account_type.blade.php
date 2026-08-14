@@ -42,21 +42,7 @@
     @if(isset($global_sidebar_bottom_ad[0]))
         <div class="hidden lg:flex absolute top-0 left-0 h-full items-center pointer-events-none z-0 px-2 sm:px-4">
             @php $row = $global_sidebar_bottom_ad[0]; @endphp
-            <div class="relative group">
-                @if($row->sidebar_ad_url == '')
-                    <div class="relative rounded-lg overflow-hidden shadow-lg border-2 border-gray-200 hover:border-blue-400 transition-all duration-300">
-                        <div class="absolute top-1 sm:top-2 left-1 sm:left-2 bg-yellow-400 text-black text-xs font-bold px-1.5 sm:px-2 py-0.5 sm:py-1 rounded z-10">ADVERTISEMENT</div>
-                        <img src="{{ asset('uploads/'.$row->sidebar_ad) }}" alt="" class="w-24 sm:w-32 lg:w-48 h-auto object-contain pointer-events-auto rounded-lg">
-                    </div>
-                @else
-                    <div class="relative rounded-lg overflow-hidden shadow-lg border-2 border-gray-200 hover:border-blue-400 transition-all duration-300">
-                        <div class="absolute top-1 sm:top-2 left-1 sm:left-2 bg-yellow-400 text-black text-xs font-bold px-1.5 sm:px-2 py-0.5 sm:py-1 rounded z-10">ADVERTISEMENT</div>
-                        <a href="{{ $row->sidebar_ad_url }}" class="pointer-events-auto">
-                            <img src="{{ asset('uploads/'.$row->sidebar_ad) }}" alt="" class="w-24 sm:w-32 lg:w-48 h-auto object-contain pointer-events-auto rounded-lg">
-                        </a>
-                    </div>
-                @endif
-            </div>
+            @include('front.partials.sidebar_ad', ['row' => $row])
         </div>
     @endif
     
@@ -64,21 +50,7 @@
     @if(isset($global_sidebar_bottom_ad[1]))
         <div class="hidden lg:flex absolute top-0 right-0 h-full items-center pointer-events-none z-0 px-2 sm:px-4">
             @php $row = $global_sidebar_bottom_ad[1]; @endphp
-            <div class="relative group">
-                @if($row->sidebar_ad_url == '')
-                    <div class="relative rounded-lg overflow-hidden shadow-lg border-2 border-gray-200 hover:border-blue-400 transition-all duration-300">
-                        <div class="absolute top-1 sm:top-2 left-1 sm:left-2 bg-yellow-400 text-black text-xs font-bold px-1.5 sm:px-2 py-0.5 sm:py-1 rounded z-10">ADVERTISEMENT</div>
-                        <img src="{{ asset('uploads/'.$row->sidebar_ad) }}" alt="" class="w-24 sm:w-32 lg:w-48 h-auto object-contain pointer-events-auto rounded-lg">
-                    </div>
-                @else
-                    <div class="relative rounded-lg overflow-hidden shadow-lg border-2 border-gray-200 hover:border-blue-400 transition-all duration-300">
-                        <div class="absolute top-1 sm:top-2 left-1 sm:left-2 bg-yellow-400 text-black text-xs font-bold px-1.5 sm:px-2 py-0.5 sm:py-1 rounded z-10">ADVERTISEMENT</div>
-                        <a href="{{ $row->sidebar_ad_url }}" class="pointer-events-auto">
-                            <img src="{{ asset('uploads/'.$row->sidebar_ad) }}" alt="" class="w-24 sm:w-32 lg:w-48 h-auto object-contain pointer-events-auto rounded-lg">
-                        </a>
-                    </div>
-                @endif
-            </div>
+            @include('front.partials.sidebar_ad', ['row' => $row])
         </div>
     @endif
 

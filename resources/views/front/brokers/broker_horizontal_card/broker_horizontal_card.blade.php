@@ -4,7 +4,7 @@
         <div class="flex items-center space-x-2">
             @if ($broker->logo)
             <div class="w-10 h-8 flex-shrink-0 bg-white p-1 rounded border border-gray-200">
-                <img src="{{ asset($broker->logo) }}" alt="Broker Logo" class="w-full h-full object-contain">
+                <img src="{{ asset($broker->logo) }}" alt="Broker Logo" class="w-full h-full object-contain" width="40" height="32" loading="lazy" decoding="async">
             </div>
             @endif
             <h4 class="font-semibold text-gray-700 text-sm">{{ Str::limit($broker->title, 20) }}</h4>
@@ -19,7 +19,7 @@
         <div class="hidden md:flex col-span-4 md:col-span-4 items-center space-x-3">
             @if ($broker->logo)
             <div class="w-16 h-12 flex-shrink-0 bg-white p-1 rounded border border-gray-200">
-                <img src="{{ asset($broker->logo) }}" alt="Broker Logo" class="w-full h-full object-contain">
+                <img src="{{ asset($broker->logo) }}" alt="Broker Logo" class="w-full h-full object-contain" width="64" height="48" loading="lazy" decoding="async">
             </div>
             @endif
             <div>

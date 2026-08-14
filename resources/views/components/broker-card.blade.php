@@ -9,15 +9,15 @@
     <div class="bg-white rounded-lg shadow-sm p-4 text-center border border-gray-200 hover:shadow-md transition-all duration-200 hover:border-gray-100 group">
         <div class="flex items-center justify-center mb-3">
             <!-- Left wing icon (grayscale) -->
-            <img src="{{ asset('public/award_2.png') }}" alt="" class="h-10 mr-2 filter grayscale opacity-80 group-hover:opacity-100 transition-opacity">
+            <img src="{{ asset('public/award_2.png') }}" alt="" class="h-10 mr-2 filter grayscale opacity-80 group-hover:opacity-100 transition-opacity" loading="lazy" decoding="async">
 
             <!-- Broker logo -->
             <a href="{{ $broker->url }}" class="inline-block hover:no-underline mx-2">
-                <img src="{{ asset($broker->logo) }}" alt="{{ $broker->name }}" class="h-8 object-contain group-hover:scale-105 transition-transform">
+                <img src="{{ asset($broker->logo) }}" alt="{{ $broker->name }}" class="h-8 object-contain group-hover:scale-105 transition-transform" loading="lazy" decoding="async">
             </a>
             
             <!-- Right wing icon (grayscale) -->
-            <img src="{{ asset('public/award_1.png') }}" alt="" class="h-10 ml-2 filter grayscale opacity-80 group-hover:opacity-100 transition-opacity">
+            <img src="{{ asset('public/award_1.png') }}" alt="" class="h-10 ml-2 filter grayscale opacity-80 group-hover:opacity-100 transition-opacity" loading="lazy" decoding="async">
         </div>
         
 

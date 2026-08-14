@@ -7,9 +7,9 @@ use Illuminate\Support\Facades\Cache;
 
 class SiteTheme
 {
-    public const DEFAULT_PRIMARY = '#007AAD';
-    public const DEFAULT_DARK = '#0C1D32';
-    public const DEFAULT_LIGHT = '#D9E2E9';
+    public const DEFAULT_PRIMARY = '#e8822a';
+    public const DEFAULT_DARK = '#1c1e24';
+    public const DEFAULT_LIGHT = '#e8e2d9';
 
     public static function setting(): ?Setting
     {
@@ -96,23 +96,23 @@ class SiteTheme
             '--bc-dark' => $dark,
             '--bc-light' => $light,
             '--bc-ice' => $light,
-            '--bc-white' => '#FFFBFC',
-            '--bc-bg' => '#f4f6f9',
+            '--bc-white' => '#fffdfb',
+            '--bc-bg' => '#f6f4f0',
             '--bc-surface' => '#ffffff',
             '--bc-text' => $dark,
-            '--bc-muted' => '#64748b',
-            '--bc-border' => '#e2e8f0',
+            '--bc-muted' => '#6b7280',
+            '--bc-border' => '#e8e3da',
             '--bc-primary-soft' => 'rgba(' . $primaryRgb . ', 0.1)',
             '--bc-accent' => $primaryLight,
-            '--bc-shadow' => '0 1px 3px rgba(15, 23, 42, 0.06), 0 8px 24px rgba(15, 23, 42, 0.06)',
-            '--bc-shadow-lg' => '0 4px 6px rgba(15, 23, 42, 0.04), 0 20px 40px rgba(15, 23, 42, 0.08)',
+            '--bc-shadow' => '0 1px 3px rgba(60, 50, 40, 0.06), 0 8px 24px rgba(60, 50, 40, 0.06)',
+            '--bc-shadow-lg' => '0 4px 6px rgba(60, 50, 40, 0.04), 0 20px 40px rgba(60, 50, 40, 0.08)',
             '--bc-radius-sm' => '8px',
             '--bc-radius-md' => '12px',
             '--bc-radius-lg' => '16px',
             '--bc-radius' => '12px',
             '--bc-container' => '1320px',
             '--bc-section-spacing' => '80px',
-            '--bc-nav-height' => '4rem',
+            '--bc-nav-height' => '5.5rem',
             '--bc-transition' => '0.2s ease',
             '--bc-font' => "Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
             '--bc-primary-rgb' => $primaryRgb,

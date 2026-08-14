@@ -72,10 +72,10 @@
     @include('front.layout.styles')
     @include('front.layout.scripts')
     @if($showCountryBrokersStrip ?? false)
-        <link rel="stylesheet" href="{{ asset('css/country-brokers.css') }}?v=3">
+        <link rel="stylesheet" href="{{ asset('css/country-brokers.css') }}?v=5">
     @endif
     @stack('page-styles')
-    <script src="{{ asset('js/bc-nav-optimizer.js') }}?v=3" defer></script>
+    <script src="{{ asset('js/bc-nav-optimizer.js') }}?v=4" defer></script>
 </head>
 
 
@@ -110,7 +110,7 @@
     @if($showCountryBrokersStrip ?? false)
         <script src="{{ asset('js/country-brokers.js') }}?v=1" defer></script>
     @endif
-    <script src="{{ asset('js/country-drawer.js') }}?v=4" defer></script>
+    <script src="{{ asset('js/country-drawer.js') }}?v=5" defer></script>
     
     
     
