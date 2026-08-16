@@ -27,7 +27,7 @@
                             </div>
                         </div>
                         @if($broker->isRegulated())
-                            <span class="bc-home-rankings__badge">Regulated</span>
+                            <span class="bc-home-rankings__badge bc-regulated-tag">Regulated</span>
                         @else
                             <span></span>
                         @endif

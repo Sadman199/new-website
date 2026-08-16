@@ -2,8 +2,10 @@
 
 namespace App\Services;
 
+use App\Http\Controllers\Front\BrokerController;
 use App\Models\Broker;
 use App\Support\AwardTaxonomy;
+use App\Support\BrokerRating;
 use Illuminate\Support\Collection;
 
 class AwardsIndexService
@@ -43,6 +45,36 @@ class AwardsIndexService
         }
 
         return $cards;
+    }
+
+    /** @return array<int, array<string, mixed>> */
+    public function winnerHighlights(?Collection $brokers = null, int $limit = 6): array
+    {
+        $brokers = $brokers ?? $this->baseBrokers();
+        $winners = [];
+
+        foreach (AwardTaxonomy::definitions() as $key => $definition) {
+            $matches = AwardTaxonomy::brokersFor($key, $brokers);
+            $winner = $matches->first();
+
+            if (! $winner) {
+                continue;
+            }
+
+            $winners[] = [
+                'award' => $definition['name'],
+                'description' => $definition['description'],
+                'award_url' => route('awards.show', ['award' => AwardTaxonomy::routeSlugFor($key)]),
+                'contenders' => $matches->count(),
+                'broker_name' => $winner->name,
+                'broker_logo' => $winner->logo ? asset($winner->logo) : null,
+                'broker_url' => route('broker_detail', ['slug' => BrokerController::reviewSlugFor($winner)]),
+                'broker_rating' => BrokerRating::outOfFive($winner->rating),
+                'broker_regulated' => $winner->isRegulated(),
+            ];
+        }
+
+        return array_slice($winners, 0, max(1, $limit));
     }
 
     /** @return array<string, int|float|string> */

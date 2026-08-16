@@ -44,6 +44,8 @@
     @endphp
 
     <div class="bc-country-hero-banner{{ $variant ? ' bc-country-hero-banner--'.$variant : '' }}"
+         data-country-context
+         data-country-slug="{{ $slug }}"
          role="status"
          aria-label="Showing content for {{ $countryName }}">
         <div class="bc-country-hero-banner__inner">
@@ -60,9 +62,9 @@
                     <p class="bc-country-hero-banner__eyebrow">{{ $eyebrowText }}</p>
                 @endunless
                 @if($isInline)
-                    <p class="bc-country-hero-banner__title">{!! $titleHtml !!}</p>
+                    <p class="bc-country-hero-banner__title" data-country-context-title>{!! $titleHtml !!}</p>
                 @else
-                    <h2 class="bc-country-hero-banner__title">{!! $titleHtml !!}</h2>
+                    <h2 class="bc-country-hero-banner__title" data-country-context-title>{!! $titleHtml !!}</h2>
                 @endif
                 @unless($isInline)
                     <p class="bc-country-hero-banner__meta">{{ $metaText }}</p>

@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Broker;
+use App\Support\BrokerRating;
 use Illuminate\Support\Str;
 
 class BrokerReviewScoreService
@@ -23,6 +24,7 @@ class BrokerReviewScoreService
     /** @return array<string, mixed> */
     public function breakdown(Broker $broker): array
     {
+        $overall = BrokerRating::outOfFive($broker->rating) ?? 0;
         $categoryScores = is_array($broker->category_scores) ? $broker->category_scores : [];
         $items = [];
 
@@ -64,8 +66,9 @@ class BrokerReviewScoreService
         $updatedAt = $broker->updated_at;
 
         return [
-            'overall' => (float) ($broker->rating ?? 0),
-            'overall_display' => number_format((float) ($broker->rating ?? 0), 1),
+            'overall' => $overall,
+            'overall_display' => number_format($overall, 1),
+            'overall_percent' => BrokerRating::percent($broker->rating),
             'trust_score' => $broker->trust_score ? (int) $broker->trust_score : null,
             'items' => $items,
             'strengths' => $strengths,

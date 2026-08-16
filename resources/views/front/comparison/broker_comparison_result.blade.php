@@ -13,6 +13,7 @@
 
 @push('page-styles')
     <link rel="stylesheet" href="{{ asset('css/broker-compare.css') }}?v=9">
+    <link rel="stylesheet" href="{{ asset('css/broker-compare-results.css') }}?v=1">
 @endpush
 
 @section('main_content')

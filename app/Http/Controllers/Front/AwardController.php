@@ -11,6 +11,7 @@ use App\Services\AwardsIndexService;
 use App\Services\BrokerAssessmentService;
 use App\Services\BrokerReviewsIndexService;
 use App\Support\AwardTaxonomy;
+use App\Support\BrokerRating;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 
@@ -86,6 +87,15 @@ class AwardController extends Controller
             ->values()
             ->all();
 
+        $awardStats = [
+            'winners' => $brokers->count(),
+            'average_rating' => $brokers->isNotEmpty()
+                ? number_format((float) $brokers->avg(fn (Broker $broker) => BrokerRating::outOfFive($broker->rating) ?? 0), 1)
+                : '—',
+            'verified_reviews' => (int) $brokers->sum('approved_review_count'),
+            'regulated' => $brokers->filter(fn (Broker $broker) => $broker->isRegulated())->count(),
+        ];
+
         $allAwardCards = collect($awardsIndexService->awardCards())
             ->reject(fn (array $card) => $card['slug'] === $awardKey)
             ->take(4)
@@ -101,6 +111,7 @@ class AwardController extends Controller
             'brokersPayload' => $brokersPayload,
             'paginatedBrokers' => $paginatedBrokers,
             'totalBrokers' => $brokers->count(),
+            'awardStats' => $awardStats,
             'relatedAwards' => $allAwardCards,
         ]);
     }

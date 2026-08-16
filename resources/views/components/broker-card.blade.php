@@ -1,8 +1,8 @@
 @props(['broker'])
 
 @php
-    $rating = $broker->rating;
-    $ratingClass = $rating == 5 ? 'text-green-500' : 'text-yellow-500';
+    $rating = \App\Support\BrokerRating::outOfFive($broker->rating) ?? 0;
+    $ratingClass = $rating >= 4.5 ? 'text-orange-500' : 'text-yellow-500';
 @endphp
 
 <div class="item">

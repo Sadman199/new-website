@@ -63,7 +63,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 
     <!-- Optimized CSS -->
-    <link href="{{ mix('css/app.css') }}" rel="stylesheet" data-bc-global>
+    <link href="{{ mix('css/app.css') }}?v=2" rel="stylesheet" data-bc-global>
     <link rel="dns-prefetch" href="https://www.googletagmanager.com">
     <link rel="preconnect" href="https://www.googletagmanager.com" crossorigin>
 
@@ -110,7 +110,7 @@
     @if($showCountryBrokersStrip ?? false)
         <script src="{{ asset('js/country-brokers.js') }}?v=1" defer></script>
     @endif
-    <script src="{{ asset('js/country-drawer.js') }}?v=5" defer></script>
+    <script src="{{ asset('js/country-drawer.js') }}?v=6" defer></script>
     
     
     

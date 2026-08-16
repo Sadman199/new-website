@@ -1,6 +1,6 @@
 @php
     $guideService = app(\App\Services\BrokerGuideService::class);
-    $rating = (float) ($broker->rating ?? 0);
+    $rating = \App\Support\BrokerRating::outOfFive($broker->rating) ?? 0;
     $guidePage = $guidePageMeta ?? ['updated_at' => '', 'updated_relative' => null];
     $topicIcon = $topic?->icon ?? 'fas fa-book-open';
 @endphp
@@ -55,7 +55,7 @@
                             @if($broker->is_scam)
                                 <span class="br-badge br-badge--danger">High Risk</span>
                             @elseif($broker->isRegulated())
-                                <span class="br-badge br-badge--safe">Regulated</span>
+                                <span class="br-badge br-badge--safe bc-regulated-tag">Regulated</span>
                             @endif
                             @if($topic?->title)
                                 <span class="br-badge br-badge--guide">{{ $topic->title }}</span>
@@ -66,7 +66,9 @@
 
                 @if($rating > 0)
                     <div class="br-hero__score-wrap">
-                        <div class="br-hero__score-ring" aria-label="Overall score {{ number_format($rating, 1) }} out of 10">
+                        <div class="br-hero__score-ring"
+                             style="--br-score-pct: {{ \App\Support\BrokerRating::percent($broker->rating) }}%"
+                             aria-label="Overall score {{ number_format($rating, 1) }} out of 5">
                             <span class="br-hero__score-value">{{ number_format($rating, 1) }}</span>
                             <span class="br-hero__score-label">Score</span>
                         </div>

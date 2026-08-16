@@ -1,6 +1,9 @@
 @if(($popularNewsData ?? collect())->isNotEmpty() || ($recentNewsData ?? collect())->isNotEmpty())
 @php
     $blogIndexService = app(\App\Services\BlogIndexService::class);
+    $insightsEyebrow = $insightsEyebrow ?? 'Editorial';
+    $insightsTitle = $insightsTitle ?? 'News & insights';
+    $insightsSubtitle = $insightsSubtitle ?? 'Latest articles and popular guides from our editorial team.';
 
     $insightPosts = ($recentNewsData ?? collect())
         ->merge($popularNewsData ?? collect())
@@ -17,10 +20,10 @@
                     <span class="bc-insights__eyebrow-icon" aria-hidden="true">
                         <i class="fas fa-newspaper"></i>
                     </span>
-                    Editorial
+                    {{ $insightsEyebrow }}
                 </p>
-                <h2 id="bcInsightsTitle" class="bc-insights__title">News &amp; insights</h2>
-                <p class="bc-insights__sub">Latest articles and popular guides from our editorial team.</p>
+                <h2 id="bcInsightsTitle" class="bc-insights__title">{{ $insightsTitle }}</h2>
+                <p class="bc-insights__sub">{{ $insightsSubtitle }}</p>
             </div>
             <a href="{{ route('blog') }}" class="bc-insights__cta">
                 View blog

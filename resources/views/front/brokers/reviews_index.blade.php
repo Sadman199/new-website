@@ -5,7 +5,10 @@
 @section('canonical', route('broker.reviews.index'))
 
 @push('page-styles')
-    <link rel="stylesheet" href="{{ asset('css/broker-reviews-index.css') }}?v=8">
+    <link rel="stylesheet" href="{{ asset('css/insight-cards.css') }}?v=3">
+    <link rel="stylesheet" href="{{ asset('css/homepage.css') }}?v=56">
+    <link rel="stylesheet" href="{{ asset('css/broker-reviews-index.css') }}?v=11">
+    <link rel="stylesheet" href="{{ asset('css/broker-reviews-discovery.css') }}?v=3">
 @endpush
 
 @section('main_content')
@@ -29,7 +32,11 @@
         </div>
     </header>
 
-    <div class="container">
+    <div class="bc-home bri-home-reuse">
+        @include('front.brokers.partials.reviews_top_picks')
+    </div>
+
+    <div class="container" id="all-broker-reviews">
         <div class="row g-4">
             <aside class="col-12 col-lg-3 bri-filters" id="briFiltersPanel" aria-label="Filter brokers">
                 <div class="bri-filters__inner">
@@ -71,12 +78,9 @@
             <div class="col-12 col-lg-9 bri-main">
                 <div class="bri-main__toolbar">
                     <div class="bri-main__toolbar-text">
+                        <p class="bri-main__eyebrow">Complete broker directory</p>
                         <h2 class="bri-main__heading">
-                            @if(($preferredCountry['slug'] ?? 'global') === 'global')
-                                Brokers available worldwide in {{ date('Y') }}
-                            @else
-                                Filter results for {{ $preferredCountry['name'] ?? 'your region' }}
-                            @endif
+                            Independent broker reviews in {{ date('Y') }}
                         </h2>
                         <p class="bri-results-count" id="briResultsCount"></p>
                     </div>
@@ -92,6 +96,15 @@
                     @endforeach
                 </ul>
 
+                <div class="bri-load-more" id="briLoadMoreWrap">
+                    <button type="button" class="bri-load-more__button" id="briLoadMore">
+                        Load more brokers
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 5v14m0 0 6-6m-6 6-6-6"/>
+                        </svg>
+                    </button>
+                </div>
+
                 <div class="bri-empty is-hidden" id="briEmptyState">
                     <p>No brokers match your filters. Try clearing the search or selecting different asset types.</p>
                 </div>
@@ -99,10 +112,22 @@
         </div>
     </div>
 
+    @include('front.brokers.partials.reviews_regions')
+    @include('front.brokers.partials.reviews_comparisons')
+
+    <div class="bc-home bri-home-reuse">
+        @include('front.homepage.inc.award_winners')
+        @include('front.homepage.inc.news_insights', [
+            'insightsEyebrow' => 'Trending now',
+            'insightsTitle' => 'Trending Blog',
+            'insightsSubtitle' => 'Popular articles, market explainers, and the latest editorial insights.',
+        ])
+    </div>
+
     <div class="bri-filters-backdrop is-hidden" id="briFiltersBackdrop" aria-hidden="true"></div>
 </div>
 @endsection
 
 @push('scripts')
-<script src="{{ asset('js/broker-reviews-index.js') }}?v=6" defer></script>
+<script src="{{ asset('js/broker-reviews-index.js') }}?v=8" defer></script>
 @endpush

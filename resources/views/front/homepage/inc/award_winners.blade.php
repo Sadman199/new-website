@@ -62,7 +62,7 @@
                                         </span>
                                     @endif
                                     @if($winner['broker_regulated'])
-                                        <span class="bc-award-card__pill">Regulated</span>
+                                        <span class="bc-award-card__pill bc-regulated-tag">Regulated</span>
                                     @endif
                                 </span>
                             </span>

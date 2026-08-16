@@ -3,10 +3,10 @@
     $brokersTotal = (int) ($stats['total'] ?? $brokerCount ?? 0);
     $regulatedTotal = (int) ($stats['regulated'] ?? 0);
     $reviewsTotal = (int) ($stats['reviews'] ?? 0);
-    $avgRating = (float) ($stats['avg_rating'] ?? 0);
+    $avgRating = \App\Support\BrokerRating::outOfFive($stats['avg_rating'] ?? 0) ?? 0;
     $propFirmsTotal = (int) ($stats['prop_firms'] ?? 0);
     $demoTotal = (int) ($stats['with_demo'] ?? 0);
-    $ratingPct = max(8, min(100, (int) round(($avgRating / 5) * 100)));
+    $ratingPct = max(8, (int) round(\App\Support\BrokerRating::percent($stats['avg_rating'] ?? 0)));
 @endphp
 
 <section class="bc-hero" id="hero">

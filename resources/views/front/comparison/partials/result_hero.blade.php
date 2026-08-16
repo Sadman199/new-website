@@ -2,6 +2,10 @@
     $left = $comparison['broker1'];
     $right = $comparison['broker2'];
     $winner = $comparison['overall_winner'];
+    $leftRating = \App\Support\BrokerRating::outOfFive($left['rating'] ?? null);
+    $rightRating = \App\Support\BrokerRating::outOfFive($right['rating'] ?? null);
+    $leftRatingPct = \App\Support\BrokerRating::percent($left['rating'] ?? null);
+    $rightRatingPct = \App\Support\BrokerRating::percent($right['rating'] ?? null);
 @endphp
 
 <header class="bc-compare-hero bc-result-hero">
@@ -35,7 +39,12 @@
                     @endif
                 </div>
                 <h2 class="bc-result-duel__name">{{ $left['name'] }}</h2>
-                <p class="bc-result-duel__score">{{ $left['rating_display'] }}</p>
+                <div class="bc-result-duel__rating"
+                     style="--rating-pct: {{ $leftRatingPct }}%"
+                     aria-label="{{ $left['name'] }} rating {{ $leftRating !== null ? number_format($leftRating, 1) . ' out of 5' : 'not rated' }}">
+                    <strong>{{ $leftRating !== null ? number_format($leftRating, 1) : '—' }}</strong>
+                    <span>/5</span>
+                </div>
                 <dl class="bc-result-duel__meta">
                     <div>
                         <dt>Safety</dt>
@@ -74,7 +83,12 @@
                     @endif
                 </div>
                 <h2 class="bc-result-duel__name">{{ $right['name'] }}</h2>
-                <p class="bc-result-duel__score">{{ $right['rating_display'] }}</p>
+                <div class="bc-result-duel__rating"
+                     style="--rating-pct: {{ $rightRatingPct }}%"
+                     aria-label="{{ $right['name'] }} rating {{ $rightRating !== null ? number_format($rightRating, 1) . ' out of 5' : 'not rated' }}">
+                    <strong>{{ $rightRating !== null ? number_format($rightRating, 1) : '—' }}</strong>
+                    <span>/5</span>
+                </div>
                 <dl class="bc-result-duel__meta">
                     <div>
                         <dt>Safety</dt>

@@ -4,13 +4,13 @@ namespace App\Http\Controllers\Front;
 
 use App\Http\Controllers\Controller;
 use App\Models\Broker;
-use App\Models\Post;
 use App\Models\PropFirm;
 use App\Models\Review;
+use App\Services\AwardsIndexService;
+use App\Services\BlogIndexService;
 use App\Services\BrokerPopularityService;
 use App\Services\CountryBrokersService;
 use App\Services\GlobalViewDataService;
-use App\Support\AwardTaxonomy;
 use App\Support\BrokerMatchQuiz;
 use App\Support\FindMyBrokerFilters;
 use Illuminate\Support\Facades\Cache;
@@ -42,14 +42,7 @@ class HomeController extends Controller
 
         $brokerCount = $homeStats['total'];
 
-        $topRatedBrokers = Cache::remember('homepage_top_rated_brokers_v2', 3600, function () {
-            return Broker::query()
-                ->where('is_scam', false)
-                ->whereNotNull('rating')
-                ->orderByDesc('rating')
-                ->take(8)
-                ->get();
-        });
+        $topRatedBrokers = app(CountryBrokersService::class)->globalTopRated(8);
 
         $bestForBeginners = Cache::remember('homepage_best_for_beginners_v2', 3600, function () {
             return Broker::query()
@@ -94,52 +87,12 @@ class HomeController extends Controller
                 ->get();
         });
 
-        $recentNewsData = Cache::remember("homepage_recent_news_{$currentLanguageId}", 600, function () use ($currentLanguageId) {
-            return Post::with(['rSubCategory', 'author', 'writtenByAuthor'])
-                ->where('language_id', $currentLanguageId)
-                ->latest()
-                ->take(6)
-                ->get();
-        });
+        $editorialStreams = app(BlogIndexService::class)->editorialStreams($currentLanguageId);
+        $recentNewsData = $editorialStreams['recent'];
+        $popularNewsData = $editorialStreams['popular'];
 
-        $popularNewsData = Cache::remember("homepage_popular_news_{$currentLanguageId}", 600, function () use ($currentLanguageId) {
-            return Post::with(['rSubCategory', 'author', 'writtenByAuthor'])
-                ->where('language_id', $currentLanguageId)
-                ->orderByDesc('visitors')
-                ->take(6)
-                ->get();
-        });
-
-        $awardWinners = Cache::remember('homepage_award_winners_v1', 3600, function () {
-            $brokers = Broker::query()
-                ->where('is_scam', false)
-                ->orderByDesc('rating')
-                ->get();
-
-            $winners = [];
-
-            foreach (AwardTaxonomy::definitions() as $key => $definition) {
-                $matches = AwardTaxonomy::brokersFor($key, $brokers);
-                $winner = $matches->first();
-
-                if (! $winner) {
-                    continue;
-                }
-
-                $winners[] = [
-                    'award' => $definition['name'],
-                    'description' => $definition['description'],
-                    'award_url' => route('awards.show', ['award' => AwardTaxonomy::routeSlugFor($key)]),
-                    'contenders' => $matches->count(),
-                    'broker_name' => $winner->name,
-                    'broker_logo' => $winner->logo ? asset($winner->logo) : null,
-                    'broker_url' => route('broker_detail', $winner->slug),
-                    'broker_rating' => $winner->rating !== null ? round((float) $winner->rating, 1) : null,
-                    'broker_regulated' => $winner->isRegulated(),
-                ];
-            }
-
-            return array_slice($winners, 0, 6);
+        $awardWinners = Cache::remember('homepage_award_winners_v2', 3600, function () {
+            return app(AwardsIndexService::class)->winnerHighlights();
         });
 
         $countrySlug = app(CountryBrokersService::class)->resolvePreferredCountry()['slug'] ?? 'global';

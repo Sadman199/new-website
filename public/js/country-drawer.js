@@ -102,6 +102,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         return fetch(recommendedUrl, {
+            credentials: 'same-origin',
             headers: {
                 'X-Requested-With': 'XMLHttpRequest',
                 Accept: 'text/html',
@@ -149,6 +150,7 @@ document.addEventListener('DOMContentLoaded', function () {
         return fetch(countryForm.action, {
             method: 'POST',
             body: body,
+            credentials: 'same-origin',
             headers: {
                 'X-Requested-With': 'XMLHttpRequest',
                 Accept: 'application/json',
@@ -161,14 +163,21 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
                 return response.json();
             })
-            .then(function () {
+            .then(function (payload) {
                 markSelectedCountry(btn);
                 updateNavPreview(btn);
+                if (payload && payload.country) {
+                    document.querySelectorAll('[data-country-context]').forEach(function (context) {
+                        context.dataset.countrySlug = payload.country.slug || '';
+                        context.setAttribute('aria-label', 'Showing content for ' + (payload.country.name || 'your region'));
+                    });
+                }
                 return refreshRecommendedSection();
             })
             .then(function () {
                 closeDrawer();
                 showToast('Country updated! Recommended brokers refreshed for ' + (btn.dataset.name || 'your region') + '.');
+                window.location.reload();
             })
             .catch(function () {
                 countryForm.submit();

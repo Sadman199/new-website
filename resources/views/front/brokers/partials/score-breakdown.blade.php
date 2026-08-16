@@ -9,8 +9,8 @@
         </div>
         <div class="br-score-summary">
             <div class="br-score-summary__ring"
-                 style="--br-score-pct: {{ max(0, min(100, (float) $scoreBreakdown['overall_display'] * 10)) }}%"
-                 aria-label="Overall score {{ $scoreBreakdown['overall_display'] }} out of 10">
+                 style="--br-score-pct: {{ $scoreBreakdown['overall_percent'] }}%"
+                 aria-label="Overall score {{ $scoreBreakdown['overall_display'] }} out of 5">
                 <span class="br-score-summary__value">{{ $scoreBreakdown['overall_display'] }}</span>
                 <span class="br-score-summary__label">Overall</span>
             </div>

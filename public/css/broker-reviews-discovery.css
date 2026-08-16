@@ -1,0 +1,407 @@
+/* Discovery sections for the broker reviews directory */
+.bri-page {
+    --brd-orange: var(--bri-ocean, #e8822a);
+    --brd-orange-dark: var(--bri-ocean-dark, #c46a16);
+    --brd-ink: var(--bri-midnight, #1c1e24);
+    --brd-muted: var(--bri-muted, #6b7280);
+    --brd-line: var(--bri-border, #e2dcd2);
+    --brd-paper: rgba(255, 255, 255, 0.82);
+}
+
+.bri-home-reuse {
+    background: transparent;
+}
+
+.bri-home-reuse::before {
+    display: none;
+}
+
+.bri-top-picks {
+    padding-top: 1.5rem;
+    padding-bottom: 2.75rem;
+}
+
+#all-broker-reviews {
+    scroll-margin-top: calc(var(--bc-nav-height, 5.5rem) + 1rem);
+    padding-top: 2rem;
+}
+
+.bri-discovery-section {
+    padding: 3.25rem 0;
+}
+
+.bri-section-head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1.5rem;
+    margin-bottom: 1.35rem;
+}
+
+.bri-section-head__eyebrow {
+    margin: 0 0 0.4rem;
+    font-size: 0.67rem;
+    font-weight: 800;
+    letter-spacing: 0.075em;
+    text-transform: uppercase;
+    color: var(--brd-orange);
+}
+
+.bri-section-head h2,
+.bri-compare-hub__copy h2 {
+    margin: 0;
+    font-size: clamp(1.45rem, 3vw, 2rem);
+    font-weight: 800;
+    letter-spacing: -0.025em;
+    color: var(--brd-ink);
+}
+
+.bri-section-head > div > p:last-child,
+.bri-compare-hub__copy > p {
+    max-width: 45rem;
+    margin: 0.5rem 0 0;
+    font-size: 0.875rem;
+    line-height: 1.6;
+    color: var(--brd-muted);
+}
+
+.bri-section-head__action {
+    flex: 0 0 auto;
+    padding: 0.65rem 1rem;
+    font-size: 0.75rem;
+    font-weight: 750;
+    color: var(--brd-ink);
+    background: #fff;
+    border: 1px solid var(--brd-line);
+    border-radius: 999px;
+    cursor: pointer;
+    transition: border-color 0.18s ease, color 0.18s ease, transform 0.18s ease;
+}
+
+.bri-section-head__action:hover {
+    color: var(--brd-orange-dark);
+    border-color: rgba(232, 130, 42, 0.4);
+    transform: translateY(-1px);
+}
+
+.bri-regions {
+    margin-top: 3rem;
+    background:
+        radial-gradient(circle at 88% 15%, rgba(245, 166, 35, 0.13), transparent 22rem),
+        rgba(255, 255, 255, 0.35);
+    border-top: 1px solid rgba(232, 130, 42, 0.11);
+    border-bottom: 1px solid rgba(232, 130, 42, 0.11);
+}
+
+.bri-regions__actions,
+.bri-regions__nav {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.bri-regions__nav {
+    gap: 0.4rem;
+}
+
+.bri-regions__nav-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.45rem;
+    height: 2.45rem;
+    padding: 0;
+    color: var(--brd-ink);
+    background: rgba(255, 255, 255, 0.82);
+    border: 1px solid var(--brd-line);
+    border-radius: 50%;
+    box-shadow: 0 5px 16px rgba(60, 50, 40, 0.06);
+    cursor: pointer;
+    transition: color 0.18s ease, border-color 0.18s ease, transform 0.18s ease, opacity 0.18s ease;
+}
+
+.bri-regions__nav-btn svg {
+    width: 1rem;
+    height: 1rem;
+}
+
+.bri-regions__nav-btn:hover:not(:disabled) {
+    color: var(--brd-orange-dark);
+    border-color: rgba(232, 130, 42, 0.42);
+    transform: translateY(-1px);
+}
+
+.bri-regions__nav-btn:disabled {
+    opacity: 0.35;
+    cursor: default;
+}
+
+.bri-regions__slider {
+    position: relative;
+    overflow: hidden;
+}
+
+.bri-regions__track {
+    display: flex;
+    gap: 0.75rem;
+    overflow-x: auto;
+    overscroll-behavior-inline: contain;
+    scroll-behavior: smooth;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    outline: none;
+}
+
+.bri-regions__track::-webkit-scrollbar {
+    display: none;
+}
+
+.bri-regions__track:focus-visible {
+    border-radius: 1rem;
+    box-shadow: 0 0 0 3px rgba(232, 130, 42, 0.2);
+}
+
+.bri-region-card {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    flex: 0 0 calc((100% - 2.25rem) / 4);
+    gap: 0.75rem;
+    min-width: 0;
+    padding: 1rem;
+    color: inherit;
+    text-decoration: none;
+    background: var(--brd-paper);
+    border: 1px solid var(--brd-line);
+    border-radius: 1rem;
+    box-shadow: 0 8px 25px rgba(60, 50, 40, 0.045);
+    scroll-snap-align: start;
+    transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.bri-region-card:hover {
+    color: inherit;
+    transform: translateY(-2px);
+    border-color: rgba(232, 130, 42, 0.36);
+    box-shadow: 0 14px 30px rgba(99, 66, 31, 0.09);
+}
+
+.bri-region-card__flag {
+    width: 3rem;
+    height: 2.35rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    font-size: 1.45rem;
+    background: #fff;
+    border: 1px solid rgba(226, 220, 210, 0.8);
+    border-radius: 0.7rem;
+}
+
+.bri-region-card__flag img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.bri-region-card__copy {
+    min-width: 0;
+}
+
+.bri-region-card__copy strong,
+.bri-region-card__copy small {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.bri-region-card__copy strong {
+    font-size: 0.88rem;
+    color: var(--brd-ink);
+}
+
+.bri-region-card__copy small {
+    margin-top: 0.18rem;
+    font-size: 0.7rem;
+    color: var(--brd-muted);
+}
+
+.bri-region-card > svg {
+    width: 1rem;
+    height: 1rem;
+    color: var(--brd-orange);
+}
+
+.bri-compare-hub {
+    padding-top: 2.75rem;
+}
+
+.bri-compare-hub__inner {
+    display: grid;
+    grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+    gap: 2rem;
+    align-items: center;
+    padding: 1.5rem;
+    overflow: hidden;
+    background:
+        radial-gradient(circle at 8% 10%, rgba(232, 130, 42, 0.18), transparent 20rem),
+        var(--brd-ink);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 1.25rem;
+    box-shadow: 0 18px 40px rgba(28, 30, 36, 0.14);
+}
+
+.bri-compare-hub__copy h2 {
+    color: #fff;
+}
+
+.bri-compare-hub__copy > p {
+    color: #c7c9ce;
+}
+
+.bri-compare-hub__copy > a {
+    display: inline-flex;
+    margin-top: 1rem;
+    padding: 0.62rem 0.95rem;
+    font-size: 0.75rem;
+    font-weight: 750;
+    color: #1c1e24;
+    text-decoration: none;
+    background: var(--brd-orange);
+    border-radius: 999px;
+}
+
+.bri-compare-hub__copy > a:hover {
+    background: #f5a623;
+}
+
+.bri-compare-hub__links {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.55rem;
+}
+
+.bri-compare-hub__links a {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.65rem;
+    min-width: 0;
+    padding: 0.75rem 0.8rem;
+    font-size: 0.72rem;
+    font-weight: 650;
+    color: #f7f5f2;
+    text-decoration: none;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 0.75rem;
+    transition: background 0.18s ease, border-color 0.18s ease;
+}
+
+.bri-compare-hub__links a:hover {
+    color: #fff;
+    background: rgba(232, 130, 42, 0.14);
+    border-color: rgba(232, 130, 42, 0.35);
+}
+
+.bri-compare-hub__links span {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.bri-compare-hub__links svg {
+    width: 0.9rem;
+    height: 0.9rem;
+    flex: 0 0 auto;
+    color: var(--brd-orange);
+}
+
+.bri-page .bc-awards {
+    margin-top: 0;
+}
+
+.bri-page .bc-insights {
+    padding-bottom: 2rem;
+}
+
+.bri-review-card-item {
+    min-width: 0;
+    list-style: none;
+}
+
+.bri-review-card-item.is-hidden {
+    display: none;
+}
+
+.bri-review-card {
+    --picks-ocean: var(--brd-orange);
+    --picks-ice: var(--bri-ice, #e8e2d9);
+    --picks-midnight: var(--brd-ink);
+
+    background: rgba(255, 255, 255, 0.76);
+    border-color: rgba(255, 255, 255, 0.72);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+}
+
+@media (max-width: 1000px) {
+    .bri-region-card {
+        flex-basis: calc((100% - 1.5rem) / 2.5);
+    }
+}
+
+@media (max-width: 760px) {
+    .bri-section-head {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .bri-regions__actions {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .bri-compare-hub__inner {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 560px) {
+    .bri-compare-hub__links {
+        grid-template-columns: 1fr;
+    }
+
+    .bri-region-card {
+        flex-basis: min(84%, 18rem);
+    }
+
+    .bri-section-head__action {
+        padding-inline: 0.8rem;
+    }
+
+    .bri-discovery-section {
+        padding: 2.5rem 0;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .bri-region-card,
+    .bri-section-head__action,
+    .bri-regions__nav-btn {
+        transition: none;
+    }
+
+    .bri-region-card:hover,
+    .bri-section-head__action:hover,
+    .bri-regions__nav-btn:hover {
+        transform: none;
+    }
+
+    .bri-regions__track {
+        scroll-behavior: auto;
+    }
+}

@@ -6,7 +6,7 @@
 
 @push('page-styles')
     <link rel="stylesheet" href="{{ asset('css/awards-index.css') }}?v=6">
-    <link rel="stylesheet" href="{{ asset('css/broker-reviews-index.css') }}?v=8">
+    <link rel="stylesheet" href="{{ asset('css/awards-show.css') }}?v=1">
 @endpush
 
 @section('main_content')
@@ -36,6 +36,24 @@
                 </div>
             </div>
 
+            <dl class="awd-show-stats" aria-label="Award category summary">
+                <div>
+                    <dt>Recognized brokers</dt>
+                    <dd>{{ number_format($awardStats['winners']) }}</dd>
+                </div>
+                <div>
+                    <dt>Average rating</dt>
+                    <dd>{{ $awardStats['average_rating'] }}<span>/5</span></dd>
+                </div>
+                <div>
+                    <dt>Verified reviews</dt>
+                    <dd>{{ number_format($awardStats['verified_reviews']) }}</dd>
+                </div>
+                <div>
+                    <dt>Regulated</dt>
+                    <dd>{{ number_format($awardStats['regulated']) }}</dd>
+                </div>
+            </dl>
         </div>
     </header>
 
@@ -43,7 +61,11 @@
         <div class="awd-wrap">
             <div class="awd-show">
                 <div class="awd-show__head">
-                    <h2 class="awd-show__heading">Award-winning brokers</h2>
+                    <div>
+                        <p class="awd-show__eyebrow">Ranked shortlist</p>
+                        <h2 class="awd-show__heading">Award-winning brokers</h2>
+                        <p class="awd-show__intro">Compare the qualities that earned each broker a place, then open the full review for our detailed assessment.</p>
+                    </div>
                     <p class="awd-show__count">
                         Showing {{ $paginatedBrokers->firstItem() ?? 0 }}–{{ $paginatedBrokers->lastItem() ?? 0 }}
                         of {{ $paginatedBrokers->total() }}
@@ -51,10 +73,14 @@
                 </div>
 
                 @if($brokersPayload !== [])
-                    <div class="awd-bri">
-                        <ul class="bri-grid awd-show__grid">
-                            @foreach($brokersPayload as $broker)
-                                @include('front.brokers.partials.reviews_index_card', ['broker' => $broker])
+                    <div class="awd-winners">
+                        <ul class="awd-show__grid">
+                            @foreach($brokersPayload as $index => $broker)
+                                @include('front.awards.partials.winner_card', [
+                                    'broker' => $broker,
+                                    'rank' => ($paginatedBrokers->firstItem() ?? 1) + $index,
+                                    'awardName' => $awardName,
+                                ])
                             @endforeach
                         </ul>
                     </div>
@@ -71,6 +97,31 @@
                     </div>
                 @endif
 
+                <section class="awd-trust-guide" aria-labelledby="awdTrustGuideTitle">
+                    <div class="awd-trust-guide__head">
+                        <p class="awd-show__eyebrow">What we look for</p>
+                        <h2 id="awdTrustGuideTitle">Why these brokers stand out</h2>
+                        <p>Recognition is based on current broker data, not paid placement. We balance safety with the practical experience traders receive.</p>
+                    </div>
+                    <div class="awd-trust-guide__grid">
+                        <article>
+                            <span>01</span>
+                            <h3>Regulatory standing</h3>
+                            <p>Licensing, investor protection, fund segregation, and the quality of regulatory oversight.</p>
+                        </article>
+                        <article>
+                            <span>02</span>
+                            <h3>Transparent value</h3>
+                            <p>Published fees, spreads, withdrawals, and trading conditions that are easy to understand.</p>
+                        </article>
+                        <article>
+                            <span>03</span>
+                            <h3>Trader experience</h3>
+                            <p>Platform quality, mobile access, execution, support, and verified client feedback.</p>
+                        </article>
+                    </div>
+                </section>
+
                 @if($relatedAwards !== [])
                     <section class="awd-show__related" aria-labelledby="awdRelatedTitle">
                         <h2 class="awd-show__related-title" id="awdRelatedTitle">More award categories</h2>
@@ -84,6 +135,15 @@
                         </ul>
                     </section>
                 @endif
+
+                <section class="awd-show-cta" aria-label="Find your broker">
+                    <div>
+                        <p class="awd-show__eyebrow">Need a tailored shortlist?</p>
+                        <h2>Find a broker that fits your trading needs</h2>
+                        <p>Filter by market, platform, deposit, regulation, and trading style.</p>
+                    </div>
+                    <a href="{{ route('find_my_broker') }}">Find my broker</a>
+                </section>
             </div>
         </div>
     </div>

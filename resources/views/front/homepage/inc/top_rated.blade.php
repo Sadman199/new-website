@@ -24,7 +24,7 @@
                         <span class="bc-home-broker-card__name">{{ $broker->name }}</span>
                         <span class="bc-home-broker-card__score">{{ number_format($broker->rating, 1) }}</span>
                         @if($broker->isRegulated())
-                            <span class="bc-home-broker-card__tag">Regulated</span>
+                            <span class="bc-home-broker-card__tag bc-regulated-tag">Regulated</span>
                         @endif
                     </a>
                 @endforeach

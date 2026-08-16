@@ -1,4 +1,8 @@
- <div class="bg-white rounded-lg shadow-sm hover:shadow-sm transition-shadow duration-300 overflow-hidden border border-gray-200 mb-4">
+@php
+    $displayRating = \App\Support\BrokerRating::outOfFive($broker->rating) ?? 0;
+    $ratingPercent = \App\Support\BrokerRating::percent($broker->rating);
+@endphp
+<div class="bg-white rounded-lg shadow-sm hover:shadow-sm transition-shadow duration-300 overflow-hidden border border-gray-200 mb-4">
     <!-- Mobile Header - Only shown on small screens -->
     <div class="md:hidden p-3 border-b border-gray-200 bg-gray-50 flex justify-between items-center">
         <div class="flex items-center space-x-2">
@@ -9,7 +13,7 @@
             @endif
             <h4 class="font-semibold text-gray-700 text-sm">{{ Str::limit($broker->title, 20) }}</h4>
         </div>
-        <span class="text-xs px-2 py-1 rounded-full {{ $broker->isRegulated() ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
+        <span class="text-xs px-2 py-1 rounded-full {{ $broker->isRegulated() ? 'bc-regulated-tag' : 'bg-red-100 text-red-800' }}">
             {{ $broker->isRegulated() ? 'Regulated' : 'Non-Regulated' }}
         </span>
     </div>
@@ -24,7 +28,7 @@
             @endif
             <div>
                 <h4 class="font-semibold text-gray-700 text-sm">{{ Str::limit($broker->title, 25) }}</h4>
-                <span class="text-xs px-2 py-1 rounded-full {{ $broker->isRegulated() ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
+                <span class="text-xs px-2 py-1 rounded-full {{ $broker->isRegulated() ? 'bc-regulated-tag' : 'bg-red-100 text-red-800' }}">
                     {{ $broker->isRegulated() ? 'Regulated' : 'Non-Regulated' }}
                 </span>
             </div>
@@ -36,19 +40,19 @@
                 <div class="flex items-center mb-1">
                     <div class="flex">
                         @for ($i = 1; $i <= 5; $i++)
-                            @if ($i <= floor($broker->rating))
+                            @if ($i <= floor($displayRating))
                                 <i class="fas fa-star text-yellow-400 text-xs"></i>
-                            @elseif ($i - 0.5 <= $broker->rating)
+                            @elseif ($i - 0.5 <= $displayRating)
                                 <i class="fas fa-star-half-alt text-yellow-400 text-xs"></i>
                             @else
                                 <i class="far fa-star text-gray-300 text-xs"></i>
                             @endif
                         @endfor
                     </div>
-                    <span class="ml-1 text-xs font-medium text-gray-700">{{ number_format($broker->rating, 1) }}/5</span>
+                    <span class="ml-1 text-xs font-medium text-gray-700">{{ number_format($displayRating, 1) }}/5</span>
                 </div>
                 <div class="w-full bg-gray-200 rounded-full h-1">
-                    <div class="bg-yellow-400 h-1 rounded-full" style="width: {{ ($broker->rating / 5) * 100 }}%"></div>
+                    <div class="bg-yellow-400 h-1 rounded-full" style="width: {{ $ratingPercent }}%"></div>
                 </div>
             </div>
         </div>
@@ -57,16 +61,16 @@
         <div class="md:hidden col-span-6 flex items-center">
             <div class="flex mr-1">
                 @for ($i = 1; $i <= 5; $i++)
-                    @if ($i <= floor($broker->rating))
+                    @if ($i <= floor($displayRating))
                         <i class="fas fa-star text-yellow-400 text-xs"></i>
-                    @elseif ($i - 0.5 <= $broker->rating)
+                    @elseif ($i - 0.5 <= $displayRating)
                         <i class="fas fa-star-half-alt text-yellow-400 text-xs"></i>
                     @else
                         <i class="far fa-star text-gray-300 text-xs"></i>
                     @endif
                 @endfor
             </div>
-            <span class="text-xs font-medium text-gray-700">{{ number_format($broker->rating, 1) }}</span>
+            <span class="text-xs font-medium text-gray-700">{{ number_format($displayRating, 1) }}</span>
         </div>
         
         <!-- Minimum Deposit -->

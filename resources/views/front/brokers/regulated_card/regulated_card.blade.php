@@ -18,7 +18,7 @@
                         {{ $broker->name }}
                     </h3>
                     <!-- Regulation Status -->
-                    <span class="text-xs text-gray-500 mt-0.5">
+                    <span class="text-xs mt-0.5 {{ $broker->isRegulated() ? 'bc-regulated-tag px-2 py-1 rounded-full' : 'text-gray-500' }}">
                         {{ $broker->isRegulated() ? 'Regulated' : 'Non-Regulated' }}
                     </span>
                 </div>

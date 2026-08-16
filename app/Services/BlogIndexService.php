@@ -8,6 +8,7 @@ use App\Models\Language;
 use App\Models\Post;
 use App\Models\SubCategory;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Cache;
 
 class BlogIndexService
 {
@@ -39,6 +40,20 @@ class BlogIndexService
             ?? 'en';
 
         return (int) (optional(Language::where('short_name', $shortName)->first())->id ?? 1);
+    }
+
+    /** @return array{recent: \Illuminate\Support\Collection, popular: \Illuminate\Support\Collection} */
+    public function editorialStreams(int $languageId, int $limit = 6): array
+    {
+        return Cache::remember("editorial_streams_v1_{$languageId}_{$limit}", 600, function () use ($languageId, $limit) {
+            $base = fn () => Post::with(['rSubCategory', 'author', 'writtenByAuthor'])
+                ->where('language_id', $languageId);
+
+            return [
+                'recent' => $base()->latest()->take($limit)->get(),
+                'popular' => $base()->orderByDesc('visitors')->take($limit)->get(),
+            ];
+        });
     }
 
     /** @return array<string, mixed> */

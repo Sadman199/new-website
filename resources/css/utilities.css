@@ -48,3 +48,24 @@
     transform: rotate(180deg);
 }
 
+/* Shared regulated status tag — deliberately distinct from generic success tags. */
+.bc-regulated-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    color: #244b8f !important;
+    background: #edf3ff !important;
+    border: 1px solid #b8cdf7 !important;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.72);
+}
+
+.bc-regulated-tag::before {
+    content: '';
+    width: 0.4rem;
+    height: 0.4rem;
+    flex: 0 0 auto;
+    border-radius: 999px;
+    background: #3567bd;
+    box-shadow: 0 0 0 3px rgba(53, 103, 189, 0.12);
+}
+

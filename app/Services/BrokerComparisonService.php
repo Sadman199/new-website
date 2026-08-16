@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Http\Controllers\Front\BrokerController;
 use App\Models\Broker;
 use App\Models\ForexBonus;
+use App\Support\BrokerRating;
 use Illuminate\Support\Collection;
 
 class BrokerComparisonService
@@ -247,7 +248,7 @@ class BrokerComparisonService
                 'label' => 'Lowest min. deposit',
                 'broker' => $winner === 'broker1' ? $left['name'] : $right['name'],
                 'value' => '$' . number_format(min((float) $broker1->minimum_deposit, (float) $broker2->minimum_deposit), 0),
-                'tone' => 'green',
+                'tone' => 'orange',
             ];
         }
 
@@ -556,6 +557,7 @@ class BrokerComparisonService
     /** @return array<string, mixed> */
     public function serializeBroker(Broker $broker): array
     {
+        $rating = BrokerRating::outOfFive($broker->rating);
         $accountTypes = is_array($broker->account_types)
             ? $broker->account_types
             : (is_string($broker->account_types) && $broker->account_types !== ''
@@ -568,7 +570,7 @@ class BrokerComparisonService
             'slug' => $broker->slug,
             'logo' => $broker->logo ? asset($broker->logo) : null,
             'og_image' => $broker->ogShareImageUrl(),
-            'rating' => $broker->rating !== null ? (float) $broker->rating : null,
+            'rating' => $rating,
             'regulation' => implode(', ', $broker->regulationList()) ?: '—',
             'regulatory_tier' => $broker->regulatory_tier ? 'Tier ' . $broker->regulatory_tier : '—',
             'platforms' => implode(', ', $broker->platformList()) ?: '—',
@@ -603,7 +605,7 @@ class BrokerComparisonService
             'vps_hosting' => $this->boolLabel($broker->vps_hosting),
             'social_trading' => $this->boolLabel($broker->social_trading),
             'account_managers' => $this->boolLabel($broker->account_managers),
-            'rating_display' => $broker->rating !== null ? number_format((float) $broker->rating, 1) . '/5' : '—',
+            'rating_display' => $rating !== null ? number_format($rating, 1) . '/5' : '—',
             'review_url' => route('broker_detail', ['slug' => BrokerController::reviewSlugFor($broker)]),
             'scam_checker_url' => route('broker.scam_checker.show', ['slug' => $broker->listingSlug()]),
             'visit_url' => $broker->open_live ?: $broker->visit_site ?: $broker->url,

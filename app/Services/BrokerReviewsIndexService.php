@@ -4,6 +4,8 @@ namespace App\Services;
 
 use App\Http\Controllers\Front\BrokerController;
 use App\Models\Broker;
+use App\Support\BrokerListingFilter;
+use App\Support\BrokerTaxonomy;
 use Illuminate\Support\Str;
 
 class BrokerReviewsIndexService
@@ -21,6 +23,32 @@ class BrokerReviewsIndexService
             'crypto' => 'Crypto',
             'cfd' => 'CFD',
         ];
+    }
+
+    /** @return array<int, array<string, mixed>> */
+    public function regions(): array
+    {
+        $brokers = Broker::query()
+            ->where('is_scam', false)
+            ->get();
+
+        return collect(BrokerTaxonomy::regionsWithFlags())
+            ->map(function (array $region, string $slug) use ($brokers) {
+                $count = $slug === 'global'
+                    ? $brokers->count()
+                    : BrokerListingFilter::brokersFor($slug, $brokers)->count();
+
+                return [
+                    'slug' => $slug,
+                    'name' => $region['name'],
+                    'flag' => $region['flag'],
+                    'code' => $region['code'],
+                    'count' => $count,
+                    'url' => route('brokers.best', ['slug' => $slug]),
+                ];
+            })
+            ->values()
+            ->all();
     }
 
     /** @return array<string, mixed> */
@@ -41,11 +69,17 @@ class BrokerReviewsIndexService
             'review_slug' => BrokerController::reviewSlugFor($broker),
             'logo' => $broker->logo ? asset($broker->logo) : null,
             'rating' => $broker->rating !== null ? round((float) $broker->rating, 1) : null,
+            'country' => trim((string) ($broker->country ?: '')),
+            'minimum_deposit' => $broker->minimum_deposit !== null
+                ? '$' . number_format((float) $broker->minimum_deposit, 0)
+                : null,
+            'leverage' => trim(strip_tags((string) ($broker->leverage ?: ''))) ?: null,
             'fee_level' => ucfirst((string) ($broker->fee_level ?: 'medium')),
             'fee_score' => $feeScore,
             'platform_score' => $platformScore,
             'withdrawal_fee' => trim((string) ($broker->withdrawal_fee ?: '')) ?: '—',
             'investor_protection' => $broker->investor_protection ? 'Yes' : 'No',
+            'is_regulated' => $broker->isRegulated(),
             'mobile_platform' => $mobileLabel,
             'mobile_platform_has_apps' => $mobileLabel !== 'No',
             'review_count' => $reviewCount,

@@ -14,10 +14,13 @@ use App\Helper\Helpers;
 use App\Services\BestBrokerGuideService;
 use App\Services\BlogIndexService;
 use App\Services\BestBrokersIndexService;
+use App\Services\AwardsIndexService;
 use App\Services\BrokerReviewsIndexService;
 use App\Services\BrokerAssessmentService;
 use App\Services\BrokerReviewScoreService;
+use App\Services\CountryBrokersService;
 use App\Services\EditorialAssignmentService;
+use App\Services\FooterIndexService;
 use App\Support\BrokerListingFilter;
 use App\Support\BrokerTaxonomy;
 use Illuminate\Support\Facades\DB;
@@ -74,11 +77,15 @@ class BrokerController extends Controller
 
     public function reviewsIndex(
         BrokerReviewsIndexService $reviewsIndexService,
-        BrokerAssessmentService $assessmentService
+        BrokerAssessmentService $assessmentService,
+        CountryBrokersService $countryBrokersService,
+        BlogIndexService $blogIndexService,
+        FooterIndexService $footerIndexService,
+        AwardsIndexService $awardsIndexService
     ) {
         Helpers::read_json();
 
-        $brokersPayload = \Illuminate\Support\Facades\Cache::remember('broker_reviews_index_v2', 1800, function () use ($reviewsIndexService, $assessmentService) {
+        $brokersPayload = \Illuminate\Support\Facades\Cache::remember('broker_reviews_index_v3', 1800, function () use ($reviewsIndexService, $assessmentService) {
             return Broker::query()
                 ->where('is_scam', false)
                 ->with(['accountOptions' => fn ($query) => $query->ordered()])
@@ -99,10 +106,37 @@ class BrokerController extends Controller
         });
 
         $marketFilters = $reviewsIndexService->marketFilters();
+        $topRatedBrokers = $countryBrokersService->globalTopRated(8);
+        $regions = \Illuminate\Support\Facades\Cache::remember(
+            'broker_reviews_regions_v2',
+            3600,
+            fn () => $reviewsIndexService->regions()
+        );
+
+        $languageId = $blogIndexService->resolveLanguageId();
+        $editorialStreams = $blogIndexService->editorialStreams($languageId);
+
+        $popularComparisons = \Illuminate\Support\Facades\Cache::remember(
+            'broker_reviews_comparisons_v1',
+            1800,
+            fn () => $footerIndexService->popularComparisons()
+        );
+
+        $awardWinners = \Illuminate\Support\Facades\Cache::remember(
+            'broker_reviews_award_winners_v1',
+            3600,
+            fn () => $awardsIndexService->winnerHighlights()
+        );
 
         return view('front.brokers.reviews_index', [
             'brokersPayload' => collect($brokersPayload),
             'marketFilters' => $marketFilters,
+            'topRatedBrokers' => $topRatedBrokers,
+            'regions' => $regions,
+            'recentNewsData' => $editorialStreams['recent'],
+            'popularNewsData' => $editorialStreams['popular'],
+            'popularComparisons' => $popularComparisons,
+            'awardWinners' => $awardWinners,
         ]);
     }
 

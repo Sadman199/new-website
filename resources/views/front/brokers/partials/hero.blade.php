@@ -51,7 +51,7 @@
                         @if($snapshot['is_scam'])
                             <span class="br-badge br-badge--danger">High Risk</span>
                         @elseif($isRegulated)
-                            <span class="br-badge br-badge--safe">Regulated</span>
+                            <span class="br-badge br-badge--safe bc-regulated-tag">Regulated</span>
                         @else
                             <span class="br-badge br-badge--warn">Unregulated</span>
                         @endif
@@ -71,7 +71,9 @@
             </div>
 
             <div class="br-hero__score-wrap">
-                <div class="br-hero__score-ring" aria-label="Overall score {{ $snapshot['score'] }} out of 10">
+                <div class="br-hero__score-ring"
+                     style="--br-score-pct: {{ \App\Support\BrokerRating::percent($snapshot['score']) }}%"
+                     aria-label="Overall score {{ $snapshot['score'] }} out of 5">
                     <span class="br-hero__score-value">{{ $snapshot['score'] }}</span>
                     <span class="br-hero__score-label">Score</span>
                 </div>

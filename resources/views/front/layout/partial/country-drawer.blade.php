@@ -18,7 +18,7 @@
 
 <div id="countryDrawer"
      class="bc-country-drawer"
-     data-recommended-url="{{ route('home.recommended_brokers') }}"
+     data-recommended-url="{{ route('home.recommended_brokers', [], false) }}"
      aria-hidden="true"
      role="dialog"
      aria-labelledby="countryDrawerTitle"
@@ -59,7 +59,7 @@
                 </div>
 
                 <form id="countryDrawerForm"
-                      action="{{ route('front_country') }}"
+                      action="{{ route('front_country', [], false) }}"
                       method="POST"
                       class="bc-country-drawer-form">
                     @csrf

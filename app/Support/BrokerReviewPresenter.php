@@ -287,7 +287,7 @@ class BrokerReviewPresenter
             'compare_url' => route('broker.comparison', ['brokers' => $broker->slug]),
             'review_count' => (int) ($reviewStats['count'] ?? 0),
             'review_average' => $reviewStats['average'] ?? 0,
-            'score' => number_format((float) $broker->rating, 1),
+            'score' => number_format(BrokerRating::outOfFive($broker->rating) ?? 0, 1),
             'trust_score' => $broker->trust_score && (int) $broker->trust_score <= 99
                 ? (int) $broker->trust_score
                 : null,

@@ -3,8 +3,8 @@
 @php
     $reviewUrl = route('broker_detail', $broker->slug);
     $visitUrl = $broker->open_live ?: $broker->visit_site ?: $broker->url;
-    $rating = $broker->rating !== null ? round((float) $broker->rating, 1) : null;
-    $ratingPercent = $rating !== null ? min(100, ($rating / 5) * 100) : 0;
+    $rating = \App\Support\BrokerRating::outOfFive($broker->rating);
+    $ratingPercent = \App\Support\BrokerRating::percent($broker->rating);
     $isRegulated = $broker->isRegulated();
     $regs = method_exists($broker, 'regulationList') ? array_slice($broker->regulationList() ?: [], 0, 2) : [];
     $leverage = $broker->leverage ? strip_tags((string) $broker->leverage) : null;
@@ -23,7 +23,7 @@
         @endif
 
         @if($isRegulated)
-            <span class="bc-pick-card__status">Regulated</span>
+            <span class="bc-pick-card__status bc-regulated-tag">Regulated</span>
         @elseif($broker->featured_broker)
             <span class="bc-pick-card__status bc-pick-card__status--featured">Featured</span>
         @endif
