@@ -28,7 +28,7 @@ class ProfileController extends Controller
         Helpers::read_json();
 
         $user = Auth::guard('web')->user();
-        $reviews = $user->reviews()->with('broker')->latest()->get();
+        $reviews = $user->reviews()->roots()->with('broker')->latest()->get();
         $activities = $user->activities()->take(8)->get();
         $notifications = $this->notifications->recent($user->id, 5);
         $unreadNotifications = $this->notifications->unreadCount($user->id);

@@ -26,21 +26,25 @@ class AuthorsIndexService
                     'step' => '01',
                     'title' => 'Research',
                     'text' => 'We analyse regulation, fees, platforms, and verified user feedback before anything is published.',
+                    'icon' => 'fas fa-search',
                 ],
                 [
                     'step' => '02',
                     'title' => 'Write & edit',
                     'text' => 'Specialist writers draft reviews and guides; editors refine clarity, structure, and compliance.',
+                    'icon' => 'fas fa-pen-nib',
                 ],
                 [
                     'step' => '03',
                     'title' => 'Fact-check',
                     'text' => 'Key claims are cross-checked against regulator databases and broker disclosures.',
+                    'icon' => 'fas fa-shield-alt',
                 ],
                 [
                     'step' => '04',
                     'title' => 'Publish & update',
                     'text' => 'Content goes live with clear attribution — and is refreshed when brokers or rules change.',
+                    'icon' => 'fas fa-sync-alt',
                 ],
             ],
         ];

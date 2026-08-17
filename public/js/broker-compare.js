@@ -50,6 +50,7 @@
         els.clearBtn = $('bcCompareClearBtn');
         els.hint = $('bcCompareHint');
         els.pairLink = $('bcComparePairLink');
+        els.battleLink = $('bcBattleModeLink');
         els.winners = $('bcCompareWinners');
         els.main = $('bcCompareMain');
 
@@ -338,28 +339,43 @@
         } else if (selected.length === 1) {
             els.hint.textContent = 'Add a second broker to compare side by side.';
         } else if (selected.length === 2) {
-            els.hint.textContent = 'Open the full comparison page, or add a third broker.';
+            els.hint.textContent = 'Open the full comparison, enter battle mode, or add a third broker.';
         } else {
             els.hint.textContent = 'Comparing 3 brokers. Clear a slot to swap one out.';
         }
     }
 
     function renderPairLink(selected) {
-        if (!els.pairLink) {
-            return;
+        if (els.pairLink) {
+            if (selected.length === 2) {
+                els.pairLink.href = pairUrl(selected[0].slug, selected[1].slug);
+                els.pairLink.classList.remove('bc-compare-hidden');
+            } else {
+                els.pairLink.classList.add('bc-compare-hidden');
+                els.pairLink.href = '#';
+            }
         }
-        if (selected.length === 2) {
-            els.pairLink.href = pairUrl(selected[0].slug, selected[1].slug);
-            els.pairLink.classList.remove('bc-compare-hidden');
-        } else {
-            els.pairLink.classList.add('bc-compare-hidden');
-            els.pairLink.href = '#';
+
+        if (els.battleLink) {
+            if (selected.length === 2) {
+                els.battleLink.href = battleUrl(selected[0].slug, selected[1].slug);
+                els.battleLink.classList.remove('bc-compare-hidden');
+            } else {
+                els.battleLink.classList.add('bc-compare-hidden');
+                els.battleLink.href = '#';
+            }
         }
     }
 
     function pairUrl(slug1, slug2) {
         var slugs = [slug1, slug2].sort();
         var base = String(config.pairBase || '/brokers/compare').replace(/\/$/, '');
+        return base + '/' + slugs[0] + '-vs-' + slugs[1];
+    }
+
+    function battleUrl(slug1, slug2) {
+        var slugs = [slug1, slug2].sort();
+        var base = String(config.battleBase || '/broker-battle').replace(/\/$/, '');
         return base + '/' + slugs[0] + '-vs-' + slugs[1];
     }
 

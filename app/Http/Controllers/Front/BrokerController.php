@@ -150,7 +150,7 @@ class BrokerController extends Controller
             return redirect()->route('broker_detail', ['slug' => $canonical], 301);
         }
 
-        return $this->detail($brokerSlug);
+        return $this->detail(request(), $brokerSlug);
     }
 
     public static function reviewSlugFor(Broker $broker): string
@@ -206,7 +206,7 @@ class BrokerController extends Controller
         abort(404);
     }
 
-    public function detail($slug)
+    public function detail(Request $request, $slug)
     {
         Helpers::read_json(); // Optional helper functionality
     
@@ -243,21 +243,17 @@ class BrokerController extends Controller
         // Fetch the latest 5 brokers
         $brokers = Broker::latest()->take(5)->get();
     
-        // Fetch approved reviews for the broker (eager load author for verified badge)
-        $approved_reviews = $broker->reviews()->where('status', 1)->with('user')->latest()->get();
-        foreach ($approved_reviews as $review) {
-            $review->formatted_date = $review->created_at->format('M d, Y');
-            $review->time_ago = $review->created_at->diffForHumans();
-        }
-
-        $reviewStats = [
-            'count' => $approved_reviews->count(),
-            'average' => round((float) $approved_reviews->avg('rating'), 1),
-        ];
-
-        $userReview = auth('web')->check()
-            ? $broker->reviews()->where('user_id', auth('web')->id())->first()
-            : null;
+        $community = app(\App\Services\BrokerReviewCommunityService::class)->forBrokerDetail(
+            $broker,
+            $request,
+            auth('web')->id()
+        );
+        $approved_reviews = $community['approved_reviews'];
+        $reviewStats = $community['reviewStats'];
+        $userReview = $community['userReview'];
+        $reviewFilters = $community['reviewFilters'];
+        $reviewFilterOptions = $community['reviewFilterOptions'];
+        $reviewAccountTypes = $community['reviewAccountTypes'];
     
         // Fetch the featured brokers
         $featured = Broker::where('featured_broker', 1)->get();
@@ -320,6 +316,9 @@ class BrokerController extends Controller
             'editorialTeam',
             'reviewStats',
             'userReview',
+            'reviewFilters',
+            'reviewFilterOptions',
+            'reviewAccountTypes',
             'reviewPageMeta',
             'reviewToc',
             'scoreBreakdown',

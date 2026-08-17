@@ -1,0 +1,308 @@
+.sub-page {
+    --sub-orange: #e8822a;
+    --sub-gold: #f5a623;
+    --sub-ink: #0b0d12;
+    --sub-panel: #141820;
+    --sub-text: #f7f5f2;
+    --sub-muted: rgba(236, 232, 226, 0.7);
+    min-height: 42rem;
+    color: var(--sub-text);
+    background:
+        radial-gradient(ellipse 65% 55% at 12% 8%, rgba(232, 130, 42, 0.15), transparent 65%),
+        radial-gradient(ellipse 45% 50% at 92% 34%, rgba(245, 166, 35, 0.08), transparent 67%),
+        linear-gradient(145deg, #11141a, var(--sub-ink));
+}
+
+.sub-hero {
+    padding: clamp(5.5rem, 9vw, 8rem) 0 clamp(4rem, 8vw, 7rem);
+}
+
+.sub-breadcrumb {
+    display: flex;
+    gap: 0.55rem;
+    align-items: center;
+    margin-bottom: clamp(2rem, 4vw, 3.5rem);
+    color: rgba(236, 232, 226, 0.48);
+    font-size: 0.75rem;
+}
+
+.sub-breadcrumb a {
+    color: rgba(236, 232, 226, 0.7);
+    text-decoration: none;
+}
+
+.sub-breadcrumb a:hover {
+    color: var(--sub-gold);
+}
+
+.sub-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(21rem, 0.72fr);
+    gap: clamp(2.5rem, 7vw, 6.5rem);
+    align-items: center;
+}
+
+.sub-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0 0 1rem;
+    padding: 0.4rem 0.75rem;
+    color: var(--sub-gold);
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.11em;
+    text-transform: uppercase;
+    border: 1px solid rgba(245, 166, 35, 0.25);
+    border-radius: 999px;
+    background: rgba(232, 130, 42, 0.08);
+}
+
+.sub-copy h1 {
+    max-width: 48rem;
+    margin: 0;
+    color: #fff;
+    font-size: clamp(2.25rem, 5.4vw, 4.65rem);
+    line-height: 1.02;
+    letter-spacing: -0.055em;
+}
+
+.sub-copy h1 span {
+    color: var(--sub-gold);
+}
+
+.sub-lead {
+    max-width: 41rem;
+    margin: 1.4rem 0 0;
+    color: var(--sub-muted);
+    font-size: clamp(1rem, 1.7vw, 1.125rem);
+    line-height: 1.75;
+}
+
+.sub-benefits {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1rem;
+    margin: 2.2rem 0 0;
+    padding: 0;
+    list-style: none;
+}
+
+.sub-benefits li {
+    display: flex;
+    gap: 0.75rem;
+}
+
+.sub-benefits li > span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 2.35rem;
+    width: 2.35rem;
+    height: 2.35rem;
+    color: var(--sub-gold);
+    background: rgba(232, 130, 42, 0.11);
+    border: 1px solid rgba(232, 130, 42, 0.2);
+    border-radius: 0.7rem;
+}
+
+.sub-benefits div {
+    display: grid;
+    gap: 0.22rem;
+}
+
+.sub-benefits strong {
+    color: #fff;
+    font-size: 0.78rem;
+}
+
+.sub-benefits small {
+    color: rgba(236, 232, 226, 0.55);
+    font-size: 0.68rem;
+    line-height: 1.5;
+}
+
+.sub-card {
+    position: relative;
+    padding: clamp(1.5rem, 4vw, 2.2rem);
+    border: 1px solid rgba(245, 166, 35, 0.22);
+    border-radius: 1.5rem;
+    background:
+        linear-gradient(145deg, rgba(255, 255, 255, 0.075), rgba(255, 255, 255, 0.025)),
+        rgba(17, 20, 27, 0.88);
+    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.35);
+    backdrop-filter: blur(18px);
+}
+
+.sub-card::before {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto;
+    height: 3px;
+    background: linear-gradient(90deg, var(--sub-orange), var(--sub-gold), transparent);
+    border-radius: 1.5rem 1.5rem 0 0;
+}
+
+.sub-card__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 3rem;
+    height: 3rem;
+    margin-bottom: 1.25rem;
+    color: var(--sub-gold);
+    background: rgba(232, 130, 42, 0.12);
+    border: 1px solid rgba(232, 130, 42, 0.25);
+    border-radius: 0.9rem;
+}
+
+.sub-card__kicker {
+    margin: 0 0 0.4rem;
+    color: var(--sub-gold);
+    font-size: 0.66rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+.sub-card h2 {
+    margin: 0 0 0.6rem;
+    color: #fff;
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    letter-spacing: -0.035em;
+}
+
+.sub-card > p:not(.sub-card__kicker, .sub-privacy, .sub-legal) {
+    margin: 0 0 1.4rem;
+    color: var(--sub-muted);
+    font-size: 0.86rem;
+    line-height: 1.65;
+}
+
+.sub-form label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: rgba(247, 245, 242, 0.9);
+    font-size: 0.76rem;
+    font-weight: 700;
+}
+
+.sub-form__field {
+    position: relative;
+}
+
+.sub-form__field i {
+    position: absolute;
+    top: 50%;
+    left: 0.95rem;
+    color: rgba(245, 166, 35, 0.8);
+    transform: translateY(-50%);
+}
+
+.sub-form input {
+    width: 100%;
+    min-height: 3.25rem;
+    padding: 0.8rem 0.9rem 0.8rem 2.75rem;
+    color: #fff;
+    background: rgba(5, 7, 10, 0.65);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 0.8rem;
+    outline: none;
+}
+
+.sub-form input:focus {
+    border-color: rgba(245, 166, 35, 0.65);
+    box-shadow: 0 0 0 3px rgba(232, 130, 42, 0.12);
+}
+
+.sub-form button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    width: 100%;
+    min-height: 3.2rem;
+    margin-top: 0.8rem;
+    color: #11141b;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--sub-gold), var(--sub-orange));
+    border: 0;
+    border-radius: 0.8rem;
+    box-shadow: 0 12px 30px rgba(232, 130, 42, 0.22);
+    cursor: pointer;
+}
+
+.sub-form button:hover {
+    background: linear-gradient(135deg, #ffb638, #ef8b30);
+}
+
+.sub-form__error {
+    margin: 0.45rem 0 0;
+    color: #ff9b91;
+    font-size: 0.72rem;
+}
+
+.sub-alert {
+    margin-bottom: 1rem;
+    padding: 0.75rem 0.85rem;
+    font-size: 0.76rem;
+    line-height: 1.5;
+    border-radius: 0.7rem;
+}
+
+.sub-alert--success {
+    color: #b9f6ca;
+    background: rgba(44, 145, 83, 0.14);
+    border: 1px solid rgba(72, 190, 113, 0.24);
+}
+
+.sub-alert--error {
+    color: #ffc2bc;
+    background: rgba(190, 57, 45, 0.14);
+    border: 1px solid rgba(226, 89, 77, 0.24);
+}
+
+.sub-privacy,
+.sub-legal {
+    margin: 0.9rem 0 0;
+    color: rgba(236, 232, 226, 0.48);
+    font-size: 0.68rem;
+    text-align: center;
+}
+
+.sub-privacy i {
+    margin-right: 0.25rem;
+    color: rgba(245, 166, 35, 0.7);
+}
+
+.sub-legal {
+    margin-top: 0.35rem;
+}
+
+.sub-legal a {
+    color: rgba(247, 245, 242, 0.75);
+}
+
+@media (max-width: 991px) {
+    .sub-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .sub-card {
+        max-width: 38rem;
+    }
+}
+
+@media (max-width: 640px) {
+    .sub-hero {
+        padding-top: 5rem;
+    }
+
+    .sub-benefits {
+        grid-template-columns: 1fr;
+    }
+
+    .sub-card {
+        border-radius: 1.15rem;
+    }
+}

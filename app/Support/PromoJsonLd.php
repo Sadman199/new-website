@@ -13,7 +13,12 @@ class PromoJsonLd
      * @param  Collection<int, array<string, mixed>>|iterable<int, array<string, mixed>>  $cards
      * @return array<string, mixed>
      */
-    public static function indexGraph(string $canonical, string $title, iterable $cards): array
+    public static function indexGraph(
+        string $canonical,
+        string $title,
+        iterable $cards,
+        iterable $faqs = [],
+    ): array
     {
         $siteUrl = rtrim((string) config('app.url'), '/') ?: url('/');
         $items = Collection::make($cards)->take(20)->values();
@@ -27,31 +32,54 @@ class PromoJsonLd
             ];
         })->all();
 
-        return [
-            '@context' => 'https://schema.org',
-            '@graph' => [
-                [
-                    '@type' => 'CollectionPage',
-                    '@id' => $canonical.'#webpage',
-                    'url' => $canonical,
-                    'name' => $title,
-                    'isPartOf' => ['@id' => $siteUrl.'#website'],
-                    'breadcrumb' => [
-                        '@type' => 'BreadcrumbList',
-                        'itemListElement' => [
-                            ['@type' => 'ListItem', 'position' => 1, 'name' => 'Home', 'item' => $siteUrl],
-                            ['@type' => 'ListItem', 'position' => 2, 'name' => 'Broker promos', 'item' => route('promotions.index')],
-                        ],
+        $faqItems = Collection::make($faqs)
+            ->filter(fn ($faq) => ! empty($faq['question']) && ! empty($faq['answer']))
+            ->map(fn ($faq) => [
+                '@type' => 'Question',
+                'name' => strip_tags((string) $faq['question']),
+                'acceptedAnswer' => [
+                    '@type' => 'Answer',
+                    'text' => strip_tags((string) $faq['answer']),
+                ],
+            ])
+            ->values()
+            ->all();
+
+        $graph = [
+            [
+                '@type' => 'CollectionPage',
+                '@id' => $canonical.'#webpage',
+                'url' => $canonical,
+                'name' => $title,
+                'isPartOf' => ['@id' => $siteUrl.'#website'],
+                'breadcrumb' => [
+                    '@type' => 'BreadcrumbList',
+                    'itemListElement' => [
+                        ['@type' => 'ListItem', 'position' => 1, 'name' => 'Home', 'item' => $siteUrl],
+                        ['@type' => 'ListItem', 'position' => 2, 'name' => 'Broker promos', 'item' => route('promotions.index')],
                     ],
                 ],
-                [
-                    '@type' => 'ItemList',
-                    '@id' => $canonical.'#itemlist',
-                    'name' => $title,
-                    'numberOfItems' => $items->count(),
-                    'itemListElement' => $listElements,
-                ],
             ],
+            [
+                '@type' => 'ItemList',
+                '@id' => $canonical.'#itemlist',
+                'name' => $title,
+                'numberOfItems' => $items->count(),
+                'itemListElement' => $listElements,
+            ],
+        ];
+
+        if ($faqItems !== []) {
+            $graph[] = [
+                '@type' => 'FAQPage',
+                '@id' => $canonical.'#faq',
+                'mainEntity' => $faqItems,
+            ];
+        }
+
+        return [
+            '@context' => 'https://schema.org',
+            '@graph' => $graph,
         ];
     }
 

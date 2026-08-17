@@ -31,6 +31,10 @@ class ForexBonus extends Model
         'min_deposit',
         'bonus_amount',
         'bonus_percentage',
+        'wagering_requirement',
+        'max_credit',
+        'eligible_clients',
+        'volume_requirement',
         'bonus_type_details',
         'terms_conditions_url',
         'affiliate_link',
@@ -54,6 +58,7 @@ class ForexBonus extends Model
         'min_deposit' => 'decimal:2',
         'bonus_amount' => 'decimal:2',
         'bonus_percentage' => 'decimal:2',
+        'max_credit' => 'decimal:2',
         'is_featured' => 'boolean',
     ];
 
@@ -287,6 +292,30 @@ class ForexBonus extends Model
         }
 
         return 'From $'.number_format($amount, 0);
+    }
+
+    public function maxCreditLabel(): ?string
+    {
+        if ($this->max_credit === null) {
+            return null;
+        }
+
+        return 'Up to $'.number_format((float) $this->max_credit, 0);
+    }
+
+    public function requirementLabel(): ?string
+    {
+        return $this->wagering_requirement ?: $this->volume_requirement;
+    }
+
+    public function eligibleClientsLabel(): ?string
+    {
+        return match ($this->eligible_clients) {
+            'new' => 'New clients',
+            'existing' => 'Existing clients',
+            'both' => 'New & existing',
+            default => null,
+        };
     }
 
     public function expiryLabel(): ?string

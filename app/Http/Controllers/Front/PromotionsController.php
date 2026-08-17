@@ -20,7 +20,11 @@ class PromotionsController extends Controller
         $search = $request->query('q');
 
         $data = $promotionsIndexService->buildIndex($type, $sort, $featuredOnly, $search);
-        $data['guide'] = $promotionsGuideService->buildHub($data['stats'], $data['tabs']);
+        $data['guide'] = $promotionsGuideService->build(
+            $data['tabs'],
+            $data['stats'],
+            $data['catalog'],
+        );
         unset($data['catalog']);
 
         $canonical = ($data['activeTab'] ?? 'all') === 'all'
@@ -30,7 +34,8 @@ class PromotionsController extends Controller
         $data['promoJsonLd'] = \App\Support\PromoJsonLd::indexGraph(
             $canonical,
             $title,
-            $data['cards'] ?? []
+            $data['cards'] ?? [],
+            $data['guide']['faqs'] ?? [],
         );
 
         return view('front.promotions.index', $data);

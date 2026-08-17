@@ -33,13 +33,7 @@ $popularReviewBrokers = ($popularReviewBrokers ?? collect())->take(10);
                     </button>
                 </div>
 
-                {{-- Prop firms mega menu --}}
-                <div class="bc-nav-group" id="propFirmsNavGroup">
-                    <button type="button" id="propFirmsButton" class="bc-nav-link @if(Request::is('prop-firms*')) bc-nav-active @endif" aria-expanded="false" aria-controls="propFirmsMegaMenu">
-                        Prop firms
-                        <svg class="pf-chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
-                    </button>
-                </div>
+                <a href="{{ route('prop_firms.index') }}" class="bc-nav-link @if(Request::is('prop-firms*')) bc-nav-active @endif">Prop firms</a>
 
                 {{-- Broker reviews mega (hover) --}}
                 <div class="bc-nav-group" id="reviewsNavGroup">
@@ -86,8 +80,6 @@ $popularReviewBrokers = ($popularReviewBrokers ?? collect())->take(10);
                     </button>
                     <div id="toolsMenu" class="bc-nav-dropdown is-hidden" aria-labelledby="toolsButton">
                         <div class="bc-nav-dropdown-panel">
-                            <a href="{{ route('promotions.index') }}" class="bc-nav-dropdown-link">Broker Promos</a>
-                            <a href="{{ route('prop_firms.index') }}" class="bc-nav-dropdown-link">Prop Firms</a>
                             <a href="{{ route('broker.comparison') }}" class="bc-nav-dropdown-link">Compare Brokers</a>
                             <a href="{{ route('broker.scam_checker') }}" class="bc-nav-dropdown-link bc-nav-dropdown-link--danger">Scam Checker</a>
                             <a href="{{ route('scam_brokers') }}" class="bc-nav-dropdown-link bc-nav-dropdown-link--danger">Scam broker list</a>
@@ -96,7 +88,6 @@ $popularReviewBrokers = ($popularReviewBrokers ?? collect())->take(10);
                     </div>
                 </div>
 
-                <a href="{{ route('awards.index') }}" class="bc-nav-link" data-bc-nav-warm>Awards</a>
                 <a href="{{ route('blog') }}" class="bc-nav-link">Blog</a>
 
                 <div class="bc-nav-group" id="companyNavGroup">
@@ -209,8 +200,6 @@ $popularReviewBrokers = ($popularReviewBrokers ?? collect())->take(10);
     </div>
     </div>
 
-    @include('front.layout.partial.prop-firms-mega-menu')
-
     {{-- Best brokers full-width mega menu --}}
     <div id="brokersMegaMenu" aria-labelledby="brokersButton" aria-hidden="true">
         <div class="bc-mega-inner">
@@ -286,6 +275,7 @@ $popularReviewBrokers = ($popularReviewBrokers ?? collect())->take(10);
             <div class="bc-mega-bottom">
                 <p>Independent comparisons — find your ideal broker in seconds.</p>
                 <div class="bc-mega-bottom__actions">
+                    <a href="{{ route('promotions.index') }}" class="bc-mega-footer" style="margin:0;padding:0;border:none;">Broker promos →</a>
                     <a href="{{ route('methodology') }}" class="bc-mega-footer" style="margin:0;padding:0;border:none;">Our methodology →</a>
                     <a href="{{ route('brokers.best.index') }}" class="bc-btn-primary">Explore all brokers</a>
                 </div>
@@ -298,20 +288,7 @@ $popularReviewBrokers = ($popularReviewBrokers ?? collect())->take(10);
         <div class="bc-mobile-nav-inner">
             <a href="{{ route('home') }}" class="bc-mobile-nav-link">Home</a>
 
-            <div class="mobile-accordion">
-                <button type="button" class="mobile-accordion-btn" data-target="mob-prop-firms">
-                    <span>Prop firms</span>
-                    <svg class="accordion-chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
-                </button>
-                <div id="mob-prop-firms" class="is-hidden bc-mobile-subpanel">
-                    <a href="{{ route('prop_firms.index') }}" class="bc-mobile-nav-link bc-mobile-nav-link--child">All prop firms</a>
-                    @foreach(($propFirmNav['categories'] ?? collect()) as $cat)
-                        <a href="{{ route('prop_firms.category', $cat->slug) }}" class="bc-mobile-nav-link bc-mobile-nav-link--child">{{ $cat->name }}</a>
-                    @endforeach
-                    <a href="{{ route('prop_firms.index', ['attribute' => 'instant-funding']) }}" class="bc-mobile-nav-link bc-mobile-nav-link--child">Instant funding</a>
-                    <a href="{{ route('prop_firms.index', ['featured' => 1]) }}" class="bc-mobile-nav-link bc-mobile-nav-link--child">Featured firms</a>
-                </div>
-            </div>
+            <a href="{{ route('prop_firms.index') }}" class="bc-mobile-nav-link">Prop firms</a>
 
             <div class="mobile-accordion">
                 <button type="button" class="mobile-accordion-btn" data-target="mob-best-categories">
@@ -337,6 +314,8 @@ $popularReviewBrokers = ($popularReviewBrokers ?? collect())->take(10);
                     <a href="{{ route('brokers.best.index') }}" class="bc-mobile-footer-link">All best brokers →</a>
                 </div>
             </div>
+
+            <a href="{{ route('promotions.index') }}" class="bc-mobile-nav-link">Broker promos</a>
 
             <div class="mobile-accordion">
                 <button type="button" class="mobile-accordion-btn" data-target="mob-reviews">
@@ -375,7 +354,6 @@ $popularReviewBrokers = ($popularReviewBrokers ?? collect())->take(10);
                     <svg class="accordion-chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
                 </button>
                 <div id="mob-tools" class="is-hidden bc-mobile-subpanel">
-                    <a href="{{ route('promotions.index') }}" class="bc-mobile-nav-link bc-mobile-nav-link--child">Broker Promos</a>
                     <a href="{{ route('broker.comparison') }}" class="bc-mobile-nav-link bc-mobile-nav-link--child">Compare Brokers</a>
                     <a href="{{ route('broker.scam_checker') }}" class="bc-mobile-nav-link bc-mobile-nav-link--child" style="color:#f87171;">Scam Checker</a>
                     <a href="{{ route('scam_brokers') }}" class="bc-mobile-nav-link bc-mobile-nav-link--child" style="color:#f87171;">Scam broker list</a>
@@ -385,7 +363,6 @@ $popularReviewBrokers = ($popularReviewBrokers ?? collect())->take(10);
 
             <div class="bc-mobile-divider"></div>
 
-            <a href="{{ route('awards.index') }}" class="bc-mobile-nav-link">Awards</a>
             <a href="{{ route('blog') }}" class="bc-mobile-nav-link">Blog</a>
             <a href="{{ route('about') }}" class="bc-mobile-nav-link">{{ $t('nav.about_us') }}</a>
             <a href="{{ route('authors') }}" class="bc-mobile-nav-link">Our team</a>

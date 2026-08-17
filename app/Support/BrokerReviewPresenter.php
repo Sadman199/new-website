@@ -227,7 +227,7 @@ class BrokerReviewPresenter
         }
 
         $toc[] = ['id' => 'faqs', 'label' => 'FAQs'];
-        $toc[] = ['id' => 'voices', 'label' => 'Comments'];
+        $toc[] = ['id' => 'voices', 'label' => 'Reviews'];
         $toc[] = ['id' => 'compare', 'label' => $broker->is_scam ? 'Safer alternatives' : 'Compare'];
 
         return $toc;

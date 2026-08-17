@@ -5,7 +5,7 @@
 @section('canonical', $author['profile_url'])
 
 @push('page-styles')
-    <link rel="stylesheet" href="{{ asset('css/authors-index.css') }}?v=4">
+    <link rel="stylesheet" href="{{ asset('css/authors-index.css') }}?v=7">
 @endpush
 
 @section('main_content')
@@ -31,10 +31,31 @@
                     @if($author['roles'] !== [])
                         <div class="aui-card__roles">
                             @foreach($author['roles'] as $role)
-                                <span class="aui-role aui-role--light">{{ $role }}</span>
+                                <span class="aui-role">{{ $role }}</span>
                             @endforeach
                         </div>
                     @endif
+
+                    <div class="aui-profile__stats">
+                        <div class="aui-profile__stat">
+                            <strong>{{ $author['contributions']['written'] }}</strong>
+                            <span>Written</span>
+                        </div>
+                        <div class="aui-profile__stat">
+                            <strong>{{ $author['contributions']['edited'] }}</strong>
+                            <span>Edited</span>
+                        </div>
+                        <div class="aui-profile__stat">
+                            <strong>{{ $author['contributions']['fact_checked'] }}</strong>
+                            <span>Fact-checked</span>
+                        </div>
+                        @if(isset($author['broker_reviews_count']))
+                            <div class="aui-profile__stat">
+                                <strong>{{ $author['broker_reviews_count'] }}</strong>
+                                <span>Broker reviews</span>
+                            </div>
+                        @endif
+                    </div>
 
                     @if($author['social'] !== [])
                         <div class="aui-profile__social">

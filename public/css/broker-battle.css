@@ -1,0 +1,824 @@
+/* Broker Battle — dark arena theme built on the BrokersCourt ink + orange tokens */
+.bc-battle-page {
+    /* Dark shades of the existing --bc-dark ink family, plus the brand orange accents */
+    --battle-base: #14161c;
+    --battle-surface: #1c1e24;
+    --battle-surface-2: #23262f;
+    --battle-line: rgba(255, 255, 255, 0.09);
+    --battle-line-strong: rgba(255, 255, 255, 0.16);
+    --battle-text: #f5f6f8;
+    --battle-muted: #9aa1ad;
+    --battle-orange: var(--bc-primary, #e8822a);
+    --battle-orange-dark: var(--bc-primary-dark, #c46a16);
+    --battle-amber: var(--bc-accent, #f5a623);
+    --battle-glow: 0 0 0 1px rgba(232, 130, 42, 0.35), 0 18px 44px rgba(232, 130, 42, 0.18);
+
+    padding-bottom: 4rem;
+    color: var(--battle-text);
+    background: var(--battle-base);
+}
+
+/* Arena lighting */
+.bc-battle-page::before {
+    background:
+        radial-gradient(ellipse 42% 38% at 12% 4%, rgba(232, 130, 42, 0.2), transparent 62%),
+        radial-gradient(ellipse 42% 38% at 88% 4%, rgba(245, 166, 35, 0.16), transparent 62%),
+        radial-gradient(ellipse 60% 40% at 50% 100%, rgba(232, 130, 42, 0.09), transparent 68%);
+}
+
+/* Site-standard container width */
+.bc-battle-page .container {
+    max-width: var(--bc-container, 1320px);
+}
+
+/* ── Hero ─────────────────────────────────────────────────── */
+.bc-battle-page .bc-compare-hero {
+    padding: 2rem 0 2.5rem;
+    background:
+        radial-gradient(ellipse 50% 60% at 50% -10%, rgba(232, 130, 42, 0.16), transparent 70%);
+    border-bottom: 1px solid var(--battle-line);
+}
+
+.bc-battle-page .bc-compare-breadcrumb,
+.bc-battle-page .bc-compare-breadcrumb a {
+    color: var(--battle-muted);
+}
+
+.bc-battle-page .bc-compare-breadcrumb a:hover {
+    color: var(--battle-amber);
+}
+
+.bc-battle-page .bc-compare-hero__eyebrow {
+    gap: 0.4rem;
+    color: var(--battle-amber);
+    background: rgba(232, 130, 42, 0.14);
+    border: 1px solid rgba(232, 130, 42, 0.42);
+    box-shadow: 0 0 22px rgba(232, 130, 42, 0.22);
+    letter-spacing: 0.16em;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+}
+
+.bc-battle-page .bc-compare-hero__title {
+    max-width: none;
+    color: var(--battle-text);
+    text-shadow: 0 12px 34px rgba(0, 0, 0, 0.45);
+}
+
+.bc-battle-page .bc-result-hero__name {
+    color: var(--battle-text);
+}
+
+.bc-battle-page .bc-result-hero__vs {
+    color: var(--battle-orange);
+    text-shadow: 0 0 24px rgba(232, 130, 42, 0.55);
+}
+
+.bc-battle-page .bc-compare-hero__sub {
+    max-width: 46rem;
+    color: var(--battle-muted);
+}
+
+/* ── Duel cards ───────────────────────────────────────────── */
+.bc-battle-page .bc-result-duel__card {
+    background: linear-gradient(160deg, var(--battle-surface-2) 0%, var(--battle-surface) 100%);
+    border: 1px solid var(--battle-line);
+    box-shadow: 0 20px 46px rgba(0, 0, 0, 0.42);
+    backdrop-filter: none;
+}
+
+.bc-battle-page .bc-result-duel__card.is-winner {
+    border-color: rgba(232, 130, 42, 0.55);
+    box-shadow: var(--battle-glow), 0 20px 46px rgba(0, 0, 0, 0.45);
+}
+
+.bc-battle-page .bc-result-duel__badge {
+    color: #14161c;
+    background: linear-gradient(135deg, var(--battle-amber), var(--battle-orange));
+    box-shadow: 0 8px 20px rgba(232, 130, 42, 0.4);
+}
+
+.bc-battle-page .bc-result-duel__logo {
+    background: rgba(255, 255, 255, 0.94);
+    border-color: var(--battle-line-strong);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35);
+}
+
+.bc-battle-page .bc-result-duel__name {
+    color: var(--battle-text);
+}
+
+.bc-battle-page .bc-result-duel__rating {
+    background:
+        radial-gradient(circle at center, var(--battle-surface) 0 63%, transparent 64%),
+        conic-gradient(var(--battle-orange) var(--rating-pct, 0%), rgba(255, 255, 255, 0.12) 0);
+    box-shadow: 0 0 0 5px rgba(232, 130, 42, 0.12);
+}
+
+.bc-battle-page .bc-result-duel__rating strong {
+    color: var(--battle-text);
+}
+
+.bc-battle-page .bc-result-duel__rating span,
+.bc-battle-page .bc-result-duel__meta dt {
+    color: var(--battle-muted);
+}
+
+.bc-battle-page .bc-result-duel__meta dd {
+    color: var(--battle-text);
+}
+
+.bc-battle-page .bc-result-duel__actions {
+    border-top-color: var(--battle-line);
+}
+
+.bc-battle-page .bc-result-duel__divider span {
+    color: #14161c;
+    background: linear-gradient(135deg, var(--battle-amber), var(--battle-orange));
+    border: 0;
+    box-shadow: 0 0 0 6px rgba(232, 130, 42, 0.12), 0 14px 30px rgba(0, 0, 0, 0.45);
+}
+
+/* ── Buttons ──────────────────────────────────────────────── */
+.bc-battle-page .bc-compare-btn--primary {
+    color: #14161c;
+    background: linear-gradient(135deg, var(--battle-amber), var(--battle-orange));
+}
+
+.bc-battle-page .bc-compare-btn--primary:hover {
+    color: #14161c;
+    background: linear-gradient(135deg, var(--battle-orange), var(--battle-amber));
+    box-shadow: 0 10px 26px rgba(232, 130, 42, 0.32);
+}
+
+.bc-battle-page .bc-compare-btn--ghost {
+    color: var(--battle-text);
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--battle-line-strong);
+}
+
+.bc-battle-page .bc-compare-btn--ghost:hover {
+    color: var(--battle-amber);
+    background: rgba(232, 130, 42, 0.12);
+    border-color: rgba(232, 130, 42, 0.45);
+}
+
+/* ── Shared section headings ──────────────────────────────── */
+.bc-battle-scoreboard__eyebrow,
+.bc-battle-section-head__eyebrow,
+.bc-battle-winner__eyebrow,
+.bc-battle-restart__eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin: 0 0 0.5rem;
+    font-size: 0.6875rem;
+    font-weight: 800;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--battle-amber);
+}
+
+.bc-battle-scoreboard__title,
+.bc-battle-section-head__title,
+.bc-battle-winner__title,
+.bc-battle-restart__title {
+    margin: 0;
+    font-size: clamp(1.35rem, 2.6vw, 1.9rem);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    color: var(--battle-text);
+}
+
+.bc-battle-section-head {
+    margin: 0 0 1.4rem;
+}
+
+.bc-battle-section-head__sub,
+.bc-battle-restart__sub,
+.bc-battle-winner__reason {
+    margin: 0.5rem 0 0;
+    max-width: 44rem;
+    font-size: 0.875rem;
+    line-height: 1.65;
+    color: var(--battle-muted);
+}
+
+.bc-battle-rounds,
+.bc-battle-summary,
+.bc-battle-winner,
+.bc-battle-share,
+.bc-battle-restart {
+    margin-bottom: 3rem;
+}
+
+/* ── Scoreboard ───────────────────────────────────────────── */
+.bc-battle-scoreboard {
+    margin: 0 0 3rem;
+}
+
+.bc-battle-scoreboard__panel {
+    position: relative;
+    padding: 1.75rem;
+    overflow: hidden;
+    background:
+        radial-gradient(circle at 50% -30%, rgba(232, 130, 42, 0.22), transparent 60%),
+        linear-gradient(160deg, var(--battle-surface-2) 0%, var(--battle-surface) 100%);
+    border: 1px solid var(--battle-line-strong);
+    border-radius: 1.5rem;
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
+}
+
+.bc-battle-scoreboard__panel::before {
+    content: '';
+    position: absolute;
+    inset: 0 0 auto;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--battle-orange), transparent);
+}
+
+.bc-battle-scoreboard__title {
+    margin-bottom: 1.4rem;
+}
+
+.bc-battle-scoreboard__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    gap: 1.15rem;
+    align-items: stretch;
+}
+
+.bc-battle-score {
+    display: grid;
+    align-content: center;
+    gap: 0.35rem;
+    padding: 1.35rem 1.4rem;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--battle-line);
+    border-radius: 1.15rem;
+}
+
+.bc-battle-score.is-winner {
+    background:
+        linear-gradient(160deg, rgba(232, 130, 42, 0.2), rgba(232, 130, 42, 0.05));
+    border-color: rgba(232, 130, 42, 0.5);
+    box-shadow: 0 0 30px rgba(232, 130, 42, 0.16);
+}
+
+.bc-battle-score__name {
+    font-size: 0.875rem;
+    font-weight: 750;
+    color: var(--battle-muted);
+}
+
+.bc-battle-score__value {
+    font-size: clamp(2rem, 5vw, 3rem);
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    line-height: 1;
+    color: var(--battle-text);
+}
+
+.bc-battle-score.is-winner .bc-battle-score__value {
+    color: var(--battle-amber);
+    text-shadow: 0 0 26px rgba(245, 166, 35, 0.35);
+}
+
+.bc-battle-score__meta {
+    font-size: 0.75rem;
+    color: var(--battle-muted);
+}
+
+.bc-battle-scoreboard__center {
+    display: grid;
+    align-content: center;
+    justify-items: center;
+    gap: 0.7rem;
+    min-width: 11rem;
+    text-align: center;
+}
+
+.bc-battle-scoreboard__verdict {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0;
+    padding: 0.6rem 1.05rem;
+    font-size: 0.9375rem;
+    color: #14161c;
+    background: linear-gradient(135deg, var(--battle-amber), var(--battle-orange));
+    border: 0;
+    border-radius: 999px;
+    box-shadow: 0 12px 30px rgba(232, 130, 42, 0.32);
+}
+
+.bc-battle-scoreboard__verdict i {
+    color: #14161c;
+}
+
+.bc-battle-scoreboard__verdict--tie {
+    color: var(--battle-text);
+    background: rgba(255, 255, 255, 0.07);
+    border: 1px solid var(--battle-line-strong);
+    box-shadow: none;
+}
+
+.bc-battle-scoreboard__tally {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    margin: 0;
+    padding: 0.4rem 0.85rem;
+    font-size: 0.8125rem;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+    color: var(--battle-text);
+    background: rgba(0, 0, 0, 0.28);
+    border: 1px solid var(--battle-line);
+    border-radius: 999px;
+}
+
+/* ── Rounds ───────────────────────────────────────────────── */
+.bc-battle-rounds__list {
+    display: grid;
+    gap: 0.85rem;
+    counter-reset: battleRound;
+}
+
+.bc-battle-round {
+    position: relative;
+    padding: 1.1rem 1.25rem;
+    background: linear-gradient(160deg, var(--battle-surface-2) 0%, var(--battle-surface) 100%);
+    border: 1px solid var(--battle-line);
+    border-radius: 1.15rem;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
+    transition: border-color 0.2s ease, transform 0.2s ease;
+}
+
+.bc-battle-round:hover {
+    border-color: rgba(232, 130, 42, 0.32);
+    transform: translateY(-2px);
+}
+
+.bc-battle-round__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.6rem;
+    margin-bottom: 0.95rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px dashed var(--battle-line);
+}
+
+.bc-battle-round__label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin: 0;
+    font-size: 0.9375rem;
+    font-weight: 800;
+    color: var(--battle-text);
+}
+
+.bc-battle-round__label::before {
+    counter-increment: battleRound;
+    content: 'R' counter(battleRound);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 2.1rem;
+    padding: 0.2rem 0.45rem;
+    font-size: 0.625rem;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    color: var(--battle-amber);
+    background: rgba(232, 130, 42, 0.12);
+    border: 1px solid rgba(232, 130, 42, 0.3);
+    border-radius: 999px;
+}
+
+.bc-battle-round__status {
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.03em;
+    color: var(--battle-amber);
+}
+
+.bc-battle-round--tie .bc-battle-round__status,
+.bc-battle-round--insufficient .bc-battle-round__status {
+    color: var(--battle-muted);
+}
+
+.bc-battle-round__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    gap: 0.85rem;
+    align-items: center;
+}
+
+.bc-battle-round__side {
+    position: relative;
+    display: grid;
+    gap: 0.25rem;
+    min-width: 0;
+    padding: 0.9rem 1rem;
+    background: rgba(255, 255, 255, 0.035);
+    border: 1px solid var(--battle-line);
+    border-radius: 0.95rem;
+}
+
+.bc-battle-round__side.is-winner {
+    background: linear-gradient(160deg, rgba(232, 130, 42, 0.18), rgba(232, 130, 42, 0.04));
+    border-color: rgba(232, 130, 42, 0.45);
+    box-shadow: inset 0 0 20px rgba(232, 130, 42, 0.08);
+}
+
+.bc-battle-round__broker {
+    font-size: 0.75rem;
+    font-weight: 750;
+    color: var(--battle-muted);
+}
+
+.bc-battle-round__value {
+    font-size: 0.9375rem;
+    font-weight: 800;
+    color: var(--battle-text);
+    word-break: break-word;
+}
+
+.bc-battle-round__side.is-winner .bc-battle-round__value {
+    color: var(--battle-amber);
+}
+
+.bc-battle-round__trophy {
+    position: absolute;
+    top: 0.7rem;
+    right: 0.8rem;
+    font-size: 0.8125rem;
+    color: var(--battle-amber);
+}
+
+.bc-battle-round__vs {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.35rem;
+    height: 2.35rem;
+    font-size: 0.625rem;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    color: var(--battle-muted);
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--battle-line);
+    border-radius: 50%;
+}
+
+.bc-battle-empty {
+    padding: 1.75rem;
+    text-align: center;
+    color: var(--battle-muted);
+    background: var(--battle-surface);
+    border: 1px dashed var(--battle-line-strong);
+    border-radius: 1.15rem;
+}
+
+/* ── Summary ──────────────────────────────────────────────── */
+.bc-battle-summary__panel {
+    overflow: hidden;
+    background: linear-gradient(160deg, var(--battle-surface-2) 0%, var(--battle-surface) 100%);
+    border: 1px solid var(--battle-line);
+    border-radius: 1.25rem;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.34);
+}
+
+.bc-battle-summary__row {
+    display: grid;
+    grid-template-columns: minmax(8rem, 1.1fr) minmax(0, 1fr) minmax(7.5rem, 0.85fr) minmax(0, 1fr);
+    gap: 0.85rem;
+    align-items: center;
+    padding: 0.95rem 1.2rem;
+    border-top: 1px solid var(--battle-line);
+}
+
+.bc-battle-summary__row--head {
+    border-top: 0;
+    background: rgba(232, 130, 42, 0.1);
+    font-size: 0.6875rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--battle-amber);
+}
+
+.bc-battle-summary__row--broker1,
+.bc-battle-summary__row--broker2 {
+    background: rgba(255, 255, 255, 0.025);
+}
+
+.bc-battle-summary__label {
+    font-size: 0.8125rem;
+    font-weight: 750;
+    color: var(--battle-text);
+}
+
+.bc-battle-summary__value {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    min-width: 0;
+    font-size: 0.8125rem;
+    font-weight: 650;
+    color: var(--battle-muted);
+    word-break: break-word;
+}
+
+.bc-battle-summary__value.is-winner {
+    font-weight: 800;
+    color: var(--battle-amber);
+}
+
+.bc-battle-summary__value i {
+    font-size: 0.75rem;
+    color: var(--battle-amber);
+}
+
+.bc-battle-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    max-width: 100%;
+    padding: 0.3rem 0.6rem;
+    overflow: hidden;
+    font-size: 0.6875rem;
+    font-weight: 800;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    border-radius: 999px;
+}
+
+.bc-battle-badge--win {
+    color: #14161c;
+    background: linear-gradient(135deg, var(--battle-amber), var(--battle-orange));
+}
+
+.bc-battle-badge--tie {
+    color: var(--battle-text);
+    background: rgba(255, 255, 255, 0.09);
+    border: 1px solid var(--battle-line-strong);
+}
+
+.bc-battle-badge--muted {
+    color: var(--battle-muted);
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--battle-line);
+}
+
+/* ── Winner podium ────────────────────────────────────────── */
+.bc-battle-winner__panel {
+    position: relative;
+    padding: 2.75rem 2rem;
+    overflow: hidden;
+    text-align: center;
+    background:
+        radial-gradient(circle at 50% 0%, rgba(232, 130, 42, 0.28), transparent 60%),
+        linear-gradient(160deg, var(--battle-surface-2) 0%, var(--battle-surface) 100%);
+    border: 1px solid rgba(232, 130, 42, 0.32);
+    border-radius: 1.5rem;
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
+}
+
+.bc-battle-winner__panel .bc-battle-winner__eyebrow {
+    display: flex;
+    justify-content: center;
+}
+
+.bc-battle-winner__title {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.65rem;
+    font-size: clamp(1.6rem, 3.5vw, 2.4rem);
+    color: var(--battle-text);
+}
+
+.bc-battle-winner__title i {
+    color: var(--battle-amber);
+    filter: drop-shadow(0 0 16px rgba(245, 166, 35, 0.5));
+}
+
+.bc-battle-winner__reason {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.bc-battle-winner__actions {
+    justify-content: center;
+}
+
+.bc-battle-winner__actions,
+.bc-battle-share__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.7rem;
+    margin-top: 1.4rem;
+}
+
+/* ── Share ────────────────────────────────────────────────── */
+.bc-battle-share__actions {
+    margin-top: 0;
+}
+
+.bc-battle-share__btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: 2.6rem;
+    padding: 0.6rem 1.05rem;
+    font-size: 0.8125rem;
+    font-weight: 750;
+    color: var(--battle-text);
+    text-decoration: none;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--battle-line-strong);
+    border-radius: 999px;
+    cursor: pointer;
+    transition: color 0.18s ease, border-color 0.18s ease, background 0.18s ease, transform 0.18s ease;
+}
+
+.bc-battle-share__btn:hover {
+    color: var(--battle-amber);
+    background: rgba(232, 130, 42, 0.12);
+    border-color: rgba(232, 130, 42, 0.45);
+    transform: translateY(-1px);
+}
+
+.bc-battle-share__btn i {
+    color: var(--battle-amber);
+}
+
+/* ── Restart ──────────────────────────────────────────────── */
+.bc-battle-restart__panel {
+    padding: 1.75rem;
+    background: linear-gradient(160deg, var(--battle-surface-2) 0%, var(--battle-surface) 100%);
+    border: 1px solid var(--battle-line-strong);
+    border-radius: 1.5rem;
+    box-shadow: 0 20px 48px rgba(0, 0, 0, 0.4);
+}
+
+.bc-battle-restart__fields {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    gap: 1rem;
+    align-items: end;
+    margin: 1.4rem 0 1rem;
+}
+
+.bc-battle-restart__field {
+    display: grid;
+    gap: 0.45rem;
+    min-width: 0;
+    font-size: 0.6875rem;
+    font-weight: 800;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--battle-muted);
+}
+
+.bc-battle-restart__field select {
+    width: 100%;
+    min-height: 2.9rem;
+    padding: 0.7rem 2.4rem 0.7rem 0.9rem;
+    font-size: 0.875rem;
+    font-weight: 650;
+    color: var(--battle-text);
+    background-color: rgba(0, 0, 0, 0.32);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%23e8822a' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 6l4 4 4-4'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.9rem center;
+    background-size: 0.9rem;
+    border: 1px solid var(--battle-line-strong);
+    border-radius: 0.85rem;
+    appearance: none;
+    -webkit-appearance: none;
+    cursor: pointer;
+}
+
+.bc-battle-restart__field select option {
+    color: #14161c;
+    background: #fff;
+}
+
+.bc-battle-restart__field select:focus {
+    outline: none;
+    border-color: rgba(232, 130, 42, 0.6);
+    box-shadow: 0 0 0 3px rgba(232, 130, 42, 0.18);
+}
+
+.bc-battle-restart__vs {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.6rem;
+    height: 2.6rem;
+    font-size: 0.6875rem;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    color: #14161c;
+    background: linear-gradient(135deg, var(--battle-amber), var(--battle-orange));
+    border-radius: 50%;
+    box-shadow: 0 10px 24px rgba(232, 130, 42, 0.3);
+}
+
+.bc-battle-restart__error {
+    margin: 0 0 1rem;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    color: #ffb4a2;
+}
+
+/* ── Popular matchup chips ────────────────────────────────── */
+.bc-battle-page .bc-compare-popular {
+    padding: 1.15rem 1.25rem;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--battle-line);
+    border-radius: 1.15rem;
+}
+
+.bc-battle-page .bc-compare-popular__label {
+    color: var(--battle-amber);
+    letter-spacing: 0.12em;
+}
+
+.bc-battle-page .bc-compare-popular__chip {
+    color: var(--battle-text);
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--battle-line-strong);
+}
+
+.bc-battle-page .bc-compare-popular__chip:hover {
+    color: var(--battle-amber);
+    background: rgba(232, 130, 42, 0.12);
+    border-color: rgba(232, 130, 42, 0.45);
+}
+
+/* ── Responsive ───────────────────────────────────────────── */
+@media (max-width: 900px) {
+    .bc-battle-scoreboard__grid,
+    .bc-battle-round__grid,
+    .bc-battle-restart__fields {
+        grid-template-columns: 1fr;
+    }
+
+    .bc-battle-scoreboard__center,
+    .bc-battle-round__vs,
+    .bc-battle-restart__vs {
+        order: -1;
+        justify-self: center;
+    }
+
+    .bc-battle-summary__row {
+        grid-template-columns: 1fr;
+        gap: 0.4rem;
+        padding: 1rem 1.1rem;
+    }
+
+    .bc-battle-summary__row--head {
+        display: none;
+    }
+
+    .bc-battle-summary__value::before {
+        content: attr(data-broker);
+        margin-right: 0.35rem;
+        font-size: 0.6875rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        color: var(--battle-muted);
+    }
+
+    .bc-battle-scoreboard__panel,
+    .bc-battle-winner__panel,
+    .bc-battle-restart__panel {
+        padding: 1.35rem;
+    }
+}
+
+@media (max-width: 560px) {
+    .bc-battle-share__btn,
+    .bc-battle-winner__actions .bc-compare-btn {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .bc-battle-round,
+    .bc-battle-share__btn {
+        transition: none;
+    }
+
+    .bc-battle-round:hover,
+    .bc-battle-share__btn:hover {
+        transform: none;
+    }
+}

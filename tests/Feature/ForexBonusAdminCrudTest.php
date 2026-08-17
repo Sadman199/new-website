@@ -19,6 +19,9 @@ class ForexBonusAdminCrudTest extends TestCase
 
     protected Admin $admin;
 
+    /** @var array<int, string> */
+    protected array $uploadedTestFiles = [];
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -32,6 +35,17 @@ class ForexBonusAdminCrudTest extends TestCase
         ]);
     }
 
+    protected function tearDown(): void
+    {
+        foreach ($this->uploadedTestFiles as $path) {
+            if (is_file($path)) {
+                unlink($path);
+            }
+        }
+
+        parent::tearDown();
+    }
+
     public function test_admin_can_create_bonus_linked_to_broker_with_editorial_credits(): void
     {
         Storage::fake('public');
@@ -40,6 +54,8 @@ class ForexBonusAdminCrudTest extends TestCase
             'name' => 'Test Broker',
             'slug' => 'test-broker',
             'rating' => 4.5,
+            'country' => 'United Kingdom',
+            'regulation' => ['FCA'],
             'logo' => '',
             'url' => 'https://example.com',
             'open_live' => 'https://example.com/live',
@@ -55,7 +71,10 @@ class ForexBonusAdminCrudTest extends TestCase
             'can_fact_check' => false,
         ]);
 
-        $image = UploadedFile::fake()->image('bonus.jpg');
+        $image = UploadedFile::fake()->createWithContent(
+            'bonus.png',
+            base64_decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAusB9Wl2nWQAAAAASUVORK5CYII=')
+        );
 
         $response = $this->actingAs($this->admin, 'admin')->post(route('admin_forex_bonus_store'), [
             'title' => 'Welcome Bonus',
@@ -74,6 +93,10 @@ class ForexBonusAdminCrudTest extends TestCase
             'min_deposit' => 100,
             'bonus_amount' => 100,
             'bonus_percentage' => 50,
+            'wagering_requirement' => '30x bonus',
+            'max_credit' => 500,
+            'eligible_clients' => 'new',
+            'volume_requirement' => '5 standard lots',
             'promotion_status' => 'ongoing',
             'written_assignee' => 'author:' . $author->id,
         ]);
@@ -82,14 +105,19 @@ class ForexBonusAdminCrudTest extends TestCase
 
         $bonus = ForexBonus::where('slug', 'welcome-bonus')->first();
         $this->assertNotNull($bonus);
+        $this->uploadedTestFiles[] = public_path($bonus->feature_image);
         $this->assertSame($broker->id, $bonus->broker_id);
         $this->assertSame($author->id, $bonus->written_by_author_id);
         $this->assertSame('Bonus Writer', $bonus->author_name);
         $this->assertNotNull($bonus->feature_image);
+        $this->assertSame('30x bonus', $bonus->wagering_requirement);
+        $this->assertSame('500.00', (string) $bonus->max_credit);
+        $this->assertSame('new', $bonus->eligible_clients);
+        $this->assertSame('5 standard lots', $bonus->volume_requirement);
 
         $credits = EditorialAssignmentService::creditsFor($bonus);
         $this->assertNotEmpty($credits);
-        $this->assertSame('Written by', $credits[0]['label']);
+        $this->assertSame('Written', $credits[0]['label']);
     }
 
     public function test_admin_can_update_bonus_without_reuploading_image(): void
@@ -98,6 +126,8 @@ class ForexBonusAdminCrudTest extends TestCase
             'name' => 'Update Broker',
             'slug' => 'update-broker',
             'rating' => 4.0,
+            'country' => 'Australia',
+            'regulation' => ['ASIC'],
             'logo' => '',
             'url' => 'https://example.com',
             'open_live' => 'https://example.com/live',
@@ -135,6 +165,10 @@ class ForexBonusAdminCrudTest extends TestCase
             'general_terms' => 'Updated terms',
             'prize' => '$75',
             'bonus_amount' => 75,
+            'wagering_requirement' => '20x deposit',
+            'max_credit' => 750,
+            'eligible_clients' => 'both',
+            'volume_requirement' => '8 standard lots',
             'promotion_status' => 'limited-time',
             'is_featured' => '1',
         ]);
@@ -146,5 +180,8 @@ class ForexBonusAdminCrudTest extends TestCase
         $this->assertSame('uploads/forex_bonuses/existing.jpg', $bonus->feature_image);
         $this->assertTrue($bonus->is_featured);
         $this->assertSame('75.00', (string) $bonus->bonus_amount);
+        $this->assertSame('20x deposit', $bonus->wagering_requirement);
+        $this->assertSame('750.00', (string) $bonus->max_credit);
+        $this->assertSame('both', $bonus->eligible_clients);
     }
 }

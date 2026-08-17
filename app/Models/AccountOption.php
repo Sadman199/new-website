@@ -78,6 +78,17 @@ class AccountOption extends Model
         return $this->belongsTo(Broker::class);
     }
 
+    public function scopeActive(Builder $query): Builder
+    {
+        if (! Schema::hasColumn($this->getTable(), 'is_active')) {
+            return $query;
+        }
+
+        return $query->where(function (Builder $inner) {
+            $inner->where('is_active', true)->orWhereNull('is_active');
+        });
+    }
+
     public function scopeOrdered(Builder $query): Builder
     {
         if (Schema::hasColumn($this->getTable(), 'sort_order')) {

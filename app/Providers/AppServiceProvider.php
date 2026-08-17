@@ -6,7 +6,6 @@ use App\Models\Broker;
 use App\Models\Review;
 use App\Services\FooterIndexService;
 use App\Services\GlobalViewDataService;
-use App\Services\PropFirmNavService;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\View;
@@ -71,7 +70,7 @@ class AppServiceProvider extends ServiceProvider
                     'cta' => [],
                     'top_brokers' => ['links' => [], 'view_all' => null],
                     'comparisons' => [],
-                    'regions' => ['links' => [], 'view_all' => null],
+                    'regions' => [],
                     'for_users' => [],
                     'contact' => ['address' => '', 'email' => 'info@brokerscourt.com', 'phone' => ''],
                     'legal' => [],
@@ -82,17 +81,5 @@ class AppServiceProvider extends ServiceProvider
             }
         });
 
-        View::composer(['front.layout.partial.navbar', 'front.layout.partial.prop-firms-mega-menu'], function ($view) {
-            try {
-                $view->with('propFirmNav', app(PropFirmNavService::class)->forNavbar());
-            } catch (\Throwable) {
-                $view->with('propFirmNav', [
-                    'categories' => collect(),
-                    'featured' => collect(),
-                    'topRated' => collect(),
-                    'attributes' => collect(),
-                ]);
-            }
-        });
     }
 }

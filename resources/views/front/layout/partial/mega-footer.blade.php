@@ -1,6 +1,46 @@
 <footer class="mf-footer" aria-labelledby="mfFooterTitle">
     <h2 id="mfFooterTitle" class="sr-only">Site footer</h2>
 
+    <section class="mf-intro" aria-label="Newsletter signup">
+        <div class="container">
+            <form action="{{ route('subscribe') }}" method="post" class="mf-newsletter">
+                @csrf
+                <div class="mf-newsletter__head">
+                    <span class="mf-newsletter__icon" aria-hidden="true"><i class="far fa-envelope"></i></span>
+                    <div>
+                        <strong>Join the BrokersCourt briefing</strong>
+                        <span>Curated insights delivered to your inbox.</span>
+                    </div>
+                </div>
+
+                <div class="mf-newsletter__action">
+                    <label for="mfNewsletterEmail" class="sr-only">Email address</label>
+                    <div class="mf-newsletter__row">
+                        <input
+                            type="email"
+                            id="mfNewsletterEmail"
+                            name="email"
+                            value="{{ old('email') }}"
+                            required
+                            maxlength="254"
+                            placeholder="Enter your email address"
+                            class="mf-newsletter__input"
+                            autocomplete="email"
+                            aria-describedby="mfNewsletterNote"
+                        >
+                        <button type="submit" class="mf-newsletter__btn">
+                            Subscribe <i class="fas fa-arrow-right" aria-hidden="true"></i>
+                        </button>
+                    </div>
+                    <p id="mfNewsletterNote" class="mf-newsletter__note">
+                        <i class="fas fa-lock" aria-hidden="true"></i>
+                        Free insights. No spam. Unsubscribe anytime.
+                    </p>
+                </div>
+            </form>
+        </div>
+    </section>
+
     {{-- Quick-action CTA band --}}
     <section class="mf-cta" aria-label="Quick actions">
         <div class="container">
@@ -57,14 +97,6 @@
                         </div>
                     @endif
 
-                    <form action="{{ route('subscribe') }}" method="post" class="mf-newsletter">
-                        @csrf
-                        <label for="mfNewsletterEmail" class="mf-newsletter__label">Get broker news &amp; updates</label>
-                        <div class="mf-newsletter__row">
-                            <input type="email" id="mfNewsletterEmail" name="email" required placeholder="Your email" class="mf-newsletter__input" autocomplete="email">
-                            <button type="submit" class="mf-newsletter__btn">Subscribe</button>
-                        </div>
-                    </form>
                 </div>
 
                 {{-- Top Brokers --}}
@@ -112,20 +144,29 @@
                         <h3 class="mf-panel__title">Regions</h3>
                     </div>
                     <ul class="mf-links">
-                        @foreach($footer['regions']['links'] as $link)
-                            <li><a href="{{ $link['url'] }}" class="mf-links__item"><span>{{ $link['label'] }}</span></a></li>
+                        @foreach($footer['regions'] as $link)
+                            <li>
+                                <a href="{{ $link['url'] }}" class="mf-links__item mf-links__item--flag">
+                                    <span class="mf-links__flag">
+                                        @include('front.layout.partial.country-flag', [
+                                            'country' => ['code' => $link['code'] ?? null],
+                                            'class' => 'mf-flag',
+                                            'width' => 20,
+                                            'height' => 15,
+                                        ])
+                                    </span>
+                                    <span>{{ $link['label'] }}</span>
+                                </a>
+                            </li>
                         @endforeach
                     </ul>
-                    @if($footer['regions']['view_all'])
-                        <a href="{{ $footer['regions']['view_all']['url'] }}" class="mf-panel__more">{{ $footer['regions']['view_all']['label'] }} →</a>
-                    @endif
                 </nav>
 
-                {{-- For Users --}}
-                <nav class="mf-panel mf-panel--links" aria-label="For users">
+                {{-- Explore --}}
+                <nav class="mf-panel mf-panel--links" aria-label="Explore BrokersCourt">
                     <div class="mf-panel__head">
-                        <span class="mf-panel__icon"><i class="fas fa-users"></i></span>
-                        <h3 class="mf-panel__title">For Users</h3>
+                        <span class="mf-panel__icon"><i class="fas fa-compass"></i></span>
+                        <h3 class="mf-panel__title">Explore</h3>
                     </div>
                     <ul class="mf-links">
                         @foreach($footer['for_users'] as $link)

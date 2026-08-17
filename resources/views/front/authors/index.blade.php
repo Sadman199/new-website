@@ -5,7 +5,7 @@
 @section('canonical', route('authors'))
 
 @push('page-styles')
-    <link rel="stylesheet" href="{{ asset('css/authors-index.css') }}?v=5">
+    <link rel="stylesheet" href="{{ asset('css/authors-index.css') }}?v=7">
 @endpush
 
 @section('main_content')
@@ -47,8 +47,24 @@
                                 @endif
                                 <span class="aui-card__name">{{ $author['name'] }}</span>
                                 @if($author['bio'])
-                                    <span class="aui-card__bio">{{ Str::limit($author['bio'], 110) }}</span>
+                                    <span class="aui-card__bio">{{ Str::limit($author['bio'], 220) }}</span>
                                 @endif
+
+                                <span class="aui-card__stats">
+                                    <span class="aui-card__stat">
+                                        <strong>{{ $author['contributions']['written'] }}</strong>
+                                        <span>Written</span>
+                                    </span>
+                                    <span class="aui-card__stat">
+                                        <strong>{{ $author['contributions']['edited'] }}</strong>
+                                        <span>Edited</span>
+                                    </span>
+                                    <span class="aui-card__stat">
+                                        <strong>{{ $author['contributions']['fact_checked'] }}</strong>
+                                        <span>Fact-checked</span>
+                                    </span>
+                                </span>
+
                                 <span class="aui-card__link">View profile →</span>
                             </span>
                         </a>
@@ -59,14 +75,20 @@
             @if(!empty($how_we_work))
                 <section class="aui-work" aria-labelledby="auiWorkTitle">
                     <div class="aui-work__head">
+                        <p class="aui-work__eyebrow">Editorial process</p>
                         <h2 class="aui-work__title" id="auiWorkTitle">How we work</h2>
                         <p class="aui-work__lead">Every broker review and article follows the same editorial process — research, write, verify, publish.</p>
                     </div>
                     <ol class="aui-work__steps">
                         @foreach($how_we_work as $step)
                             <li class="aui-work__step">
-                                <span class="aui-work__step-num">{{ $step['step'] }}</span>
-                                <div>
+                                <span class="aui-work__step-marker">
+                                    <span class="aui-work__step-icon" aria-hidden="true">
+                                        <i class="{{ $step['icon'] ?? 'fas fa-check' }}"></i>
+                                    </span>
+                                    <span class="aui-work__step-num" aria-hidden="true">{{ $step['step'] }}</span>
+                                </span>
+                                <div class="aui-work__step-body">
                                     <h3 class="aui-work__step-title">{{ $step['title'] }}</h3>
                                     <p class="aui-work__step-text">{{ $step['text'] }}</p>
                                 </div>

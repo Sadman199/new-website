@@ -80,6 +80,7 @@
                 <p class="bc-compare-actions__hint" id="bcCompareHint">Pick at least 2 brokers to see the comparison table below.</p>
                 <div class="bc-compare-actions__buttons">
                     <a href="#" class="bc-compare-btn bc-compare-btn--primary bc-compare-hidden" id="bcComparePairLink">Open full comparison</a>
+                    <a href="#" class="bc-compare-btn bc-compare-btn--ghost bc-compare-hidden" id="bcBattleModeLink">Enter battle mode</a>
                     <button type="button" class="bc-compare-btn bc-compare-btn--ghost" id="bcCompareClearBtn">
                         Clear all
                     </button>
@@ -132,8 +133,9 @@
         brokers: @json($brokersPayload),
         tabGroups: @json($tabGroups),
         searchUrl: @json(route('broker.live.search')),
-        pairBase: @json(url('/brokers/compare'))
+        pairBase: @json(url('/brokers/compare')),
+        battleBase: @json(url('/broker-battle'))
     };
 </script>
-<script src="{{ asset('js/broker-compare.js') }}?v=8" defer></script>
+<script src="{{ asset('js/broker-compare.js') }}?v=9" defer></script>
 @endpush

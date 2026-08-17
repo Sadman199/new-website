@@ -9,13 +9,7 @@
     var showingCountEl = document.getElementById('bpr-showing-count');
     var sortSelect = document.getElementById('bpr-sort-select');
     var featuredToggle = document.getElementById('bpr-featured-toggle');
-    var mobileTabSelect = document.getElementById('bpr-mobile-tab-select');
-    var stickyTabs = document.getElementById('bpr-tabs');
-    var toolbar = document.getElementById('bpr-toolbar');
-    var tabbarDesktop = document.querySelector('.bpr-tabbar__desktop');
-    var featuredTrack = document.getElementById('bpr-featured-track');
-    var featuredPrev = document.getElementById('bpr-featured-prev');
-    var featuredNext = document.getElementById('bpr-featured-next');
+    var filterBar = document.querySelector('.bpr-filters__bar');
 
     function navigateTo(url) {
         if (url) {
@@ -51,60 +45,16 @@
         });
     }
 
-    if (mobileTabSelect) {
-        mobileTabSelect.addEventListener('change', function () {
-            navigateTo(mobileTabSelect.value);
-        });
-    }
-
-    var sortSelectMobile = document.getElementById('bpr-sort-select-mobile');
-    if (sortSelectMobile) {
-        sortSelectMobile.addEventListener('change', function () {
-            navigateTo(appendSortParam(sortSelectMobile.getAttribute('data-base-url'), sortSelectMobile.value));
-        });
-    }
-
-    if (tabbarDesktop && 'IntersectionObserver' in window) {
+    if (filterBar && 'IntersectionObserver' in window) {
         var sentinel = document.createElement('div');
         sentinel.style.cssText = 'position:absolute;top:0;left:0;width:1px;height:1px;pointer-events:none;';
-        tabbarDesktop.parentElement.insertBefore(sentinel, tabbarDesktop);
+        filterBar.parentElement.insertBefore(sentinel, filterBar);
         var pinObserver = new IntersectionObserver(function (entries) {
             entries.forEach(function (entry) {
-                tabbarDesktop.classList.toggle('is-pinned', !entry.isIntersecting);
+                filterBar.classList.toggle('is-pinned', !entry.isIntersecting);
             });
         }, { threshold: 1, rootMargin: '-1px 0px 0px 0px' });
         pinObserver.observe(sentinel);
-    }
-
-    function updateFeaturedNavState() {
-        if (!featuredTrack || !featuredPrev || !featuredNext) {
-            return;
-        }
-
-        var maxScroll = featuredTrack.scrollWidth - featuredTrack.clientWidth;
-        featuredPrev.disabled = featuredTrack.scrollLeft <= 4;
-        featuredNext.disabled = featuredTrack.scrollLeft >= maxScroll - 4;
-    }
-
-    if (featuredTrack && featuredPrev && featuredNext) {
-        var scrollFeatured = function (direction) {
-            var card = featuredTrack.querySelector('.bpr-spotlight');
-            var gap = 12;
-            var amount = card ? card.offsetWidth + gap : featuredTrack.clientWidth * 0.85;
-            featuredTrack.scrollBy({ left: direction * amount, behavior: 'smooth' });
-        };
-
-        featuredPrev.addEventListener('click', function () {
-            scrollFeatured(-1);
-        });
-
-        featuredNext.addEventListener('click', function () {
-            scrollFeatured(1);
-        });
-
-        featuredTrack.addEventListener('scroll', updateFeaturedNavState, { passive: true });
-        window.addEventListener('resize', updateFeaturedNavState);
-        updateFeaturedNavState();
     }
 
     if (loadMoreBtn && grid) {
@@ -209,4 +159,5 @@
             }
         });
     });
+
 })();

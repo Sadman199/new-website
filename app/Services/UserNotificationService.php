@@ -72,12 +72,15 @@ class UserNotificationService
         }
 
         $brokerName = $review->broker?->name ?? 'a broker';
+        $isReply = $review->isReply();
 
         $this->notify(
             $review->user,
             'review_pending',
-            'Review submitted',
-            "Your review for {$brokerName} is pending approval.",
+            $isReply ? 'Reply submitted' : 'Review submitted',
+            $isReply
+                ? "Your reply on {$brokerName} is pending approval."
+                : "Your review for {$brokerName} is pending approval.",
             route('user.profile', ['tab' => 'overview']).'#ua-reviews'
         );
     }
@@ -90,12 +93,15 @@ class UserNotificationService
 
         $brokerName = $review->broker?->name ?? 'a broker';
         $slug = $review->broker?->slug;
+        $isReply = $review->isReply();
 
         $this->notify(
             $review->user,
             'review_approved',
-            'Review published',
-            "Your review for {$brokerName} has been approved and is now live.",
+            $isReply ? 'Reply published' : 'Review published',
+            $isReply
+                ? "Your reply on {$brokerName} has been approved and is now live."
+                : "Your review for {$brokerName} has been approved and is now live.",
             $slug ? route('broker_detail', ['slug' => $slug]) : route('user.profile', ['tab' => 'overview'])
         );
     }
@@ -107,12 +113,15 @@ class UserNotificationService
         }
 
         $brokerName = $review->broker?->name ?? 'a broker';
+        $isReply = $review->isReply();
 
         $this->notify(
             $review->user,
             'review_declined',
-            'Review not published',
-            "Your review for {$brokerName} was not approved. Contact us if you have questions.",
+            $isReply ? 'Reply not published' : 'Review not published',
+            $isReply
+                ? "Your reply on {$brokerName} was not approved. Contact us if you have questions."
+                : "Your review for {$brokerName} was not approved. Contact us if you have questions.",
             route('user.profile', ['tab' => 'overview']).'#ua-reviews'
         );
     }

@@ -13,10 +13,15 @@ use Illuminate\Validation\Rules\Password;
 
 class RegisterController extends Controller
 {
-    public function showForm()
+    public function showForm(Request $request)
     {
         if (Auth::guard('web')->check()) {
             return redirect()->route('user.profile');
+        }
+
+        $redirect = $request->query('redirect');
+        if (is_string($redirect) && $redirect !== '' && str_starts_with($redirect, url('/'))) {
+            $request->session()->put('url.intended', $redirect);
         }
 
         Helpers::read_json();
@@ -57,7 +62,7 @@ class RegisterController extends Controller
         ActivityLog::record('registered', 'Created a new account', $user->id);
         ActivityLog::record('login', 'Logged in', $user->id);
 
-        return redirect()->route('user.profile')
+        return redirect()->intended(route('user.profile'))
             ->with('success', 'Welcome to BrokersCourt! Your account is pending verification by our team.');
     }
 }

@@ -67,4 +67,9 @@ class FrontLayoutArchitectureTest extends TestCase
     {
         $this->get('/broker-reviews')->assertOk();
     }
+
+    public function test_blog_index_renders(): void
+    {
+        $this->get('/blog')->assertOk();
+    }
 }

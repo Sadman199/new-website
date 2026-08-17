@@ -127,6 +127,27 @@
                                         <label for="bonus_percentage">Bonus Percentage (%)</label>
                                         <input type="number" step="0.01" name="bonus_percentage" id="bonus_percentage" class="form-control" value="{{ old('bonus_percentage', $forexBonus->bonus_percentage) }}">
                                     </div>
+                                    <div class="col-md-4 mb-3">
+                                        <label for="max_credit">Maximum Bonus Credit ($)</label>
+                                        <input type="number" step="0.01" min="0" name="max_credit" id="max_credit" class="form-control" value="{{ old('max_credit', $forexBonus->max_credit) }}" placeholder="e.g. 500">
+                                    </div>
+                                    <div class="col-md-4 mb-3">
+                                        <label for="wagering_requirement">Wagering Requirement</label>
+                                        <input type="text" name="wagering_requirement" id="wagering_requirement" class="form-control" value="{{ old('wagering_requirement', $forexBonus->wagering_requirement) }}" placeholder="e.g. 30x bonus">
+                                    </div>
+                                    <div class="col-md-4 mb-3">
+                                        <label for="volume_requirement">Volume Requirement</label>
+                                        <input type="text" name="volume_requirement" id="volume_requirement" class="form-control" value="{{ old('volume_requirement', $forexBonus->volume_requirement) }}" placeholder="e.g. 10 standard lots">
+                                    </div>
+                                    <div class="col-md-4 mb-3">
+                                        <label for="eligible_clients">Eligible Clients</label>
+                                        <select name="eligible_clients" id="eligible_clients" class="form-control">
+                                            <option value="">Not specified</option>
+                                            <option value="new" @selected(old('eligible_clients', $forexBonus->eligible_clients) === 'new')>New clients</option>
+                                            <option value="existing" @selected(old('eligible_clients', $forexBonus->eligible_clients) === 'existing')>Existing clients</option>
+                                            <option value="both" @selected(old('eligible_clients', $forexBonus->eligible_clients) === 'both')>New and existing clients</option>
+                                        </select>
+                                    </div>
                                     <!-- Terms and Conditions URL -->
                                     <div class="col-md-6 mb-3">
                                         <label for="terms_conditions_url">Terms and Conditions URL</label>

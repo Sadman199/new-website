@@ -1,48 +1,66 @@
 <?php
 namespace App\Http\Controllers\Front;
+
 use App\Http\Controllers\Controller;
+use App\Mail\SubscriptionVerification;
 use App\Models\Subscriber;
 use Illuminate\Http\Request;
-use App\Mail\SubscriptionVerification;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
-
+use Throwable;
 
 class SubscriberController extends Controller
 {
+    public function index()
+    {
+        return view('front.subscribe.index');
+    }
+
     public function subscribe(Request $request)
     {
-        // Validate the request
-        $request->validate([
-            'email' => 'required|email|unique:subscribers,email',
+        $validated = $request->validate([
+            'email' => ['required', 'email:rfc', 'max:254'],
         ]);
 
-        // Create the new subscriber
-        $subscriber = new Subscriber();
-        $subscriber->email = $request->email;
-        $subscriber->status = 'Pending';  // Set status to Inactive initially
-        $subscriber->token = Str::random(60);  // Use Str::random() for generating the token
+        $email = Str::lower(trim($validated['email']));
+        $subscriber = Subscriber::firstOrNew(['email' => $email]);
+
+        if ($subscriber->exists && $subscriber->status === 'Active') {
+            return back()->with('success', 'You are already subscribed to BrokersCourt updates.');
+        }
+
+        $subscriber->status = 'Pending';
+        $subscriber->token = Str::random(60);
         $subscriber->save();
 
-        // Send the subscription verification email
-        \Mail::to($subscriber->email)->send(new SubscriptionVerification($subscriber));
+        try {
+            Mail::to($subscriber->email)->send(new SubscriptionVerification($subscriber));
+        } catch (Throwable $exception) {
+            Log::error('Subscription verification email could not be sent.', [
+                'subscriber_id' => $subscriber->id,
+                'exception' => $exception->getMessage(),
+            ]);
 
-        return redirect()->back()->with('success', 'Subscription successful! Please check your email to verify your subscription.');
+            return back()
+                ->withInput()
+                ->with('error', 'We saved your request, but could not send the verification email. Please try again shortly.');
+        }
+
+        return back()->with('success', 'Please check your inbox and verify your subscription.');
     }
 
-    public function verify($token, $email)
+    public function verify(string $token, string $email)
     {
-        // Find the subscriber by email and token
         $subscriber = Subscriber::where('email', $email)->where('token', $token)->first();
-    
+
         if ($subscriber) {
-            // Update the status to 'Active' after successful verification
             $subscriber->status = 'Active';
             $subscriber->save();
-    
+
             return redirect()->route('home')->with('success', 'Subscription verified successfully!');
         }
-    
+
         return redirect()->route('home')->with('error', 'Invalid verification link or token.');
     }
-    
 }

@@ -56,7 +56,7 @@ class PromotionsIndexService
         $searchTerm = $this->normalizeSearch($search);
         $catalog = $this->activePromotionsCatalog();
         $cacheKey = sprintf(
-            'promotions_index_v6_%s_%s_%d_%s',
+            'promotions_index_v8_%s_%s_%d_%s',
             $activeType,
             $sortKey,
             $featuredOnly ? 1 : 0,
@@ -167,7 +167,7 @@ class PromotionsIndexService
      */
     public function activePromotionsCatalog(): Collection
     {
-        return Cache::remember('promotions_active_catalog_v5', self::CACHE_TTL, function () {
+        return Cache::remember('promotions_active_catalog_v6', self::CACHE_TTL, function () {
             return $this->activePromotionsQuery()
                 ->get()
                 ->filter(fn (ForexBonus $bonus) => $bonus->isActivePromotion())
@@ -203,6 +203,8 @@ class PromotionsIndexService
         return [
             'id' => $bonus->id,
             'title' => $bonus->title,
+            'description' => Str::limit(strip_tags((string) $bonus->description), 140),
+            'type_details' => Str::limit(strip_tags((string) $bonus->bonus_type_details), 180),
             'url' => $bonus->cardUrl(),
             'offer' => $bonus->headlineOffer(),
             'type_short' => $bonus->promoTypeShort(),
@@ -218,6 +220,11 @@ class PromotionsIndexService
             'eligibility_teaser' => $this->eligibilityTeaser($bonus),
             'feature_image' => $bonus->feature_image ? asset($bonus->feature_image) : null,
             'min_deposit' => $bonus->minDepositLabel(),
+            'wagering_requirement' => $bonus->wagering_requirement,
+            'volume_requirement' => $bonus->volume_requirement,
+            'requirement' => $bonus->requirementLabel(),
+            'max_credit' => $bonus->maxCreditLabel(),
+            'eligible_clients' => $bonus->eligibleClientsLabel(),
             'expiry' => $bonus->expiryLabel(),
             'expiry_badge' => $expiryBadge,
             'expiry_tone' => $bonus->expiryTone(),
@@ -294,6 +301,7 @@ class PromotionsIndexService
 
         return [
             'total_active' => $all->count(),
+            'total_brokers' => $all->pluck('broker_id')->filter()->unique()->count(),
             'featured' => $all->where('is_featured', true)->count(),
             'ending_this_month' => $endingThisMonth,
             'ending_soon' => $endingSoon,

@@ -17,6 +17,7 @@ class ForexBonusAdminService
         'title', 'slug', 'publish_date', 'author_name', 'promo_type', 'description',
         'link', 'participate', 'how_to_participate', 'details', 'general_terms', 'prize',
         'eligibility_criteria', 'expiry_date', 'min_deposit', 'bonus_amount', 'bonus_percentage',
+        'wagering_requirement', 'max_credit', 'eligible_clients', 'volume_requirement',
         'bonus_type_details', 'terms_conditions_url', 'affiliate_link', 'bonus_category',
         'promotion_status', 'meta_title', 'meta_keywords', 'meta_description', 'broker_id',
     ];

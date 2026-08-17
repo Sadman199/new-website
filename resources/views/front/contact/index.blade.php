@@ -5,7 +5,7 @@
 @section('canonical', route('contact'))
 
 @push('page-styles')
-    <link rel="stylesheet" href="{{ asset('css/contact-index.css') }}?v=4">
+    <link rel="stylesheet" href="{{ asset('css/contact-index.css') }}?v=6">
 @endpush
 
 @section('main_content')
@@ -29,7 +29,6 @@
             @if($page['detail'])
                 <p class="cti-hero__subtitle">{!! strip_tags($page['detail'], '<p><br><strong><em>') !!}</p>
             @endif
-
         </div>
     </header>
 

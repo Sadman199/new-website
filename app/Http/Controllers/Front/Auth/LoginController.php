@@ -14,10 +14,15 @@ class LoginController extends Controller
     public function __construct(
         private UserSessionPreferenceService $sessionPreferences
     ) {}
-    public function showForm()
+    public function showForm(Request $request)
     {
         if (Auth::guard('web')->check()) {
             return redirect()->route('user.profile');
+        }
+
+        $redirect = $request->query('redirect');
+        if (is_string($redirect) && $redirect !== '' && str_starts_with($redirect, url('/'))) {
+            $request->session()->put('url.intended', $redirect);
         }
 
         Helpers::read_json();

@@ -1,7 +1,5 @@
 <?php
 
-// In SubscriptionVerification.php
-
 namespace App\Mail;
 
 use App\Models\Subscriber;
@@ -13,7 +11,7 @@ class SubscriptionVerification extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public $subscriber;
+    public Subscriber $subscriber;
 
     public function __construct(Subscriber $subscriber)
     {
@@ -21,17 +19,16 @@ class SubscriptionVerification extends Mailable
     }
 
 
-public function build()
-{
-    return $this->subject('Welcome to BrokersCourt!')
-                ->view('emails.subscription_verification')
-                ->with([
-                    'url' => route('subscriber.verify', [
-                        'token' => $this->subscriber->token,
-                        'email' => $this->subscriber->email,
-                    ]),
-                ]);
-}
-
-
+    public function build(): self
+    {
+        return $this
+            ->subject('Confirm your BrokersCourt subscription')
+            ->view('emails.subscription_verification')
+            ->with([
+                'url' => route('subscriber.verify', [
+                    'token' => $this->subscriber->token,
+                    'email' => $this->subscriber->email,
+                ]),
+            ]);
+    }
 }

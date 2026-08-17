@@ -9,7 +9,7 @@
 
 @push('page-styles')
     <link rel="stylesheet" href="{{ asset('css/best-broker-guide.css') }}?v=11">
-    <link rel="stylesheet" href="{{ asset('css/broker-review.css') }}?v=24">
+    <link rel="stylesheet" href="{{ asset('css/broker-review.css') }}?v=28">
 @endpush
 
 @push('json_ld')
@@ -149,5 +149,5 @@
 
 @push('scripts')
     <script src="{{ asset('js/best-broker-guide.js') }}?v=6" defer></script>
-    <script src="{{ asset('js/broker-review.js') }}?v=8" defer></script>
+    <script src="{{ asset('js/broker-review.js') }}?v=10" defer></script>
 @endpush

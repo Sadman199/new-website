@@ -38,6 +38,7 @@ use App\Http\Controllers\Front\Auth\GoogleAuthController;
 use App\Http\Controllers\Front\Auth\ForgotPasswordController;
 use App\Http\Controllers\Front\Auth\ResetPasswordController;
 use App\Http\Controllers\Front\UserReviewController;
+use App\Http\Controllers\Front\ReviewReplyController;
 use App\Http\Controllers\Front\ProfileController;
 use App\Http\Controllers\Front\SavedBrokerController;
 use App\Http\Controllers\Front\NotificationController;
@@ -142,10 +143,12 @@ Route::get('/news/popular', [NewsController::class, 'popularNews'])->name('news_
 
 Route::get('/about', [AboutController::class, 'index'])->name('about');
 Route::redirect('/about-us', '/about', 301)->name('about.us');
-Route::get('/authors', [AuthorsController::class, 'index'])->name('authors');
-Route::get('/authors/{slug}', [AuthorsController::class, 'show'])
+Route::get('/our-team', [AuthorsController::class, 'index'])->name('authors');
+Route::get('/our-team/{slug}', [AuthorsController::class, 'show'])
     ->where('slug', '[a-z0-9\-]+')
     ->name('authors.show');
+Route::redirect('/authors', '/our-team', 301);
+Route::redirect('/authors/{slug}', '/our-team/{slug}', 301);
 Route::get('/broker-promos', [PromotionsController::class, 'index'])->name('promotions.index');
 Route::get('/broker-promos/load-more', [PromotionsController::class, 'loadMore'])->name('promotions.load_more');
 Route::get('/broker-promos/{type}', [PromotionsController::class, 'index'])->name('promotions.tab');
@@ -490,6 +493,14 @@ Route::get('/brokers/compare/{broker1_slug}-vs-{broker2_slug}',
     ])
     ->name('brokers.compare');
 
+Route::get('/broker-battle/{broker1_slug}-vs-{broker2_slug}',
+    [BrokerComparisonController::class, 'battle'])
+    ->where([
+        'broker1_slug' => '[a-zA-Z0-9\-]+',
+        'broker2_slug' => '[a-zA-Z0-9\-]+',
+    ])
+    ->name('brokers.battle');
+
 Route::get('/compare/{broker1_slug}/{broker2_slug}', function (string $broker1_slug, string $broker2_slug) {
     return redirect()->to(\App\Services\BrokerComparisonService::canonicalPairUrl($broker1_slug, $broker2_slug), 301);
 })->where([
@@ -530,6 +541,9 @@ Route::prefix('admin')->middleware('admin:admin')->group(function () {
 
 // Review submission — requires a logged-in user account
 Route::post('/brokers/{broker}/reviews', [ReviewController::class, 'store'])->middleware('auth')->name('reviews.store');
+Route::post('/brokers/{broker}/reviews/{review}/replies', [ReviewReplyController::class, 'store'])
+    ->middleware('auth')
+    ->name('reviews.replies.store');
 
 
 Route::get('/regulated-brokers', [BrokerTypeController::class, 'showRegulatedBrokers'])->name('regulated_brokers');
@@ -573,8 +587,12 @@ Route::middleware('auth')->group(function () {
 // ==== End User Accounts ====
 
 // Frontend Routes
-Route::post('/subscribe', [SubscriberController::class, 'subscribe'])->name('subscribe');
-Route::get('/verify-subscription/{token}/{email}', [SubscriberController::class, 'verify'])->name('subscriber_verify');
+Route::get('/subscribe', [SubscriberController::class, 'index'])->name('subscribe.index');
+Route::post('/subscribe', [SubscriberController::class, 'subscribe'])
+    ->middleware('throttle:6,1')
+    ->name('subscribe');
+Route::get('/verify-subscription/{token}/{email}', [SubscriberController::class, 'verify'])
+    ->name('subscriber.verify');
 Route::redirect('/brokers/comparison', '/brokers/compare', 301)->name('brokers.comparison.dropdown');
 
 Route::get('/brokers/{slug}', [BrokerController::class, 'legacyBestBrokerRedirect'])

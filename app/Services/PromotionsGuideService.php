@@ -24,6 +24,11 @@ class PromotionsGuideService
             'promo_type' => 'Forex Live Contest',
             'description' => 'Real-money or live-account competitions ranked by profit, ROI, or volume — prizes can be cash or account credits.',
         ],
+        'demo-contests' => [
+            'name' => 'Demo contests',
+            'promo_type' => 'Forex Demo Contest',
+            'description' => 'Practice-account competitions with cash or account-credit prizes — no live deposit is usually required, but entry and ranking rules still apply.',
+        ],
         'cashback-rebates' => [
             'name' => 'Cashback & rebates',
             'promo_type' => 'Forex Cashback Rebate',
@@ -49,13 +54,11 @@ class PromotionsGuideService
     public function build(array $tabs, array $stats, Collection $catalog): array
     {
         $typeRows = $this->typeRows($tabs, $catalog);
-        $currentByType = $this->currentByType($tabs, $catalog);
 
         return [
             'toc' => $this->tableOfContents(),
             'stats' => $stats,
             'type_rows' => $typeRows,
-            'current_by_type' => $currentByType,
             'total_types_live' => collect($typeRows)->where('count', '>', 0)->count(),
             'faqs' => $this->faqs($stats, $typeRows),
         ];
@@ -108,14 +111,14 @@ class PromotionsGuideService
     private function tableOfContents(): array
     {
         return [
+            ['id' => 'current-promotions', 'label' => 'Current Promotions on BrokersCourt'],
+            ['id' => 'top-rated-brokers', 'label' => 'Top Rated Brokers'],
             ['id' => 'what-is-forex-promotion', 'label' => 'What is a Forex Promotion?'],
             ['id' => 'types-of-forex-promotions', 'label' => 'Types of Forex Promotions'],
-            ['id' => 'promotion-types-at-a-glance', 'label' => 'Promotion Types at a Glance'],
             ['id' => 'how-to-evaluate', 'label' => 'How to Evaluate Any Forex Promotion?'],
             ['id' => 'common-mistakes', 'label' => 'Common Mistakes With Forex Promotions'],
             ['id' => 'regulation-and-promotions', 'label' => 'Regulation and Forex Promotions'],
-            ['id' => 'current-promotions', 'label' => 'Current Promotions Available on BrokersCourt'],
-            ['id' => 'faqs', 'label' => 'FAQs'],
+            ['id' => 'faqs', 'label' => 'Broker Promos FAQ'],
         ];
     }
 
@@ -136,7 +139,23 @@ class PromotionsGuideService
                 continue;
             }
 
+            $promotions = ($catalog->get($meta['promo_type']) ?? collect())->values();
             $sample = $this->sampleFromCatalog($catalog, $meta['promo_type']);
+            $minimumDeposits = $promotions
+                ->pluck('min_deposit')
+                ->filter(fn ($value) => $value !== null)
+                ->map(fn ($value) => (float) $value);
+            $endingSoon = $promotions
+                ->filter(fn (ForexBonus $bonus) => $bonus->isExpiryUrgent())
+                ->count();
+            $requirement = $promotions
+                ->map(fn (ForexBonus $bonus) => $bonus->requirementLabel())
+                ->first(fn ($value) => filled($value));
+            $maxCredit = $promotions
+                ->pluck('max_credit')
+                ->filter(fn ($value) => $value !== null)
+                ->map(fn ($value) => (float) $value)
+                ->max();
 
             $rows[] = [
                 'slug' => $slug,
@@ -147,49 +166,15 @@ class PromotionsGuideService
                 'tone' => $sample['type_tone'] ?? 'default',
                 'sample_offer' => $sample['offer'] ?? null,
                 'sample_broker' => $sample['broker_name'] ?? null,
+                'sample_url' => $sample['url'] ?? null,
+                'min_deposit' => $this->minimumDepositRange($minimumDeposits),
+                'requirement' => $requirement ?: 'Varies by offer',
+                'max_credit' => $maxCredit !== null ? '$'.number_format($maxCredit, 0) : 'Varies',
+                'ending_soon' => $endingSoon,
             ];
         }
 
         return $rows;
-    }
-
-    /**
-     * @param  array<int, array<string, mixed>>  $tabs
-     * @param  Collection<string, Collection<int, ForexBonus>>  $catalog
-     * @return array<int, array<string, mixed>>
-     */
-    private function currentByType(array $tabs, Collection $catalog): array
-    {
-        $groups = [];
-
-        foreach ($tabs as $tab) {
-            $slug = $tab['slug'];
-            $meta = self::TYPE_META[$slug] ?? null;
-
-            if (! $meta || (int) ($tab['count'] ?? 0) === 0) {
-                continue;
-            }
-
-            $promos = ($catalog->get($meta['promo_type']) ?? collect())
-                ->take(8)
-                ->map(fn (ForexBonus $bonus) => $this->promotionsIndexService->serializeCard($bonus))
-                ->values()
-                ->all();
-
-            if ($promos === []) {
-                continue;
-            }
-
-            $groups[] = [
-                'slug' => $slug,
-                'name' => $meta['name'],
-                'count' => (int) $tab['count'],
-                'url' => $tab['url'],
-                'promos' => $promos,
-            ];
-        }
-
-        return $groups;
     }
 
     /**
@@ -201,6 +186,23 @@ class PromotionsGuideService
         $bonus = ($catalog->get($promoType) ?? collect())->first();
 
         return $bonus ? $this->promotionsIndexService->serializeCard($bonus) : [];
+    }
+
+    /** @param Collection<int, float> $values */
+    private function minimumDepositRange(Collection $values): string
+    {
+        if ($values->isEmpty()) {
+            return 'Not specified';
+        }
+
+        $minimum = (float) $values->min();
+        $maximum = (float) $values->max();
+
+        if ($minimum === $maximum) {
+            return $minimum <= 0 ? 'No deposit' : 'From $'.number_format($minimum, 0);
+        }
+
+        return '$'.number_format($minimum, 0).'–$'.number_format($maximum, 0);
     }
 
     /**

@@ -14,6 +14,9 @@ class BlogIndexService
 {
     public const CARDS_PER_TAB = 20;
 
+    /** Stories highlighted next to the lead article. */
+    public const TOP_STORIES = 3;
+
     /** @var array<int, string> */
     public const INSIGHT_GRADIENTS = [
         'linear-gradient(135deg, #e8822a 0%, #1c1e24 100%)',
@@ -75,20 +78,69 @@ class BlogIndexService
             ->limit(self::CARDS_PER_TAB)
             ->get();
 
-        $latestHeadline = $posts->first();
-
         $activeTabMeta = collect($tabs)->firstWhere('slug', $activeTab) ?? $tabs[0];
+
+        $serialized = $posts->map(fn (Post $post) => $this->serializePost($post))->values();
+        $featured = $serialized->first();
 
         return [
             'tabs' => $tabs,
             'activeTab' => $activeTab,
             'activeTabName' => $activeTabMeta['name'] ?? 'All News',
             'stats' => $this->stats($languageId),
-            'latestHeadline' => $latestHeadline ? $this->serializePost($latestHeadline) : null,
-            'cards' => $posts->map(fn (Post $post) => $this->serializePost($post))->all(),
+            'featured' => $featured,
+            'topStories' => $serialized->slice(1, self::TOP_STORIES)->values()->all(),
+            'cards' => $serialized->slice(1 + self::TOP_STORIES)->values()->all(),
+            'mostRead' => $this->mostRead($languageId, $featured['id'] ?? null),
+            'readNext' => $this->readNext($languageId, $serialized->pluck('id')->all()),
             'cardLimit' => self::CARDS_PER_TAB,
             'cardCount' => $posts->count(),
         ];
+    }
+
+    /**
+     * Highest-traffic articles for the editorial sidebar.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    public function mostRead(int $languageId, ?int $excludeId = null, int $limit = 5): array
+    {
+        return Post::query()
+            ->with(['rSubCategory', 'writtenByAuthor'])
+            ->where('language_id', $languageId)
+            ->when($excludeId, fn ($q) => $q->where('id', '!=', $excludeId))
+            ->orderByDesc('visitors')
+            ->orderByDesc('id')
+            ->limit($limit)
+            ->get()
+            ->map(fn (Post $post) => $this->serializePost($post))
+            ->all();
+    }
+
+    /**
+     * Follow-up reading that is not already visible in the current feed.
+     *
+     * @param  array<int, int>  $excludeIds
+     * @return array<int, array<string, mixed>>
+     */
+    public function readNext(int $languageId, array $excludeIds = [], int $limit = 3): array
+    {
+        $base = fn () => Post::query()
+            ->with(['rSubCategory', 'writtenByAuthor'])
+            ->where('language_id', $languageId)
+            ->orderByDesc('visitors')
+            ->orderByDesc('id')
+            ->limit($limit);
+
+        $posts = $base()
+            ->when($excludeIds !== [], fn ($q) => $q->whereNotIn('id', $excludeIds))
+            ->get();
+
+        if ($posts->isEmpty()) {
+            $posts = $base()->get();
+        }
+
+        return $posts->map(fn (Post $post) => $this->serializePost($post))->all();
     }
 
     /** @return array<int, array<string, mixed>> */
@@ -166,6 +218,7 @@ class BlogIndexService
             'category' => $sub?->sub_category_name ?? 'Insights',
             'author' => $author['name'],
             'author_photo' => $author['photo'] ? asset('uploads/' . $author['photo']) : null,
+            'author_url' => $author['url'] ?? null,
             'date' => $post->updated_at->format('M j, Y'),
             'date_iso' => $post->updated_at->toDateString(),
             'date_short' => $post->updated_at->format('M j'),
@@ -223,17 +276,24 @@ class BlogIndexService
         return is_string($legacyAuthor) && $legacyAuthor !== '' ? $legacyAuthor : 'BrokersCourt Editorial';
     }
 
-    /** @return array{name: string, photo: string|null} */
+    /** @return array{name: string, photo: string|null, url: string|null} */
     public function authorFor(Post $post): array
     {
+        $author = null;
         $photo = null;
 
-        if ($post->relationLoaded('writtenByAuthor') && $post->writtenByAuthor?->photo) {
-            $photo = $post->writtenByAuthor->photo;
+        if ($post->relationLoaded('writtenByAuthor') && $post->writtenByAuthor) {
+            $author = $post->writtenByAuthor;
         } elseif ($post->written_by_author_id) {
-            $photo = ($post->writtenByAuthor ?? Author::find($post->written_by_author_id))?->photo;
+            $author = $post->writtenByAuthor ?? Author::find($post->written_by_author_id);
         } elseif ($post->author_id && (int) $post->author_id !== 0) {
-            $photo = ($post->relationLoaded('author') ? $post->author : Author::find($post->author_id))?->photo;
+            $author = $post->relationLoaded('author') ? $post->author : Author::find($post->author_id);
+        }
+
+        $author = $author instanceof Author ? $author : null;
+
+        if ($author) {
+            $photo = $author->photo;
         } elseif ($post->admin_id) {
             $photo = Admin::find($post->admin_id)?->photo;
         }
@@ -241,6 +301,7 @@ class BlogIndexService
         return [
             'name' => $this->authorName($post),
             'photo' => $photo,
+            'url' => $author?->profileUrl(),
         ];
     }
 

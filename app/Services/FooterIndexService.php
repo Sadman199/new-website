@@ -11,7 +11,6 @@ use App\Models\Broker;
 use App\Models\Language;
 
 use App\Models\Page;
-use App\Support\BrokerTaxonomy;
 use App\Support\SiteTheme;
 
 
@@ -26,7 +25,7 @@ class FooterIndexService
 
     {
 
-        return \Illuminate\Support\Facades\Cache::remember('footer_index_v3', 3600, function () {
+        return \Illuminate\Support\Facades\Cache::remember('footer_index_v6', 3600, function () {
 
             $page = $this->resolvePage();
 
@@ -275,21 +274,23 @@ class FooterIndexService
 
 
 
-    /** @return array{links: array<int, array<string, string>>, view_all: array<string, string>|null} */
+    /**
+     * Mirrors the region list used by the navbar mega menu.
+     *
+     * @return array<int, array<string, string|null>>
+     */
 
     private function regions(): array
 
     {
 
-        $links = collect(BrokerTaxonomy::countriesWithFlags())
+        return collect(BrokerAdminService::listedRegionsWithFlags())
 
-            ->reject(fn ($country, string $slug) => $slug === 'global')
+            ->map(fn (array $region, string $slug) => [
 
-            ->take(8)
+                'label' => $region['name'],
 
-            ->map(fn (array $country, string $slug) => [
-
-                'label' => $country['flag'] . ' ' . $country['name'],
+                'code' => $region['code'] ?? null,
 
                 'url' => route('brokers.best', ['slug' => $slug]),
 
@@ -298,22 +299,6 @@ class FooterIndexService
             ->values()
 
             ->all();
-
-
-
-        return [
-
-            'links' => $links,
-
-            'view_all' => [
-
-                'label' => 'All regions',
-
-                'url' => route('brokers.best.index'),
-
-            ],
-
-        ];
 
     }
 
@@ -331,9 +316,9 @@ class FooterIndexService
 
             ['label' => 'Trading tools', 'url' => route('trading.tools')],
 
-            ['label' => 'Bonuses', 'url' => route('promotions.index')],
+            ['label' => 'Prop firms', 'url' => route('prop_firms.index')],
 
-            ['label' => 'Scam warnings', 'url' => route('scam_brokers')],
+            ['label' => 'Our methodology', 'url' => route('methodology')],
 
             ['label' => 'Our team', 'url' => route('authors')],
 
