@@ -18,6 +18,17 @@ class BrokerRequest extends FormRequest
             $countries = array_values(array_filter(array_map('trim', explode(',', $this->input('associated_countries_combined')))));
             $this->merge(['associated_countries' => $countries]);
         }
+
+        // DB column is NOT NULL varchar(255); empty browser input becomes null via ConvertEmptyStringsToNull.
+        if (! $this->filled('url')) {
+            $this->merge(['url' => '']);
+        }
+
+        // Capitalization is decimal(15,2) — strip common currency formatting before numeric validation.
+        if ($this->filled('capitalization') && is_string($this->input('capitalization'))) {
+            $raw = trim(str_replace([',', ' ', '$', '€', '£'], '', $this->input('capitalization')));
+            $this->merge(['capitalization' => $raw === '' ? null : $raw]);
+        }
     }
 
     public function authorize(): bool
@@ -39,7 +50,7 @@ class BrokerRequest extends FormRequest
                 Rule::unique('brokers', 'slug')->ignore($brokerId),
             ],
             'title' => ['nullable', 'string', 'max:255'],
-            'url' => ['nullable', 'string', 'max:2000'],
+            'url' => ['nullable', 'string', 'max:255'],
             'short_description' => ['nullable', 'string'],
             'country' => ['required', 'string', 'max:500'],
             'year_founded' => ['nullable', 'integer', 'min:1900', 'max:' . (date('Y') + 1)],
@@ -106,7 +117,7 @@ class BrokerRequest extends FormRequest
             'regulatory_licenses' => ['nullable', 'string'],
             'associated_countries' => ['nullable', 'array'],
             'associated_countries.*' => ['string', 'max:100'],
-            'capitalization' => ['nullable', 'string'],
+            'capitalization' => ['nullable', 'numeric', 'min:0', 'max:9999999999999.99'],
             'insurance' => ['nullable', 'string'],
             'investor_protection' => ['nullable', 'boolean'],
             'segregation_of_funds' => ['nullable', 'boolean'],

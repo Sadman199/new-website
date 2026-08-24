@@ -207,7 +207,7 @@
                     {{-- Pagination --}}
                     @if($paginatedBrokers->hasPages())
                     <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
-                        {{ $paginatedBrokers->links() }}
+                        {{ $paginatedBrokers->links('pagination.brokerscourt') }}
                     </div>
                     @endif
                 </section>

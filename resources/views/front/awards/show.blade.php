@@ -87,7 +87,7 @@
 
                     @if($paginatedBrokers->hasPages())
                         <nav class="awd-show__pagination" aria-label="Broker pagination">
-                            {{ $paginatedBrokers->links() }}
+                            {{ $paginatedBrokers->links('pagination.brokerscourt') }}
                         </nav>
                     @endif
                 @else

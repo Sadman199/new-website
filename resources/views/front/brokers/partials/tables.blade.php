@@ -2,9 +2,7 @@
     $firstAccount = $broker->accountOptions->first();
     $regulations = $broker->regulationList();
     $platformList = $broker->platformList();
-    $accountTypesList = is_array($broker->account_types) && count($broker->account_types)
-        ? $broker->account_types
-        : $broker->accountOptions->pluck('account_type')->filter()->unique()->values()->all();
+    $accountTypesList = $broker->accountTypeLabelList() ?: $broker->accountOptions->pluck('account_type')->filter()->unique()->values()->all();
     $spreadsDisplay = $broker->spreads
         ?: optional($firstAccount)->spread_label
         ?: (optional($firstAccount)->spread_value ? optional($firstAccount)->spread_value . ' pips' : null);

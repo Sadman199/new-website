@@ -43,7 +43,7 @@
                 </div>
                 @endforeach
                 <div class="col-md-12">
-                    {{ $photos->links() }}
+                    {{ $photos->links('pagination.brokerscourt') }}
                 </div>
 
             </div>

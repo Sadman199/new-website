@@ -111,7 +111,7 @@
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 text-xs md:text-sm">
                     <div>
                         <div class="text-gray-500">Leverage</div>
-                        <div class="font-medium">{{ $broker->leverage }}</div>
+                        <div class="font-medium">{{ \App\Support\RichText::toPlainText($broker->leverage) ?? '—' }}</div>
                     </div>
                     <div>
                         <div class="text-gray-500">Platforms</div>

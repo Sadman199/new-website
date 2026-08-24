@@ -11,11 +11,7 @@
         <div class="bg-gray-50 rounded-lg p-4">
             <h4 class="text-sm font-medium text-gray-500 mb-3">{{ $broker1->name }}</h4>
             <div class="flex flex-wrap gap-2">
-                @php
-                    $accounts1 = is_array($broker1->account_types)
-                        ? $broker1->account_types
-                        : json_decode($broker1->account_types, true);
-                @endphp
+                @php $accounts1 = $broker1->accountTypeLabelList(); @endphp
     
                 @if(!empty($accounts1))
                     @foreach($accounts1 as $account)
@@ -33,11 +29,7 @@
         <div class="bg-gray-50 rounded-lg p-4">
             <h4 class="text-sm font-medium text-gray-500 mb-3">{{ $broker2->name }}</h4>
             <div class="flex flex-wrap gap-2">
-                @php
-                    $accounts2 = is_array($broker2->account_types)
-                        ? $broker2->account_types
-                        : json_decode($broker2->account_types, true);
-                @endphp
+                @php $accounts2 = $broker2->accountTypeLabelList(); @endphp
     
                 @if(!empty($accounts2))
                     @foreach($accounts2 as $account)

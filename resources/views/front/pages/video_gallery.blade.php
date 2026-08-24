@@ -48,7 +48,7 @@
                 </div>
                 @endforeach
                 <div class="col-md-12">
-                    {{ $videos->links() }}
+                    {{ $videos->links('pagination.brokerscourt') }}
                 </div>
 
             </div>

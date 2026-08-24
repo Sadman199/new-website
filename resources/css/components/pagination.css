@@ -1,0 +1,101 @@
+.bc-pagination-nav {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.875rem 1rem;
+}
+
+.bc-pagination-nav__meta {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--bc-muted);
+}
+
+.bc-pagination-nav__list {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.45rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.bc-pagination-nav__link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 2.5rem;
+    height: 2.5rem;
+    padding: 0 0.8rem;
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: var(--bc-text);
+    text-decoration: none;
+    background: rgba(255, 255, 255, 0.92);
+    border: 1px solid rgba(var(--bc-light-rgb), 0.75);
+    border-radius: 999px;
+    box-shadow: 0 6px 18px rgba(60, 50, 40, 0.05);
+    transition: color var(--bc-transition), background var(--bc-transition), border-color var(--bc-transition), transform var(--bc-transition), box-shadow var(--bc-transition);
+}
+
+.bc-pagination-nav__link:hover {
+    color: var(--bc-primary);
+    border-color: rgba(var(--bc-primary-rgb), 0.28);
+    background: rgba(var(--bc-primary-rgb), 0.08);
+    transform: translateY(-1px);
+}
+
+.bc-pagination-nav__link--arrow {
+    min-width: 2.75rem;
+    font-size: 1rem;
+}
+
+.bc-pagination-nav__link--dots {
+    min-width: 2.25rem;
+    color: var(--bc-muted);
+    background: transparent;
+    border-style: dashed;
+    box-shadow: none;
+}
+
+.bc-pagination-nav .is-active .bc-pagination-nav__link {
+    color: #fff;
+    background: linear-gradient(135deg, var(--bc-primary) 0%, var(--bc-primary-light) 100%);
+    border-color: transparent;
+    box-shadow: 0 10px 24px rgba(var(--bc-primary-rgb), 0.25);
+}
+
+.bc-pagination-nav .is-disabled .bc-pagination-nav__link {
+    color: rgba(107, 114, 128, 0.65);
+    background: rgba(255, 255, 255, 0.62);
+    border-color: rgba(var(--bc-light-rgb), 0.55);
+    box-shadow: none;
+    pointer-events: none;
+}
+
+.bc-pagination-nav--simple {
+    justify-content: flex-end;
+}
+
+@media (max-width: 640px) {
+    .bc-pagination-nav {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .bc-pagination-nav__meta {
+        text-align: center;
+    }
+
+    .bc-pagination-nav__list {
+        justify-content: center;
+    }
+
+    .bc-pagination-nav__link {
+        min-width: 2.35rem;
+        height: 2.35rem;
+        padding: 0 0.7rem;
+    }
+}

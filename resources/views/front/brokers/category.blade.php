@@ -221,7 +221,7 @@
 
                 @if($broker->short_description)
                     <p class="mt-3 text-gray-700">
-                        {{ $broker->short_description }}
+                        {{ \App\Support\RichText::toPlainText($broker->short_description) }}
                     </p>
                 @endif
 
@@ -231,13 +231,9 @@
                     <div>
                         <h4 class="mb-2 font-semibold text-green-600">Pros</h4>
 
-                        @php
-                            $pros = is_string($broker->pros)
-                                ? json_decode($broker->pros, true)
-                                : $broker->pros;
-                        @endphp
+                        @php $pros = \App\Support\RichText::listItems($broker->pros ?? null); @endphp
 
-                        @if(is_array($pros))
+                        @if($pros !== [])
                             <ul class="space-y-1 list-disc list-inside">
                                 @foreach($pros as $pro)
                                     <li>{{ $pro }}</li>
@@ -250,13 +246,9 @@
                     <div>
                         <h4 class="mb-2 font-semibold text-red-600">Cons</h4>
 
-                        @php
-                            $cons = is_string($broker->cons)
-                                ? json_decode($broker->cons, true)
-                                : $broker->cons;
-                        @endphp
+                        @php $cons = \App\Support\RichText::listItems($broker->cons ?? null); @endphp
 
-                        @if(is_array($cons))
+                        @if($cons !== [])
                             <ul class="space-y-1 list-disc list-inside">
                                 @foreach($cons as $con)
                                     <li>{{ $con }}</li>

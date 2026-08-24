@@ -6,6 +6,7 @@ use App\Http\Controllers\Front\BrokerController;
 use App\Models\Broker;
 use App\Support\BrokerListingFilter;
 use App\Support\BrokerTaxonomy;
+use App\Support\RichText;
 use Illuminate\Support\Str;
 
 class BrokerReviewsIndexService
@@ -69,26 +70,28 @@ class BrokerReviewsIndexService
             'review_slug' => BrokerController::reviewSlugFor($broker),
             'logo' => $broker->logo ? asset($broker->logo) : null,
             'rating' => $broker->rating !== null ? round((float) $broker->rating, 1) : null,
-            'country' => trim((string) ($broker->country ?: '')),
+            'country' => RichText::toPlainText($broker->country) ?? '',
             'minimum_deposit' => $broker->minimum_deposit !== null
                 ? '$' . number_format((float) $broker->minimum_deposit, 0)
                 : null,
-            'leverage' => trim(strip_tags((string) ($broker->leverage ?: ''))) ?: null,
+            'leverage' => RichText::toPlainText($broker->leverage),
             'fee_level' => ucfirst((string) ($broker->fee_level ?: 'medium')),
             'fee_score' => $feeScore,
             'platform_score' => $platformScore,
-            'withdrawal_fee' => trim((string) ($broker->withdrawal_fee ?: '')) ?: '—',
+            'withdrawal_fee' => RichText::toPlainText($broker->withdrawal_fee) ?: '—',
             'investor_protection' => $broker->investor_protection ? 'Yes' : 'No',
             'is_regulated' => $broker->isRegulated(),
             'mobile_platform' => $mobileLabel,
             'mobile_platform_has_apps' => $mobileLabel !== 'No',
             'review_count' => $reviewCount,
-            'top_feature' => trim((string) ($broker->top_feature ?: '')),
-            'short_description' => Str::limit(trim(strip_tags((string) ($broker->short_description ?: ''))), 140),
+            'top_feature' => RichText::toPlainText($broker->top_feature),
+            'short_description' => ($plain = RichText::toPlainText($broker->short_description))
+                ? Str::limit($plain, 140)
+                : null,
             'regulation_summary' => $this->regulationSummary($regulators),
-            'spreads' => trim((string) ($broker->spreads ?: '')) ?: null,
+            'spreads' => RichText::toPlainText($broker->spreads),
             'is_award_winner' => (bool) $broker->featured_broker,
-            'award_label' => trim((string) ($broker->top_feature ?: '')) ?: 'Featured broker',
+            'award_label' => 'Award winner',
             'markets' => $markets,
             'visit_url' => $broker->open_live ?: $broker->visit_site ?: $broker->url,
             'review_url' => route('broker_detail', ['slug' => BrokerController::reviewSlugFor($broker)]),

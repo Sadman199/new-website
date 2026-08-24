@@ -1,11 +1,8 @@
 @php
-    $prosRaw = preg_replace('/<\/?li>/', "\n", $broker->pros ?? '');
-    $prosClean = strip_tags($prosRaw, '<a><b><strong><i><u><br>');
-    $prosArray = array_filter(array_map('trim', explode("\n", $prosClean)));
+    use App\Support\RichText;
 
-    $consRaw = preg_replace('/<\/?li>/', "\n", $broker->cons ?? '');
-    $consClean = strip_tags($consRaw, '<a><b><strong><i><u><br>');
-    $consArray = array_filter(array_map('trim', explode("\n", $consClean)));
+    $prosArray = RichText::listItems($broker->pros ?? null);
+    $consArray = RichText::listItems($broker->cons ?? null);
 @endphp
 
 <section class="br-section" id="key-stats">
@@ -20,7 +17,7 @@
                 <ul>
                     @forelse($prosArray as $pro)
                         @if($pro !== '')
-                            <li>{!! $pro !!}</li>
+                            <li>{{ $pro }}</li>
                         @endif
                     @empty
                         <li class="br-empty">No pros listed yet.</li>
@@ -32,7 +29,7 @@
                 <ul>
                     @forelse($consArray as $con)
                         @if($con !== '')
-                            <li>{!! $con !!}</li>
+                            <li>{{ $con }}</li>
                         @endif
                     @empty
                         <li class="br-empty">No cons listed yet.</li>
@@ -44,7 +41,7 @@
         @if($broker->verdict)
         <div class="br-verdict">
             <div class="br-verdict__label">Our Verdict</div>
-            <div class="br-verdict__text">{!! $broker->verdict !!}</div>
+            <div class="br-verdict__text">{!! \App\Support\RichText::forDisplay($broker->verdict) !!}</div>
         </div>
         @endif
     </div>

@@ -85,7 +85,7 @@ class BrokerController extends Controller
     ) {
         Helpers::read_json();
 
-        $brokersPayload = \Illuminate\Support\Facades\Cache::remember('broker_reviews_index_v3', 1800, function () use ($reviewsIndexService, $assessmentService) {
+        $brokersPayload = \Illuminate\Support\Facades\Cache::remember('broker_reviews_index_v4', 1800, function () use ($reviewsIndexService, $assessmentService) {
             return Broker::query()
                 ->where('is_scam', false)
                 ->with(['accountOptions' => fn ($query) => $query->ordered()])

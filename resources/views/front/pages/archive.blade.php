@@ -69,7 +69,7 @@
                         @endif
                         <!-- Pagination -->
                         <div class="col-12">
-                            {{ $post_data_archive->links() }}
+                            {{ $post_data_archive->links('pagination.brokerscourt') }}
                         </div>
                     </div>
                 </div>

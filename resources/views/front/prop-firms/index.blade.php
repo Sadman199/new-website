@@ -108,7 +108,7 @@
                         @include('front.prop-firms.partials.firm_card', ['firm' => $firm])
                     @endforeach
                 </div>
-                <div class="pf-pagination">{{ $firms->links() }}</div>
+                <div class="pf-pagination">{{ $firms->links('pagination.brokerscourt') }}</div>
             @else
                 <div class="pf-card pf-empty">
                     <p>No prop firms match your filters. <a href="{{ route('prop_firms.index') }}" style="color:var(--pf-gold);">Clear filters</a></p>

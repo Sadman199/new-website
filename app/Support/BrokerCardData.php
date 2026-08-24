@@ -34,14 +34,20 @@ class BrokerCardData
             'review_url' => route('broker_detail', ['slug' => BrokerController::reviewSlugFor($broker)]),
             'visit_url' => $broker->open_live ?: $broker->visit_site ?: $broker->url,
             'minimum_deposit' => $min !== null ? '$' . number_format((float) $min, 0) : '—',
-            'leverage' => $broker->leverage ?: '—',
-            'spreads' => $broker->spreads ?: '—',
-            'platforms' => $platforms ? implode(', ', array_slice($platforms, 0, 3)) : '—',
-            'regulation_summary' => $regs ? implode(', ', array_slice($regs, 0, 3)) : null,
+            'leverage' => self::compactStat($broker->leverage) ?: '—',
+            'spreads' => self::compactStat($broker->spreads) ?: '—',
+            'platforms' => $platforms
+                ? (self::compactStat(implode(', ', array_slice($platforms, 0, 2))) ?: '—')
+                : '—',
+            'regulation_summary' => $regs
+                ? self::compactStat(implode(', ', array_slice($regs, 0, 3)), 48)
+                : null,
             'is_featured' => (bool) $broker->featured_broker,
             'is_regulated' => $broker->isRegulated(),
-            'top_feature' => trim((string) ($broker->top_feature ?? '')),
-            'short_description' => Str::limit(trim(strip_tags((string) ($broker->short_description ?? ''))), 140),
+            'top_feature' => RichText::toPlainText($broker->top_feature),
+            'short_description' => ($plain = RichText::toPlainText($broker->short_description))
+                ? Str::limit($plain, 140)
+                : null,
             'review_count' => (int) ($broker->approved_review_count ?? 0),
             'markets' => $broker->marketList(),
             'is_award_winner' => (bool) $broker->featured_broker,
@@ -65,6 +71,9 @@ class BrokerCardData
             $regs = array_values(array_filter(explode(',', $regs)));
         }
 
+        $topFeature = RichText::toPlainText(isset($broker['top_feature']) ? (string) $broker['top_feature'] : null);
+        $shortDescription = RichText::toPlainText(isset($broker['short_description']) ? (string) $broker['short_description'] : null);
+
         return [
             'id' => $broker['id'] ?? null,
             'name' => (string) ($broker['name'] ?? 'Broker'),
@@ -74,14 +83,14 @@ class BrokerCardData
             'review_url' => $broker['review_url'] ?? '#',
             'visit_url' => $broker['visit_url'] ?? null,
             'minimum_deposit' => $broker['minimum_deposit'] ?? null,
-            'leverage' => $broker['leverage'] ?? null,
-            'spreads' => $broker['spreads'] ?? null,
-            'platforms' => $broker['platforms'] ?? null,
-            'regulation_summary' => $broker['regulation_summary'] ?? null,
+            'leverage' => self::compactStat($broker['leverage'] ?? null),
+            'spreads' => self::compactStat($broker['spreads'] ?? null),
+            'platforms' => self::compactStat($broker['platforms'] ?? null),
+            'regulation_summary' => self::compactStat($broker['regulation_summary'] ?? null, 48),
             'is_featured' => (bool) ($broker['is_featured'] ?? false),
             'is_regulated' => (bool) ($broker['is_regulated'] ?? false),
-            'top_feature' => $broker['top_feature'] ?? null,
-            'short_description' => $broker['short_description'] ?? null,
+            'top_feature' => $topFeature,
+            'short_description' => $shortDescription ? Str::limit($shortDescription, 140) : null,
             'review_count' => (int) ($broker['review_count'] ?? 0),
             'markets' => $markets,
             'performance' => is_array($broker['performance'] ?? null) ? $broker['performance'] : [],
@@ -94,5 +103,22 @@ class BrokerCardData
             'regulator_slugs' => $regs,
             'investor_protection' => $broker['investor_protection'] ?? null,
         ];
+    }
+
+    private static function compactStat(mixed $value, int $limit = 22): ?string
+    {
+        if ($value === null || $value === '' || $value === '—') {
+            return $value === '—' ? '—' : null;
+        }
+
+        $plain = is_array($value)
+            ? implode(', ', array_slice(array_values(array_filter($value, 'strlen')), 0, 2))
+            : RichText::toPlainText((string) $value);
+
+        if ($plain === null || $plain === '') {
+            return null;
+        }
+
+        return Str::limit($plain, $limit, '…');
     }
 }

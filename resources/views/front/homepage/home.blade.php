@@ -6,18 +6,20 @@
 @push('page-styles')
     <link rel="stylesheet" href="{{ asset('css/insight-cards.css') }}?v=3">
     <link rel="stylesheet" href="{{ asset('css/broker-match-quiz.css') }}?v=13">
-    <link rel="stylesheet" href="{{ asset('css/homepage.css') }}?v=56">
+    <link rel="stylesheet" href="{{ asset('css/homepage.css') }}?v=57">
 @endpush
 
 @section('main_content')
 <div class="bc-home">
     @include('front.homepage.inc.hero_search')
+    @include('front.homepage.inc.home_ad', ['slot' => 'search'])
     @include('front.homepage.inc.personalized_home')
     @include('front.homepage.inc.broker_picks')
     @include('front.homepage.inc.broker_match_quiz')
     @include('front.homepage.inc.broker_sentiment')
     @include('front.homepage.inc.news_insights')
     @include('front.homepage.inc.award_winners')
+    @include('front.homepage.inc.home_ad', ['slot' => 'footer'])
 </div>
 @endsection
 

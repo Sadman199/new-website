@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Helper\Helpers;
 use App\Models\Language;
 use App\Models\TradingTool;
+use App\Services\BlogIndexService;
 use App\Services\TradingCalculator;
 use App\Support\TradingToolsRegistry;
 use Illuminate\Http\Request;
@@ -25,8 +26,12 @@ class TradingToolsController extends Controller
         Helpers::read_json();
         $current_short_name = $this->currentShortName();
         $tools = $this->resolveTools();
+        $latestPosts = app(BlogIndexService::class)->latestPosts(
+            app(BlogIndexService::class)->resolveLanguageId(),
+            3
+        );
 
-        return view('front.trading-tools.index', compact('current_short_name', 'tools'));
+        return view('front.trading-tools.index', compact('current_short_name', 'tools', 'latestPosts'));
     }
 
     public function show(string $slug)
@@ -122,6 +127,8 @@ class TradingToolsController extends Controller
             $tool->page_title = $registry['title'] ?? $tool->name;
             $tool->page_meta = $registry['meta'] ?? ($tool->short_description ?? '');
             $tool->page_about = $registry['about'] ?? ($tool->description ?? $tool->short_description ?? '');
+            $tool->tool_summary = $tool->short_description ?: ($registry['meta'] ?? $tool->page_about);
+            $tool->tool_description = $tool->description ?: ($registry['about'] ?? $tool->short_description ?? '');
 
             if ($registry && ! empty($registry['icon']) && empty($tool->icon)) {
                 $tool->icon = $registry['icon'];
@@ -157,6 +164,8 @@ class TradingToolsController extends Controller
                 'page_title' => $registry['title'],
                 'page_meta' => $registry['meta'],
                 'page_about' => $registry['about'],
+                'tool_summary' => $registry['meta'],
+                'tool_description' => $registry['about'],
             ]);
         }
 

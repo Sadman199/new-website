@@ -2,7 +2,7 @@
     display: grid;
     grid-template-columns: auto 1fr auto;
     gap: 1.25rem;
-    align-items: center;
+    align-items: start;
     position: relative;
     padding: 1.25rem;
     background: var(--bc-surface);
@@ -137,6 +137,10 @@
     font-weight: 700;
     color: var(--bc-text);
     text-decoration: none;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 100%;
     transition: color var(--bc-transition);
 }
 
@@ -164,22 +168,31 @@
 
 .broker-card__tagline {
     margin: 0 0 0.75rem;
+    max-width: 100%;
     font-size: 0.8125rem;
     line-height: 1.45;
     color: var(--bc-muted);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
 }
 
 .broker-card__stats {
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 0.5rem;
+    align-items: stretch;
 }
 
 .broker-card__stat {
+    min-width: 0;
+    min-height: 3.35rem;
     padding: 0.5rem 0.625rem;
     background: #fafbfc;
     border: 1px solid rgba(var(--bc-light-rgb), 0.65);
     border-radius: var(--bc-radius-sm);
+    overflow: hidden;
 }
 
 .broker-card__stat-label {
@@ -190,19 +203,28 @@
     letter-spacing: 0.03em;
     text-transform: uppercase;
     color: var(--bc-muted);
+    white-space: nowrap;
 }
 
 .broker-card__stat-value {
+    display: block;
+    min-width: 0;
     font-size: 0.8125rem;
     font-weight: 700;
     color: var(--bc-text);
     line-height: 1.3;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .broker-card__regulation {
     margin: 0.75rem 0 0;
     font-size: 0.75rem;
     color: var(--bc-muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .broker-card__performance {

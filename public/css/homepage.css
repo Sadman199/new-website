@@ -4071,3 +4071,77 @@
         transform: none;
     }
 }
+
+/* Homepage ads — uses Home Ad records from the admin Advertisements section */
+.bc-home-ad {
+    padding: 0.75rem 0 0.25rem;
+}
+
+.bc-home-ad--footer {
+    padding: 0.5rem 0 2.5rem;
+}
+
+.bc-home-ad__eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin: 0 0 0.7rem;
+    padding: 0.28rem 0.7rem;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--bc-primary);
+    background: rgba(232, 130, 42, 0.08);
+    border: 1px solid rgba(232, 130, 42, 0.18);
+    border-radius: 999px;
+}
+
+.bc-home-ad__eyebrow-dot {
+    width: 0.4rem;
+    height: 0.4rem;
+    border-radius: 50%;
+    background: var(--bc-primary);
+}
+
+.bc-home-ad__frame {
+    position: relative;
+    display: block;
+    overflow: hidden;
+    border-radius: 1rem;
+    background: var(--home-glass);
+    border: 1px solid var(--home-glass-border);
+    box-shadow: var(--bc-shadow);
+    text-decoration: none;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+a.bc-home-ad__frame:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--bc-shadow-lg);
+    border-color: rgba(232, 130, 42, 0.28);
+}
+
+.bc-home-ad__image {
+    display: block;
+    width: 100%;
+    height: auto;
+    max-height: 220px;
+    object-fit: cover;
+    object-position: center;
+}
+
+@media (max-width: 767px) {
+    .bc-home-ad {
+        padding: 0.5rem 0 0;
+    }
+
+    .bc-home-ad--footer {
+        padding: 0.25rem 0 1.75rem;
+    }
+
+    .bc-home-ad__image {
+        max-height: 140px;
+        border-radius: 0.85rem;
+    }
+}

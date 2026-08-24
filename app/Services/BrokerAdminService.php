@@ -69,6 +69,22 @@ class BrokerAdminService
             $broker->slug = Str::slug($request->input('name', $broker->name));
         }
 
+        // Fallback if slug collapses to empty (e.g. symbol-only names).
+        if ($broker->slug === '' || $broker->slug === null) {
+            $broker->slug = 'broker-' . Str::lower(Str::random(8));
+        }
+
+        // DB requires a non-null URL.
+        if ($broker->url === null || $broker->url === '') {
+            $broker->url = $request->input('visit_site') ?: ($request->input('open_live') ?: '#');
+        }
+
+        if ($request->filled('capitalization')) {
+            $broker->capitalization = round((float) $request->input('capitalization'), 2);
+        } elseif ($request->exists('capitalization')) {
+            $broker->capitalization = null;
+        }
+
         $this->handleUpload($request, 'logo', 'uploads/logos', 'logo_', $broker, 'logo');
         $this->handleUpload($request, 'banner_image_1', 'uploads', 'banner1_', $broker, 'banner_image_1');
         $this->handleUpload($request, 'banner_image_2', 'uploads', 'banner2_', $broker, 'banner_image_2');

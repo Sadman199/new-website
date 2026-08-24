@@ -56,7 +56,7 @@
                     @endif
 
                     @if($post_data->hasPages())
-                        <div class="mt-4">{{ $post_data->links() }}</div>
+                        <div class="mt-4">{{ $post_data->links('pagination.brokerscourt') }}</div>
                     @endif
                 </div>
 

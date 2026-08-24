@@ -137,7 +137,7 @@
         <p class="bbg-broker-card__recommended">Recommended for: {{ $entry['recommended_for'] }}</p>
 
         @if($entry['broker']->short_description)
-            <p class="bbg-broker-card__summary">{{ $entry['broker']->short_description }}</p>
+            <p class="bbg-broker-card__summary">{{ \App\Support\RichText::toPlainText($entry['broker']->short_description) }}</p>
         @endif
 
         <ul class="bbg-broker-card__facts">

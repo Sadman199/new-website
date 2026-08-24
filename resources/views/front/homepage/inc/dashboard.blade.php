@@ -55,7 +55,7 @@
                         </div>
                         <span class="bv-table-row__reg">{{ Str::limit(implode(', ', array_slice($broker->regulationList(), 0, 2)), 24) ?: '—' }}</span>
                         <span class="bv-table-row__deposit">${{ number_format((float) ($broker->minimum_deposit ?? 0), 0) }}</span>
-                        <span class="bv-table-row__lev">{{ $broker->leverage ?: '—' }}</span>
+                        <span class="bv-table-row__lev">{{ \App\Support\RichText::toPlainText($broker->leverage) ?: '—' }}</span>
                         <span class="bv-table-row__score">{{ number_format($broker->rating, 1) }}</span>
                     </a>
                 @endforeach

@@ -11,7 +11,7 @@
 @endpush
 
 @push('page-styles')
-    <link rel="stylesheet" href="{{ asset('css/promotions-index.css') }}?v=23">
+    <link rel="stylesheet" href="{{ asset('css/promotions-index.css') }}?v=25">
 @endpush
 
 @php
@@ -31,35 +31,47 @@
                 <span>Broker promos</span>
             </nav>
 
-            <div class="bpr-hero__grid">
-                <div class="bpr-hero__intro">
-                    <p class="bpr-hero__eyebrow">Live broker offers</p>
-                    <h1 class="bpr-hero__title">Broker <span class="bpr-hero__accent">promos</span></h1>
-                    <p class="bpr-hero__subtitle">
-                        Deposit bonuses, contests, and cashback from regulated brokers — verified against expiry
-                        dates and refreshed from our promotions database.
-                    </p>
-                </div>
+            <p class="bpr-hero__eyebrow">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M21 11.25v8.25a1.5 1.5 0 0 1-1.5 1.5H4.5a1.5 1.5 0 0 1-1.5-1.5v-8.25M12 4.875A2.625 2.625 0 1 0 12 10.125 2.625 2.625 0 0 0 12 4.875Zm0 0V3.75m0 18.75v-1.5"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 10.125A6.375 6.375 0 0 0 5.625 16.5h12.75A6.375 6.375 0 0 0 12 10.125Z"/>
+                </svg>
+                Live broker offers
+            </p>
+            <h1 class="bpr-hero__title">Broker <span class="bpr-hero__accent">promos</span></h1>
+            <p class="bpr-hero__subtitle">
+                Deposit bonuses, contests, and cashback from regulated brokers — verified against expiry dates
+                and refreshed from our promotions database.
+            </p>
 
-                <dl class="bpr-hero__stats">
-                    <div>
-                        <dt>Active offers</dt>
-                        <dd>{{ number_format($stats['total_active'] ?? 0) }}</dd>
-                    </div>
-                    <div>
-                        <dt>Brokers</dt>
-                        <dd>{{ number_format($stats['total_brokers'] ?? 0) }}</dd>
-                    </div>
-                    <div>
-                        <dt>Ending soon</dt>
-                        <dd>{{ number_format($stats['ending_soon'] ?? 0) }}</dd>
-                    </div>
-                    <div>
-                        <dt>Updated</dt>
-                        <dd>{{ $refreshedAt ?? now()->format('M j, Y') }}</dd>
-                    </div>
-                </dl>
-            </div>
+            <ul class="bpr-hero__stats" aria-label="Promotions summary">
+                <li>
+                    <strong>{{ number_format($stats['total_active'] ?? 0) }}</strong>
+                    <span>active offers</span>
+                </li>
+                @if(($stats['total_brokers'] ?? 0) > 0)
+                    <li>
+                        <strong>{{ number_format($stats['total_brokers']) }}</strong>
+                        <span>brokers</span>
+                    </li>
+                @endif
+                @if(($stats['ending_soon'] ?? 0) > 0)
+                    <li>
+                        <strong>{{ number_format($stats['ending_soon']) }}</strong>
+                        <span>ending soon</span>
+                    </li>
+                @endif
+                <li>
+                    <strong>{{ $refreshedAt ?? now()->format('M j') }}</strong>
+                    <span>last updated</span>
+                </li>
+                @if(($stats['featured'] ?? 0) > 0 && ($stats['total_brokers'] ?? 0) === 0)
+                    <li>
+                        <strong>{{ number_format($stats['featured']) }}</strong>
+                        <span>editor’s picks</span>
+                    </li>
+                @endif
+            </ul>
 
             @include('front.brokers.partials.country_context_hero', [
                 'eyebrow' => 'Viewing offers for your region',
@@ -68,18 +80,18 @@
         </div>
     </header>
 
-    <div class="container">
+    <div class="container bpr-body">
         <section class="bpr-board" id="current-promotions" aria-labelledby="bprBoardTitle">
             <div class="bpr-board__head">
                 <div>
-                    <p class="bpr-section__eyebrow">{{ $isFullBoard ? 'Live promotions board' : 'Currently viewing' }}</p>
+                    <p class="bpr-section__eyebrow">Live listings</p>
                     <h2 class="bpr-board__title" id="bprBoardTitle">
-                        {{ $isFullBoard ? 'Current Promotions Available on BrokersCourt' : $activeTabName }}
+                        {{ $isFullBoard ? 'Current promotions' : $activeTabName }}
                     </h2>
+                    <p class="bpr-board__count">
+                        Showing <span id="bpr-showing-count">{{ $loadedCount }}</span> of {{ $totalCount }} {{ \Illuminate\Support\Str::plural('offer', $totalCount) }}
+                    </p>
                 </div>
-                <p class="bpr-board__count">
-                    <span id="bpr-showing-count">{{ $loadedCount }}</span> of {{ $totalCount }} {{ \Illuminate\Support\Str::plural('offer', $totalCount) }}
-                </p>
             </div>
 
             @include('front.promotions.partials.promo_toolbar')
@@ -101,12 +113,6 @@
                     <a href="{{ route('promotions.index') }}" class="bpr-btn bpr-btn--primary">View all offers</a>
                 </div>
             @endif
-
-            <p class="bpr-method-note" role="note">
-                <strong>How we list promotions:</strong>
-                active offers are matched to broker profiles, checked against expiry dates, and refreshed from our
-                promotions database.
-            </p>
         </section>
 
         <x-broker-slider
@@ -126,6 +132,7 @@
         <section class="bpr-cta" aria-label="More tools">
             <div class="bpr-cta__inner">
                 <div>
+                    <p class="bpr-cta__eyebrow">Before you claim</p>
                     <h2 class="bpr-cta__title">Compare brokers before you claim a bonus</h2>
                     <p class="bpr-cta__text">Check regulation, fees, and safety scores before opening an account for any promotion.</p>
                 </div>

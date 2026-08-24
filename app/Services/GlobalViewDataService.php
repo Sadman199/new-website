@@ -40,7 +40,11 @@ class GlobalViewDataService
             $defaultLang = Language::query()->where('is_default', 'Yes')->first();
 
             return [
-                'global_top_ad_data' => TopAdvertisement::query()->find(1) ?? new TopAdvertisement(),
+                'global_top_ad_data' => TopAdvertisement::disableCache()->find(1) ?? new TopAdvertisement([
+                    'top_ad' => '',
+                    'top_ad_url' => null,
+                    'top_ad_status' => 'Hide',
+                ]),
                 'global_sidebar_top_ad' => SidebarAdvertisement::query()
                     ->where('sidebar_ad_location', 'Top')
                     ->get(),

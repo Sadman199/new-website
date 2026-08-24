@@ -19,8 +19,9 @@
                         <span class="w-8 h-8 rounded-lg bg-orange-50 text-orange-600 flex items-center justify-center text-sm"><i class="fas {{ $insight['icon'] }}"></i></span>
                         {{ $insight['title'] }}
                     </h4>
-                    @if(strip_tags($insight['content'] ?? ''))
-                        <p class="text-sm text-gray-600 leading-relaxed">{{ strip_tags($insight['content']) }}</p>
+                    @php $insightText = \App\Support\RichText::toPlainText($insight['content'] ?? null); @endphp
+                    @if($insightText)
+                        <p class="text-sm text-gray-600 leading-relaxed">{{ $insightText }}</p>
                     @else
                         <p class="text-sm text-gray-400 italic">Not available</p>
                     @endif

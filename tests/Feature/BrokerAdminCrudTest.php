@@ -192,6 +192,40 @@ class BrokerAdminCrudTest extends TestCase
         $response->assertSessionHasErrors('regions.0');
     }
 
+    public function test_admin_can_create_broker_with_capitalization_and_empty_url(): void
+    {
+        $response = $this->actingAs($this->admin, 'admin')
+            ->post(route('admin_broker_store'), [
+                'name' => 'Capital Broker',
+                'slug' => 'capital-broker',
+                'country' => 'Cyprus',
+                'url' => '',
+                'capitalization' => '2500000.75',
+            ]);
+
+        $broker = Broker::where('slug', 'capital-broker')->first();
+
+        $this->assertNotNull($broker);
+        $response->assertRedirect(route('admin_broker_edit', ['id' => $broker->id]));
+        $this->assertNotSame('', $broker->url);
+        $this->assertEquals(2500000.75, (float) $broker->capitalization);
+    }
+
+    public function test_non_numeric_capitalization_is_rejected(): void
+    {
+        $response = $this->actingAs($this->admin, 'admin')
+            ->from(route('admin_broker_create'))
+            ->post(route('admin_broker_store'), [
+                'name' => 'Bad Capital Broker',
+                'country' => 'UK',
+                'capitalization' => 'ten million',
+            ]);
+
+        $response->assertRedirect(route('admin_broker_create'));
+        $response->assertSessionHasErrors('capitalization');
+        $this->assertDatabaseMissing('brokers', ['name' => 'Bad Capital Broker']);
+    }
+
     public function test_panel_broker_routes_redirect_to_legacy_admin(): void
     {
         $response = $this->actingAs($this->admin, 'admin')

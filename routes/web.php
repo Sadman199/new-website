@@ -259,7 +259,7 @@ Route::get('/admin/home-advertisement', [AdminAdvertisementController::class, 'h
 Route::post('/admin/home-advertisement-update', [AdminAdvertisementController::class, 'home_ad_update'])->name('admin_home_ad_update');
 
 Route::get('/admin/top-advertisement', [AdminAdvertisementController::class, 'top_ad_show'])->name('admin_top_ad_show')->middleware('admin:admin');
-Route::post('/admin/top-advertisement-update', [AdminAdvertisementController::class, 'top_ad_update'])->name('admin_top_ad_update');
+Route::post('/admin/top-advertisement-update', [AdminAdvertisementController::class, 'top_ad_update'])->name('admin_top_ad_update')->middleware('admin:admin');
 
 
 Route::get('/admin/sidebar-advertisement-view', [AdminAdvertisementController::class, 'sidebar_ad_show'])->name('admin_sidebar_ad_show')->middleware('admin:admin');
@@ -326,9 +326,9 @@ Route::group(['prefix' => 'admin/broker', 'middleware' => 'admin:admin'], functi
     Route::get('/scam', [AdminBrokerController::class, 'scam'])->name('admin_broker_scam');
     Route::get('/create', [AdminBrokerController::class, 'create'])->name('admin_broker_create');
     Route::post('/store', [AdminBrokerController::class, 'store'])->name('admin_broker_store');
-    Route::get('/edit/{id}', [AdminBrokerController::class, 'edit'])->name('admin_broker_edit');
-    Route::put('/update/{id}', [AdminBrokerController::class, 'update'])->name('admin_broker_update');
-    Route::delete('/delete/{id}', [AdminBrokerController::class, 'delete'])->name('admin_broker_delete');
+    Route::get('/edit/{id}', [AdminBrokerController::class, 'edit'])->whereNumber('id')->name('admin_broker_edit');
+    Route::put('/update/{id}', [AdminBrokerController::class, 'update'])->whereNumber('id')->name('admin_broker_update');
+    Route::delete('/delete/{id}', [AdminBrokerController::class, 'delete'])->whereNumber('id')->name('admin_broker_delete');
 
 });
 // ==== Broker Management End ====
@@ -400,16 +400,16 @@ Route::group(['prefix' => 'admin/account-options', 'middleware' => 'admin:admin'
 });
 
 Route::group(['prefix' => 'admin/broker', 'middleware' => 'admin:admin'], function () {
-    Route::get('/{broker_id}/account-options', [AccountOptionController::class, 'index'])->name('admin_account_options_index');
-    Route::get('/{broker_id}/account-options/create', [AccountOptionController::class, 'create'])->name('admin_account_options_create');
-    Route::post('/{broker_id}/account-options/store', [AccountOptionController::class, 'store'])->name('admin_account_options_store');
-    Route::get('/{broker_id}/account-options/edit/{id}', [AccountOptionController::class, 'edit'])->name('admin_account_options_edit');
-    Route::put('/{broker_id}/account-options/update/{id}', [AccountOptionController::class, 'update'])->name('admin_account_options_update');
-    Route::delete('/{broker_id}/account-options/delete/{id}', [AccountOptionController::class, 'delete'])->name('admin_account_options_delete');
+    Route::get('/{broker_id}/account-options', [AccountOptionController::class, 'index'])->whereNumber('broker_id')->name('admin_account_options_index');
+    Route::get('/{broker_id}/account-options/create', [AccountOptionController::class, 'create'])->whereNumber('broker_id')->name('admin_account_options_create');
+    Route::post('/{broker_id}/account-options/store', [AccountOptionController::class, 'store'])->whereNumber('broker_id')->name('admin_account_options_store');
+    Route::get('/{broker_id}/account-options/edit/{id}', [AccountOptionController::class, 'edit'])->whereNumber('broker_id')->whereNumber('id')->name('admin_account_options_edit');
+    Route::put('/{broker_id}/account-options/update/{id}', [AccountOptionController::class, 'update'])->whereNumber('broker_id')->whereNumber('id')->name('admin_account_options_update');
+    Route::delete('/{broker_id}/account-options/delete/{id}', [AccountOptionController::class, 'delete'])->whereNumber('broker_id')->whereNumber('id')->name('admin_account_options_delete');
 
-    Route::get('/{broker_id}/guides', [AdminBrokerGuideController::class, 'index'])->name('admin_broker_guides_index');
-    Route::get('/{broker_id}/guides/{topic_slug}/edit', [AdminBrokerGuideController::class, 'edit'])->name('admin_broker_guides_edit');
-    Route::put('/{broker_id}/guides/{topic_slug}', [AdminBrokerGuideController::class, 'update'])->name('admin_broker_guides_update');
+    Route::get('/{broker_id}/guides', [AdminBrokerGuideController::class, 'index'])->whereNumber('broker_id')->name('admin_broker_guides_index');
+    Route::get('/{broker_id}/guides/{topic_slug}/edit', [AdminBrokerGuideController::class, 'edit'])->whereNumber('broker_id')->name('admin_broker_guides_edit');
+    Route::put('/{broker_id}/guides/{topic_slug}', [AdminBrokerGuideController::class, 'update'])->whereNumber('broker_id')->name('admin_broker_guides_update');
 });
 
 Route::group(['prefix' => 'admin/broker-guide-topics', 'middleware' => 'admin:admin'], function () {

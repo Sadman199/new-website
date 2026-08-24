@@ -117,14 +117,14 @@ class RegulatedBrokersIndexService
                 ? implode(', ', array_slice($regulators, 0, 3)) . (count($regulators) > 3 ? ' +' . (count($regulators) - 3) : '')
                 : 'Investor protection only',
             'regulator_slugs' => $regulatorSlugs,
-            'spreads' => trim((string) ($broker->spreads ?: '')) ?: null,
+            'spreads' => \App\Support\RichText::toPlainText($broker->spreads),
             'minimum_deposit' => $broker->minimum_deposit !== null
                 ? '$' . number_format((float) $broker->minimum_deposit, 0)
                 : null,
             'investor_protection' => $broker->investor_protection ? 'Yes' : 'No',
             'segregation_of_funds' => $broker->segregation_of_funds ? 'Yes' : 'No',
-            'country' => trim((string) ($broker->country ?: '')) ?: null,
-            'top_feature' => trim((string) ($broker->top_feature ?: '')),
+            'country' => \App\Support\RichText::toPlainText($broker->country),
+            'top_feature' => \App\Support\RichText::toPlainText($broker->top_feature),
             'visit_url' => $broker->open_live ?: $broker->visit_site ?: $broker->url,
             'review_url' => route('broker_detail', ['slug' => BrokerController::reviewSlugFor($broker)]),
         ];

@@ -558,11 +558,7 @@ class BrokerComparisonService
     public function serializeBroker(Broker $broker): array
     {
         $rating = BrokerRating::outOfFive($broker->rating);
-        $accountTypes = is_array($broker->account_types)
-            ? $broker->account_types
-            : (is_string($broker->account_types) && $broker->account_types !== ''
-                ? json_decode($broker->account_types, true) ?? []
-                : []);
+        $accountTypes = $broker->accountTypeLabelList();
 
         return [
             'id' => $broker->id,

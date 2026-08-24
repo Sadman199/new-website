@@ -53,12 +53,28 @@ class AdminBrokerController extends Controller
 
     public function store(BrokerRequest $request)
     {
-        $broker = $this->brokerAdmin->save(new Broker(), $request);
-        app(\App\Services\BrokerGuideService::class)->ensureGuidesForBroker($broker);
+        try {
+            $broker = $this->brokerAdmin->save(new Broker(), $request);
+            app(\App\Services\BrokerGuideService::class)->ensureGuidesForBroker($broker);
 
-        return redirect()
-            ->route('admin_broker_edit', $broker->id)
-            ->with('success', 'Broker created successfully. You can add account options next.');
+            if (! $broker->id) {
+                return redirect()
+                    ->back()
+                    ->withInput()
+                    ->with('error', 'Broker was saved but no ID was returned. Please check the brokers list.');
+            }
+
+            return redirect()
+                ->route('admin_broker_edit', ['id' => $broker->id])
+                ->with('success', 'Broker created successfully. You can add account options next.');
+        } catch (\Throwable $e) {
+            report($e);
+
+            return redirect()
+                ->back()
+                ->withInput()
+                ->with('error', 'Could not create broker: ' . $e->getMessage());
+        }
     }
 
     public function edit($id)
@@ -73,12 +89,21 @@ class AdminBrokerController extends Controller
 
     public function update(BrokerRequest $request, $id)
     {
-        $broker = Broker::findOrFail($id);
-        $this->brokerAdmin->save($broker, $request);
+        try {
+            $broker = Broker::findOrFail($id);
+            $this->brokerAdmin->save($broker, $request);
 
-        return redirect()
-            ->route('admin_broker_edit', $broker->id)
-            ->with('success', 'Broker updated successfully.');
+            return redirect()
+                ->route('admin_broker_edit', ['id' => $broker->id])
+                ->with('success', 'Broker updated successfully.');
+        } catch (\Throwable $e) {
+            report($e);
+
+            return redirect()
+                ->back()
+                ->withInput()
+                ->with('error', 'Could not update broker: ' . $e->getMessage());
+        }
     }
 
     public function delete($id)

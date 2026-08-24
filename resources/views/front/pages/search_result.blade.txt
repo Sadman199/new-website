@@ -71,7 +71,7 @@
 
 
                         <div class="col-md-12">
-                            {{ $post_data->links() }}
+                            {{ $post_data->links('pagination.brokerscourt') }}
                         </div>
 
                     </div>

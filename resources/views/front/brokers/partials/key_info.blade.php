@@ -7,7 +7,7 @@
         @if($broker->short_description)
         <div class="p-4 bg-gray-50 border border-gray-100 rounded-lg">
             <h3 class="font-bold text-gray-900 mb-2">Summary</h3>
-            <div class="text-sm text-gray-700 leading-relaxed">{!! $broker->short_description !!}</div>
+            <div class="text-sm text-gray-700 leading-relaxed">{{ \App\Support\RichText::toPlainText($broker->short_description) }}</div>
         </div>
         @endif
 
@@ -65,7 +65,7 @@
                     @endforeach
                 </div>
                 @if($broker->payment_methods)
-                <p class="text-sm text-gray-600 mt-3"><strong>Payments:</strong> {!! strip_tags($broker->payment_methods) !!}</p>
+                <p class="text-sm text-gray-600 mt-3"><strong>Payments:</strong> {{ \App\Support\RichText::toPlainText($broker->payment_methods) }}</p>
                 @endif
             </div>
 
@@ -76,14 +76,14 @@
                         <div class="bc-data-row__icon"><i class="fas fa-mobile-alt"></i></div>
                         <div>
                             <div class="bc-data-row__label">Mobile Trading</div>
-                            <div class="bc-data-row__value">{!! $broker->mobile_trading ?? '—' !!}</div>
+                            <div class="bc-data-row__value">{{ \App\Support\RichText::toPlainText($broker->mobile_trading) ?? '—' }}</div>
                         </div>
                     </div>
                     <div class="bc-data-row">
                         <div class="bc-data-row__icon"><i class="fas fa-globe"></i></div>
                         <div>
                             <div class="bc-data-row__label">Web Trader</div>
-                            <div class="bc-data-row__value">{!! $broker->web_trader ?? '—' !!}</div>
+                            <div class="bc-data-row__value">{{ \App\Support\RichText::toPlainText($broker->web_trader) ?? '—' }}</div>
                         </div>
                     </div>
                 </div>

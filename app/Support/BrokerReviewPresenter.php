@@ -363,18 +363,31 @@ class BrokerReviewPresenter
         }
 
         if (is_array($value)) {
-            $value = implode(', ', $value);
+            $value = JsonList::toPlainText($value) ?? implode(', ', $value);
         }
 
-        $string = trim(strip_tags((string) $value) === '' && $allowHtml ? (string) $value : (string) $value);
-        if ($string === '' || $string === '—') {
+        if ($allowHtml) {
+            $display = RichText::forDisplay((string) $value);
+            if ($display === null) {
+                return null;
+            }
+
+            return [
+                'label' => $label,
+                'value' => $display,
+                'html' => strip_tags($display) !== $display,
+            ];
+        }
+
+        $plain = RichText::toPlainText((string) $value);
+        if ($plain === null) {
             return null;
         }
 
         return [
             'label' => $label,
-            'value' => (string) $value,
-            'html' => $allowHtml && strip_tags((string) $value) !== (string) $value,
+            'value' => $plain,
+            'html' => false,
         ];
     }
 

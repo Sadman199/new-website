@@ -90,18 +90,18 @@ class BestBrokerGuideMetrics
 
         return [
             'guide_score' => number_format(self::guideScore($broker, $slug, $type), 1),
-            'spreads' => $broker->spreads ?: '—',
-            'commission' => $broker->commission ?: '—',
+            'spreads' => RichText::toPlainText($broker->spreads) ?: '—',
+            'commission' => RichText::toPlainText($broker->commission) ?: '—',
             'fee_level' => ucfirst((string) ($broker->fee_level ?: 'medium')),
             'minimum_deposit' => $broker->minimum_deposit !== null
                 ? '$'.number_format((float) $broker->minimum_deposit, 0)
                 : '—',
-            'leverage' => $broker->leverage ?: '—',
+            'leverage' => RichText::toPlainText($broker->leverage) ?: '—',
             'platform_count' => (string) count($platforms),
             'instrument_count' => $broker->instrument_count ? (string) $broker->instrument_count : '—',
             'vps_hosting' => $broker->vps_hosting ? 'Yes' : 'No',
-            'pricing' => $broker->pricing ?: '—',
-            'withdrawal_fee' => $broker->withdrawal_fee ?: '—',
+            'pricing' => RichText::toPlainText($broker->pricing) ?: '—',
+            'withdrawal_fee' => RichText::toPlainText($broker->withdrawal_fee) ?: '—',
             'deposit_methods' => self::shortList($broker->deposit_methods, 28),
             'regulatory_tier' => self::regulatoryTierLabel($broker->regulatory_tier),
             'regulator_count' => (string) count($regulators),
@@ -124,8 +124,8 @@ class BestBrokerGuideMetrics
     public static function oneLiner(Broker $broker): string
     {
         $parts = array_filter([
-            $broker->top_feature,
-            $broker->spreads ? 'Spreads '.$broker->spreads : null,
+            RichText::toPlainText($broker->top_feature),
+            ($spreads = RichText::toPlainText($broker->spreads)) ? 'Spreads '.$spreads : null,
             count($broker->regulationList()) ? 'Multi-regulated' : null,
         ]);
 
@@ -147,25 +147,23 @@ class BestBrokerGuideMetrics
     /** @return array<int, string> */
     public static function prosList(Broker $broker, int $limit = 3): array
     {
-        $html = (string) $broker->pros;
+        $items = RichText::listItems($broker->pros);
 
-        if ($html === '') {
+        if ($items === []) {
             return array_values(array_filter([
-                $broker->top_feature,
-                $broker->spreads ? 'Competitive spreads: '.$broker->spreads : null,
+                RichText::toPlainText($broker->top_feature),
+                ($spreads = RichText::toPlainText($broker->spreads))
+                    ? 'Competitive spreads: '.$spreads
+                    : null,
             ]));
         }
 
-        preg_match_all('/<li[^>]*>(.*?)<\/li>/is', $html, $matches);
-
-        $items = array_map(static fn ($item) => trim(strip_tags($item)), $matches[1] ?? []);
-
-        return array_values(array_filter(array_slice($items, 0, $limit)));
+        return array_slice($items, 0, $limit);
     }
 
     private static function shortList(?string $value, int $limit): string
     {
-        $value = trim(strip_tags((string) $value));
+        $value = RichText::toPlainText($value) ?? '';
 
         if ($value === '') {
             return '—';

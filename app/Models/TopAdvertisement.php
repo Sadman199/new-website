@@ -9,4 +9,10 @@ use GeneaLabs\LaravelModelCaching\Traits\Cachable;
 class TopAdvertisement extends Model
 {
     use HasFactory, Cachable;
+
+    protected $fillable = [
+        'top_ad',
+        'top_ad_url',
+        'top_ad_status',
+    ];
 }

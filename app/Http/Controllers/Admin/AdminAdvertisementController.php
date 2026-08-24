@@ -10,106 +10,140 @@ use App\Models\SidebarAdvertisement;
 
 class AdminAdvertisementController extends Controller
 {
+    private function getOrCreateHomeAd(): HomeAdvertisement
+    {
+        $record = \DB::table('home_advertisements')->where('id', 1)->first();
+
+        if (! $record) {
+            \DB::table('home_advertisements')->insert([
+                'above_search_ad'        => '',
+                'above_search_ad_url'    => null,
+                'above_search_ad_status' => 'Hide',
+                'above_footer_ad'        => '',
+                'above_footer_ad_url'    => null,
+                'above_footer_ad_status' => 'Hide',
+                'created_at'             => now(),
+                'updated_at'             => now(),
+            ]);
+        }
+
+        return HomeAdvertisement::disableCache()->where('id', 1)->first();
+    }
+
     public function home_ad_show()
     {
-        $home_ad_data = HomeAdvertisement::where('id',1)->first();
-        return view('admin.advertisement_home_view',compact('home_ad_data'));
+        $home_ad_data = $this->getOrCreateHomeAd();
+        return view('admin.advertisement_home_view', compact('home_ad_data'));
     }
 
     public function home_ad_update(Request $request)
     {
-        $home_ad_data = HomeAdvertisement::where('id', 1)->first();
-    
+        $request->validate([
+            'above_search_ad'        => 'nullable|image|mimes:jpg,jpeg,png,gif,webp|max:5120',
+            'above_footer_ad'        => 'nullable|image|mimes:jpg,jpeg,png,gif,webp|max:5120',
+            'above_search_ad_url'    => 'nullable|url|max:500',
+            'above_footer_ad_url'    => 'nullable|url|max:500',
+            'above_search_ad_status' => 'required|in:Show,Hide',
+            'above_footer_ad_status' => 'required|in:Show,Hide',
+        ]);
+
+        $home_ad_data = $this->getOrCreateHomeAd();
+
         // Handle the "above_search_ad" file upload
         if ($request->hasFile('above_search_ad')) {
-            $request->validate([
-                'above_search_ad' => 'image|mimes:jpg,jpeg,png,gif'
-            ]);
-    
-            // Check if the old image exists and delete it
-            $oldImagePath = $_SERVER['DOCUMENT_ROOT'] . '/uploads/' . $home_ad_data->above_search_ad;
-            if (file_exists($oldImagePath)) {
-                unlink($oldImagePath); // Delete the old image
+            $old = $home_ad_data->above_search_ad;
+            if ($old && file_exists(public_path('uploads/' . $old))) {
+                @unlink(public_path('uploads/' . $old));
             }
-    
-            // Handle the new image upload
-            $ext = $request->file('above_search_ad')->extension();
-            $final_name = 'above_search_ad' . '.' . $ext;
-            $request->file('above_search_ad')->move($_SERVER['DOCUMENT_ROOT'] . '/uploads/', $final_name);
-    
-            // Update the image name in the database
+            $ext        = $request->file('above_search_ad')->extension();
+            $final_name = 'above_search_ad_' . time() . '.' . $ext;
+            $request->file('above_search_ad')->move(public_path('uploads'), $final_name);
             $home_ad_data->above_search_ad = $final_name;
         }
-    
+
         // Handle the "above_footer_ad" file upload
         if ($request->hasFile('above_footer_ad')) {
-            $request->validate([
-                'above_footer_ad' => 'image|mimes:jpg,jpeg,png,gif'
-            ]);
-    
-            // Check if the old image exists and delete it
-            $oldImagePath = $_SERVER['DOCUMENT_ROOT'] . '/uploads/' . $home_ad_data->above_footer_ad;
-            if (file_exists($oldImagePath)) {
-                unlink($oldImagePath); // Delete the old image
+            $old = $home_ad_data->above_footer_ad;
+            if ($old && file_exists(public_path('uploads/' . $old))) {
+                @unlink(public_path('uploads/' . $old));
             }
-    
-            // Handle the new image upload
-            $ext = $request->file('above_footer_ad')->extension();
-            $final_name = 'above_footer_ad' . '.' . $ext;
-            $request->file('above_footer_ad')->move($_SERVER['DOCUMENT_ROOT'] . '/uploads/', $final_name);
-    
-            // Update the image name in the database
+            $ext        = $request->file('above_footer_ad')->extension();
+            $final_name = 'above_footer_ad_' . time() . '.' . $ext;
+            $request->file('above_footer_ad')->move(public_path('uploads'), $final_name);
             $home_ad_data->above_footer_ad = $final_name;
         }
-        
-        // Update other fields
-        $home_ad_data->above_search_ad_url = $request->above_search_ad_url;
-        $home_ad_data->above_search_ad_status = $request->above_search_ad_status;
-        $home_ad_data->above_footer_ad_url = $request->above_footer_ad_url;
-        $home_ad_data->above_footer_ad_status = $request->above_footer_ad_status;
-        $home_ad_data->update();
-    
-        return redirect()->back()->with('success', 'Data is updated successfully.');
+
+        // Always update the non-file fields directly via DB to bypass caching
+        \DB::table('home_advertisements')->where('id', 1)->update([
+            'above_search_ad'        => $home_ad_data->above_search_ad,
+            'above_search_ad_url'    => $request->above_search_ad_url,
+            'above_search_ad_status' => $request->above_search_ad_status,
+            'above_footer_ad'        => $home_ad_data->above_footer_ad,
+            'above_footer_ad_url'    => $request->above_footer_ad_url,
+            'above_footer_ad_status' => $request->above_footer_ad_status,
+            'updated_at'             => now(),
+        ]);
+
+        return redirect()->back()->with('success', 'Advertisements updated successfully.');
     }
 
 
+
+    private function getOrCreateTopAd(): TopAdvertisement
+    {
+        $record = \DB::table('top_advertisements')->where('id', 1)->first();
+
+        if (! $record) {
+            \DB::table('top_advertisements')->insert([
+                'top_ad' => '',
+                'top_ad_url' => null,
+                'top_ad_status' => 'Hide',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+        }
+
+        return TopAdvertisement::disableCache()->where('id', 1)->firstOrFail();
+    }
 
     public function top_ad_show()
     {
-        $top_ad_data = TopAdvertisement::where('id',1)->first();
-        return view('admin.advertisement_top_view',compact('top_ad_data'));
+        $top_ad_data = $this->getOrCreateTopAd();
+
+        return view('admin.advertisement_top_view', compact('top_ad_data'));
     }
 
-     public function top_ad_update(Request $request)
+    public function top_ad_update(Request $request)
     {
-        $top_ad_data = TopAdvertisement::where('id', 1)->first();
-    
+        $request->validate([
+            'top_ad' => 'nullable|image|mimes:jpg,jpeg,png,gif,webp|max:5120',
+            'top_ad_url' => 'nullable|url|max:500',
+            'top_ad_status' => 'required|in:Show,Hide',
+        ]);
+
+        $top_ad_data = $this->getOrCreateTopAd();
+        $imageName = $top_ad_data->top_ad ?? '';
+
         if ($request->hasFile('top_ad')) {
-            $request->validate([
-                'top_ad' => 'image|mimes:jpg,jpeg,png,gif'
-            ]);
-    
-            // Check if the old image exists and delete it
-            $oldImagePath = $_SERVER['DOCUMENT_ROOT'] . '/uploads/' . $top_ad_data->top_ad;
-            if (file_exists($oldImagePath)) {
-                unlink($oldImagePath); // Delete the old image
+            if ($imageName && file_exists(public_path('uploads/' . $imageName))) {
+                @unlink(public_path('uploads/' . $imageName));
             }
-    
-            // Handle the new image upload
+
             $ext = $request->file('top_ad')->extension();
-            $final_name = 'top_ad' . '.' . $ext;
-            $request->file('top_ad')->move($_SERVER['DOCUMENT_ROOT'] . '/uploads/', $final_name);
-    
-            // Update the image name in the database (no need to prepend 'uploads/' again)
-            $top_ad_data->top_ad = $final_name;
+            $imageName = 'top_ad_' . time() . '.' . $ext;
+            $request->file('top_ad')->move(public_path('uploads'), $imageName);
         }
-    
-        // Update other fields
-        $top_ad_data->top_ad_url = $request->top_ad_url;
-        $top_ad_data->top_ad_status = $request->top_ad_status;
-        $top_ad_data->update();
-    
-        return redirect()->back()->with('success', 'Data is updated successfully.');
+
+        \DB::table('top_advertisements')->where('id', 1)->update([
+            'top_ad' => $imageName,
+            'top_ad_url' => $request->top_ad_url,
+            'top_ad_status' => $request->top_ad_status,
+            'updated_at' => now(),
+        ]);
+
+        \App\Services\GlobalViewDataService::flush();
+
+        return redirect()->back()->with('success', 'Top advertisement updated successfully.');
     }
 
 

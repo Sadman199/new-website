@@ -95,7 +95,7 @@ class BrokerFeaturePresenter
                 : asset('images/default-broker.png'),
             'rating' => $broker->rating !== null ? round((float) $broker->rating, 1) : null,
             'country' => $broker->country,
-            'top_feature' => trim((string) ($broker->top_feature ?: '')),
+            'top_feature' => \App\Support\RichText::toPlainText($broker->top_feature) ?? '',
             'review_url' => route('broker_detail', $broker->slug),
             'visit_url' => $visitUrl ?: null,
             'features' => array_slice($allFeatures, 0, 6),

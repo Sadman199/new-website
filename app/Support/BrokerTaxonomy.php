@@ -235,9 +235,9 @@ class BrokerTaxonomy
      * @param  array<int, string>|null  $accountTypes
      * @return array{0: array<int, string>, 1: array<int, string>}
      */
-    public static function splitLegacyAccountTypes(?array $accountTypes): array
+    public static function splitLegacyAccountTypes(mixed $accountTypes): array
     {
-        $accountTypes = is_array($accountTypes) ? $accountTypes : [];
+        $accountTypes = JsonList::normalize($accountTypes);
         $known = self::categorySlugs();
 
         $categories = [];

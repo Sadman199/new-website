@@ -230,8 +230,16 @@
                 </div>
                 <div class="row">
                     <div class="col-md-6 form-group">
-                        <label for="capitalization">Capitalization</label>
-                        <textarea name="capitalization" id="capitalization" class="form-control" rows="2">{{ old('capitalization', $broker->capitalization) }}</textarea>
+                        <label for="capitalization">Capitalization (USD)</label>
+                        <input type="number"
+                               step="0.01"
+                               min="0"
+                               name="capitalization"
+                               id="capitalization"
+                               class="form-control"
+                               value="{{ old('capitalization', $broker->capitalization) }}"
+                               placeholder="e.g. 1000000">
+                        <small class="text-muted">Numeric company capital only (stored as a decimal).</small>
                     </div>
                     <div class="col-md-6 form-group">
                         <label for="insurance">Insurance / Compensation</label>

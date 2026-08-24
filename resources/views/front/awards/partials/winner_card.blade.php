@@ -3,7 +3,9 @@
     $ratingPercent = \App\Support\BrokerRating::percent($broker['rating'] ?? null);
     $feeScore = isset($broker['fee_score']) ? max(0, min(5, (float) $broker['fee_score'])) : null;
     $platformScore = isset($broker['platform_score']) ? max(0, min(5, (float) $broker['platform_score'])) : null;
-    $summary = $broker['top_feature'] ?: $broker['short_description'] ?: 'Recognized for dependable service and strong trading conditions.';
+    $summary = \App\Support\RichText::toPlainText($broker['top_feature'] ?? null)
+        ?: \App\Support\RichText::toPlainText($broker['short_description'] ?? null)
+        ?: 'Recognized for dependable service and strong trading conditions.';
 @endphp
 
 <li class="awd-winner-card {{ $rank === 1 ? 'is-top-pick' : '' }}">

@@ -61,7 +61,7 @@
     </div>
 
     <div class="fmb-pagination">
-        {{ $brokers->onEachSide(1)->links() }}
+        {{ $brokers->onEachSide(1)->links('pagination.brokerscourt') }}
     </div>
 @else
     <div class="fmb-empty">

@@ -15,14 +15,15 @@
 
     $highlight = null;
     if (! $card['is_award_winner'] && ! empty($card['top_feature'])) {
-        $highlight = $card['top_feature'];
+        $highlight = \App\Support\RichText::toPlainText($card['top_feature']);
     } elseif ($card['review_count'] > 0) {
         $highlight = number_format($card['review_count']) . ' user ' . \Illuminate\Support\Str::plural('review', $card['review_count']);
     } elseif (! empty($card['regulation_summary'])) {
         $highlight = $card['regulation_summary'];
     } elseif (! empty($card['short_description'])) {
-        $highlight = $card['short_description'];
+        $highlight = \App\Support\RichText::toPlainText($card['short_description']);
     }
+    $highlight = $highlight ? \Illuminate\Support\Str::limit($highlight, 92, '…') : null;
 
     $stats = array_filter([
         ['label' => 'Min. deposit', 'value' => $card['minimum_deposit']],
@@ -107,7 +108,7 @@
         </div>
 
         @if($highlight)
-            <p class="broker-card__tagline">{{ $highlight }}</p>
+            <p class="broker-card__tagline" title="{{ $highlight }}">{{ $highlight }}</p>
         @endif
 
         @if($stats !== [])
@@ -115,7 +116,7 @@
                 @foreach($stats as $stat)
                     <div class="broker-card__stat">
                         <span class="broker-card__stat-label">{{ $stat['label'] }}</span>
-                        <span class="broker-card__stat-value">{{ $stat['value'] }}</span>
+                        <span class="broker-card__stat-value" title="{{ $stat['value'] }}">{{ $stat['value'] }}</span>
                     </div>
                 @endforeach
             </div>
@@ -138,7 +139,7 @@
         @endif
 
         @if(! empty($card['regulation_summary']) && $highlight !== $card['regulation_summary'])
-            <p class="broker-card__regulation">{{ $card['regulation_summary'] }}</p>
+            <p class="broker-card__regulation" title="{{ $card['regulation_summary'] }}">{{ $card['regulation_summary'] }}</p>
         @endif
     </div>
 

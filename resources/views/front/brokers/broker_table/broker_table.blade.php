@@ -86,7 +86,7 @@
                             <svg class="w-4 h-4 mr-1 text-green-500" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M12 7a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0V8.414l-4.293 4.293a1 1 0 01-1.414 0L8 10.414l-4.293 4.293a1 1 0 01-1.414-1.414l5-5a1 1 0 011.414 0L11 10.586 14.586 7H12z" clip-rule="evenodd"/>
                             </svg>
-                            <span class="text-sm font-mono font-medium text-gray-900">{{ $broker->spreads }}</span>
+                            <span class="text-sm font-mono font-medium text-gray-900">{{ \App\Support\RichText::toPlainText($broker->spreads) ?? '—' }}</span>
                         </div>
                     </td>
                     
@@ -96,7 +96,7 @@
                             <svg class="-ml-0.5 mr-1.5 h-2 w-2 text-blue-400" fill="currentColor" viewBox="0 0 8 8">
                                 <circle cx="4" cy="4" r="3"/>
                             </svg>
-                            {{ $broker->leverage }}
+                            {{ \App\Support\RichText::toPlainText($broker->leverage) ?? '—' }}
                         </span>
                     </td>
                     
@@ -139,15 +139,13 @@
                                     STRENGTHS
                                 </div>
                                 <ul class="space-y-2">
-                                    @foreach(explode('</li>', $broker->pros) as $pro)
-                                        @if(trim(strip_tags($pro)))
-                                            <li class="text-gray-700 flex">
-                                                <svg class="flex-shrink-0 h-4 w-4 text-green-500 mt-0.5 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                                                </svg>
-                                                {{ strip_tags($pro) }}
-                                            </li>
-                                        @endif
+                                    @foreach(\App\Support\RichText::listItems($broker->pros ?? null) as $pro)
+                                        <li class="text-gray-700 flex">
+                                            <svg class="flex-shrink-0 h-4 w-4 text-green-500 mt-0.5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                            </svg>
+                                            {{ $pro }}
+                                        </li>
                                     @endforeach
                                 </ul>
                             </div>
@@ -159,15 +157,13 @@
                                     CONSIDERATIONS
                                 </div>
                                 <ul class="space-y-2">
-                                    @foreach(explode('</li>', $broker->cons) as $con)
-                                        @if(trim(strip_tags($con)))
-                                            <li class="text-gray-700 flex">
-                                                <svg class="flex-shrink-0 h-4 w-4 text-red-500 mt-0.5 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
-                                                </svg>
-                                                {{ strip_tags($con) }}
-                                            </li>
-                                        @endif
+                                    @foreach(\App\Support\RichText::listItems($broker->cons ?? null) as $con)
+                                        <li class="text-gray-700 flex">
+                                            <svg class="flex-shrink-0 h-4 w-4 text-red-500 mt-0.5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+                                            </svg>
+                                            {{ $con }}
+                                        </li>
                                     @endforeach
                                 </ul>
                             </div>

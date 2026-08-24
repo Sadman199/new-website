@@ -73,7 +73,7 @@
                             @endforeach
                         </div>
                         @if($all_posts->hasPages())
-                            <div class="mt-4">{{ $all_posts->links() }}</div>
+                            <div class="mt-4">{{ $all_posts->links('pagination.brokerscourt') }}</div>
                         @endif
                     @else
                         <p class="bll-empty">{{ NO_POST_FOUND }}</p>

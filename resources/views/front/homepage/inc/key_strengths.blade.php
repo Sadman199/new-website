@@ -53,7 +53,7 @@
                     @endif
                 </span>
                 <span class="bv-strength-row__name">{{ $broker->name }}</span>
-                <span class="bv-strength-row__meta">{{ $broker->leverage ?: '—' }}</span>
+                <span class="bv-strength-row__meta">{{ \App\Support\RichText::toPlainText($broker->leverage) ?: '—' }}</span>
             </a>
         @endforeach
     </div>

@@ -2,6 +2,9 @@
 
 namespace App\Models;
 
+use App\Support\JsonList;
+use App\Support\RichText;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use GeneaLabs\LaravelModelCaching\Traits\Cachable;
@@ -26,7 +29,7 @@ class Broker extends Model
         'account_managers', 'news_and_analysis', 'economic_calendar', 'vps_hosting',
         'associated_countries', 'broker_categories', 'regions', 'slug', 'top_feature', 'featured_broker', 'top_broker',
         'meta_title', 'meta_keyword', 'meta_description', 'title', 'rating',
-        'trust_score', 'regulatory_tier', 'banner_image_1', 'banner_image_2',
+        'trust_score', 'regulatory_tier', 'banner_image_1', 'banner_image_2', 'logo',
         'is_scam', 'scam_reason', 'scam_reported_date',
         'written_by_author_id', 'edited_by_author_id', 'fact_checked_by_author_id',
         'written_by_admin_id', 'edited_by_admin_id', 'fact_checked_by_admin_id',
@@ -35,6 +38,7 @@ class Broker extends Model
     protected $casts = [
         'minimum_deposit' => 'decimal:2',
         'rating' => 'decimal:2',
+        'capitalization' => 'decimal:2',
         'year_founded' => 'integer',
         'instrument_count' => 'integer',
         'trust_score' => 'integer',
@@ -131,14 +135,189 @@ class Broker extends Model
         return count($this->regulationList()) > 0 || (bool) $this->investor_protection;
     }
 
+    /** Strip legacy Summernote / entity markup from short text fields site-wide. */
+    protected function title(): Attribute
+    {
+        return $this->plainTextAttribute();
+    }
+
+    protected function shortDescription(): Attribute
+    {
+        return $this->plainTextAttribute();
+    }
+
+    protected function topFeature(): Attribute
+    {
+        return $this->plainTextAttribute();
+    }
+
+    protected function commission(): Attribute
+    {
+        return $this->plainTextAttribute();
+    }
+
+    protected function pricing(): Attribute
+    {
+        return $this->plainTextAttribute();
+    }
+
+    protected function depositMethods(): Attribute
+    {
+        return $this->plainTextAttribute();
+    }
+
+    protected function withdrawalMethod(): Attribute
+    {
+        return $this->plainTextAttribute();
+    }
+
+    protected function withdrawalFee(): Attribute
+    {
+        return $this->plainTextAttribute();
+    }
+
+    protected function paymentMethods(): Attribute
+    {
+        return $this->plainTextAttribute();
+    }
+
+    protected function languages(): Attribute
+    {
+        return $this->plainTextAttribute();
+    }
+
+    protected function spreads(): Attribute
+    {
+        return $this->plainTextAttribute();
+    }
+
+    protected function leverage(): Attribute
+    {
+        return $this->plainTextAttribute();
+    }
+
+    protected function customerSupport(): Attribute
+    {
+        return $this->plainTextAttribute();
+    }
+
+    protected function country(): Attribute
+    {
+        return $this->plainTextAttribute();
+    }
+
+    protected function mobileTrading(): Attribute
+    {
+        return $this->plainTextAttribute();
+    }
+
+    protected function webTrader(): Attribute
+    {
+        return $this->plainTextAttribute();
+    }
+
+    protected function chartingTools(): Attribute
+    {
+        return $this->plainTextAttribute();
+    }
+
+    protected function newsAndAnalysis(): Attribute
+    {
+        return $this->plainTextAttribute();
+    }
+
+    protected function researchTools(): Attribute
+    {
+        return $this->plainTextAttribute();
+    }
+
+    protected function educationalResources(): Attribute
+    {
+        return $this->plainTextAttribute();
+    }
+
+    protected function socialTrading(): Attribute
+    {
+        return $this->plainTextAttribute();
+    }
+
+    protected function insurance(): Attribute
+    {
+        return $this->plainTextAttribute();
+    }
+
+    protected function regulatedJurisdictions(): Attribute
+    {
+        return $this->plainTextAttribute();
+    }
+
+    protected function regulatoryLicenses(): Attribute
+    {
+        return $this->plainTextAttribute();
+    }
+
+    protected function metaTitle(): Attribute
+    {
+        return $this->plainTextAttribute();
+    }
+
+    protected function metaKeyword(): Attribute
+    {
+        return $this->plainTextAttribute();
+    }
+
+    protected function metaDescription(): Attribute
+    {
+        return $this->plainTextAttribute();
+    }
+
+    protected function scamReason(): Attribute
+    {
+        return $this->plainTextAttribute();
+    }
+
+    protected function description(): Attribute
+    {
+        return $this->richTextAttribute();
+    }
+
+    protected function verdict(): Attribute
+    {
+        return $this->richTextAttribute();
+    }
+
+    protected function pros(): Attribute
+    {
+        return $this->richTextAttribute();
+    }
+
+    protected function cons(): Attribute
+    {
+        return $this->richTextAttribute();
+    }
+
+    private function plainTextAttribute(): Attribute
+    {
+        return Attribute::make(
+            get: static fn ($value) => RichText::toPlainText(
+                $value === null || $value === '' ? null : (string) $value
+            ),
+        );
+    }
+
+    private function richTextAttribute(): Attribute
+    {
+        return Attribute::make(
+            get: static fn ($value) => RichText::forDisplay(
+                $value === null || $value === '' ? null : (string) $value
+            ),
+        );
+    }
+
     /** @return array<int, string> */
     public function marketList(): array
     {
-        if (is_array($this->markets)) {
-            return $this->markets;
-        }
-
-        return [];
+        return JsonList::normalize($this->markets);
     }
 
     public function getScamSlugAttribute()
@@ -170,47 +349,37 @@ class Broker extends Model
     /** @return array<int, string> */
     public function regulationList(): array
     {
-        if (is_array($this->regulation)) {
-            return $this->regulation;
-        }
+        $items = JsonList::normalize($this->regulation);
 
-        if (is_string($this->regulation) && $this->regulation !== '') {
-            $decoded = json_decode($this->regulation, true);
-
-            return is_array($decoded) ? $decoded : [strip_tags($this->regulation)];
-        }
-
-        return [];
+        return $items !== [] ? $items : (
+            is_string($this->regulation) && $this->regulation !== ''
+                ? [RichText::toPlainText($this->regulation) ?? strip_tags($this->regulation)]
+                : []
+        );
     }
 
     /** @return array<int, string> */
     public function platformList(): array
     {
-        if (is_array($this->platforms)) {
-            return $this->platforms;
-        }
+        $items = JsonList::normalize($this->platforms);
 
-        if (is_string($this->platforms) && $this->platforms !== '') {
-            $decoded = json_decode($this->platforms, true);
-
-            return is_array($decoded) ? $decoded : [strip_tags($this->platforms)];
-        }
-
-        return [];
+        return $items !== [] ? $items : (
+            is_string($this->platforms) && $this->platforms !== ''
+                ? [RichText::toPlainText($this->platforms) ?? strip_tags($this->platforms)]
+                : []
+        );
     }
 
     /** @return array<int, string> */
     public function brokerCategoryList(): array
     {
-        $categories = is_array($this->broker_categories) ? $this->broker_categories : [];
+        $categories = JsonList::normalize($this->broker_categories);
 
         if ($categories !== []) {
-            return array_values($categories);
+            return $categories;
         }
 
-        [$legacyCategories] = \App\Support\BrokerTaxonomy::splitLegacyAccountTypes(
-            is_array($this->account_types) ? $this->account_types : null
-        );
+        [$legacyCategories] = \App\Support\BrokerTaxonomy::splitLegacyAccountTypes($this->account_types);
 
         return $legacyCategories;
     }
@@ -218,20 +387,18 @@ class Broker extends Model
     /** @return array<int, string> */
     public function regionList(): array
     {
-        if (is_array($this->regions)) {
-            return array_values($this->regions);
-        }
-
-        return [];
+        return JsonList::normalize($this->regions);
     }
 
     /** @return array<int, string> */
     public function accountTypeLabelList(): array
     {
-        [, $labels] = \App\Support\BrokerTaxonomy::splitLegacyAccountTypes(
-            is_array($this->account_types) ? $this->account_types : null
-        );
+        [, $labels] = \App\Support\BrokerTaxonomy::splitLegacyAccountTypes($this->account_types);
 
-        return $labels;
+        if ($labels !== []) {
+            return $labels;
+        }
+
+        return $this->accountOptions->pluck('account_type')->filter()->unique()->values()->all();
     }
 }

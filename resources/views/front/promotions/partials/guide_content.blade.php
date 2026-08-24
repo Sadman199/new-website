@@ -10,31 +10,14 @@
                 <p class="bpr-guide__eyebrow">Promotions guide</p>
                 <h2 class="bpr-guide__index-title">What’s Inside</h2>
                 <p class="bpr-guide__index-lead">
-                    Understand every promotion format, compare live terms side by side, and check broker safety
-                    before you claim anything.
+                    Understand promotion formats, compare live terms, and check broker safety before you claim an offer.
                 </p>
             </div>
-
-            <dl class="bpr-inside-stats">
-                <div>
-                    <dt>Active offers</dt>
-                    <dd>{{ number_format($stats['total_active'] ?? 0) }}</dd>
-                </div>
-                <div>
-                    <dt>Live categories</dt>
-                    <dd>{{ $guide['total_types_live'] ?? 0 }}</dd>
-                </div>
-                <div>
-                    <dt>Brokers listed</dt>
-                    <dd>{{ number_format($stats['total_brokers'] ?? 0) }}</dd>
-                </div>
-            </dl>
 
             <ol class="bpr-inside-grid">
                 @foreach($toc as $item)
                     <li>
                         <a href="#{{ $item['id'] }}" class="bpr-inside-link">
-                            <span aria-hidden="true">{{ str_pad((string) $loop->iteration, 2, '0', STR_PAD_LEFT) }}</span>
                             {{ $item['label'] }}
                         </a>
                     </li>
