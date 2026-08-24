@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import argparse
 import json
 import re
 import sys
@@ -184,9 +185,31 @@ def extract(sql_path: Path) -> list[dict]:
     return rows
 
 
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(
+        description="Extract brokers rows from a legacy phpMyAdmin SQL dump into JSON."
+    )
+    parser.add_argument(
+        "source",
+        nargs="?",
+        default=r"c:\Users\Sakib\Downloads\brokers (1).sql",
+        help="Path to the legacy SQL dump file.",
+    )
+    parser.add_argument(
+        "-o",
+        "--output",
+        default=r"F:\vscode\storage\app\imports\legacy_brokers.json",
+        help="Path for the generated JSON file.",
+    )
+    return parser.parse_args()
+
+
 def main() -> None:
-    src = Path(r"c:\Users\Sakib\Downloads\brokers (1).sql")
-    out = Path(r"F:\vscode\storage\app\imports\legacy_brokers.json")
+    args = parse_args()
+    src = Path(args.source)
+    out = Path(args.output)
+    if not src.exists():
+        raise SystemExit(f"Source SQL file not found: {src}")
     out.parent.mkdir(parents=True, exist_ok=True)
     rows = extract(src)
     out.write_text(json.dumps(rows, ensure_ascii=False, indent=2), encoding="utf-8")
