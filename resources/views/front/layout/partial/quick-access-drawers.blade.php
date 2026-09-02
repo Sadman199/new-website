@@ -49,7 +49,7 @@
 
             <p class="bc-tools-sheet__section-title">Useful tools</p>
             <div class="bc-tools-sheet__links">
-                <a href="{{ route('trading.tools') }}" class="bc-tools-sheet__link">
+                <a href="{{ route('calculators.index') }}" class="bc-tools-sheet__link">
                     <span class="bc-tools-sheet__link-icon"><i class="fas fa-calculator" aria-hidden="true"></i></span>
                     <span class="bc-tools-sheet__link-text">
                         <strong>Trading tools</strong>

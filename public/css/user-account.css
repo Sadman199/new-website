@@ -45,12 +45,14 @@ body:has(.ua-root) {
 }
 
 .ua-wrap {
-    width: min(100%, 80rem);
+    width: min(100%, var(--bc-container, 1320px));
+    max-width: var(--bc-container, 1320px);
     margin: 0 auto;
 }
 
 .ua-wrap--narrow {
     width: min(100%, 28rem);
+    max-width: 28rem;
     margin: 0 auto;
     display: flex;
     flex-direction: column;
@@ -59,7 +61,8 @@ body:has(.ua-root) {
 }
 
 .ua-wrap--profile {
-    width: min(100%, 56rem);
+    width: 100%;
+    max-width: min(100%, 56rem);
     margin: 0 auto;
 }
 
@@ -68,15 +71,16 @@ body:has(.ua-root) {
     display: grid;
     gap: 2.5rem;
     align-items: center;
-    width: min(100%, 66rem);
-    margin: 0 auto;
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
     min-height: calc(100vh - var(--bc-nav-height, 5.5rem) - 9rem);
 }
 
 @media (min-width: 960px) {
     .ua-auth-shell {
-        grid-template-columns: minmax(0, 1fr) 27rem;
-        gap: 4rem;
+        grid-template-columns: minmax(0, 1fr) minmax(22rem, 30rem);
+        gap: clamp(2rem, 5vw, 4.5rem);
     }
 }
 

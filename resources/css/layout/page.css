@@ -9,6 +9,7 @@
     max-width: var(--bc-container);
 }
 
+/* Unified site shell — every page wrapper should use one of these classes */
 .bc-container,
 .bc-home-container,
 .fmb-wrap,
@@ -19,13 +20,27 @@
 .bpr-wrap,
 .cti-wrap,
 .abt-wrap,
-.bbg-container {
+.bbg-container,
+.bbh-wrap,
+.brb-wrap,
+.sbi-wrap,
+.bpd-wrap,
+.bbd-wrap,
+.tt-wrap,
+.bsc-container,
+.ssr-wrap {
     width: 100%;
     max-width: var(--bc-container);
     margin-left: auto;
     margin-right: auto;
     padding-left: calc(var(--bs-gutter-x, 1.5rem) * 0.5);
     padding-right: calc(var(--bs-gutter-x, 1.5rem) * 0.5);
+}
+
+/* Narrow prose / legal pages */
+.abt-wrap--narrow,
+.cms-wrap--narrow {
+    max-width: min(var(--bc-container), 48rem);
 }
 
 .page-section {

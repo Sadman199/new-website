@@ -1,63 +1,83 @@
 @extends('admin.layout.app')
+@include('admin.partials._ab_assets')
 
+@section('dashboard_page', true)
+@section('main_content_class', 'main-content--dashboard')
 @section('heading', 'Sidebar Advertisements')
 
-@section('button')
-<a href="{{ route('admin_sidebar_ad_create') }}" class="btn btn-primary"><i class="fas fa-plus"></i> Add New</a>
-@endsection
-
 @section('main_content')
-<div class="section-body py-4">
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-12">
-                <div class="card shadow-sm border-0">
-                    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-                        <h5 class="mb-0">Advertisement List</h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="table-responsive">
-                            <table class="table table-hover table-bordered" id="example1">
-                                <thead class="thead-dark">
-                                    <tr>
-                                        <th scope="col" class="text-center" style="width: 5%">#</th>
-                                        <th scope="col" class="text-center" style="width: 25%">Photo</th>
-                                        <th scope="col" style="width: 30%">URL</th>
-                                        <th scope="col" class="text-center" style="width: 15%">Location</th>
-                                        <th scope="col" class="text-center" style="width: 25%">Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach($sidebar_ad_data as $row)
-                                    <tr>
-                                        <td class="text-center align-middle">{{ $loop->iteration }}</td>
-                                        <td class="text-center align-middle">
-                                            <img src="{{ asset('uploads/'.$row->sidebar_ad) }}" alt="Ad Image" class="img-fluid rounded" style="max-width: 150px; max-height: 100px; object-fit: cover;">
-                                        </td>
-                                        <td class="align-middle">
-                                            <a href="{{ $row->sidebar_ad_url }}" target="_blank" class="text-primary">{{ Str::limit($row->sidebar_ad_url, 50) }}</a>
-                                        </td>
-                                        <td class="text-center align-middle">{{ $row->sidebar_ad_location }}</td>
-                                        <td class="text-center align-middle">
-                                            <a href="{{ route('admin_sidebar_ad_edit', $row->id) }}" class="btn btn-primary btn-sm mr-1" title="Edit">
-                                                <i class="fas fa-edit"></i> Edit
-                                            </a>
-                                            <form action="{{ route('admin_sidebar_ad_delete', $row->id) }}" method="POST" style="display:inline;" onsubmit="return confirm('Are you sure you want to delete this advertisement?');">
+<div class="ab-page ab-page--hub">
+    <div class="ab-wrap">
+        @include('admin.ads._nav', ['active' => 'sidebar'])
+        <header class="ab-header">
+            <div>
+                <p class="ab-header__eyebrow">Advertisements</p>
+                <h1 class="ab-header__title">Sidebar Ads</h1>
+                <p class="ab-header__sub">Small banners in the article and review sidebars.</p>
+            </div>
+            <div class="ab-header__actions">
+                <a href="{{ route('admin_sidebar_ad_create') }}" class="ab-btn ab-btn--primary">
+                    <i class="fas fa-plus" aria-hidden="true"></i>
+                    Add Sidebar Ad
+                </a>
+            </div>
+        </header>
+
+        <div class="ab-panel">
+            @if($sidebar_ad_data->isEmpty())
+                <div class="ab-empty">
+                    <h3>No sidebar ads yet</h3>
+                    <p>Add a top or bottom sidebar banner for article pages.</p>
+                    <a href="{{ route('admin_sidebar_ad_create') }}" class="ab-btn ab-btn--primary">Add Sidebar Ad</a>
+                </div>
+            @else
+                <div class="ab-table-wrap">
+                    <table class="ab-table">
+                        <thead>
+                            <tr>
+                                <th>Ad</th>
+                                <th>URL</th>
+                                <th>Location</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($sidebar_ad_data as $row)
+                                <tr>
+                                    <td>
+                                        <div class="ab-broker">
+                                            <span class="ab-logo">
+                                                <img src="{{ asset('uploads/'.$row->sidebar_ad) }}" alt="">
+                                            </span>
+                                            <div>
+                                                <p class="ab-broker__name">Sidebar #{{ $row->id }}</p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        @if($row->sidebar_ad_url)
+                                            <a href="{{ $row->sidebar_ad_url }}" target="_blank" rel="noopener">{{ \Illuminate\Support\Str::limit($row->sidebar_ad_url, 48) }}</a>
+                                        @else
+                                            —
+                                        @endif
+                                    </td>
+                                    <td>{{ $row->sidebar_ad_location }}</td>
+                                    <td>
+                                        <div class="ab-actions">
+                                            <a class="ab-btn ab-btn--ghost ab-btn--sm" href="{{ route('admin_sidebar_ad_edit', $row->id) }}">Edit</a>
+                                            <form action="{{ route('admin_sidebar_ad_delete', $row->id) }}" method="POST" data-ab-delete data-ab-name="sidebar ad #{{ $row->id }}" data-ab-warn="This cannot be undone." data-ab-confirm="Delete ad">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="submit" class="btn btn-danger btn-sm" title="Delete">
-                                                    <i class="fas fa-trash"></i> Delete
-                                                </button>
+                                                <button class="ab-btn ab-btn--ghost ab-btn--sm" type="submit">Delete</button>
                                             </form>
-                                        </td>
-                                    </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
                 </div>
-            </div>
+            @endif
         </div>
     </div>
 </div>

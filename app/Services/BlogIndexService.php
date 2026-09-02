@@ -4,18 +4,20 @@ namespace App\Services;
 
 use App\Models\Admin;
 use App\Models\Author;
+use App\Models\Category;
 use App\Models\Language;
 use App\Models\Post;
 use App\Models\SubCategory;
-use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Str;
 
 class BlogIndexService
 {
-    public const CARDS_PER_TAB = 20;
+    public const PER_PAGE = 12;
 
-    /** Stories highlighted next to the lead article. */
-    public const TOP_STORIES = 3;
+    /** @deprecated Use PER_PAGE. Kept for callers that still reference the old constant. */
+    public const CARDS_PER_TAB = 12;
 
     /** @var array<int, string> */
     public const INSIGHT_GRADIENTS = [
@@ -48,8 +50,9 @@ class BlogIndexService
     /** @return array{recent: \Illuminate\Support\Collection, popular: \Illuminate\Support\Collection} */
     public function editorialStreams(int $languageId, int $limit = 6): array
     {
-        return Cache::remember("editorial_streams_v1_{$languageId}_{$limit}", 600, function () use ($languageId, $limit) {
+        return Cache::remember("editorial_streams_v2_{$languageId}_{$limit}", 600, function () use ($languageId, $limit) {
             $base = fn () => Post::with(['rSubCategory', 'author', 'writtenByAuthor'])
+                ->published()
                 ->where('language_id', $languageId);
 
             return [
@@ -60,41 +63,67 @@ class BlogIndexService
     }
 
     /** @return array<string, mixed> */
-    public function buildIndex(int $languageId, ?string $subcategorySlug = null): array
+    public function buildIndex(int $languageId, ?string $categorySlug = null, ?string $subcategorySlug = null): array
     {
-        $tabs = $this->subcategoryTabs($languageId);
-        $activeTab = $subcategorySlug ?: 'all';
+        $tabs = $this->categoryTabs($languageId);
+        $category = $this->resolveCategory($categorySlug, $languageId);
+        $subcategory = null;
+
+        if (! $category && $subcategorySlug) {
+            $subcategory = SubCategory::query()
+                ->with('rCategory')
+                ->where('language_id', $languageId)
+                ->where('slug', $subcategorySlug)
+                ->first();
+
+            if ($subcategory?->rCategory) {
+                $category = $subcategory->rCategory;
+            }
+        }
+
+        $activeTab = $category ? $category->publicSlug() : 'all';
+        $activeTabName = $category?->category_name ?? 'All';
 
         $query = Post::query()
-            ->with(['rSubCategory', 'writtenByAuthor'])
+            ->with(['rSubCategory.rCategory', 'writtenByAuthor'])
+            ->published()
             ->where('language_id', $languageId);
 
-        if ($subcategorySlug) {
-            $query->whereHas('rSubCategory', fn ($q) => $q->where('slug', $subcategorySlug));
+        if ($subcategory) {
+            $query->where('sub_category_id', $subcategory->id);
+        } elseif ($category) {
+            $query->whereHas('rSubCategory', fn ($q) => $q->where('category_id', $category->id));
+        }
+
+        if (Schema::hasColumn('posts', 'featured_blog')) {
+            $query->orderByDesc('featured_blog');
+        }
+        if (Schema::hasColumn('posts', 'is_featured')) {
+            $query->orderByDesc('is_featured');
         }
 
         $posts = $query
             ->orderByDesc('id')
-            ->limit(self::CARDS_PER_TAB)
-            ->get();
+            ->paginate(self::PER_PAGE)
+            ->withQueryString();
 
-        $activeTabMeta = collect($tabs)->firstWhere('slug', $activeTab) ?? $tabs[0];
+        $posts->setCollection(
+            $posts->getCollection()->map(fn (Post $post) => $this->serializePost($post))->values()
+        );
 
-        $serialized = $posts->map(fn (Post $post) => $this->serializePost($post))->values();
-        $featured = $serialized->first();
+        $isFiltered = $activeTab !== 'all';
 
         return [
             'tabs' => $tabs,
             'activeTab' => $activeTab,
-            'activeTabName' => $activeTabMeta['name'] ?? 'All News',
-            'stats' => $this->stats($languageId),
-            'featured' => $featured,
-            'topStories' => $serialized->slice(1, self::TOP_STORIES)->values()->all(),
-            'cards' => $serialized->slice(1 + self::TOP_STORIES)->values()->all(),
-            'mostRead' => $this->mostRead($languageId, $featured['id'] ?? null),
-            'readNext' => $this->readNext($languageId, $serialized->pluck('id')->all()),
-            'cardLimit' => self::CARDS_PER_TAB,
-            'cardCount' => $posts->count(),
+            'activeTabName' => $activeTabName,
+            'posts' => $posts,
+            'pageTitle' => $isFiltered
+                ? $activeTabName.' — BrokersCourt Blog'
+                : 'Forex & Broker Blog — Analysis, News & Guides | BrokersCourt',
+            'pageDescription' => $isFiltered
+                ? 'Read BrokersCourt articles in '.$activeTabName.': independent coverage of brokers, markets, regulation, and trading.'
+                : 'Independent BrokersCourt journalism on brokers, markets, regulation, and trading — researched and published by our editorial team.',
         ];
     }
 
@@ -107,6 +136,7 @@ class BlogIndexService
     {
         return Post::query()
             ->with(['rSubCategory', 'writtenByAuthor'])
+            ->published()
             ->where('language_id', $languageId)
             ->when($excludeId, fn ($q) => $q->where('id', '!=', $excludeId))
             ->orderByDesc('visitors')
@@ -127,6 +157,7 @@ class BlogIndexService
     {
         $base = fn () => Post::query()
             ->with(['rSubCategory', 'writtenByAuthor'])
+            ->published()
             ->where('language_id', $languageId)
             ->orderByDesc('visitors')
             ->orderByDesc('id')
@@ -144,46 +175,72 @@ class BlogIndexService
     }
 
     /** @return array<int, array<string, mixed>> */
-    public function subcategoryTabs(int $languageId): array
+    public function categoryTabs(int $languageId): array
     {
-        $totalPosts = min(Post::where('language_id', $languageId)->count(), self::CARDS_PER_TAB);
+        $totalPosts = Post::published()->where('language_id', $languageId)->count();
 
         $tabs = [[
             'slug' => 'all',
-            'name' => 'All News',
+            'name' => 'All',
             'count' => $totalPosts,
             'url' => route('blog'),
         ]];
 
-        $subcategories = SubCategory::query()
+        $categories = Category::query()
             ->where('language_id', $languageId)
-            ->where('show_on_menu', 'Show')
-            ->orderBy('sub_category_order')
-            ->withCount(['rPost as posts_count' => fn ($q) => $q->where('language_id', $languageId)])
+            ->orderBy('category_order')
+            ->orderBy('category_name')
+            ->withCount([
+                'classifiedPosts as posts_count' => fn ($q) => $q->published()->where('posts.language_id', $languageId),
+            ])
             ->get()
-            ->filter(fn (SubCategory $sub) => $sub->posts_count > 0);
+            ->filter(fn (Category $category) => (int) $category->posts_count > 0);
 
-        foreach ($subcategories as $sub) {
+        foreach ($categories as $category) {
+            $slug = $category->publicSlug();
             $tabs[] = [
-                'slug' => $sub->slug,
-                'name' => $sub->sub_category_name,
-                'count' => min((int) $sub->posts_count, self::CARDS_PER_TAB),
-                'url' => route('blog', ['subcategory' => $sub->slug]),
+                'slug' => $slug,
+                'name' => $category->category_name,
+                'count' => (int) $category->posts_count,
+                'url' => route('blog', ['category' => $slug]),
             ];
         }
 
         return $tabs;
     }
 
+    /** @return array<int, array<string, mixed>> */
+    public function subcategoryTabs(int $languageId): array
+    {
+        return $this->categoryTabs($languageId);
+    }
+
+    private function resolveCategory(?string $slug, int $languageId): ?Category
+    {
+        $slug = trim((string) $slug);
+        if ($slug === '' || $slug === 'all') {
+            return null;
+        }
+
+        $categories = Category::query()
+            ->where('language_id', $languageId)
+            ->orderBy('category_order')
+            ->orderBy('id')
+            ->get();
+
+        return $categories->first(fn (Category $category) => $category->publicSlug() === $slug)
+            ?? $categories->first(fn (Category $category) => (string) $category->id === $slug);
+    }
+
     /** @return array<string, int> */
     public function stats(int $languageId): array
     {
-        $posts = Post::where('language_id', $languageId);
+        $posts = Post::published()->where('language_id', $languageId);
 
         return [
             'total_posts' => (clone $posts)->count(),
             'subcategories' => SubCategory::where('language_id', $languageId)
-                ->whereHas('rPost', fn ($q) => $q->where('language_id', $languageId))
+                ->whereHas('rPost', fn ($q) => $q->published()->where('language_id', $languageId))
                 ->count(),
             'total_views' => (int) (clone $posts)->sum('visitors'),
             'authors' => Author::whereHas('legacyPosts', fn ($q) => $q->where('language_id', $languageId))->count(),
@@ -199,13 +256,16 @@ class BlogIndexService
     public function serializePost(Post $post): array
     {
         $sub = $post->rSubCategory;
+        $parent = $sub?->rCategory;
         $author = $this->authorFor($post);
+        $publishedAt = $post->publish_at ?? $post->created_at ?? $post->updated_at;
+        $categoryName = $parent?->category_name ?: ($sub?->sub_category_name ?? 'Insights');
 
         return [
             'id' => $post->id,
             'title' => $post->post_title,
             'slug' => $post->slug,
-            'excerpt' => $this->excerpt($post),
+            'excerpt' => $this->excerpt($post, 160),
             'photo' => $post->post_photo ? asset('uploads/' . $post->post_photo) : null,
             'url' => $sub
                 ? route('news_detail', ['subcategory_slug' => $sub->slug, 'post_slug' => $post->slug])
@@ -215,13 +275,17 @@ class BlogIndexService
                 'slug' => $sub?->slug,
                 'color' => $this->badgeColor($sub?->sub_category_name ?? ''),
             ],
-            'category' => $sub?->sub_category_name ?? 'Insights',
+            'parent_category' => $parent?->category_name,
+            'category' => $categoryName,
+            'content_type' => $post->content_type ?: 'article',
+            'content_type_label' => Str::title(str_replace(['-', '_'], ' ', (string) ($post->content_type ?: 'article'))),
             'author' => $author['name'],
             'author_photo' => $author['photo'] ? asset('uploads/' . $author['photo']) : null,
             'author_url' => $author['url'] ?? null,
-            'date' => $post->updated_at->format('M j, Y'),
-            'date_iso' => $post->updated_at->toDateString(),
-            'date_short' => $post->updated_at->format('M j'),
+            'date' => $publishedAt?->format('M j, Y') ?? '',
+            'date_iso' => $publishedAt?->toDateString() ?? '',
+            'date_short' => $publishedAt?->format('M j') ?? '',
+            'date_rel' => $publishedAt?->diffForHumans() ?? '',
             'read_time' => $this->readTimeMinutes($post),
             'views' => (int) $post->visitors,
         ];
@@ -229,6 +293,11 @@ class BlogIndexService
 
     private function excerpt(Post $post, int $limit = 140): string
     {
+        $meta = trim((string) ($post->excerpt ?? ''));
+        if ($meta !== '') {
+            return Str::limit($meta, $limit);
+        }
+
         $meta = trim((string) ($post->meta_description ?? ''));
         if ($meta !== '') {
             return Str::limit($meta, $limit);
@@ -242,6 +311,10 @@ class BlogIndexService
 
     private function readTimeMinutes(Post $post): int
     {
+        if (! empty($post->reading_time)) {
+            return max(1, (int) $post->reading_time);
+        }
+
         $words = str_word_count(strip_tags((string) $post->post_detail));
 
         return max(1, (int) ceil($words / 200));
@@ -312,6 +385,7 @@ class BlogIndexService
 
         return Post::query()
             ->with(['rSubCategory', 'writtenByAuthor'])
+            ->published()
             ->where('language_id', $languageId)
             ->orderByDesc('id')
             ->limit($limit)

@@ -100,6 +100,16 @@ class Broker extends Model
         return $this->hasMany(ForexBonus::class);
     }
 
+    public function posts()
+    {
+        return $this->belongsToMany(Post::class, 'post_broker')->withTimestamps();
+    }
+
+    public function banners()
+    {
+        return $this->belongsToMany(Banner::class, 'banner_broker')->withTimestamps();
+    }
+
     public function writtenByAuthor()
     {
         return $this->belongsTo(Author::class, 'written_by_author_id');
@@ -143,7 +153,7 @@ class Broker extends Model
 
     protected function shortDescription(): Attribute
     {
-        return $this->plainTextAttribute();
+        return $this->richTextAttribute();
     }
 
     protected function topFeature(): Attribute
@@ -332,6 +342,21 @@ class Broker extends Model
         }
 
         return \Illuminate\Support\Str::slug($this->name);
+    }
+
+    public function mediaUrl(?string $path = null): ?string
+    {
+        $path = $path ?? $this->logo;
+
+        if (! filled($path)) {
+            return null;
+        }
+
+        if (str_starts_with($path, 'http://') || str_starts_with($path, 'https://') || str_starts_with($path, '//')) {
+            return $path;
+        }
+
+        return asset(ltrim($path, '/'));
     }
 
     public function ogShareImageUrl(): string

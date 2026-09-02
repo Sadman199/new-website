@@ -54,7 +54,7 @@
                                     </div>
                                     <div class="form-group">
                                         <label class="font-weight-bold">Bio</label>
-                                        <textarea class="form-control" name="bio" rows="3" placeholder="Short author bio (optional)">{{ old('bio', $author_data->bio) }}</textarea>
+                                        <textarea class="form-control snote" data-admin-editor="compact" name="bio" rows="4" placeholder="Short author bio (optional)">{{ old('bio', $author_data->bio) }}</textarea>
                                     </div>
                                     <div class="form-group">
                                         <label class="font-weight-bold">Twitter URL</label>

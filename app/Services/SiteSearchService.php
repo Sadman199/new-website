@@ -309,6 +309,7 @@ class SiteSearchService
     {
         $posts = Post::query()
             ->with('rSubCategory')
+            ->published()
             ->where('language_id', $languageId)
             ->where(function ($builder) use ($query) {
                 $builder->where('post_title', 'like', "%{$query}%")
@@ -506,16 +507,25 @@ class SiteSearchService
             ->limit(self::PER_TYPE_LIMIT)
             ->get();
 
-        $items = $tools->map(fn (TradingTool $tool) => $this->item(
+        $items = $tools->map(function (TradingTool $tool) {
+            $routeSlug = \App\Support\TradingToolsRegistry::routeSlug($tool->slug);
+            $url = $routeSlug
+                ? (\App\Support\TradingToolsRegistry::isWidget($tool->slug)
+                    ? route('trading.tools.show', ['slug' => $routeSlug])
+                    : route('calculators.show', ['slug' => $routeSlug]))
+                : route('calculators.index');
+
+            return $this->item(
             title: $tool->name,
-            url: route('trading.tools.show', ['slug' => $tool->slug]),
+            url: $url,
             type: 'tool',
             typeLabel: 'Trading Tool',
             excerpt: Str::limit(strip_tags((string) ($tool->short_description ?: $tool->description)), 140),
             image: null,
             meta: 'Trading tool',
             sortDate: optional($tool->updated_at)->timestamp ?? optional($tool->created_at)->timestamp,
-        ))->all();
+            );
+        })->all();
 
         return $this->group('Trading Tools', 'tool', $items);
     }
@@ -633,6 +643,13 @@ class SiteSearchService
                 'excerpt' => 'Explore curated best-broker rankings by category and country.',
                 'meta' => 'Rankings hub',
                 'url' => route('brokers.best.index'),
+            ],
+            [
+                'title' => 'Top Brokers',
+                'keywords' => ['top', 'brokers', 'forex', 'ratings', 'compare'],
+                'excerpt' => 'Discover top forex brokers with verified spreads, deposits, leverage, and ratings.',
+                'meta' => 'Top brokers directory',
+                'url' => route('brokers.top.index'),
             ],
             [
                 'title' => 'Blog',

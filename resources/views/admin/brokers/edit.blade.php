@@ -1,42 +1,61 @@
 @extends('admin.layout.app')
+@include('admin.brokers._assets')
 
-@section('heading', 'Edit Broker — ' . $broker->name)
+@section('dashboard_page', true)
+@section('main_content_class', 'main-content--dashboard')
 
-@section('button')
-    <a href="{{ route('admin_broker_show') }}" class="btn btn-primary">
-        <i class="fas fa-arrow-left"></i> Back to Brokers
-    </a>
-@endsection
+@section('heading', 'Edit broker')
 
 @section('main_content')
-<div class="tw-max-w-6xl tw-mx-auto tw-px-4 tw-py-6">
-    <div class="tw-bg-white tw-rounded-2xl tw-border tw-border-slate-200/70 tw-shadow-sm tw-overflow-hidden">
-        <div class="tw-px-6 tw-py-5 tw-border-b tw-border-slate-100 tw-flex tw-items-start tw-justify-between tw-gap-4">
-            <div>
-                <h2 class="tw-text-lg tw-font-extrabold tw-text-slate-900">Edit Broker</h2>
-                <p class="tw-mt-1 tw-text-sm tw-text-slate-600 tw-flex tw-items-center tw-gap-2">
-                    <span class="tw-inline-flex tw-items-center tw-gap-2 tw-px-2 tw-py-1 tw-rounded-lg tw-bg-slate-50 tw-border tw-border-slate-200">
-                        <i class="fas fa-link tw-text-slate-400"></i>
-                        <span class="tw-truncate">{{ $broker->slug }}</span>
-                    </span>
-                </p>
-            </div>
-
-            @if($broker->rating)
-                <span class="tw-inline-flex tw-items-center tw-gap-2 tw-h-9 tw-px-4 tw-rounded-full tw-bg-amber-50 tw-border tw-border-amber-200 tw-text-amber-700 tw-font-bold tw-text-sm">
-                    <i class="fas fa-star"></i>
-                    {{ number_format($broker->rating, 1) }}/5
+<div class="ab-page">
+    <div class="ab-wrap">
+        <header class="ab-header">
+            <div class="ab-identity">
+                <span class="ab-logo ab-logo--lg">
+                    @if($broker->mediaUrl())
+                        <img src="{{ $broker->mediaUrl() }}" alt="">
+                    @else
+                        <span>{{ strtoupper(substr($broker->name, 0, 1)) }}</span>
+                    @endif
                 </span>
-            @endif
-        </div>
+                <div>
+                    <p class="ab-header__eyebrow">Edit broker</p>
+                    <h1 class="ab-header__title">{{ $broker->name }}</h1>
+                    <p class="ab-header__sub">{{ $broker->slug }} @if($broker->country) · {{ $broker->country }} @endif</p>
+                </div>
+            </div>
+            <div class="ab-header__actions">
+                @if($broker->slug)
+                    <a href="{{ route('broker_detail', $broker->slug) }}" class="ab-btn ab-btn--ghost" target="_blank" rel="noopener">View on site</a>
+                @endif
+                <a href="{{ route('admin_broker_view', $broker->id) }}" class="ab-btn ab-btn--ghost">Overview</a>
+                <a href="{{ route('admin_broker_show') }}" class="ab-btn ab-btn--ghost">All brokers</a>
+            </div>
+        </header>
 
-        <div class="tw-px-6 tw-py-6">
-            @include('admin.brokers._tabs', ['broker' => $broker->loadCount('accountOptions'), 'activeTab' => 'broker'])
+        @include('admin.brokers._tabs', ['broker' => $broker, 'activeTab' => 'broker'])
 
-            <form action="{{ route('admin_broker_update', $broker->id) }}"
-                  method="POST"
-                  enctype="multipart/form-data"
-                  class="tw-space-y-6">
+        @if($errors->any())
+            <div class="ab-banner" role="alert">
+                <h3>Please fix {{ $errors->count() }} {{ \Illuminate\Support\Str::plural('issue', $errors->count()) }} before saving</h3>
+                <ol>
+                    @foreach($errors->all() as $message)
+                        <li>{{ $message }}</li>
+                    @endforeach
+                </ol>
+            </div>
+        @endif
+
+        <div class="ab-layout">
+            <nav class="ab-nav" aria-label="Form sections">
+                <a href="#identity" data-ab-nav class="is-active">1. Identity</a>
+                <a href="#regulation" data-ab-nav>2. Regulation</a>
+                <a href="#trading" data-ab-nav>3. Trading</a>
+                <a href="#seo" data-ab-nav>4. SEO</a>
+                <a href="#publish" data-ab-nav>5. Publish</a>
+            </nav>
+
+            <form action="{{ route('admin_broker_update', $broker->id) }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 @method('PUT')
                 @include('admin.brokers._form', ['broker' => $broker, 'formOptions' => $formOptions])
@@ -45,9 +64,3 @@
     </div>
 </div>
 @endsection
-
-@push('styles')
-<style>
-    /* Legacy styles kept disabled; the broker form uses Tailwind <details> sections now. */
-</style>
-@endpush

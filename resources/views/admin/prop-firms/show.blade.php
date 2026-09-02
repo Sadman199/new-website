@@ -1,196 +1,195 @@
 @extends('admin.layout.app')
+@include('admin.brokers._assets')
+
+@section('dashboard_page', true)
+@section('main_content_class', 'main-content--dashboard')
 
 @section('heading', 'All Prop Firms')
 
-@section('button')
-<a href="{{ route('admin_prop_firms_create') }}"
-   class="tw-inline-flex tw-items-center tw-gap-2 tw-rounded-xl tw-bg-brand tw-text-white tw-px-5 tw-py-2.5 tw-text-sm tw-font-extrabold hover:tw-bg-brand/90">
-    <i class="fas fa-plus-circle"></i>
-    Add new
-</a>
-@endsection
-
 @section('main_content')
-<div class="tw-max-w-7xl tw-mx-auto tw-px-4 tw-py-6">
-    <div class="tw-flex tw-flex-col lg:tw-flex-row lg:tw-items-end lg:tw-justify-between tw-gap-3 tw-mb-6">
-        <div>
-            <p class="tw-text-xs tw-font-semibold tw-uppercase tw-tracking-widest tw-text-slate-500">Prop firms</p>
-            <h2 class="tw-mt-1 tw-text-2xl tw-font-extrabold tw-text-slate-900">All prop firms</h2>
-            <p class="tw-mt-1 tw-text-sm tw-text-slate-600">Filter, bulk manage, and edit prop firm details.</p>
-        </div>
-    </div>
-
-    <div class="tw-bg-white tw-rounded-2xl tw-border tw-border-slate-200/70 tw-px-5 tw-py-4 tw-mb-5">
-        <form method="GET" class="tw-grid tw-grid-cols-1 md:tw-grid-cols-5 tw-gap-3">
-            <div class="tw-space-y-2 md:tw-col-span-1">
-                <label class="tw-text-xs tw-font-bold tw-text-slate-600">Search</label>
-                <input type="search" name="q" class="tw-w-full tw-rounded-xl tw-border tw-border-slate-200 tw-bg-white tw-text-sm tw-px-3 tw-py-2" value="{{ request('q') }}" placeholder="Name or slug…">
+<div class="ab-page">
+    <div class="ab-wrap">
+        <header class="ab-header">
+            <div>
+                <p class="ab-header__eyebrow">Prop firms</p>
+                <h1 class="ab-header__title">All firms</h1>
+                <p class="ab-header__sub">Search, filter, and keep every listing current from one place.</p>
             </div>
-
-            <div class="tw-space-y-2 md:tw-col-span-1">
-                <label class="tw-text-xs tw-font-bold tw-text-slate-600">Category</label>
-                <select name="category_id" class="tw-w-full tw-rounded-xl tw-border tw-border-slate-200 tw-bg-white tw-text-sm tw-px-3 tw-py-2">
-                    <option value="">All</option>
-                    @foreach($categories as $cat)
-                        <option value="{{ $cat->id }}" @selected(request('category_id') == $cat->id)>{{ $cat->name }}</option>
-                    @endforeach
-                </select>
+            <div class="ab-header__actions">
+                <a href="{{ route('admin_prop_firms_dashboard') }}" class="ab-btn ab-btn--ghost">Dashboard</a>
+                <a href="{{ route('admin_prop_firms_create') }}" class="ab-btn ab-btn--primary">
+                    <i class="fas fa-plus" aria-hidden="true"></i>
+                    Add prop firm
+                </a>
             </div>
+        </header>
 
-            <div class="tw-space-y-2 md:tw-col-span-1">
-                <label class="tw-text-xs tw-font-bold tw-text-slate-600">Status</label>
-                <select name="status" class="tw-w-full tw-rounded-xl tw-border tw-border-slate-200 tw-bg-white tw-text-sm tw-px-3 tw-py-2">
-                    <option value="">All</option>
-                    <option value="active" @selected(request('status') === 'active')>Active</option>
-                    <option value="inactive" @selected(request('status') === 'inactive')>Inactive</option>
-                </select>
+        @include('admin.prop-firms._nav', ['active' => 'firms'])
+
+        <div class="ab-kpis">
+            <div class="ab-kpi">
+                <span class="ab-kpi__icon"><i class="fas fa-building" aria-hidden="true"></i></span>
+                <div>
+                    <p class="ab-kpi__label">Total</p>
+                    <p class="ab-kpi__value">{{ number_format($stats['total']) }}</p>
+                </div>
             </div>
-
-            <div class="tw-space-y-2 md:tw-col-span-1">
-                <label class="tw-text-xs tw-font-bold tw-text-slate-600">Sort</label>
-                <select name="sort" class="tw-w-full tw-rounded-xl tw-border tw-border-slate-200 tw-bg-white tw-text-sm tw-px-3 tw-py-2">
-                    @foreach(['created_at' => 'Created', 'name' => 'Name', 'trust_score' => 'Trust Score', 'overall_rating' => 'Overall Rating'] as $key => $label)
-                        <option value="{{ $key }}" @selected($sort === $key)>{{ $label }}</option>
-                    @endforeach
-                </select>
+            <div class="ab-kpi">
+                <span class="ab-kpi__icon"><i class="fas fa-check" aria-hidden="true"></i></span>
+                <div>
+                    <p class="ab-kpi__label">Active</p>
+                    <p class="ab-kpi__value">{{ number_format($stats['active']) }}</p>
+                </div>
             </div>
-
-            <div class="tw-space-y-2 md:tw-col-span-1">
-                <label class="tw-text-xs tw-font-bold tw-text-slate-600">Dir</label>
-                <select name="direction" class="tw-w-full tw-rounded-xl tw-border tw-border-slate-200 tw-bg-white tw-text-sm tw-px-3 tw-py-2">
-                    <option value="desc" @selected($direction === 'desc')>Desc</option>
-                    <option value="asc" @selected($direction === 'asc')>Asc</option>
-                </select>
+            <div class="ab-kpi">
+                <span class="ab-kpi__icon"><i class="fas fa-star" aria-hidden="true"></i></span>
+                <div>
+                    <p class="ab-kpi__label">Featured</p>
+                    <p class="ab-kpi__value">{{ number_format($stats['featured']) }}</p>
+                </div>
             </div>
-
-            <div class="tw-col-span-full tw-flex tw-justify-end tw-pt-1">
-                <button type="submit" class="tw-inline-flex tw-items-center tw-gap-2 tw-rounded-xl tw-bg-brand tw-text-white tw-px-5 tw-py-2.5 tw-text-sm tw-font-extrabold hover:tw-bg-brand/90">
-                    <i class="fas fa-filter"></i>
-                    Filter
-                </button>
-            </div>
-        </form>
-    </div>
-
-    <form method="POST" action="{{ route('admin_prop_firms_bulk') }}" id="bulk-form">
-        @csrf
-
-        <div class="tw-bg-white tw-rounded-2xl tw-border tw-border-slate-200/70 tw-px-5 tw-py-4 tw-mb-5">
-            <div class="tw-flex tw-items-center tw-justify-between tw-gap-4 tw-flex-wrap">
-                <label class="tw-flex tw-items-center tw-gap-3 tw-text-sm tw-font-extrabold tw-text-slate-800">
-                    <input type="checkbox" id="check-all" class="tw-w-4 tw-h-4 tw-rounded" />
-                    Select all
-                </label>
-
-                <div class="tw-flex tw-items-center tw-gap-3 tw-flex-wrap">
-                    <select name="action" class="tw-rounded-xl tw-border tw-border-slate-200 tw-bg-white tw-text-sm tw-px-3 tw-py-2" style="width:auto;">
-                        <option value="">Bulk action…</option>
-                        <option value="activate">Activate</option>
-                        <option value="deactivate">Deactivate</option>
-                        <option value="delete">Delete</option>
-                    </select>
-                    <button type="submit" class="tw-inline-flex tw-items-center tw-gap-2 tw-rounded-xl tw-border tw-border-slate-200 tw-bg-white tw-text-slate-800 tw-px-4 tw-py-2.5 tw-text-sm tw-font-extrabold hover:tw-bg-slate-50"
-                            onclick="return confirm('Apply bulk action to selected items?')">
-                        Apply
-                    </button>
+            <div class="ab-kpi">
+                <span class="ab-kpi__icon"><i class="fas fa-shield-alt" aria-hidden="true"></i></span>
+                <div>
+                    <p class="ab-kpi__label">Verified</p>
+                    <p class="ab-kpi__value">{{ number_format($stats['verified']) }}</p>
                 </div>
             </div>
         </div>
 
-        @if($propFirms->isEmpty())
-            <div class="tw-bg-white tw-rounded-2xl tw-border tw-border-slate-200/70 tw-px-6 tw-py-10 tw-text-sm tw-text-slate-600">
-                No prop firms found.
-            </div>
-        @else
-            <div class="tw-grid tw-grid-cols-1 md:tw-grid-cols-2 xl:tw-grid-cols-3 tw-gap-4">
-                @foreach($propFirms as $firm)
-                    <article class="tw-bg-white tw-rounded-2xl tw-border tw-border-slate-200/70 tw-overflow-hidden">
-                        <div class="tw-px-5 tw-py-4 tw-border-b tw-border-slate-100 tw-flex tw-items-start tw-justify-between tw-gap-4">
-                            <label class="tw-flex tw-items-center tw-gap-3">
-                                <input type="checkbox" name="ids[]" value="{{ $firm->id }}" class="row-check tw-w-4 tw-h-4 tw-rounded" />
-                                <div class="tw-w-10 tw-h-10 tw-rounded-xl tw-border tw-border-slate-200 tw-bg-slate-50 tw-flex tw-items-center tw-justify-center overflow-hidden">
-                                    @if($firm->logo)
-                                        <img src="{{ asset($firm->logo) }}" alt="{{ $firm->name }} logo" class="tw-w-full tw-h-full tw-object-contain" />
-                                    @else
-                                        <i class="fas fa-building tw-text-slate-400"></i>
-                                    @endif
-                                </div>
-                            </label>
+        <div class="ab-panel">
+            <form method="GET" action="{{ route('admin_prop_firms_show') }}" class="ab-filters ab-filters--5">
+                <div class="ab-field">
+                    <label for="ab-q">Search</label>
+                    <input id="ab-q" class="ab-input" type="search" name="q" value="{{ $filters['q'] }}" placeholder="Name, slug, HQ…">
+                </div>
+                <div class="ab-field">
+                    <label for="ab-category">Category</label>
+                    <select id="ab-category" class="ab-select" name="category_id">
+                        <option value="">All categories</option>
+                        @foreach($categories as $cat)
+                            <option value="{{ $cat->id }}" @selected((string) $filters['category_id'] === (string) $cat->id)>{{ $cat->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="ab-field">
+                    <label for="ab-status">Status</label>
+                    <select id="ab-status" class="ab-select" name="status">
+                        <option value="">All firms</option>
+                        <option value="active" @selected($filters['status'] === 'active')>Active</option>
+                        <option value="inactive" @selected($filters['status'] === 'inactive')>Inactive</option>
+                        <option value="featured" @selected($filters['status'] === 'featured')>Featured</option>
+                        <option value="verified" @selected($filters['status'] === 'verified')>Verified</option>
+                    </select>
+                </div>
+                <div class="ab-field">
+                    <label for="ab-sort">Sort</label>
+                    <select id="ab-sort" class="ab-select" name="sort">
+                        <option value="newest" @selected($filters['sort'] === 'newest')>Newest</option>
+                        <option value="name" @selected($filters['sort'] === 'name')>Name</option>
+                        <option value="trust" @selected($filters['sort'] === 'trust')>Trust score</option>
+                        <option value="rating" @selected($filters['sort'] === 'rating')>Rating</option>
+                    </select>
+                </div>
+                <div class="ab-header__actions">
+                    <button type="submit" class="ab-btn ab-btn--primary">Filter</button>
+                    @if($filters['q'] !== '' || $filters['category_id'] !== '' || $filters['status'] !== '' || $filters['sort'] !== 'newest')
+                        <a href="{{ route('admin_prop_firms_show') }}" class="ab-btn ab-btn--ghost">Reset</a>
+                    @endif
+                </div>
+            </form>
 
-                            <span class="tw-inline-flex tw-items-center tw-h-7 tw-px-3 tw-rounded-full tw-text-[11px] tw-font-extrabold tw-border {{ $firm->is_active ? 'tw-bg-emerald-50 tw-border-emerald-200 tw-text-emerald-700' : 'tw-bg-slate-50 tw-border-slate-200 tw-text-slate-700' }}">
-                                {{ $firm->is_active ? 'Active' : 'Inactive' }}
-                            </span>
+            @if($propFirms->isEmpty())
+                <div class="ab-empty">
+                    <h3>No prop firms match these filters</h3>
+                    <p>Try a different search, or add the first listing to the directory.</p>
+                    <a href="{{ route('admin_prop_firms_create') }}" class="ab-btn ab-btn--primary">Add prop firm</a>
+                </div>
+            @else
+                <form method="POST" action="{{ route('admin_prop_firms_bulk') }}" id="ab-bulk-form">
+                    @csrf
+                    <div class="ab-bulk">
+                        <label class="ab-broker__name" style="display:inline-flex;align-items:center;gap:.55rem;font-size:.875rem;">
+                            <input type="checkbox" id="ab-check-all">
+                            Select all on this page
+                        </label>
+                        <div class="ab-header__actions">
+                            <select name="action" class="ab-select" style="min-width:10rem;">
+                                <option value="">Bulk action…</option>
+                                <option value="activate">Activate</option>
+                                <option value="deactivate">Deactivate</option>
+                                <option value="delete">Delete</option>
+                            </select>
+                            <button type="submit" class="ab-btn ab-btn--ghost" onclick="return confirm('Apply this bulk action to the selected firms?')">Apply</button>
                         </div>
-
-                        <div class="tw-px-5 tw-py-4">
-                            <div class="tw-space-y-2">
-                                <div>
-                                    <p class="tw-text-[11px] tw-font-bold tw-uppercase tw-tracking-widest tw-text-slate-500">Name</p>
-                                    <p class="tw-mt-1 tw-text-base tw-font-extrabold tw-text-slate-900">{{ $firm->name }}</p>
-                                    <p class="tw-text-xs tw-text-slate-500">{{ $firm->slug }}</p>
-                                </div>
-
-                                <div class="tw-grid tw-grid-cols-2 tw-gap-3">
-                                    <div>
-                                        <p class="tw-text-[11px] tw-font-bold tw-uppercase tw-tracking-widest tw-text-slate-500">Category</p>
-                                        <p class="tw-text-sm tw-font-extrabold tw-text-slate-900">{{ $firm->category?->name ?? '—' }}</p>
-                                    </div>
-                                    <div>
-                                        <p class="tw-text-[11px] tw-font-bold tw-uppercase tw-tracking-widest tw-text-slate-500">Trust</p>
-                                        <p class="tw-text-sm tw-font-extrabold tw-text-slate-900">{{ $firm->trust_score ?? '—' }}</p>
-                                    </div>
-                                </div>
-
-                                <div class="tw-flex tw-items-center tw-gap-2 tw-flex-wrap">
-                                    <span class="tw-inline-flex tw-items-center tw-rounded-full tw-bg-amber-50 tw-border tw-border-amber-200 tw-px-2 tw-py-0.5 tw-text-[11px] tw-font-extrabold tw-text-amber-700">
-                                        Featured: {{ $firm->is_featured ? 'Yes' : 'No' }}
-                                    </span>
-                                    <span class="tw-inline-flex tw-items-center tw-rounded-full tw-bg-indigo-50 tw-border tw-border-indigo-200 tw-px-2 tw-py-0.5 tw-text-[11px] tw-font-extrabold tw-text-indigo-700">
-                                        Verified: {{ $firm->is_verified ? 'Yes' : 'No' }}
-                                    </span>
-                                </div>
-
-                                <div>
-                                    <p class="tw-text-[11px] tw-font-bold tw-uppercase tw-tracking-widest tw-text-slate-500">Created</p>
-                                    <p class="tw-mt-1 tw-text-sm tw-font-extrabold tw-text-slate-900">{{ $firm->created_at?->format('M d, Y') }}</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="tw-px-5 tw-pb-5">
-                            <div class="tw-flex tw-items-center tw-justify-end tw-gap-2 tw-flex-wrap">
-                                <a href="{{ route('admin_prop_firms_edit', $firm->id) }}"
-                                   class="tw-inline-flex tw-items-center tw-gap-2 tw-rounded-xl tw-bg-white tw-border tw-border-slate-200 tw-text-slate-800 tw-px-4 tw-py-2.5 tw-text-sm tw-font-extrabold hover:tw-bg-slate-50">
-                                    <i class="fas fa-edit tw-text-brand"></i>
-                                    Edit
-                                </a>
-
-                                <form action="{{ route('admin_prop_firms_delete', $firm->id) }}" method="POST" onsubmit="return confirm('Delete this prop firm?')">
-                                    @csrf @method('DELETE')
-                                    <button type="submit"
-                                            class="tw-inline-flex tw-items-center tw-gap-2 tw-rounded-xl tw-bg-rose-50 tw-border tw-border-rose-200 tw-text-rose-700 tw-px-4 tw-py-2.5 tw-text-sm tw-font-extrabold hover:tw-bg-rose-100">
-                                        <i class="fas fa-trash"></i>
-                                        Delete
-                                    </button>
-                                </form>
-                            </div>
-                        </div>
-                    </article>
-                @endforeach
-            </div>
-
-            <div class="tw-mt-8">
-                {{ $propFirms->links() }}
-            </div>
-        @endif
-    </form>
+                    </div>
+                </form>
+                <div class="ab-table-wrap">
+                        <table class="ab-table">
+                            <thead>
+                                <tr>
+                                    <th></th>
+                                    <th>Firm</th>
+                                    <th>Category</th>
+                                    <th>Trust</th>
+                                    <th>Rating</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($propFirms as $firm)
+                                    @php $logo = $firm->mediaUrl(); @endphp
+                                    <tr>
+                                        <td>
+                                            <input type="checkbox" class="ab-row-check" form="ab-bulk-form" name="ids[]" value="{{ $firm->id }}">
+                                        </td>
+                                        <td>
+                                            <div class="ab-broker">
+                                                <span class="ab-logo">
+                                                    @if($logo)
+                                                        <img src="{{ $logo }}" alt="">
+                                                    @else
+                                                        <span>{{ strtoupper(substr($firm->name, 0, 1)) }}</span>
+                                                    @endif
+                                                </span>
+                                                <div>
+                                                    <p class="ab-broker__name">{{ $firm->name }}</p>
+                                                    <p class="ab-broker__meta">{{ $firm->slug }} · {{ $firm->programs_count }} programs</p>
+                                                    <div class="ab-pills">
+                                                        @if($firm->is_active)<span class="ab-pill ab-pill--ok">Active</span>@else<span class="ab-pill">Inactive</span>@endif
+                                                        @if($firm->is_featured)<span class="ab-pill ab-pill--warn">Featured</span>@endif
+                                                        @if($firm->is_verified)<span class="ab-pill">Verified</span>@endif
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>{{ $firm->category?->name ?: '—' }}</td>
+                                        <td>{{ $firm->trust_score !== null ? number_format((float) $firm->trust_score, 1) : '—' }}</td>
+                                        <td>{{ $firm->overall_rating !== null ? number_format((float) $firm->overall_rating, 1) : '—' }}</td>
+                                        <td>
+                                            <div class="ab-actions">
+                                                <a class="ab-btn ab-btn--ghost ab-btn--sm" href="{{ route('admin_prop_firms_edit', $firm->id) }}">Edit</a>
+                                                @if($firm->slug)
+                                                    <a class="ab-btn ab-btn--ghost ab-btn--sm" href="{{ route('prop_firms.show', $firm->slug) }}" target="_blank" rel="noopener">Site</a>
+                                                @endif
+                                                <form action="{{ route('admin_prop_firms_delete', $firm->id) }}" method="POST" data-ab-delete data-ab-name="{{ $firm->name }}" data-ab-warn="This cannot be undone. Related programs, FAQs, and reviews will also be removed." data-ab-confirm="Delete firm">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="ab-btn ab-btn--danger ab-btn--sm">Delete</button>
+                                                </form>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="ab-foot">
+                        <span class="ab-broker__meta">Showing {{ $propFirms->firstItem() }}–{{ $propFirms->lastItem() }} of {{ $propFirms->total() }}</span>
+                        {{ $propFirms->links('pagination::bootstrap-4') }}
+                    </div>
+            @endif
+        </div>
+    </div>
 </div>
 @endsection
-
-@push('scripts')
-<script>
-document.getElementById('check-all')?.addEventListener('change', function () {
-    document.querySelectorAll('.row-check').forEach(cb => cb.checked = this.checked);
-});
-</script>
-@endpush

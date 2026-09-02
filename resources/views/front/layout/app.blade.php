@@ -1,6 +1,6 @@
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 
 <head>
     <meta charset="utf-8">
@@ -10,18 +10,27 @@
     @php
         $seoTitle = trim($__env->yieldContent('title')) ?: 'BrokersCourt - Compare and Find Top Forex Brokers, Reviews, and Deals';
         $seoDescription = trim($__env->yieldContent('meta_description')) ?: \App\Support\SiteTheme::defaultMetaDescription();
+        $seoKeywords = trim($__env->yieldContent('meta_keywords')) ?: null;
         $seoCanonical = trim($__env->yieldContent('canonical')) ?: url()->current();
+        $seoOgTitle = trim($__env->yieldContent('og_title')) ?: $seoTitle;
+        $seoOgDescription = trim($__env->yieldContent('og_description')) ?: $seoDescription;
         $seoOgImage = \App\Support\SiteTheme::ogImageUrl(trim($__env->yieldContent('og_image')) ?: null);
         $seoOgImageWidth = trim($__env->yieldContent('og_image_width')) ?: null;
         $seoOgImageHeight = trim($__env->yieldContent('og_image_height')) ?: null;
+        $seoOgType = trim($__env->yieldContent('og_type')) ?: 'website';
         $seoRobots = trim($__env->yieldContent('robots')) ?: 'index, follow';
         $seoSiteName = \App\Support\SiteTheme::siteName();
+        $seoLocale = trim($__env->yieldContent('og_locale')) ?: 'en_GB';
     @endphp
 
     <!-- SEO Meta Tags -->
     <meta name="description" content="{{ $seoDescription }}">
+    @if($seoKeywords)
+        <meta name="keywords" content="{{ $seoKeywords }}">
+    @endif
     <meta name="author" content="{{ $seoSiteName }}">
     <meta name="robots" content="{{ $seoRobots }}">
+    <meta name="theme-color" content="{{ \App\Support\SiteTheme::primary() }}">
     <link rel="canonical" href="{{ $seoCanonical }}">
 
     <title>{{ $seoTitle }}</title>
@@ -34,13 +43,14 @@
     <!-- End Google Tag Manager -->
 
     <!-- Open Graph / Facebook -->
-    <meta property="og:type" content="website">
+    <meta property="og:type" content="{{ $seoOgType }}">
+    <meta property="og:locale" content="{{ $seoLocale }}">
     <meta property="og:site_name" content="{{ $seoSiteName }}">
     <meta property="og:url" content="{{ $seoCanonical }}">
-    <meta property="og:title" content="{{ $seoTitle }}">
-    <meta property="og:description" content="{{ $seoDescription }}">
+    <meta property="og:title" content="{{ $seoOgTitle }}">
+    <meta property="og:description" content="{{ $seoOgDescription }}">
     <meta property="og:image" content="{{ $seoOgImage }}">
-    <meta property="og:image:alt" content="{{ $seoTitle }}">
+    <meta property="og:image:alt" content="{{ $seoOgTitle }}">
     @if($seoOgImageWidth)
         <meta property="og:image:width" content="{{ $seoOgImageWidth }}">
     @endif
@@ -50,20 +60,23 @@
 
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@BrokersCourt">
     <meta name="twitter:creator" content="@BrokersCourt">
-    <meta name="twitter:title" content="{{ $seoTitle }}">
-    <meta name="twitter:description" content="{{ $seoDescription }}">
+    <meta name="twitter:title" content="{{ $seoOgTitle }}">
+    <meta name="twitter:description" content="{{ $seoOgDescription }}">
     <meta name="twitter:image" content="{{ $seoOgImage }}">
+
+    <script type="application/ld+json">@json(\App\Support\SiteJsonLd::globalGraph())</script>
     @stack('json_ld')
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="{{ \App\Support\SiteTheme::faviconUrl() }}">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,6..12,400;0,6..12,500;0,6..12,600;0,6..12,700;0,6..12,800;1,6..12,400;1,6..12,600&display=swap" rel="stylesheet">
 
     <!-- Optimized CSS -->
-    <link href="{{ mix('css/app.css') }}?v=4" rel="stylesheet" data-bc-global>
+    <link href="{{ mix('css/app.css') }}?v=13" rel="stylesheet" data-bc-global>
     <link rel="dns-prefetch" href="https://www.googletagmanager.com">
     <link rel="preconnect" href="https://www.googletagmanager.com" crossorigin>
 
@@ -143,36 +156,45 @@
 
     @if(session('success'))
         <script>
-            Swal.fire({
-                icon: 'success',
-                title: 'Success!',
-                text: @json(session('success')),
-                confirmButtonColor: '#3085d6',
-                confirmButtonText: 'OK'
+            document.addEventListener('DOMContentLoaded', function () {
+                if (typeof Swal === 'undefined') return;
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success!',
+                    text: @json(session('success')),
+                    confirmButtonColor: getComputedStyle(document.documentElement).getPropertyValue('--bc-primary').trim() || '#e8822a',
+                    confirmButtonText: 'OK'
+                });
             });
         </script>
     @endif
 
     @if(session('error'))
         <script>
-            Swal.fire({
-                icon: 'error',
-                title: 'Error!',
-                text: @json(session('error')),
-                confirmButtonColor: '#d33',
-                confirmButtonText: 'OK'
+            document.addEventListener('DOMContentLoaded', function () {
+                if (typeof Swal === 'undefined') return;
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error!',
+                    text: @json(session('error')),
+                    confirmButtonColor: getComputedStyle(document.documentElement).getPropertyValue('--bc-danger').trim() || '#dc2626',
+                    confirmButtonText: 'OK'
+                });
             });
         </script>
     @endif
 
     @if($errors->any())
         <script>
-            Swal.fire({
-                icon: 'error',
-                title: 'Please fix the errors',
-                text: @json($errors->first()),
-                confirmButtonColor: '#d33',
-                confirmButtonText: 'OK'
+            document.addEventListener('DOMContentLoaded', function () {
+                if (typeof Swal === 'undefined') return;
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Please fix the errors',
+                    text: @json($errors->first()),
+                    confirmButtonColor: getComputedStyle(document.documentElement).getPropertyValue('--bc-danger').trim() || '#dc2626',
+                    confirmButtonText: 'OK'
+                });
             });
         </script>
     @endif

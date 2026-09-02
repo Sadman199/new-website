@@ -52,31 +52,31 @@
                         @if($promo->description)
                             <div class="br-promo__block">
                                 <h4>Description</h4>
-                                <div>{!! $promo->description !!}</div>
+                                <div class="br-prose">{!! \App\Support\RichText::forDisplay($promo->description) !!}</div>
                             </div>
                         @endif
                         @if($promo->details)
                             <div class="br-promo__block">
                                 <h4>Details</h4>
-                                <div>{!! $promo->details !!}</div>
+                                <div class="br-prose">{!! \App\Support\RichText::forDisplay($promo->details) !!}</div>
                             </div>
                         @endif
                         @if($promo->how_to_participate)
                             <div class="br-promo__block">
                                 <h4>How to participate</h4>
-                                <div>{!! $promo->how_to_participate !!}</div>
+                                <div class="br-prose">{!! \App\Support\RichText::forDisplay($promo->how_to_participate) !!}</div>
                             </div>
                         @endif
                         @if($promo->eligibility_criteria)
                             <div class="br-promo__block">
                                 <h4>Eligibility</h4>
-                                <div>{!! $promo->eligibility_criteria !!}</div>
+                                <div class="br-prose">{!! \App\Support\RichText::forDisplay($promo->eligibility_criteria) !!}</div>
                             </div>
                         @endif
                         @if($promo->general_terms)
                             <div class="br-promo__block">
                                 <h4>Terms</h4>
-                                <div>{!! $promo->general_terms !!}</div>
+                                <div class="br-prose">{!! \App\Support\RichText::forDisplay($promo->general_terms) !!}</div>
                             </div>
                         @endif
                         @if($promo->expiry_date)

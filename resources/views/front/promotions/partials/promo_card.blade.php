@@ -2,30 +2,69 @@
     $facts = collect([
         ['label' => 'Min. deposit', 'value' => $promo['min_deposit'] ?? null],
         ['label' => 'Max credit', 'value' => $promo['max_credit'] ?? null],
+        ['label' => 'Eligible', 'value' => $promo['eligible_clients'] ?? null],
         ['label' => 'Requirement', 'value' => $promo['requirement'] ?? null],
-    ])->filter(fn ($fact) => filled($fact['value']))->take(2)->values();
+    ])->filter(fn ($fact) => filled($fact['value']))->take(3)->values();
 
     $regulators = collect($promo['regulation_short'] ?? [])->take(2)->implode(' · ');
     $rating = $promo['broker_rating'] ?? null;
+    $typeTone = $promo['type_tone'] ?? 'deposit';
+    $expiryBadge = $promo['expiry_badge'] ?? null;
+    $viewUrl = $promo['detail_url'] ?? $promo['url'] ?? null;
 @endphp
 
-<article class="bpr-card {{ !empty($promo['is_featured']) ? 'is-featured' : '' }}">
-    <header class="bpr-card__brand">
-        <a href="{{ $promo['url'] }}" class="bpr-card__logo" tabindex="-1" aria-hidden="true">
+<article class="bpr-card bpr-card--{{ $typeTone }} {{ !empty($promo['is_featured']) ? 'is-featured' : '' }} {{ !empty($promo['is_urgent']) ? 'is-urgent' : '' }}">
+    @if(!empty($promo['feature_image']))
+        <a href="{{ $viewUrl }}" class="bpr-card__media" tabindex="-1" aria-hidden="true">
+            <img src="{{ $promo['feature_image'] }}"
+                 alt=""
+                 loading="lazy"
+                 decoding="async"
+                 width="400"
+                 height="160">
+        </a>
+    @endif
+
+    <div class="bpr-card__accent" aria-hidden="true"></div>
+
+    <header class="bpr-card__top">
+        <div class="bpr-card__tags">
+            <span class="bpr-card__type">{{ $promo['type_short'] }}</span>
+            @if(!empty($promo['is_featured']))
+                <span class="bpr-card__flag">Featured</span>
+            @endif
+            @if(!empty($promo['promotion_status_label']))
+                <span class="bpr-card__status bpr-card__status--{{ $promo['promotion_status'] ?? 'ongoing' }}">
+                    {{ $promo['promotion_status_label'] }}
+                </span>
+            @endif
+        </div>
+
+        @if($expiryBadge)
+            <span class="bc-expiry-badge bc-expiry-badge--pill bc-expiry-badge--{{ $expiryBadge['tone'] ?? 'normal' }}">
+                {{ $expiryBadge['short'] ?? $expiryBadge['label'] }}
+            </span>
+        @endif
+    </header>
+
+    <div class="bpr-card__brand">
+        <a href="{{ $viewUrl }}" class="bpr-card__logo" tabindex="-1" aria-hidden="true">
             @if(!empty($promo['broker_logo']))
                 <img src="{{ $promo['broker_logo'] }}"
                      alt=""
                      loading="lazy"
                      decoding="async"
-                     width="44"
-                     height="44">
+                     width="48"
+                     height="48">
             @else
-                <span class="bpr-card__logo-initial">{{ strtoupper(substr((string) $promo['broker_name'], 0, 1)) }}</span>
+                <span class="bpr-card__logo-initial">{{ strtoupper(substr((string) ($promo['broker_name'] ?? $promo['title']), 0, 1)) }}</span>
             @endif
         </a>
 
         <div class="bpr-card__brand-text">
-            <span class="bpr-card__broker">{{ $promo['broker_name'] }}</span>
+            @if(!empty($promo['broker_name']))
+                <span class="bpr-card__broker">{{ $promo['broker_name'] }}</span>
+            @endif
             @if($regulators)
                 <span class="bpr-card__regulators">{{ $regulators }}</span>
             @endif
@@ -39,21 +78,24 @@
                 {{ number_format($rating, 1) }}
             </span>
         @endif
-    </header>
+    </div>
 
     <div class="bpr-card__body">
-        <div class="bpr-card__tags">
-            <span class="bpr-card__type">{{ $promo['type_short'] }}</span>
-            @if(!empty($promo['is_featured']))
-                <span class="bpr-card__flag">Editor’s pick</span>
-            @endif
-        </div>
-
-        <p class="bpr-card__offer">{{ $promo['offer'] }}</p>
+        @if(!empty($promo['offer']))
+            <p class="bpr-card__offer">{{ $promo['offer'] }}</p>
+        @endif
 
         <h3 class="bpr-card__title">
-            <a href="{{ $promo['url'] }}">{{ \Illuminate\Support\Str::limit($promo['title'], 72) }}</a>
+            @if($viewUrl)
+                <a href="{{ $viewUrl }}">{{ \Illuminate\Support\Str::limit($promo['title'], 72) }}</a>
+            @else
+                {{ \Illuminate\Support\Str::limit($promo['title'], 72) }}
+            @endif
         </h3>
+
+        @if(!empty($promo['description']))
+            <p class="bpr-card__desc">{{ $promo['description'] }}</p>
+        @endif
 
         @if($facts->isNotEmpty())
             <dl class="bpr-card__facts">
@@ -65,18 +107,32 @@
                 @endforeach
             </dl>
         @endif
+
+        @if(!empty($promo['region_note']))
+            <p class="bpr-card__region">{{ $promo['region_note'] }}</p>
+        @endif
     </div>
 
     <footer class="bpr-card__foot">
-        <a href="{{ $promo['url'] }}" class="bpr-card__cta">
-            View offer
-            <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                <path fill-rule="evenodd" d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd"/>
-            </svg>
-        </a>
+        <div class="bpr-card__actions">
+            @if($viewUrl)
+                <a href="{{ $viewUrl }}" class="bpr-card__cta bpr-card__cta--view">View bonus</a>
+            @endif
+            @if(!empty($promo['affiliate_link']))
+                <a href="{{ $promo['affiliate_link'] }}"
+                   class="bpr-card__cta bpr-card__cta--claim"
+                   target="_blank"
+                   rel="noopener noreferrer nofollow">Claim bonus</a>
+            @endif
+        </div>
 
-        @if(!empty($promo['expiry']))
-            <span class="bpr-card__expiry">{{ $promo['expiry'] }}</span>
-        @endif
+        <div class="bpr-card__foot-meta">
+            @if(!empty($promo['broker_review_url']))
+                <a href="{{ $promo['broker_review_url'] }}" class="bpr-card__review">Broker review</a>
+            @endif
+            @if(!empty($promo['expiry']))
+                <span class="bpr-card__expiry">{{ $promo['expiry'] }}</span>
+            @endif
+        </div>
     </footer>
 </article>

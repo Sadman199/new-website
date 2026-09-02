@@ -4,12 +4,12 @@
     $normalized = \App\Support\SiteTheme::normalizeHex($value, $default ?? '#007AAD');
 @endphp
 
-<div class="form-group">
+<div class="form-group ab-color-field">
     <label class="font-weight-bold d-block" for="{{ $fieldId }}">{{ $label }}</label>
     @if(!empty($help))
         <p class="text-muted small mb-2">{{ $help }}</p>
     @endif
-    <div class="d-flex align-items-center flex-wrap" style="gap:0.75rem;">
+    <div class="ab-color-field__row">
         <input type="color"
                id="{{ $fieldId }}_picker"
                value="{{ $normalized }}"

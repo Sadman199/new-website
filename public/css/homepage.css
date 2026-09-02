@@ -392,11 +392,20 @@
         inset 0 1px 0 rgba(255, 255, 255, 0.9);
 }
 
+.bc-hero__quickbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.6rem 0.75rem;
+}
+
 .bc-hero__chips {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     gap: 0.5rem;
+    min-width: 0;
 }
 
 .bc-hero__chips-label {
@@ -405,9 +414,11 @@
     color: var(--hero-muted);
 }
 
-.bc-hero__chip {
+.bc-hero__chip,
+.bc-hero__filters-toggle {
     display: inline-flex;
     align-items: center;
+    gap: 0.4rem;
     padding: 0.35rem 0.75rem;
     font-size: 0.8125rem;
     font-weight: 600;
@@ -419,7 +430,9 @@
     transition: background 0.15s, border-color 0.15s, color 0.15s, box-shadow 0.15s;
 }
 
-.bc-hero__chip:hover {
+.bc-hero__chip:hover,
+.bc-hero__filters-toggle:hover,
+.bc-hero__filters-toggle.is-open {
     color: var(--hero-orange);
     background: rgba(255, 255, 255, 0.9);
     border-color: rgba(232, 130, 42, 0.35);
@@ -427,24 +440,15 @@
 }
 
 .bc-hero__filters-toggle {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 0.75rem;
-    width: 100%;
-    padding: 0.7rem 0.15rem 0.15rem;
-    font-size: 0.875rem;
-    font-weight: 600;
-    color: #4b5563;
-    background: none;
-    border: none;
-    border-top: 1px solid rgba(28, 30, 36, 0.08);
+    flex-shrink: 0;
     cursor: pointer;
-    transition: color 0.15s;
+    white-space: nowrap;
 }
 
-.bc-hero__filters-toggle:hover {
+.bc-hero__filters-toggle svg:first-child {
+    flex-shrink: 0;
     color: var(--hero-orange);
+    opacity: 0.85;
 }
 
 .bc-hero__filters-chevron {
@@ -458,7 +462,7 @@
 }
 
 .bc-hero__filters {
-    padding-top: 0.75rem;
+    margin-top: 0.75rem;
 }
 
 .bc-hero__filters[hidden] {
@@ -3716,10 +3720,10 @@
     transform: translateX(3px);
 }
 
-/* auto-fit keeps the row full whether 2 or 6 categories have a winner */
+/* Three award cards per row on desktop */
 .bc-awards__grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(15.5rem, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 1rem;
 }
 
@@ -4034,6 +4038,12 @@
 
 .bc-award-method:hover .bc-award-method__link svg {
     transform: translateX(3px);
+}
+
+@media (max-width: 991.98px) {
+    .bc-awards__grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
 }
 
 @media (max-width: 640px) {

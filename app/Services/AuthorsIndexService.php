@@ -61,6 +61,7 @@ class AuthorsIndexService
 
         $articles = Post::query()
             ->with('rSubCategory')
+            ->published()
             ->where(function ($query) use ($author) {
                 $query->where('written_by_author_id', $author->id)
                     ->orWhere('author_id', $author->id);

@@ -76,9 +76,7 @@
             @if($author['bio'])
                 <section class="aui-bio-box" aria-labelledby="auiBioTitle">
                     <h2 class="aui-bio-box__title" id="auiBioTitle">About {{ $author['name'] }}</h2>
-                    <div class="aui-bio-box__content">
-                        <p>{{ $author['bio'] }}</p>
-                    </div>
+                    <div class="aui-bio-box__content cms-prose">{!! \App\Support\RichText::forDisplay($author['bio']) !!}</div>
                 </section>
             @endif
 

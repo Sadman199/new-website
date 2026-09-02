@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
 use App\Models\Author;
 use App\Models\Post;
 use Illuminate\Http\Request;
@@ -13,25 +12,55 @@ use Illuminate\Validation\Rule;
 use App\Mail\Websitemail;
 use Throwable;
 
-class AdminAuthorController extends Controller
+class AdminAuthorController extends AdminController
 {
-    public function show()
+    public function show(Request $request)
     {
-        $authors = Author::query()
-            ->withCount([
-                'postsWritten as written_posts_count',
-                'postsEdited as edited_posts_count',
-                'postsFactChecked as fact_checked_posts_count',
-            ])
-            ->orderBy('name')
-            ->get();
+        $filters = [
+            'q' => trim((string) $request->get('q', '')),
+            'role' => (string) $request->get('role', ''),
+            'sort' => (string) $request->get('sort', 'name'),
+        ];
 
-        return view('admin.author_show', compact('authors'));
+        $query = Author::query()->withCount([
+            'postsWritten as written_posts_count',
+            'postsEdited as edited_posts_count',
+            'postsFactChecked as fact_checked_posts_count',
+        ]);
+
+        if ($filters['role'] === 'write') {
+            $query->where('can_write', true);
+        } elseif ($filters['role'] === 'edit') {
+            $query->where('can_edit', true);
+        } elseif ($filters['role'] === 'fact') {
+            $query->where('can_fact_check', true);
+        }
+
+        match ($filters['sort']) {
+            'newest' => $query->latest('id'),
+            'written' => $query->orderByDesc('written_posts_count'),
+            default => $query->orderBy('name'),
+        };
+
+        $authors = $this->paginateWithSearch($query, $request, ['name', 'email'], 12);
+
+        return view('admin.authors.show', [
+            'authors' => $authors,
+            'filters' => $filters,
+            'stats' => [
+                'total' => Author::query()->count(),
+                'writers' => Author::query()->where('can_write', true)->count(),
+                'editors' => Author::query()->where('can_edit', true)->count(),
+                'fact' => Author::query()->where('can_fact_check', true)->count(),
+            ],
+        ]);
     }
 
     public function create()
     {
-        return view('admin.author_create');
+        return view('admin.authors.create', [
+            'author' => new Author(['can_write' => true]),
+        ]);
     }
 
     public function store(Request $request)
@@ -42,7 +71,7 @@ class AdminAuthorController extends Controller
             'password' => 'required|min:6',
             'retype_password' => 'required|same:password',
             'photo' => 'nullable|image|mimes:jpg,jpeg,png,gif,webp',
-            'bio' => 'nullable|string|max:2000',
+            'bio' => 'nullable|string|max:20000',
             'twitter_url' => 'nullable|url|max:255',
             'linkedin_url' => 'nullable|url|max:255',
             'facebook_url' => 'nullable|url|max:255',
@@ -77,14 +106,30 @@ class AdminAuthorController extends Controller
             ]);
         }
 
-        return redirect()->route('admin_author_show')->with('success', 'Author account is created successfully.');
+        return redirect()->route('admin_author_show')->with('success', 'Author created.');
+    }
+
+    public function view($id)
+    {
+        $author = Author::query()
+            ->withCount([
+                'postsWritten as written_posts_count',
+                'postsEdited as edited_posts_count',
+                'postsFactChecked as fact_checked_posts_count',
+            ])
+            ->findOrFail($id);
+
+        return view('admin.authors.view', compact('author'));
     }
 
     public function edit($id)
     {
-        $author_data = Author::findOrFail($id);
+        $author = Author::findOrFail($id);
 
-        return view('admin.author_edit', compact('author_data'));
+        return view('admin.authors.edit', [
+            'author' => $author,
+            'author_data' => $author,
+        ]);
     }
 
     public function update(Request $request, $id)
@@ -99,7 +144,7 @@ class AdminAuthorController extends Controller
                 Rule::unique('authors')->ignore($author->id),
             ],
             'photo' => 'nullable|image|mimes:jpg,jpeg,png,gif,webp',
-            'bio' => 'nullable|string|max:2000',
+            'bio' => 'nullable|string|max:20000',
             'twitter_url' => 'nullable|url|max:255',
             'linkedin_url' => 'nullable|url|max:255',
             'facebook_url' => 'nullable|url|max:255',
@@ -124,12 +169,13 @@ class AdminAuthorController extends Controller
         $author->can_fact_check = $request->boolean('can_fact_check');
         $author->save();
 
-        return redirect()->route('admin_author_show')->with('success', 'Data is updated successfully.');
+        return redirect()->route('admin_author_show')->with('success', 'Author saved.');
     }
 
     public function delete($id)
     {
         $author = Author::findOrFail($id);
+        $name = $author->name;
 
         Post::query()->where('author_id', $author->id)->update(['author_id' => 0]);
         Post::query()->where('written_by_author_id', $author->id)->update(['written_by_author_id' => null]);
@@ -139,7 +185,7 @@ class AdminAuthorController extends Controller
         $this->deletePhoto($author->photo);
         $author->delete();
 
-        return redirect()->route('admin_author_show')->with('success', 'Author is deleted successfully.');
+        return redirect()->route('admin_author_show')->with('success', '"'.$name.'" was deleted.');
     }
 
     protected function storePhoto(Request $request): string

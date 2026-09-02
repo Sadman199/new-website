@@ -21,7 +21,7 @@
                             <p class="cms-team__role">{{ $member['role'] }}</p>
                         @endif
                         @if(!empty($member['bio']))
-                            <p class="cms-team__bio">{!! nl2br(e($member['bio'])) !!}</p>
+                            <div class="cms-team__bio cms-prose">{!! \App\Support\RichText::forDisplay($member['bio'] ?? null) !!}</div>
                         @endif
                     </article>
                 @endforeach

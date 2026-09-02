@@ -1,11 +1,11 @@
 @extends('front.layout.app')
 
 @section('title', 'Best brokers for every need in ' . date('Y') . ' | BrokersCourt')
-@section('meta_description', 'Explore editor-picked best broker rankings by trading style, platform, asset class, and country. Find the ideal broker for your goals.')
+@section('meta_description', $pageLead ?? 'Compare regulated brokers with competitive fees, robust platforms, and transparent trading conditions.')
 @section('canonical', route('brokers.best.index'))
 
 @push('page-styles')
-    <link rel="stylesheet" href="{{ asset('css/best-brokers-index.css') }}?v=7">
+    <link rel="stylesheet" href="{{ asset('css/best-brokers-index.css') }}?v=9">
 @endpush
 
 @section('main_content')
@@ -13,9 +13,9 @@
     $popularLists = collect($toplists)->where('popular', true)->values();
     $allLists = collect($toplists)->where('popular', false)->values();
     $countryListsCount = collect($toplists)->where('type', 'country')->count();
-    $countryName = ($preferredCountry['slug'] ?? 'global') === 'global'
-        ? null
-        : ($preferredCountry['name'] ?? null);
+    $countrySlug = $preferredCountry['slug'] ?? 'global';
+    $countryName = $countrySlug === 'global' ? null : ($preferredCountry['name'] ?? null);
+    $heroLead = $pageLead ?? 'Compare regulated brokers that offer competitive fees, robust platforms, and transparent trading conditions.';
     $awardsSpotlight = [
         'title' => 'Meet the Best of the Best',
         'description' => 'BrokersCourt Awards ' . date('Y') . ' winners are here!',
@@ -33,8 +33,15 @@
             </nav>
 
             <p class="bbh-hero__eyebrow">Independent broker research</p>
-            <h1 class="bbh-hero__title">Explore the <span class="bbh-hero__accent">top brokers</span> for every need</h1>
-            <p class="bbh-hero__subtitle">Browse our editor-picked rankings to find the ideal broker for your goals</p>
+            <h1 class="bbh-hero__title">
+                Best brokers
+                @if($countryName)
+                    in <span class="bbh-hero__accent">{{ $countryName }}</span>
+                @else
+                    for <span class="bbh-hero__accent">every trader</span>
+                @endif
+            </h1>
+            <p class="bbh-hero__subtitle">{{ $heroLead }}</p>
 
             @include('front.brokers.partials.country_context_hero')
 
@@ -45,7 +52,7 @@
                 <input type="search"
                        id="bbhHeroSearchInput"
                        class="bbh-hero__search"
-                       placeholder="Search by keyword e.g. 'low fees'"
+                       placeholder="Search broker lists by name"
                        autocomplete="off"
                        aria-label="Search broker lists">
             </div>
@@ -59,7 +66,7 @@
                 <input type="search"
                        id="bbhSearchInput"
                        class="bbh-filters__search bbh-filters__search--desktop"
-                       placeholder="Search by keyword e.g. 'low fees'"
+                       placeholder="Search broker lists by name"
                        autocomplete="off"
                        aria-label="Search broker lists">
                 <button type="button" class="bbh-filters__reset" id="bbhResetFiltersTop">

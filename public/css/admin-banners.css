@@ -1,0 +1,181 @@
+/* Banner admin form — single-column hub layout */
+.ab-page--banners .ab-banner-form {
+    max-width: none;
+    width: 100%;
+}
+
+.ab-banner-form__stack {
+    display: grid;
+    gap: 1rem;
+}
+
+.ab-banner-form__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    padding: 0.15rem 0 0.5rem;
+}
+
+.ab-banner-format {
+    margin: 0;
+    padding: 0;
+    border: 0;
+}
+
+.ab-banner-format legend {
+    margin-bottom: 0.55rem;
+    font-size: 0.875rem;
+    font-weight: 700;
+}
+
+.ab-banner-format__grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem;
+}
+
+.ab-banner-choice {
+    display: flex;
+    gap: 0.7rem;
+    align-items: flex-start;
+    margin: 0;
+    padding: 0.85rem 0.95rem;
+    cursor: pointer;
+    background: #fff;
+    border: 1px solid var(--ab-border, #e8e3da);
+    border-radius: 0.9rem;
+}
+
+.ab-banner-choice:has(input:checked),
+.ab-banner-choice.is-selected {
+    border-color: rgba(232, 130, 42, 0.55);
+    background: rgba(232, 130, 42, 0.06);
+    box-shadow: 0 0 0 3px rgba(232, 130, 42, 0.12);
+}
+
+.ab-banner-choice input {
+    margin-top: 0.2rem;
+    accent-color: var(--ab-brand, #e8822a);
+}
+
+.ab-banner-choice strong {
+    display: block;
+    font-size: 0.9rem;
+    color: var(--ab-ink, #1c1e24);
+}
+
+.ab-banner-choice small {
+    display: block;
+    margin-top: 0.2rem;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--ab-muted, #64748b);
+}
+
+.ab-banner-uploads {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+}
+
+.ab-banner-upload {
+    padding: 0.9rem 1rem 1rem;
+    background: #faf8f4;
+    border: 1px dashed var(--ab-border, #e8e3da);
+    border-radius: 0.9rem;
+}
+
+.ab-page--banners .ab-banner-upload input[type="file"] {
+    max-width: 100%;
+}
+
+.ab-page--banners .form-control.is-invalid,
+.ab-page--banners .ab-html-code.is-invalid {
+    border-color: #dc2626;
+    box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.12);
+}
+
+.ab-banner-placement-select {
+    display: block;
+    width: 100%;
+    min-height: 42px;
+    height: 42px;
+}
+
+.ab-banner-field--full,
+.ab-banner-field--full .select2-container,
+.ab-page--banners .select2-container {
+    display: block;
+    width: 100% !important;
+}
+
+.ab-page--banners #banner_placement,
+.ab-page--banners #targeting,
+.ab-page--banners #broker_id,
+.ab-page--banners #broker_ids,
+.ab-page--banners #page_path {
+    width: 100%;
+}
+
+.ab-page--banners .select2-container .select2-selection--single,
+.ab-page--banners .select2-container .select2-selection--multiple {
+    min-height: 42px;
+    border-color: var(--ab-border, #e8e3da);
+    border-radius: 0.7rem;
+}
+
+.ab-page--banners .select2-container--default .select2-selection--single .select2-selection__rendered {
+    line-height: 40px;
+    padding-left: 12px;
+}
+
+.ab-banner-broker-box {
+    padding: 1rem 1.05rem 1.05rem;
+    background: #fffaf4;
+    border: 1px solid rgba(232, 130, 42, 0.35);
+    border-radius: 0.9rem;
+}
+
+.ab-html-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+    margin-bottom: 0.75rem;
+}
+
+.ab-html-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+    gap: 0.9rem;
+    align-items: stretch;
+}
+
+.ab-html-code {
+    min-height: 18rem;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 0.8125rem;
+    line-height: 1.5;
+}
+
+.ab-html-preview-label {
+    margin: 0 0 0.4rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--ab-muted, #64748b);
+}
+
+.ab-html-preview {
+    width: 100%;
+    min-height: 18rem;
+    background: #f7f5f1;
+    border: 1px solid var(--ab-border, #e8e3da);
+    border-radius: 0.85rem;
+}
+
+@media (max-width: 900px) {
+    .ab-banner-format__grid,
+    .ab-banner-uploads,
+    .ab-html-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}

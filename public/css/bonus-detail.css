@@ -1,4 +1,4 @@
-﻿/* Bonus detail — BrokersCourt premium theme */
+/* Bonus detail — BrokersCourt premium theme */
 .bbd-page {
     --bbd-ocean: #e8822a;
     --bbd-ocean-dark: #c46a16;
@@ -330,11 +330,68 @@
 }
 
 .bbd-panel__title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
     margin: 0 0 0.875rem;
     font-size: 1.0625rem;
     font-weight: 800;
     color: var(--bbd-text);
     letter-spacing: -0.02em;
+}
+
+.bbd-panel__title-icon {
+    width: 1.125rem;
+    height: 1.125rem;
+    flex-shrink: 0;
+    color: var(--bbd-ocean);
+}
+
+/* Prize & special conditions ? emphasized panel */
+.bbd-panel--prize {
+    background: linear-gradient(135deg, var(--bbd-surface) 0%, rgba(232, 130, 42, 0.05) 100%);
+    border-color: rgba(232, 130, 42, 0.22);
+}
+
+/* How to get it ? numbered step timeline for list-based content */
+.bbd-panel--steps .bbd-panel__content--html ol,
+.bbd-panel--steps .bbd-panel__content--html ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    counter-reset: bbd-step;
+    display: grid;
+    gap: 0.75rem;
+}
+
+.bbd-panel--steps .bbd-panel__content--html li {
+    position: relative;
+    counter-increment: bbd-step;
+    padding: 0.75rem 0.875rem 0.75rem 2.75rem;
+    background: #faf8f4;
+    border: 1px solid var(--bbd-border);
+    border-radius: 0.625rem;
+}
+
+.bbd-panel--steps .bbd-panel__content--html li + li {
+    margin-top: 0;
+}
+
+.bbd-panel--steps .bbd-panel__content--html li::before {
+    content: counter(bbd-step);
+    position: absolute;
+    left: 0.75rem;
+    top: 0.75rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.5rem;
+    height: 1.5rem;
+    font-size: 0.75rem;
+    font-weight: 800;
+    color: #fff;
+    background: var(--bbd-ocean);
+    border-radius: 999px;
 }
 
 .bbd-panel--stats {
@@ -420,6 +477,32 @@
 
 .bbd-panel__content--html li + li {
     margin-top: 0.35rem;
+}
+
+.bbd-panel__content--html img,
+.bbd-panel__content--html table {
+    max-width: 100%;
+    height: auto;
+}
+
+.bbd-panel__content--html table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 0.85rem 0;
+}
+
+.bbd-panel__content--html th,
+.bbd-panel__content--html td {
+    border: 1px solid #e7e5e4;
+    padding: 0.45rem 0.6rem;
+    text-align: left;
+}
+
+.bbd-panel__content--html blockquote {
+    margin: 0.85rem 0;
+    padding: 0.25rem 0.85rem;
+    border-left: 3px solid #e8822a;
+    color: #57534e;
 }
 
 .bbd-highlights {

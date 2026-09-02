@@ -14,6 +14,7 @@ use App\Helper\Helpers;
 use App\Services\BestBrokerGuideService;
 use App\Services\BlogIndexService;
 use App\Services\BestBrokersIndexService;
+use App\Services\TopBrokersIndexService;
 use App\Services\AwardsIndexService;
 use App\Services\BrokerReviewsIndexService;
 use App\Services\BrokerAssessmentService;
@@ -71,8 +72,29 @@ class BrokerController extends Controller
 
         $toplists = $indexService->toplists();
         $filterGroups = $indexService->filterGroups();
+        $pageLead = $indexService->heroLead(BrokerTaxonomy::resolvePreferredCountry());
 
-        return view('front.brokers.best_brokers_index', compact('toplists', 'filterGroups'));
+        return view('front.brokers.best_brokers_index', compact('toplists', 'filterGroups', 'pageLead'));
+    }
+
+    public function topBrokersIndex(
+        TopBrokersIndexService $topBrokersIndexService,
+        BrokerReviewsIndexService $reviewsIndexService
+    ) {
+        Helpers::read_json();
+
+        $page = $topBrokersIndexService->pageData($reviewsIndexService);
+
+        return view('front.brokers.top_brokers_index', [
+            'brokers' => collect($page['brokers']),
+            'totalBrokers' => $page['total_brokers'],
+            'editorPicks' => $page['editor_picks'],
+            'updatedLabel' => $page['updated_label'],
+            'awardCategories' => $page['award_categories'],
+            'brokerCategories' => $page['broker_categories'],
+            'regulationTabs' => $page['regulation_tabs'],
+            'quickFilters' => $topBrokersIndexService->quickFilters(),
+        ]);
     }
 
     public function reviewsIndex(
@@ -384,16 +406,14 @@ public function byAward($award)
 
 
 
-    public function bestBrokers($slug, BestBrokerGuideService $guideService, BlogIndexService $blogIndexService)
+    public function bestBrokers($slug, BestBrokerGuideService $guideService)
     {
         $slug = $this->resolveCategorySlug($slug);
         $guidePage = $guideService->build($slug);
 
         abort_if($guidePage === null, 404);
 
-        $latestPosts = $blogIndexService->latestPosts($blogIndexService->resolveLanguageId(), 3);
-
-        return view('front.brokers.best_broker_guide', compact('guidePage', 'latestPosts'));
+        return view('front.brokers.best_broker_guide', compact('guidePage'));
     }
 
     public function legacyBestBrokerRedirect(string $slug)

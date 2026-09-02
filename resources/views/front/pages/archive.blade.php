@@ -1,5 +1,6 @@
 @extends('front.layout.app')
 @section('title', 'Blog Archive | Discover Forex Insights and Broker Tips')
+@section('meta_description', 'Browse archived forex broker insights, trading tips, and market analysis published on BrokersCourt.')
 @section('main_content')
 <div id="loader-overlay">
     <div class="loader"></div>
@@ -10,7 +11,7 @@
             <div class="row d-flex align-items-center justify-content-center">
                 <div class="col-md-7">
                     <div class="hero-content">
-                        <h2 class="b_c_h">{{ ALL_POSTS_OF }} {{ $updated_date }}</h2>
+                        <h1 class="b_c_h">{{ ALL_POSTS_OF }} {{ $updated_date }}</h1>
                         <nav>
                             <ol class="breadcrumb">
                                 <li class="breadcrumb-item"><a href="{{ route('home') }}">{{ HOME }}</a></li>

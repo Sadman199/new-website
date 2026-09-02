@@ -40,8 +40,6 @@ class BrokerReviewJsonLd
         $faqItems = Collection::make($faqs)->values();
 
         $graph = [
-            self::organization($orgId, $siteUrl),
-            self::website($websiteId, $orgId, $siteUrl),
             self::webPage($pageId, $canonical, $broker, $orgId, $brokerId, $breadcrumbId),
             self::breadcrumb($breadcrumbId, $canonical, $broker),
             self::financialService($brokerId, $canonical, $broker, $reviews, $reviewStats, $snapshot),

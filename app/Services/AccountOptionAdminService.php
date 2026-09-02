@@ -42,9 +42,10 @@ class AccountOptionAdminService
 
         $option->features = $this->normalizeArrayInput($request->input('features', []));
 
-        if (empty($option->slug)) {
-            $option->slug = Str::slug($option->account_type);
-        }
+        $slug = trim((string) ($option->slug ?: ''));
+        $option->slug = $slug === ''
+            ? $this->uniqueSlug('', $option->id, $brokerId, $option->account_type)
+            : (Str::slug($slug) ?: $this->uniqueSlug('', $option->id, $brokerId, $option->account_type));
 
         if ($request->filled('max_leverage_numeric')) {
             $numeric = (int) $request->input('max_leverage_numeric');
@@ -135,6 +136,26 @@ class AccountOptionAdminService
         $items = array_values(array_filter(array_map('trim', $value)));
 
         return $items ?: null;
+    }
+
+    protected function uniqueSlug(string $slug, ?int $ignoreId, int $brokerId, mixed $accountType): string
+    {
+        $base = Str::slug($slug) ?: Str::slug((string) $accountType) ?: 'account-'.Str::lower(Str::random(6));
+        $candidate = $base;
+        $suffix = 2;
+
+        while (
+            AccountOption::query()
+                ->where('broker_id', $brokerId)
+                ->where('slug', $candidate)
+                ->when($ignoreId, fn ($query) => $query->where('id', '!=', $ignoreId))
+                ->exists()
+        ) {
+            $candidate = $base.'-'.$suffix;
+            $suffix++;
+        }
+
+        return $candidate;
     }
 
     protected function parseLeverageNumeric(string $raw): ?int

@@ -30,6 +30,7 @@ class NewsController extends Controller
 
         // Query latest posts for current language
         $posts = Post::with(['rSubCategory', 'author'])
+            ->published()
             ->where('language_id', $current_language_id)
             ->orderBy('id', 'desc')
             ->paginate(12);
@@ -55,6 +56,7 @@ class NewsController extends Controller
 
         // Query popular posts ordered by 'visitors' count descending
         $posts = Post::with(['rSubCategory', 'author'])
+            ->published()
             ->where('language_id', $current_language_id)
             ->orderBy('visitors', 'desc')
             ->paginate(12);
@@ -65,12 +67,24 @@ class NewsController extends Controller
         ]);
     }
 
-    public function blog(BlogIndexService $blogIndexService)
+    public function blog(Request $request, BlogIndexService $blogIndexService)
     {
         $languageId = $blogIndexService->resolveLanguageId();
-        $subcategory = request()->query('subcategory');
 
-        $indexData = $blogIndexService->buildIndex($languageId, $subcategory);
+        $indexData = $blogIndexService->buildIndex(
+            $languageId,
+            $request->query('category'),
+            $request->query('subcategory')
+        );
+
+        if ($request->ajax() || $request->boolean('ajax')) {
+            return response()->json([
+                'activeTab' => $indexData['activeTab'],
+                'activeTabName' => $indexData['activeTabName'],
+                'title' => $indexData['pageTitle'],
+                'html' => view('front.blog.partials.feed', $indexData)->render(),
+            ]);
+        }
 
         return view('front.blog.index', $indexData);
     }

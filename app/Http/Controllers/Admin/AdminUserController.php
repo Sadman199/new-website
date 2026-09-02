@@ -39,6 +39,7 @@ class AdminUserController extends Controller
             'total' => User::count(),
             'verified' => User::where('is_verified', true)->count(),
             'unverified' => User::where('is_verified', false)->count(),
+            'banned' => User::where('status', 'banned')->count(),
         ];
 
         return view('admin.users.index', compact('users', 'counts', 'search', 'filter'));

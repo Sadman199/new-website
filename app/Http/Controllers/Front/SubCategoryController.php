@@ -30,6 +30,7 @@ class SubCategoryController extends Controller
 
         // Fetch posts under the sub-category with related sub-category and author
         $post_data = Post::with(['rSubCategory', 'author'])
+            ->published()
             ->where('sub_category_id', $sub_category_data->id)
             ->where('language_id', $current_language_id)
             ->orderBy('id', 'desc')
@@ -47,7 +48,7 @@ class SubCategoryController extends Controller
         foreach ($all_tags as $tag) {
             $tag_posts = Tag::where('tag_name', $tag->tag_name)->pluck('post_id');
 
-            $count = Post::whereIn('id', $tag_posts)
+            $count = Post::published()->whereIn('id', $tag_posts)
                 ->where('language_id', $current_language_id)
                 ->count();
 

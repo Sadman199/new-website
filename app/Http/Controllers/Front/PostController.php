@@ -30,22 +30,31 @@ class PostController extends Controller
         }
     
         // Fetch the post by slug and ensure it belongs to the correct subcategory
-        $post_detail = Post::with([
-                'rSubCategory',
-                'writtenByAuthor',
-                'editedByAuthor',
-                'factCheckedByAuthor',
-                'writtenByAdmin',
-                'editedByAdmin',
-                'factCheckedByAdmin',
-                'author',
-            ])
+        $relations = [
+            'rSubCategory',
+            'writtenByAuthor',
+            'editedByAuthor',
+            'factCheckedByAuthor',
+            'writtenByAdmin',
+            'editedByAdmin',
+            'factCheckedByAdmin',
+            'author',
+            'tags',
+        ];
+
+        if (\Illuminate\Support\Facades\Schema::hasTable('post_broker')) {
+            $relations[] = 'brokers';
+        }
+        if (\Illuminate\Support\Facades\Schema::hasTable('post_related')) {
+            $relations[] = 'relatedPosts.rSubCategory';
+        }
+
+        $post_detail = Post::with($relations)
             ->where('slug', $post_slug)
             ->where('sub_category_id', $subcategory->id)
             ->first();
     
-        if (!$post_detail) {
-            // Handle case where post is not found
+        if (! $post_detail || ! $post_detail->isPubliclyVisible()) {
             abort(404, 'Post not found');
         }
     
@@ -74,21 +83,38 @@ class PostController extends Controller
         $postMeta = $blogIndexService->serializePost($post_detail);
 
         // Fetch tags related to this post
-        $tag_data = Tag::where('post_id', $post_detail->id)->get();
-    
-        // Fetch related posts
-        $related_post_array = Post::with('rSubCategory')
-            ->where('sub_category_id', $post_detail->sub_category_id)
-            ->orderBy('id', 'desc')
-            ->get();
+        $tag_data = $post_detail->relationLoaded('tags')
+            ? $post_detail->tags
+            : Tag::where('post_id', $post_detail->id)->get();
+
+        $related_post_array = collect();
+        if ($post_detail->shouldShowRelatedPosts()) {
+            $manualRelated = collect();
+            if (\Illuminate\Support\Facades\Schema::hasTable('post_related')) {
+                $manualRelated = $post_detail->relationLoaded('relatedPosts')
+                    ? $post_detail->relatedPosts
+                    : $post_detail->relatedPosts()->with('rSubCategory')->get();
+            }
+
+            $related_post_array = $manualRelated->filter(fn (Post $post) => $post->isPubliclyVisible());
+
+            if ($related_post_array->isEmpty()) {
+                $related_post_array = Post::with('rSubCategory')
+                    ->published()
+                    ->where('sub_category_id', $post_detail->sub_category_id)
+                    ->where('id', '!=', $post_detail->id)
+                    ->orderBy('id', 'desc')
+                    ->limit(6)
+                    ->get();
+            }
+        }
 
         $relatedCards = $related_post_array
-            ->filter(fn (Post $post) => $post->id !== $post_detail->id)
-            ->take(3)
+            ->take(6)
             ->map(fn (Post $post) => $blogIndexService->serializePost($post))
             ->values();
 
-        $recommendedBrokers = $blogPostDetailService->recommendedBrokers();
+        $recommendedBrokers = $blogPostDetailService->recommendedBrokersFor($post_detail);
         $depositBonuses = $blogPostDetailService->latestDepositBonuses();
 
         $guidePageMeta = [

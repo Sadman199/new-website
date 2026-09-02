@@ -314,7 +314,7 @@ class FooterIndexService
 
             ['label' => 'Blog & news', 'url' => route('blog')],
 
-            ['label' => 'Trading tools', 'url' => route('trading.tools')],
+            ['label' => 'Trading tools', 'url' => route('calculators.index')],
 
             ['label' => 'Prop firms', 'url' => route('prop_firms.index')],
 

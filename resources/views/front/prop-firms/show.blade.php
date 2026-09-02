@@ -8,8 +8,8 @@
 @section('og_image', $firm->og_image ?: ($firm->logo ?: ''))
 
 @push('page-styles')
-    <link rel="stylesheet" href="{{ asset('css/prop-firms-design-system.css') }}?v=5">
-    <link rel="stylesheet" href="{{ asset('css/prop-firm-detail.css') }}?v=5">
+    <link rel="stylesheet" href="{{ asset('css/prop-firms-design-system.css') }}?v=6">
+    <link rel="stylesheet" href="{{ asset('css/prop-firm-detail.css') }}?v=6">
 @endpush
 
 @section('main_content')
@@ -52,7 +52,7 @@
                     </div>
 
                     @if($firm->description)
-                        <p class="pf-detail__desc">{{ $firm->description }}</p>
+                        <div class="pf-detail__desc cms-prose">{!! \App\Support\RichText::forDisplay($firm->description) !!}</div>
                     @endif
 
                     <div class="pf-detail__stats">
@@ -158,7 +158,7 @@
                             <span class="pf-score">★ {{ number_format($review->rating, 1) }}</span>
                         </div>
                         <p class="pf-review__meta">{{ $review->author ?? 'Trader' }}</p>
-                        <p class="pf-review__body">{{ $review->content }}</p>
+                        <div class="pf-review__body cms-prose">{!! \App\Support\RichText::forDisplay($review->content) !!}</div>
                     </article>
                 @endforeach
             </section>
@@ -174,7 +174,7 @@
                                 {{ $faq->question }}
                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
                             </button>
-                            <div class="pf-faq__a">{{ $faq->answer }}</div>
+                            <div class="pf-faq__a cms-prose">{!! \App\Support\RichText::forDisplay($faq->answer) !!}</div>
                         </div>
                     @endforeach
                 </div>

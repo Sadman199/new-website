@@ -6,32 +6,33 @@ use App\Http\Controllers\Controller;
 use App\Helper\Helpers;
 use App\Models\Language;
 use App\Models\TradingTool;
-use App\Services\BlogIndexService;
 use App\Services\TradingCalculator;
 use App\Support\TradingToolsRegistry;
 use Illuminate\Http\Request;
 
 class TradingToolsController extends Controller
 {
-    public function index(Request $request)
+    public function calculatorsIndex(Request $request)
     {
         if ($request->filled('tool')) {
             $routeSlug = TradingToolsRegistry::routeSlug((string) $request->query('tool'));
 
             if ($routeSlug) {
-                return redirect()->route('trading.tools.show', ['slug' => $routeSlug], 301);
+                return redirect()->route('calculators.show', ['slug' => $routeSlug], 301);
             }
         }
 
         Helpers::read_json();
         $current_short_name = $this->currentShortName();
-        $tools = $this->resolveTools();
-        $latestPosts = app(BlogIndexService::class)->latestPosts(
-            app(BlogIndexService::class)->resolveLanguageId(),
-            3
-        );
+        $calculators = $this->resolveCalculators();
+        $widgetTool = $this->resolveTools()->firstWhere('slug', 'live-markets');
 
-        return view('front.trading-tools.index', compact('current_short_name', 'tools', 'latestPosts'));
+        return view('front.calculators.index', compact('current_short_name', 'calculators', 'widgetTool'));
+    }
+
+    public function index(Request $request)
+    {
+        return redirect()->route('calculators.index', $request->query(), 301);
     }
 
     public function show(string $slug)
@@ -43,8 +44,10 @@ class TradingToolsController extends Controller
 
         $current_short_name = $this->currentShortName();
         $tools = $this->resolveTools();
+        $calculators = $this->resolveCalculators();
         $tool = $tools->firstWhere('slug', $toolKey);
         abort_if(! $tool, 404);
+        $calculator = $tool;
 
         $meta = TradingToolsRegistry::meta($toolKey);
 
@@ -52,7 +55,9 @@ class TradingToolsController extends Controller
             return view('front.trading-tools.show-live-markets', compact(
                 'current_short_name',
                 'tools',
+                'calculators',
                 'tool',
+                'calculator',
                 'toolKey',
                 'meta',
                 'slug'
@@ -63,10 +68,12 @@ class TradingToolsController extends Controller
         $currencies = array_keys(TradingCalculator::defaultRates());
         $rates = TradingCalculator::defaultRates();
 
-        return view('front.trading-tools.show', compact(
+        return view('front.calculators.show', compact(
             'current_short_name',
             'tools',
+            'calculators',
             'tool',
+            'calculator',
             'toolKey',
             'meta',
             'pairs',
@@ -170,6 +177,14 @@ class TradingToolsController extends Controller
         }
 
         return $tools->values();
+    }
+
+    /** @return \Illuminate\Support\Collection<int, object> */
+    private function resolveCalculators()
+    {
+        return $this->resolveTools()
+            ->filter(fn ($tool) => ! TradingToolsRegistry::isWidget($tool->slug))
+            ->values();
     }
 
     /** @return array<int, object> */

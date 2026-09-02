@@ -30,47 +30,6 @@
     height: 100%;
 }
 
-.broker-card__compare {
-    position: absolute;
-    top: 0.875rem;
-    right: 0.875rem;
-    z-index: 2;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.375rem;
-    padding: 0.3125rem 0.625rem;
-    font-size: 0.6875rem;
-    font-weight: 700;
-    letter-spacing: 0.02em;
-    text-transform: uppercase;
-    color: var(--bc-muted);
-    background: rgba(255, 255, 255, 0.92);
-    border: 1px solid var(--bc-border);
-    border-radius: 999px;
-    cursor: pointer;
-    user-select: none;
-    transition: border-color var(--bc-transition), color var(--bc-transition), background var(--bc-transition);
-}
-
-.broker-card__compare:has(input:checked) {
-    color: var(--bc-primary);
-    border-color: rgba(var(--bc-primary-rgb), 0.35);
-    background: rgba(var(--bc-primary-rgb), 0.08);
-}
-
-.broker-card__compare-input {
-    width: 0.875rem;
-    height: 0.875rem;
-    margin: 0;
-    accent-color: var(--bc-primary);
-    cursor: pointer;
-}
-
-.broker-card__compare-input:disabled {
-    opacity: 0.35;
-    cursor: not-allowed;
-}
-
 .broker-card__brand {
     display: flex;
     flex-direction: column;
@@ -169,6 +128,7 @@
 .broker-card__tagline {
     margin: 0 0 0.75rem;
     max-width: 100%;
+    min-height: calc(1.45em * 2);
     font-size: 0.8125rem;
     line-height: 1.45;
     color: var(--bc-muted);

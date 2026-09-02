@@ -1,5 +1,5 @@
 @foreach($cards as $promo)
-    @include('front.promotions.partials.promo_card', ['promo' => $promo])
+    @include('front.promotions.partials.promo_row', ['promo' => $promo])
 @endforeach
 
 <span class="bpr-hidden"

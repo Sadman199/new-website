@@ -26,6 +26,21 @@ class CmsPage extends Model
         return $this->status === 'published';
     }
 
+    public function statusLabel(): string
+    {
+        return $this->isPublished() ? 'Published' : 'Draft';
+    }
+
+    public function templateLabel(): string
+    {
+        return \App\Support\CmsSectionRegistry::TEMPLATES[$this->template] ?? ucfirst((string) $this->template);
+    }
+
+    public function publicUrl(): string
+    {
+        return url('/'.$this->slug);
+    }
+
     public function seoTitle(): string
     {
         return $this->meta_title ?: $this->title;

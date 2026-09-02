@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\BrokerGuideTopicRequest;
+use App\Models\BrokerGuide;
 use App\Models\BrokerGuideTopic;
 use App\Services\BrokerGuideHubService;
 use App\Services\BrokerGuideTopicService;
@@ -20,14 +21,46 @@ class AdminBrokerGuideTopicController extends Controller
     {
         $this->topicService->seedDefaultsIfEmpty();
 
-        $topics = BrokerGuideTopic::query()
-            ->withCount('guides')
-            ->ordered()
-            ->get();
+        $filters = [
+            'q' => trim((string) $request->get('q', '')),
+            'status' => (string) $request->get('status', ''),
+        ];
+
+        $query = BrokerGuideTopic::query()->withCount('guides');
+
+        if ($filters['q'] !== '') {
+            $term = $filters['q'];
+            $query->where(function ($sub) use ($term) {
+                $sub->where('title', 'like', '%'.$term.'%')
+                    ->orWhere('slug', 'like', '%'.$term.'%')
+                    ->orWhere('default_summary', 'like', '%'.$term.'%');
+            });
+        }
+
+        if ($filters['status'] === 'active') {
+            $query->where('is_active', true);
+        } elseif ($filters['status'] === 'inactive') {
+            $query->where('is_active', false);
+        }
+
+        $topics = $query->ordered()->get();
+
+        $stats = [
+            'total' => BrokerGuideTopic::query()->count(),
+            'active' => BrokerGuideTopic::query()->where('is_active', true)->count(),
+            'inactive' => BrokerGuideTopic::query()->where('is_active', false)->count(),
+            'guides' => BrokerGuide::query()->count(),
+        ];
 
         return view('admin.broker_guide_topics.index', [
             'topics' => $topics,
+            'stats' => $stats,
+            'filters' => $filters,
             'contextProfiles' => BrokerGuideTopic::contextProfileOptions(),
+            'hub' => [
+                'title' => $this->hubService->titleTemplate(),
+                'description' => $this->hubService->description(),
+            ],
         ]);
     }
 
@@ -41,7 +74,16 @@ class AdminBrokerGuideTopicController extends Controller
 
     public function store(BrokerGuideTopicRequest $request)
     {
-        $topic = $this->topicService->save(new BrokerGuideTopic(), $this->payload($request));
+        try {
+            $topic = $this->topicService->save(new BrokerGuideTopic(), $this->payload($request));
+        } catch (\Throwable $e) {
+            report($e);
+
+            return redirect()
+                ->back()
+                ->withInput()
+                ->with('error', 'Could not create guide topic: '.$e->getMessage());
+        }
 
         return redirect()
             ->route('admin_broker_guide_topics_edit', $topic->id)
@@ -60,8 +102,17 @@ class AdminBrokerGuideTopicController extends Controller
 
     public function update(BrokerGuideTopicRequest $request, int $id)
     {
-        $topic = BrokerGuideTopic::findOrFail($id);
-        $this->topicService->save($topic, $this->payload($request));
+        try {
+            $topic = BrokerGuideTopic::findOrFail($id);
+            $this->topicService->save($topic, $this->payload($request));
+        } catch (\Throwable $e) {
+            report($e);
+
+            return redirect()
+                ->back()
+                ->withInput()
+                ->with('error', 'Could not update guide topic: '.$e->getMessage());
+        }
 
         return redirect()
             ->route('admin_broker_guide_topics_index')
@@ -70,8 +121,16 @@ class AdminBrokerGuideTopicController extends Controller
 
     public function destroy(int $id)
     {
-        $topic = BrokerGuideTopic::findOrFail($id);
-        $this->topicService->delete($topic);
+        try {
+            $topic = BrokerGuideTopic::findOrFail($id);
+            $this->topicService->delete($topic);
+        } catch (\Throwable $e) {
+            report($e);
+
+            return redirect()
+                ->back()
+                ->with('error', 'Could not delete guide topic: '.$e->getMessage());
+        }
 
         return redirect()
             ->route('admin_broker_guide_topics_index')
@@ -85,10 +144,19 @@ class AdminBrokerGuideTopicController extends Controller
             'hub_description' => ['nullable', 'string', 'max:1000'],
         ]);
 
-        $this->hubService->saveSettings([
-            'hub_title' => $data['hub_title'],
-            'hub_description' => $data['hub_description'] ?? '',
-        ]);
+        try {
+            $this->hubService->saveSettings([
+                'hub_title' => $data['hub_title'],
+                'hub_description' => $data['hub_description'] ?? '',
+            ]);
+        } catch (\Throwable $e) {
+            report($e);
+
+            return redirect()
+                ->back()
+                ->withInput()
+                ->with('error', 'Could not save hub settings: '.$e->getMessage());
+        }
 
         return redirect()
             ->route('admin_broker_guide_topics_index')

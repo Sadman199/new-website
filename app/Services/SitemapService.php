@@ -61,6 +61,7 @@ class SitemapService
         $this->push($urls, route('home'), $now, 'daily', '1.0');
         $this->push($urls, route('broker.reviews.index'), $now, 'daily', '0.9');
         $this->push($urls, route('brokers.best.index'), $now, 'weekly', '0.8');
+        $this->push($urls, route('brokers.top.index'), $now, 'weekly', '0.85');
         $this->push($urls, route('find_my_broker'), $now, 'weekly', '0.8');
         $this->push($urls, route('broker.comparison'), $now, 'weekly', '0.8');
         $this->push($urls, route('promotions.index'), $now, 'daily', '0.8');
@@ -71,7 +72,7 @@ class SitemapService
         $this->push($urls, route('blog'), $now, 'daily', '0.7');
         $this->push($urls, route('authors'), $now, 'monthly', '0.5');
         $this->push($urls, route('awards.index'), $now, 'monthly', '0.6');
-        $this->push($urls, route('trading.tools'), $now, 'monthly', '0.6');
+        $this->push($urls, route('calculators.index'), $now, 'monthly', '0.6');
         $this->push($urls, route('about'), $now, 'monthly', '0.4');
         $this->push($urls, route('methodology'), $now, 'monthly', '0.5');
         $this->push($urls, route('contact'), $now, 'yearly', '0.3');
@@ -253,6 +254,7 @@ class SitemapService
             }
 
             Post::query()
+                ->published()
                 ->with('rSubCategory:id,slug')
                 ->orderByDesc('id')
                 ->get(['id', 'slug', 'sub_category_id', 'updated_at'])
@@ -329,7 +331,16 @@ class SitemapService
                 ->active()
                 ->get(['slug', 'updated_at'])
                 ->each(function (TradingTool $tool) use (&$urls) {
-                    $this->push($urls, route('trading.tools.show', ['slug' => $tool->slug]), $tool->updated_at, 'monthly', '0.5');
+                    $routeSlug = \App\Support\TradingToolsRegistry::routeSlug($tool->slug);
+                    if (! $routeSlug || \App\Support\TradingToolsRegistry::isWidget($tool->slug)) {
+                        if ($routeSlug && \App\Support\TradingToolsRegistry::isWidget($tool->slug)) {
+                            $this->push($urls, route('trading.tools.show', ['slug' => $routeSlug]), $tool->updated_at, 'monthly', '0.5');
+                        }
+
+                        return;
+                    }
+
+                    $this->push($urls, route('calculators.show', ['slug' => $routeSlug]), $tool->updated_at, 'monthly', '0.5');
                 });
         });
 

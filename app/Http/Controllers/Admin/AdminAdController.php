@@ -22,12 +22,19 @@ class AdminAdController extends AdminController
         }
 
         if ($request->filled('active')) {
-            $query->where('is_active', (bool) $request->get('active'));
+            $query->where('is_active', $request->get('active') === '1');
         }
 
-        $ads = $this->paginateWithSearch($query, $request, ['title', 'category'], 20);
+        $ads = $this->paginateWithSearch($query, $request, ['title', 'category'], 12);
 
-        return view('admin.ads.index', compact('ads'));
+        return view('admin.ads.index', [
+            'ads' => $ads,
+            'stats' => [
+                'total' => Ad::query()->count(),
+                'active' => Ad::query()->where('is_active', true)->count(),
+                'popups' => Ad::query()->where('type', 'popup')->count(),
+            ],
+        ]);
     }
 
     public function create()

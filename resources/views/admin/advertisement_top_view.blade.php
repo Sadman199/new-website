@@ -1,128 +1,97 @@
 @extends('admin.layout.app')
+@include('admin.partials._ab_assets')
 
+@section('dashboard_page', true)
+@section('main_content_class', 'main-content--dashboard')
 @section('heading', 'Top Advertisements')
 
 @section('main_content')
-<div class="section-body py-4">
-    <div class="container">
-
-        @if(session('success'))
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                <i class="fas fa-check-circle mr-2"></i>{{ session('success') }}
-                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+<div class="ab-page ab-page--hub">
+    <div class="ab-wrap">
+        @include('admin.ads._nav', ['active' => 'top'])
+        <header class="ab-header">
+            <div>
+                <p class="ab-header__eyebrow">Advertisements</p>
+                <h1 class="ab-header__title">Update Top Advertisement</h1>
+                <p class="ab-header__sub">The banner shown at the very top of public pages.</p>
             </div>
-        @endif
+        </header>
 
         @if($errors->any())
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                <i class="fas fa-exclamation-circle mr-2"></i>
-                <ul class="mb-0 pl-3">
-                    @foreach($errors->all() as $error)
-                        <li>{{ $error }}</li>
+            <div class="ab-banner" role="alert">
+                <h3>Please fix {{ $errors->count() }} {{ \Illuminate\Support\Str::plural('issue', $errors->count()) }} before saving</h3>
+                <ol>
+                    @foreach($errors->all() as $message)
+                        <li>{{ $message }}</li>
                     @endforeach
-                </ul>
-                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+                </ol>
             </div>
         @endif
 
-        <div class="row justify-content-center">
-            <div class="col-lg-8">
-                <div class="card shadow-sm border-0">
-                    <div class="card-header bg-primary text-white">
-                        <h5 class="mb-0">Update Top Advertisement</h5>
+        <form action="{{ route('admin_top_ad_update') }}" method="POST" enctype="multipart/form-data">
+            @csrf
+            <section class="ab-section">
+                <div class="ab-section__head">
+                    <h2>Top banner</h2>
+                    <p>Upload an image, optional click URL, and choose whether visitors see it.</p>
+                </div>
+                <div class="ab-section__body">
+                    <div class="form-group">
+                        <label>Current image</label>
+                        @if(!empty($top_ad_data->top_ad))
+                            <img id="top_ad_preview" class="ab-ad-preview" src="{{ asset('uploads/'.$top_ad_data->top_ad) }}" alt="Top Ad">
+                        @else
+                            <div id="top_ad_preview_placeholder" class="ab-ad-placeholder">
+                                <i class="fas fa-image" aria-hidden="true"></i> No image uploaded yet
+                            </div>
+                            <img id="top_ad_preview" src="" alt="" class="ab-ad-preview d-none">
+                        @endif
                     </div>
-                    <div class="card-body">
-                        <form action="{{ route('admin_top_ad_update') }}" method="post" enctype="multipart/form-data">
-                            @csrf
-                            <div class="form-group">
-                                <label class="font-weight-bold">Existing Photo</label>
-                                <div class="mb-3">
-                                    @if(!empty($top_ad_data->top_ad))
-                                        <img id="top_ad_preview"
-                                             src="{{ asset('uploads/'.$top_ad_data->top_ad) }}"
-                                             alt="Top Ad"
-                                             class="img-fluid rounded border"
-                                             style="max-width: 100%; max-height: 150px; object-fit: cover;">
-                                    @else
-                                        <div id="top_ad_preview_placeholder"
-                                             class="rounded border d-flex align-items-center justify-content-center text-muted"
-                                             style="height: 120px; background: #f8f9fa; font-size: 0.85rem;">
-                                            <i class="fas fa-image mr-2"></i> No image uploaded yet
-                                        </div>
-                                        <img id="top_ad_preview" src="" alt="" class="img-fluid rounded border d-none"
-                                             style="max-width: 100%; max-height: 150px; object-fit: cover;">
-                                    @endif
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="font-weight-bold">Change Photo
-                                    <small class="text-muted font-weight-normal">(jpg, png, gif, webp — max 5MB)</small>
-                                </label>
-                                <div class="custom-file">
-                                    <input type="file"
-                                           class="custom-file-input @error('top_ad') is-invalid @enderror"
-                                           id="top_ad"
-                                           name="top_ad"
-                                           accept="image/*"
-                                           onchange="previewTopAd(this)">
-                                    <label class="custom-file-label" for="top_ad">Choose file</label>
-                                    @error('top_ad')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="font-weight-bold">URL</label>
-                                <input type="url"
-                                       class="form-control @error('top_ad_url') is-invalid @enderror"
-                                       name="top_ad_url"
-                                       value="{{ old('top_ad_url', $top_ad_data->top_ad_url) }}"
-                                       placeholder="https://example.com">
-                                @error('top_ad_url')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-                            <div class="form-group">
-                                <label class="font-weight-bold">Status</label>
-                                <select name="top_ad_status" class="form-control custom-select @error('top_ad_status') is-invalid @enderror" required>
-                                    <option value="Show" @selected(old('top_ad_status', $top_ad_data->top_ad_status) === 'Show')>Show</option>
-                                    <option value="Hide" @selected(old('top_ad_status', $top_ad_data->top_ad_status) === 'Hide')>Hide</option>
-                                </select>
-                                @error('top_ad_status')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-                            <div class="form-group text-center mt-4">
-                                <button type="submit" class="btn btn-primary btn-lg px-5">Update Advertisement</button>
-                            </div>
-                        </form>
+                    <div class="form-group">
+                        <label for="top_ad">Change photo</label>
+                        <input type="file" name="top_ad" id="top_ad" class="form-control-file @error('top_ad') is-invalid @enderror" accept="image/*">
+                        <p class="ab-note mt-1 mb-0">JPG, PNG, GIF, WEBP — max 5MB. Leave empty to keep the current image.</p>
+                        @error('top_ad')<small class="ab-error">{{ $message }}</small>@enderror
+                    </div>
+                    <div class="form-group">
+                        <label for="top_ad_url">Click URL</label>
+                        <input type="url" name="top_ad_url" id="top_ad_url" class="form-control @error('top_ad_url') is-invalid @enderror"
+                               value="{{ old('top_ad_url', $top_ad_data->top_ad_url) }}" placeholder="https://">
+                        @error('top_ad_url')<small class="ab-error">{{ $message }}</small>@enderror
+                    </div>
+                    <div class="form-group mb-0">
+                        <label for="top_ad_status">Status</label>
+                        <select name="top_ad_status" id="top_ad_status" class="form-control" required>
+                            <option value="Show" @selected(old('top_ad_status', $top_ad_data->top_ad_status) === 'Show')>Show</option>
+                            <option value="Hide" @selected(old('top_ad_status', $top_ad_data->top_ad_status) === 'Hide')>Hide</option>
+                        </select>
                     </div>
                 </div>
+            </section>
+            <div class="ab-save">
+                <button type="submit" class="ab-btn ab-btn--primary">
+                    <i class="fas fa-save" aria-hidden="true"></i>
+                    Save top ad
+                </button>
             </div>
-        </div>
+        </form>
     </div>
 </div>
 @endsection
 
 @push('scripts')
 <script>
-function previewTopAd(input) {
-    if (!input.files || !input.files[0]) return;
-    const preview = document.getElementById('top_ad_preview');
-    const placeholder = document.getElementById('top_ad_preview_placeholder');
-    const reader = new FileReader();
+document.getElementById('top_ad')?.addEventListener('change', function () {
+    if (!this.files || !this.files[0]) return;
+    var preview = document.getElementById('top_ad_preview');
+    var placeholder = document.getElementById('top_ad_preview_placeholder');
+    var reader = new FileReader();
     reader.onload = function (e) {
         preview.src = e.target.result;
         preview.classList.remove('d-none');
         if (placeholder) placeholder.classList.add('d-none');
     };
-    reader.readAsDataURL(input.files[0]);
-    const label = input.nextElementSibling;
-    if (label) label.textContent = input.files[0].name;
-}
+    reader.readAsDataURL(this.files[0]);
+});
 </script>
 @endpush

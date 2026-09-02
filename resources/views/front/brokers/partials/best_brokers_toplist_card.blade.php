@@ -2,19 +2,27 @@
     data-bbh-card
     data-bbh-spotlight="{{ ($spotlight ?? false) ? 'true' : 'false' }}"
     data-bbh-title="{{ $list['title'] }}"
-    data-bbh-desc="{{ $list['description'] }}"
     data-bbh-filters="{{ implode(',', $list['filters'] ?? []) }}">
     <article class="bbh-card {{ ($spotlight ?? false) ? 'bbh-card--award' : '' }}">
         @if($spotlight ?? false)
-            <div>
+            <div class="bbh-card__body">
                 <span class="bbh-card__eyebrow">BrokersCourt</span>
                 <a href="{{ $list['url'] }}" class="bbh-card__title">{{ $list['title'] }}</a>
-                <p class="bbh-card__desc">{{ $list['description'] }}</p>
+                @if(!empty($list['description']))
+                    <p class="bbh-card__desc">{{ $list['description'] }}</p>
+                @endif
             </div>
         @else
-            <div>
+            <div class="bbh-card__body">
                 <a href="{{ $list['url'] }}" class="bbh-card__title">{{ $list['title'] }}</a>
-                <p class="bbh-card__desc">{{ $list['description'] }}</p>
+
+                @if(!empty($list['description']))
+                    <p class="bbh-card__desc">{{ $list['description'] }}</p>
+                @endif
+
+                @if(!empty($list['broker_count']))
+                    <p class="bbh-card__meta">{{ number_format($list['broker_count']) }} {{ \Illuminate\Support\Str::plural('broker', $list['broker_count']) }} in this list</p>
+                @endif
 
                 @if(!empty($list['broker_logos']))
                     <div class="bbh-card__logos" aria-hidden="true">

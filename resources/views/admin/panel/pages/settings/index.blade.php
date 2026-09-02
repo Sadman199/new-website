@@ -70,7 +70,7 @@
             </div>
             <div class="form-group">
                 <label for="disqus_code">disqus_code</label>
-                <textarea class="form-control-bc" name="disqus_code" id="disqus_code" rows="2">{{ old('disqus_code', $setting->disqus_code ?? '') }}</textarea>
+                <textarea class="form-control-bc" name="disqus_code" id="disqus_code" rows="2" data-admin-editor="off">{{ old('disqus_code', $setting->disqus_code ?? '') }}</textarea>
             </div>
         </div>
     </form>

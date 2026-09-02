@@ -129,7 +129,7 @@
                 <div class="br-guide-article-panel">
                     @if(strip_tags($guide->content ?? ''))
                         <div class="br-prose br-guide-content">
-                            {!! $guide->content !!}
+                            {!! \App\Support\RichText::forDisplay($guide->content) !!}
                         </div>
                     @else
                         <div class="br-guide-empty">

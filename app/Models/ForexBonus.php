@@ -62,6 +62,45 @@ class ForexBonus extends Model
         'is_featured' => 'boolean',
     ];
 
+    public static function promoTypes(): array
+    {
+        return [
+            'Forex Deposit Bonus' => 'Deposit bonus',
+            'Forex No Deposit Bonus' => 'No deposit',
+            'Forex Live Contest' => 'Live contest',
+            'Forex Demo Contest' => 'Demo contest',
+            'Forex Cashback Rebate' => 'Cashback',
+            'Crypto Bonus Promotion' => 'Crypto promo',
+        ];
+    }
+
+    public static function promotionStatuses(): array
+    {
+        return [
+            'ongoing' => 'Ongoing',
+            'limited-time' => 'Limited time',
+            'expired' => 'Expired',
+        ];
+    }
+
+    public function promotionStatusLabel(): string
+    {
+        return self::promotionStatuses()[$this->promotion_status] ?? 'Ongoing';
+    }
+
+    public function imageUrl(): ?string
+    {
+        if (! $this->feature_image) {
+            return null;
+        }
+
+        if (str_starts_with((string) $this->feature_image, 'http')) {
+            return $this->feature_image;
+        }
+
+        return asset(ltrim((string) $this->feature_image, '/'));
+    }
+
     public function broker()
     {
         return $this->belongsTo(Broker::class);
@@ -306,6 +345,20 @@ class ForexBonus extends Model
     public function requirementLabel(): ?string
     {
         return $this->wagering_requirement ?: $this->volume_requirement;
+    }
+
+    public function wageringRequirementLabel(): ?string
+    {
+        $value = trim(strip_tags((string) $this->wagering_requirement));
+
+        return $value !== '' ? $value : null;
+    }
+
+    public function volumeRequirementLabel(): ?string
+    {
+        $value = trim(strip_tags((string) $this->volume_requirement));
+
+        return $value !== '' ? $value : null;
     }
 
     public function eligibleClientsLabel(): ?string

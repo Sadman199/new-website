@@ -54,7 +54,7 @@ class AdminPropFirmProgramController extends Controller
 
     public function edit(int $id)
     {
-        $program = PropFirmProgram::findOrFail($id);
+        $program = PropFirmProgram::with('propFirm')->findOrFail($id);
 
         return view('admin.prop-firms.programs.edit', [
             'program' => $program,

@@ -49,19 +49,6 @@ class BrokerComparisonJsonLd
             '@context' => 'https://schema.org',
             '@graph' => array_values(array_filter([
                 [
-                    '@type' => 'Organization',
-                    '@id' => $orgId,
-                    'name' => SiteTheme::siteName(),
-                    'url' => $siteUrl,
-                ],
-                [
-                    '@type' => 'WebSite',
-                    '@id' => $websiteId,
-                    'url' => $siteUrl,
-                    'name' => SiteTheme::siteName(),
-                    'publisher' => ['@id' => $orgId],
-                ],
-                [
                     '@type' => 'WebPage',
                     '@id' => $pageId,
                     'url' => $shareUrl,

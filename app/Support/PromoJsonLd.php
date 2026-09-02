@@ -112,7 +112,7 @@ class PromoJsonLd
 
         return [
             '@context' => 'https://schema.org',
-            '@graph' => [
+            '@graph' => array_values(array_filter([
                 [
                     '@type' => 'WebPage',
                     '@id' => $canonical.'#webpage',
@@ -130,7 +130,7 @@ class PromoJsonLd
                     ],
                 ],
                 $offer,
-            ],
+            ])),
         ];
     }
 }

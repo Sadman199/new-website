@@ -66,85 +66,8 @@
                             <button type="button" class="bc-hero__seg-btn" data-bc-hero-seg="props">Prop Firms</button>
                         </div>
 
-                        @if(!empty($quickFilterLinks))
-                            <div class="bc-hero__chips" data-bc-hero-broker-only>
-                                <span class="bc-hero__chips-label">Popular:</span>
-                                @foreach($quickFilterLinks as $chip)
-                                    <a href="{{ $chip['url'] }}" class="bc-hero__chip">{{ $chip['label'] }}</a>
-                                @endforeach
-                            </div>
-                        @endif
-
-                        <button type="button"
-                                class="bc-hero__filters-toggle"
-                                id="bcHeroFiltersToggle"
-                                data-bc-hero-broker-only
-                                aria-expanded="false"
-                                aria-controls="bcHeroFilters">
-                            <span>Filter by regulation, cost &amp; leverage</span>
-                            <svg class="bc-hero__filters-chevron" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
-                        </button>
-
-                        <div class="bc-hero__filters" id="bcHeroFilters" data-bc-hero-broker-only hidden>
-                            <div class="bc-finder__filters">
-                                <div class="bc-finder__field" data-bc-dropdown>
-                                    <span class="bc-finder__select-label">Regulation</span>
-                                    <input type="hidden" name="regulation" value="" data-bc-dropdown-input disabled>
-                                    <button type="button" class="bc-finder__dropdown-trigger" data-bc-dropdown-trigger aria-expanded="false" aria-haspopup="listbox" disabled>
-                                        <span class="bc-finder__dropdown-value">Any regulator</span>
-                                        <svg class="bc-finder__dropdown-chevron" width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
-                                    </button>
-                                    <div class="bc-finder__dropdown-menu" data-bc-dropdown-menu role="listbox">
-                                        <button type="button" class="bc-finder__dropdown-option is-selected" data-bc-dropdown-option data-value="" role="option">Any regulator</button>
-                                        @foreach($searchCatalogs['regulation'] as $value => $label)
-                                            @if($value !== '')
-                                                <button type="button" class="bc-finder__dropdown-option" data-bc-dropdown-option data-value="{{ $value }}" role="option">{{ $label }}</button>
-                                            @endif
-                                        @endforeach
-                                    </div>
-                                </div>
-
-                                <div class="bc-finder__field" data-bc-dropdown>
-                                    <span class="bc-finder__select-label">Trading cost</span>
-                                    <input type="hidden" name="spread" value="" data-bc-dropdown-input disabled>
-                                    <button type="button" class="bc-finder__dropdown-trigger" data-bc-dropdown-trigger aria-expanded="false" aria-haspopup="listbox" disabled>
-                                        <span class="bc-finder__dropdown-value">{{ $searchCatalogs['spread'][''] ?? 'Any spread' }}</span>
-                                        <svg class="bc-finder__dropdown-chevron" width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
-                                    </button>
-                                    <div class="bc-finder__dropdown-menu" data-bc-dropdown-menu role="listbox">
-                                        @foreach($searchCatalogs['spread'] as $value => $label)
-                                            <button type="button" class="bc-finder__dropdown-option {{ $value === '' ? 'is-selected' : '' }}" data-bc-dropdown-option data-value="{{ $value }}" role="option">{{ $label }}</button>
-                                        @endforeach
-                                    </div>
-                                </div>
-
-                                <div class="bc-finder__field" data-bc-dropdown>
-                                    <span class="bc-finder__select-label">Leverage</span>
-                                    <input type="hidden" name="leverage" value="" data-bc-dropdown-input disabled>
-                                    <button type="button" class="bc-finder__dropdown-trigger" data-bc-dropdown-trigger aria-expanded="false" aria-haspopup="listbox" disabled>
-                                        <span class="bc-finder__dropdown-value">{{ $searchCatalogs['leverage'][''] ?? 'Any leverage' }}</span>
-                                        <svg class="bc-finder__dropdown-chevron" width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
-                                    </button>
-                                    <div class="bc-finder__dropdown-menu" data-bc-dropdown-menu role="listbox">
-                                        @foreach($searchCatalogs['leverage'] as $value => $label)
-                                            <button type="button" class="bc-finder__dropdown-option {{ $value === '' ? 'is-selected' : '' }}" data-bc-dropdown-option data-value="{{ $value }}" role="option">{{ $label }}</button>
-                                        @endforeach
-                                    </div>
-                                </div>
-
-                                <button type="submit" class="bc-hero__search-btn bc-hero__search-btn--filter">Apply filters</button>
-                            </div>
-                        </div>
                     </form>
                 </div>
-
-                <nav class="bc-hero__links" aria-label="Quick actions">
-                    <a href="{{ route('find_my_broker') }}" class="bc-hero__link">Browse all brokers</a>
-                    <span class="bc-hero__link-divider" aria-hidden="true">·</span>
-                    <a href="{{ route('broker.comparison') }}" class="bc-hero__link">Compare side by side</a>
-                    <span class="bc-hero__link-divider" aria-hidden="true">·</span>
-                    <a href="{{ route('find_my_broker') }}" class="bc-hero__link">Find my match</a>
-                </nav>
             </div>
 
             <aside class="bc-hero__visual" aria-hidden="true">

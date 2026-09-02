@@ -2,118 +2,149 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\ForexBonusRequest;
 use App\Models\Broker;
 use App\Models\ForexBonus;
 use App\Services\EditorialAssignmentService;
 use App\Services\ForexBonusAdminService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
+use Throwable;
 
-class AdminForexBonusController extends Controller
+class AdminForexBonusController extends AdminController
 {
     public function __construct(protected ForexBonusAdminService $service)
     {
     }
 
-    public function show()
+    public function show(Request $request)
     {
-        $forexBonuses = ForexBonus::with('broker')
-            ->orderByDesc('publish_date')
-            ->paginate(10);
+        $filters = [
+            'q' => trim((string) $request->get('q', '')),
+            'promo_type' => (string) $request->get('promo_type', ''),
+            'status' => (string) $request->get('status', ''),
+            'broker_id' => (string) $request->get('broker_id', ''),
+            'featured' => (string) $request->get('featured', ''),
+            'sort' => (string) $request->get('sort', 'newest'),
+        ];
 
-        return view('admin.forex_bonuses.show', compact('forexBonuses'));
+        $query = ForexBonus::query()->with('broker');
+
+        if ($filters['promo_type'] !== '' && array_key_exists($filters['promo_type'], ForexBonus::promoTypes())) {
+            $query->where('promo_type', $filters['promo_type']);
+        }
+
+        if (in_array($filters['status'], ['ongoing', 'limited-time', 'expired'], true)) {
+            $query->where('promotion_status', $filters['status']);
+        }
+
+        if ($filters['broker_id'] !== '') {
+            $query->where('broker_id', $filters['broker_id']);
+        }
+
+        if ($filters['featured'] === '1') {
+            $query->where('is_featured', true);
+        } elseif ($filters['featured'] === '0') {
+            $query->where('is_featured', false);
+        }
+
+        match ($filters['sort']) {
+            'title' => $query->orderBy('title'),
+            'expiry' => $query->orderByRaw('expiry_date is null')->orderBy('expiry_date'),
+            'updated' => $query->latest('updated_at'),
+            default => $query->orderByDesc('publish_date')->orderByDesc('id'),
+        };
+
+        $bonuses = $this->paginateWithSearch($query, $request, ['title', 'slug'], 12);
+
+        return view('admin.forex_bonuses.show', [
+            'bonuses' => $bonuses,
+            'forexBonuses' => $bonuses,
+            'filters' => $filters,
+            'promoTypes' => ForexBonus::promoTypes(),
+            'statuses' => ForexBonus::promotionStatuses(),
+            'brokers' => Broker::query()->orderBy('name')->get(['id', 'name']),
+            'stats' => [
+                'total' => ForexBonus::query()->count(),
+                'featured' => ForexBonus::query()->where('is_featured', true)->count(),
+                'ongoing' => ForexBonus::query()->where('promotion_status', 'ongoing')->count(),
+                'expired' => ForexBonus::query()->where('promotion_status', 'expired')->count(),
+            ],
+        ]);
     }
 
     public function create()
     {
-        return view('admin.forex_bonuses.create', $this->formData());
+        return view('admin.forex_bonuses.create', $this->formData(new ForexBonus([
+            'publish_date' => now()->toDateString(),
+            'promotion_status' => 'ongoing',
+            'promo_type' => 'Forex Deposit Bonus',
+        ])));
     }
 
-    public function store(Request $request)
+    public function store(ForexBonusRequest $request)
     {
-        $request->validate($this->rules());
+        try {
+            $this->service->save(new ForexBonus(), $request);
+        } catch (Throwable $e) {
+            report($e);
 
-        $this->service->save(new ForexBonus(), $request);
+            return redirect()->back()->withInput()->with('error', 'Could not create the bonus: '.$e->getMessage());
+        }
 
-        return redirect()->route('admin_forex_bonus_show')->with('success', 'Forex Bonus created successfully!');
+        return redirect()->route('admin_forex_bonus_show')->with('success', 'Bonus created.');
+    }
+
+    public function view($id)
+    {
+        $bonus = ForexBonus::query()->with('broker')->findOrFail($id);
+
+        return view('admin.forex_bonuses.view', [
+            'bonus' => $bonus,
+            'credits' => EditorialAssignmentService::creditsFor($bonus),
+        ]);
     }
 
     public function edit($id)
     {
-        $forexBonus = ForexBonus::findOrFail($id);
+        $bonus = ForexBonus::query()->findOrFail($id);
 
-        return view('admin.forex_bonuses.edit', array_merge(compact('forexBonus'), $this->formData()));
+        return view('admin.forex_bonuses.edit', $this->formData($bonus));
     }
 
-    public function update(Request $request, $id)
+    public function update(ForexBonusRequest $request, $id)
     {
-        $request->validate($this->rules($id));
+        $bonus = ForexBonus::query()->findOrFail($id);
 
-        $forexBonus = ForexBonus::findOrFail($id);
-        $this->service->save($forexBonus, $request);
+        try {
+            $this->service->save($bonus, $request);
+        } catch (Throwable $e) {
+            report($e);
 
-        return redirect()->route('admin_forex_bonus_show')->with('success', 'Forex Bonus updated successfully!');
+            return redirect()->back()->withInput()->with('error', 'Could not save the bonus: '.$e->getMessage());
+        }
+
+        return redirect()->route('admin_forex_bonus_show')->with('success', 'Bonus saved.');
     }
 
     public function delete($id)
     {
-        $forexBonus = ForexBonus::findOrFail($id);
-        $this->service->delete($forexBonus);
+        $bonus = ForexBonus::query()->findOrFail($id);
+        $title = $bonus->title;
+        $this->service->delete($bonus);
 
-        return redirect()->route('admin_forex_bonus_show')->with('success', 'Forex Bonus deleted successfully!');
+        return redirect()->route('admin_forex_bonus_show')->with('success', '"'.$title.'" was deleted.');
     }
 
-    protected function formData(): array
+    /** @return array<string, mixed> */
+    protected function formData(ForexBonus $bonus): array
     {
         return [
-            'brokers' => Broker::orderBy('name')->get(['id', 'name', 'slug']),
+            'bonus' => $bonus,
+            'forexBonus' => $bonus,
+            'brokers' => Broker::query()->orderBy('name')->get(['id', 'name', 'slug']),
             'editorialOptions' => EditorialAssignmentService::allAssigneeOptions(),
-        ];
-    }
-
-    protected function rules(?int $id = null): array
-    {
-        $slugRule = $id
-            ? 'required|string|max:255|unique:forex_bonuses,slug,' . $id
-            : 'required|string|max:255|unique:forex_bonuses,slug';
-
-        return [
-            'title' => 'required|string|max:255',
-            'slug' => $slugRule,
-            'broker_id' => 'nullable|exists:brokers,id',
-            'publish_date' => 'required|date',
-            'author_name' => 'nullable|string|max:255',
-            'promo_type' => 'required|in:Forex Deposit Bonus,Forex No Deposit Bonus,Forex Live Contest,Forex Demo Contest,Forex Cashback Rebate,Crypto Bonus Promotion',
-            'description' => 'required|string',
-            'feature_image' => ($id ? 'nullable' : 'required') . '|image|mimes:jpg,jpeg,png,webp,avif,gif|max:5120',
-            'link' => 'required|url',
-            'affiliate_link' => 'nullable|url',
-            'participate' => 'required|string',
-            'how_to_participate' => 'required|string',
-            'details' => 'required|string',
-            'general_terms' => 'required|string',
-            'prize' => 'required',
-            'eligibility_criteria' => 'nullable|string',
-            'expiry_date' => 'nullable|date',
-            'min_deposit' => 'nullable|numeric|min:0',
-            'bonus_amount' => 'nullable|numeric|min:0',
-            'bonus_percentage' => 'nullable|numeric|min:0|max:1000',
-            'wagering_requirement' => 'nullable|string|max:255',
-            'max_credit' => 'nullable|numeric|min:0',
-            'eligible_clients' => 'nullable|in:new,existing,both',
-            'volume_requirement' => 'nullable|string|max:255',
-            'bonus_type_details' => 'nullable|string',
-            'terms_conditions_url' => 'nullable|url',
-            'bonus_category' => 'nullable|string|max:255',
-            'promotion_status' => 'nullable|in:ongoing,limited-time,expired',
-            'is_featured' => 'nullable|boolean',
-            'meta_title' => 'nullable|string|max:255',
-            'meta_keywords' => 'nullable|string',
-            'meta_description' => 'nullable|string',
-            'written_assignee' => 'nullable|string',
-            'edited_assignee' => 'nullable|string',
-            'fact_checked_assignee' => 'nullable|string',
+            'promoTypes' => ForexBonus::promoTypes(),
+            'statuses' => ForexBonus::promotionStatuses(),
         ];
     }
 }

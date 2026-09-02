@@ -1,132 +1,166 @@
 @extends('admin.layout.app')
+@include('admin.partials._ab_assets')
 
-@section('heading', 'Popup & Campaign Ads')
+@section('dashboard_page', true)
+@section('main_content_class', 'main-content--dashboard')
+@section('heading', 'Popup Ads')
 
-@section('button')
-<a href="{{ route('admin_ads_create') }}" class="btn btn-primary"><i class="fas fa-plus"></i> Add New Ad</a>
-@endsection
+@php
+    $hasFilters = request()->filled('q') || request()->filled('type') || request()->filled('active');
+@endphp
 
 @section('main_content')
-<div class="section-body py-4">
-    <div class="container-fluid">
-        @if(session('success'))
-            <div class="alert alert-success">{{ session('success') }}</div>
-        @endif
+<div class="ab-page ab-page--hub">
+    <div class="ab-wrap">
+        @include('admin.ads._nav', ['active' => 'popups'])
+        <header class="ab-header">
+            <div>
+                <p class="ab-header__eyebrow">Advertisements</p>
+                <h1 class="ab-header__title">Popup Ads</h1>
+                <p class="ab-header__sub">Timed, scroll, and stay-triggered campaigns on public pages.</p>
+            </div>
+            <div class="ab-header__actions">
+                <a href="{{ route('admin_ads_create') }}" class="ab-btn ab-btn--primary">
+                    <i class="fas fa-plus" aria-hidden="true"></i>
+                    Add Popup Ad
+                </a>
+            </div>
+        </header>
 
-        <div class="card shadow-sm border-0 mb-4">
-            <div class="card-body">
-                <form method="GET" action="{{ route('admin_ads_index') }}" class="form-row align-items-end">
-                    <div class="form-group col-md-4 mb-2">
-                        <label>Search</label>
-                        <input type="text" name="q" value="{{ request('q') }}" class="form-control" placeholder="Title or category">
-                    </div>
-                    <div class="form-group col-md-3 mb-2">
-                        <label>Type</label>
-                        <select name="type" class="form-control">
-                            <option value="">All types</option>
-                            @foreach(['popup','banner','image','video','text','custom'] as $t)
-                                <option value="{{ $t }}" {{ request('type') === $t ? 'selected' : '' }}>{{ ucfirst($t) }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="form-group col-md-2 mb-2">
-                        <label>Status</label>
-                        <select name="active" class="form-control">
-                            <option value="">All</option>
-                            <option value="1" {{ request('active') === '1' ? 'selected' : '' }}>Active</option>
-                            <option value="0" {{ request('active') === '0' ? 'selected' : '' }}>Inactive</option>
-                        </select>
-                    </div>
-                    <div class="form-group col-md-3 mb-2">
-                        <button class="btn btn-primary" type="submit"><i class="fas fa-search"></i> Filter</button>
-                        <a href="{{ route('admin_ads_index') }}" class="btn btn-light">Reset</a>
-                    </div>
-                </form>
+        <div class="ab-kpis">
+            <div class="ab-kpi">
+                <span class="ab-kpi__icon"><i class="fas fa-bullhorn" aria-hidden="true"></i></span>
+                <div>
+                    <p class="ab-kpi__label">Total</p>
+                    <p class="ab-kpi__value">{{ number_format($stats['total']) }}</p>
+                </div>
+            </div>
+            <div class="ab-kpi">
+                <span class="ab-kpi__icon"><i class="fas fa-check-circle" aria-hidden="true"></i></span>
+                <div>
+                    <p class="ab-kpi__label">Active</p>
+                    <p class="ab-kpi__value">{{ number_format($stats['active']) }}</p>
+                </div>
+            </div>
+            <div class="ab-kpi">
+                <span class="ab-kpi__icon"><i class="fas fa-window-restore" aria-hidden="true"></i></span>
+                <div>
+                    <p class="ab-kpi__label">Popups</p>
+                    <p class="ab-kpi__value">{{ number_format($stats['popups']) }}</p>
+                </div>
             </div>
         </div>
 
-        <div class="card shadow-sm border-0">
-            <div class="card-header bg-primary text-white">
-                <h5 class="mb-0">Ads List</h5>
-            </div>
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-hover table-bordered" id="example1">
-                        <thead class="thead-dark">
+        <div class="ab-panel">
+            <form method="GET" action="{{ route('admin_ads_index') }}" class="ab-filters ab-filters--hub">
+                <div class="ab-field">
+                    <label for="ad-q">Search</label>
+                    <input id="ad-q" class="ab-input" type="search" name="q" value="{{ request('q') }}" placeholder="Title or campaign">
+                </div>
+                <div class="ab-field">
+                    <label for="ad-type">Type</label>
+                    <select id="ad-type" class="ab-select" name="type">
+                        <option value="">All types</option>
+                        @foreach(['popup','banner','image','video','text','custom'] as $t)
+                            <option value="{{ $t }}" @selected(request('type') === $t)>{{ ucfirst($t) }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="ab-field">
+                    <label for="ad-active">Status</label>
+                    <select id="ad-active" class="ab-select" name="active">
+                        <option value="">All</option>
+                        <option value="1" @selected(request('active') === '1')>Active</option>
+                        <option value="0" @selected(request('active') === '0')>Off</option>
+                    </select>
+                </div>
+                <div class="ab-header__actions">
+                    <button type="submit" class="ab-btn ab-btn--primary">Filter</button>
+                    @if($hasFilters)
+                        <a href="{{ route('admin_ads_index') }}" class="ab-btn ab-btn--ghost">Reset</a>
+                    @endif
+                </div>
+            </form>
+
+            @if($ads->isEmpty())
+                <div class="ab-empty">
+                    <h3>{{ $hasFilters ? 'No ads match these filters' : 'No popup ads yet' }}</h3>
+                    <p>{{ $hasFilters ? 'Try a different search, or reset the filters.' : 'Create a popup or campaign ad for public pages.' }}</p>
+                    @if($hasFilters)
+                        <a href="{{ route('admin_ads_index') }}" class="ab-btn ab-btn--ghost">Reset filters</a>
+                    @else
+                        <a href="{{ route('admin_ads_create') }}" class="ab-btn ab-btn--primary">Add Popup Ad</a>
+                    @endif
+                </div>
+            @else
+                <div class="ab-table-wrap">
+                    <table class="ab-table">
+                        <thead>
                             <tr>
-                                <th>#</th>
-                                <th>Preview</th>
-                                <th>Title</th>
+                                <th>Ad</th>
                                 <th>Type</th>
                                 <th>Trigger</th>
-                                <th>Priority</th>
                                 <th>Dates</th>
                                 <th>Status</th>
-                                <th style="min-width:180px">Action</th>
+                                <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @forelse($ads as $ad)
-                            <tr>
-                                <td>{{ $ad->id }}</td>
-                                <td class="text-center">
-                                    @if($ad->image)
-                                        <img src="{{ $ad->image_url }}" alt="" style="max-width:90px;max-height:60px;object-fit:cover" class="rounded">
-                                    @else
-                                        <span class="text-muted">—</span>
-                                    @endif
-                                </td>
-                                <td>
-                                    <strong>{{ $ad->title }}</strong>
-                                    @if($ad->category)
-                                        <div class="small text-muted">{{ $ad->category }}</div>
-                                    @endif
-                                </td>
-                                <td><span class="badge badge-info">{{ $ad->type }}</span></td>
-                                <td>
-                                    @if($ad->type === 'popup')
-                                        <span class="badge badge-secondary">{{ $ad->trigger_type }}</span>
-                                        {{ $ad->trigger_value }}{{ $ad->trigger_type === 'scroll' ? '%' : ($ad->trigger_type === 'time' ? 's' : 'm') }}
-                                    @else
-                                        —
-                                    @endif
-                                </td>
-                                <td>{{ $ad->priority }}</td>
-                                <td class="small">
-                                    {{ optional($ad->start_date)->format('Y-m-d') ?? '—' }}
-                                    →
-                                    {{ optional($ad->end_date)->format('Y-m-d') ?? '—' }}
-                                </td>
-                                <td>
-                                    @if($ad->is_active)
-                                        <span class="badge badge-success">Active</span>
-                                    @else
-                                        <span class="badge badge-secondary">Off</span>
-                                    @endif
-                                </td>
-                                <td>
-                                    <a href="{{ route('admin_ads_edit', $ad->id) }}" class="btn btn-primary btn-sm"><i class="fas fa-edit"></i></a>
-                                    <form action="{{ route('admin_ads_toggle', $ad->id) }}" method="POST" style="display:inline;">
-                                        @csrf
-                                        <button type="submit" class="btn btn-warning btn-sm" title="Toggle"><i class="fas fa-power-off"></i></button>
-                                    </form>
-                                    <form action="{{ route('admin_ads_delete', $ad->id) }}" method="POST" style="display:inline;" onsubmit="return confirm('Delete this ad?');">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
-                                    </form>
-                                </td>
-                            </tr>
-                            @empty
-                            <tr>
-                                <td colspan="9" class="text-center text-muted py-4">No ads yet. Create your first popup ad.</td>
-                            </tr>
-                            @endforelse
+                            @foreach($ads as $ad)
+                                <tr>
+                                    <td>
+                                        <div class="ab-broker">
+                                            <span class="ab-logo">
+                                                @if($ad->image_url)
+                                                    <img src="{{ $ad->image_url }}" alt="">
+                                                @else
+                                                    <span>{{ strtoupper(substr($ad->title ?: 'A', 0, 1)) }}</span>
+                                                @endif
+                                            </span>
+                                            <div>
+                                                <p class="ab-broker__name">{{ $ad->title }}</p>
+                                                <p class="ab-broker__meta">{{ $ad->category ?: 'Priority '.$ad->priority }}</p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>{{ ucfirst($ad->type) }}</td>
+                                    <td>
+                                        @if($ad->type === 'popup')
+                                            {{ $ad->trigger_type }} {{ $ad->trigger_value }}{{ $ad->trigger_type === 'scroll' ? '%' : ($ad->trigger_type === 'time' ? 's' : 'm') }}
+                                        @else
+                                            —
+                                        @endif
+                                    </td>
+                                    <td>
+                                        <div>{{ optional($ad->start_date)->format('M j, Y') ?? 'Anytime' }}</div>
+                                        <div class="ab-broker__meta">{{ optional($ad->end_date)->format('M j, Y') ?? 'No end' }}</div>
+                                    </td>
+                                    <td>
+                                        <span class="ab-pill {{ $ad->is_active ? 'ab-pill--ok' : '' }}">{{ $ad->is_active ? 'Active' : 'Off' }}</span>
+                                    </td>
+                                    <td>
+                                        <div class="ab-actions">
+                                            <a class="ab-btn ab-btn--ghost ab-btn--sm" href="{{ route('admin_ads_edit', $ad->id) }}">Edit</a>
+                                            <form action="{{ route('admin_ads_toggle', $ad->id) }}" method="POST">
+                                                @csrf
+                                                <button class="ab-btn ab-btn--ghost ab-btn--sm" type="submit">{{ $ad->is_active ? 'Turn off' : 'Turn on' }}</button>
+                                            </form>
+                                            <form action="{{ route('admin_ads_delete', $ad->id) }}" method="POST" data-ab-delete data-ab-name="{{ $ad->title }}" data-ab-warn="This cannot be undone." data-ab-confirm="Delete ad">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button class="ab-btn ab-btn--ghost ab-btn--sm" type="submit">Delete</button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                            @endforeach
                         </tbody>
                     </table>
                 </div>
-                <div class="mt-3">{{ $ads->links() }}</div>
-            </div>
+                @if($ads->hasPages())
+                    <div class="ab-pager">{{ $ads->links() }}</div>
+                @endif
+            @endif
         </div>
     </div>
 </div>

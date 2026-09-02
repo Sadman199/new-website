@@ -9,4 +9,14 @@ use GeneaLabs\LaravelModelCaching\Traits\Cachable;
 class Tag extends Model
 {
     use HasFactory, Cachable;
+
+    protected $fillable = [
+        'post_id',
+        'tag_name',
+    ];
+
+    public function post()
+    {
+        return $this->belongsTo(Post::class);
+    }
 }

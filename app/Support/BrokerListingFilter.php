@@ -95,7 +95,21 @@ class BrokerListingFilter
             return self::matchesCountry($broker, $slug, $regions, $countries);
         }
 
+        // Category tags are only filled in on a handful of rows, so fall back to the
+        // broker's own data rather than returning an empty list.
+        if (isset(BrokerTaxonomy::categories()[$slug])) {
+            return BrokerCategorySignals::derivedMatch($broker, $slug);
+        }
+
         return false;
+    }
+
+    /** Was this broker tagged for the slug in the admin, rather than matched from its data? */
+    public static function isTagged(Broker $broker, string $slug): bool
+    {
+        return in_array($slug, $broker->brokerCategoryList(), true)
+            || in_array($slug, $broker->regionList(), true)
+            || in_array($slug, self::normalizeList($broker->associated_countries), true);
     }
 
     private static function hasHighLeverage(Broker $broker): bool

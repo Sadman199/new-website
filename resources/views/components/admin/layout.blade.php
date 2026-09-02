@@ -7,10 +7,11 @@
     <link rel="icon" type="image/png" href="{{ asset('uploads/favicon.png') }}">
     <title>{{ $title ?? 'Admin' }} — {{ config('admin-panel.name') }}</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="stylesheet" href="{{ asset('assets/admin/css/admin.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/admin-editor.css') }}?v=2">
     @stack('styles')
 </head>
 <body>
@@ -48,6 +49,14 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
 <script src="{{ asset('assets/admin/js/admin.js') }}"></script>
+<script src="https://cdn.jsdelivr.net/npm/tinymce@6.8.4/tinymce.min.js" referrerpolicy="origin"></script>
+<script>
+    window.bcAdminEditor = {
+        uploadUrl: @json(auth('admin')->check() ? route('admin_editor_image') : ''),
+        csrf: @json(csrf_token())
+    };
+</script>
+<script src="{{ asset('js/admin-editor.js') }}?v=3"></script>
 @stack('scripts')
 </body>
 </html>

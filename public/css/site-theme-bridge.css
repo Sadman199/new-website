@@ -1,6 +1,80 @@
 /* Global theme bridge — uses CSS variables from admin Brand Colors */
 html {
     overflow-x: clip;
+    color-scheme: light;
+}
+
+[data-theme="dark"] {
+    color-scheme: dark;
+}
+
+body {
+    background: var(--bc-bg);
+    color: var(--bc-text);
+}
+
+/* Light scrollbars — prevent OS dark mode from forcing black scrollbars */
+:root,
+[data-theme="light"] {
+    scrollbar-color: #d4cfc6 #f6f4f0;
+}
+
+:root::-webkit-scrollbar,
+body::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+:root::-webkit-scrollbar-track,
+body::-webkit-scrollbar-track {
+    background: #f6f4f0;
+}
+
+:root::-webkit-scrollbar-thumb,
+body::-webkit-scrollbar-thumb {
+    background: #d4cfc6;
+    border-radius: 999px;
+    border: 2px solid #f6f4f0;
+}
+
+:root::-webkit-scrollbar-thumb:hover,
+body::-webkit-scrollbar-thumb:hover {
+    background: #bfb8ad;
+}
+
+/* Normalize legacy page shells that hardcoded 80rem (1280px) */
+.bbg-container,
+.mf-wrap,
+.bbh-wrap,
+.brb-wrap,
+.sbi-wrap,
+.bpd-wrap,
+.bbd-wrap,
+.tt-wrap,
+.bc-compare-wrap,
+.bc-review-page .bc-container,
+.br-page .bbg-container,
+#mobileMenu .bc-mobile-nav-inner {
+    max-width: var(--bc-container) !important;
+}
+
+.mf-wrap,
+.bbg-container,
+.bbh-wrap,
+.brb-wrap,
+.sbi-wrap,
+.bpd-wrap,
+.bbd-wrap,
+.tt-wrap {
+    width: min(100% - 2rem, var(--bc-container)) !important;
+}
+
+@media (min-width: 1024px) {
+    .bbg-container,
+    .bbd-wrap,
+    .bpd-wrap {
+        width: min(100% - 3rem, var(--bc-container)) !important;
+    }
 }
 
 /* Prefer token-driven buttons; keep soft aliases for Bootstrap .btn-primary */
@@ -51,41 +125,41 @@ html {
 }
 
 .bc-expiry-badge--expired {
-    color: #64748b;
-    background: #f1f5f9;
-    border-color: #e2e8f0;
+    color: var(--bc-muted);
+    background: var(--bc-bg);
+    border-color: var(--bc-border);
 }
 
 .bc-expiry-badge--urgent {
-    color: #dc2626;
+    color: var(--bc-danger);
     background: rgba(220, 38, 38, 0.08);
     border-color: rgba(220, 38, 38, 0.16);
 }
 
 .bc-expiry-badge--soon {
-    color: #c2410c;
+    color: var(--bc-warning);
     background: rgba(249, 115, 22, 0.1);
     border-color: rgba(249, 115, 22, 0.18);
 }
 
 .bc-expiry-badge--normal {
-    color: #c46a16;
-    background: rgba(232, 130, 42, 0.08);
-    border-color: rgba(232, 130, 42, 0.14);
+    color: var(--bc-primary-dark);
+    background: var(--bc-primary-soft);
+    border-color: rgba(var(--bc-primary-rgb), 0.14);
 }
 
 .bc-expiry-fact--urgent,
 .bc-expiry-fact--soon,
 .is-urgent {
-    color: #dc2626 !important;
+    color: var(--bc-danger) !important;
     font-weight: 700;
 }
 
 .bc-expiry-fact--expired {
-    color: #64748b !important;
+    color: var(--bc-muted) !important;
     text-decoration: line-through;
 }
 
 .bc-expiry-fact--normal {
-    color: #64748b;
+    color: var(--bc-muted);
 }

@@ -87,11 +87,10 @@
 
         function cardMatches(card, query, filtersByGroup) {
             var title = (card.getAttribute('data-bbh-title') || '').toLowerCase();
-            var desc = (card.getAttribute('data-bbh-desc') || '').toLowerCase();
             var tags = cardTags(card);
             var groupKeys = Object.keys(filtersByGroup);
 
-            var matchesQuery = !query || title.indexOf(query) !== -1 || desc.indexOf(query) !== -1;
+            var matchesQuery = !query || title.indexOf(query) !== -1;
 
             if (!matchesQuery) {
                 return false;

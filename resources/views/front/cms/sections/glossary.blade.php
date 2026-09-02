@@ -5,7 +5,7 @@
             <h2 class="cms-section__title">{{ $d['heading'] }}</h2>
         @endif
         @if(!empty($d['intro']))
-            <p class="cms-section__lead">{{ $d['intro'] }}</p>
+            <div class="cms-section__lead cms-prose">{!! \App\Support\RichText::forDisplay($d['intro'] ?? null) !!}</div>
         @endif
         @if(!empty($d['items']))
             <dl class="cms-glossary__list">
@@ -13,7 +13,7 @@
                     @if(!empty($item['term']))
                         <div class="cms-glossary__item" id="{{ \Illuminate\Support\Str::slug($item['term']) }}">
                             <dt>{{ $item['term'] }}</dt>
-                            <dd>{!! nl2br(e($item['definition'] ?? '')) !!}</dd>
+                            <dd class="cms-prose">{!! \App\Support\RichText::forDisplay($item['definition'] ?? null) !!}</dd>
                         </div>
                     @endif
                 @endforeach

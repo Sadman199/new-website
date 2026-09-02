@@ -35,7 +35,7 @@
 * { box-sizing: border-box; }
 
 body {
-  font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+  font-family: 'Plus Jakarta Sans', 'Segoe UI', system-ui, sans-serif;
   background: var(--bc-bg-base);
   color: var(--bc-text);
   margin: 0;

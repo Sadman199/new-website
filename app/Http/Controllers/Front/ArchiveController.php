@@ -25,7 +25,7 @@ class ArchiveController extends Controller
     {
         Helpers::read_json();
         
-        $post_data_archive = Post::with('rSubCategory')->whereMonth('created_at', '=', $month)->whereYear('created_at', '=', $year)->paginate(12);
+        $post_data_archive = Post::with('rSubCategory')->published()->whereMonth('created_at', '=', $month)->whereYear('created_at', '=', $year)->paginate(12);
 
         foreach($post_data_archive as $item) {
             $ts = strtotime($item->created_at);

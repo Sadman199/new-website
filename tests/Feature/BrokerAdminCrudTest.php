@@ -233,4 +233,227 @@ class BrokerAdminCrudTest extends TestCase
 
         $response->assertRedirect(route('admin_broker_show'));
     }
+
+    public function test_admin_can_view_broker_details(): void
+    {
+        $broker = Broker::create([
+            'name' => 'Detail Broker',
+            'slug' => 'detail-broker',
+            'url' => 'https://example.com',
+            'country' => 'Cyprus',
+            'rating' => 4.2,
+        ]);
+
+        $response = $this->actingAs($this->admin, 'admin')
+            ->get(route('admin_broker_view', $broker->id));
+
+        $response->assertOk();
+        $response->assertSee('Detail Broker');
+        $response->assertSee('Overview');
+        $response->assertSee('Cyprus');
+    }
+
+    public function test_admin_can_filter_featured_brokers(): void
+    {
+        Broker::create([
+            'name' => 'Featured One',
+            'slug' => 'featured-one',
+            'url' => 'https://example.com',
+            'country' => 'UK',
+            'featured_broker' => true,
+        ]);
+        Broker::create([
+            'name' => 'Plain One',
+            'slug' => 'plain-one',
+            'url' => 'https://example.com',
+            'country' => 'UK',
+            'featured_broker' => false,
+        ]);
+
+        $response = $this->actingAs($this->admin, 'admin')
+            ->get(route('admin_broker_show', ['status' => 'featured']));
+
+        $response->assertOk();
+        $response->assertSee('Featured One');
+        $response->assertDontSee('Plain One');
+    }
+
+    public function test_admin_can_search_brokers_by_country(): void
+    {
+        Broker::create([
+            'name' => 'Cyprus Desk',
+            'slug' => 'cyprus-desk',
+            'url' => 'https://example.com',
+            'country' => 'Cyprus',
+        ]);
+        Broker::create([
+            'name' => 'UK Desk',
+            'slug' => 'uk-desk',
+            'url' => 'https://example.com',
+            'country' => 'United Kingdom',
+        ]);
+
+        $response = $this->actingAs($this->admin, 'admin')
+            ->get(route('admin_broker_show', ['q' => 'Cyprus']));
+
+        $response->assertOk();
+        $response->assertSee('Cyprus Desk');
+        $response->assertDontSee('UK Desk');
+    }
+
+    public function test_create_form_includes_category_description_fields(): void
+    {
+        $response = $this->actingAs($this->admin, 'admin')
+            ->get(route('admin_broker_create'));
+
+        $response->assertOk();
+        $response->assertSee('name="category_descriptions[low-spread-brokers]"', false);
+        $response->assertSee('name="region_descriptions[asia]"', false);
+        $response->assertSee('name="country_descriptions[bangladesh]"', false);
+    }
+
+    public function test_admin_can_save_taxonomy_descriptions_with_a_broker(): void
+    {
+        $response = $this->actingAs($this->admin, 'admin')
+            ->post(route('admin_broker_store'), [
+                'name' => 'Described Broker',
+                'slug' => 'described-broker',
+                'country' => 'Cyprus',
+                'url' => 'https://example.com',
+                'broker_categories' => ['low-spread-brokers'],
+                'regions' => ['asia'],
+                'associated_countries' => ['bangladesh'],
+                'category_descriptions' => [
+                    'low-spread-brokers' => 'Tight spreads on major FX pairs.',
+                ],
+                'region_descriptions' => [
+                    'asia' => 'Brokers commonly used by traders in Asia.',
+                ],
+                'country_descriptions' => [
+                    'bangladesh' => 'Brokers available to traders in Bangladesh.',
+                ],
+            ]);
+
+        $broker = Broker::where('slug', 'described-broker')->first();
+        $this->assertNotNull($broker);
+        $response->assertRedirect(route('admin_broker_edit', $broker->id));
+
+        $this->assertDatabaseHas('broker_taxonomy_terms', [
+            'type' => 'category',
+            'slug' => 'low-spread-brokers',
+            'description' => 'Tight spreads on major FX pairs.',
+        ]);
+        $this->assertDatabaseHas('broker_taxonomy_terms', [
+            'type' => 'region',
+            'slug' => 'asia',
+            'description' => 'Brokers commonly used by traders in Asia.',
+        ]);
+        $this->assertDatabaseHas('broker_taxonomy_terms', [
+            'type' => 'country',
+            'slug' => 'bangladesh',
+            'description' => 'Brokers available to traders in Bangladesh.',
+        ]);
+    }
+
+    public function test_unselected_taxonomy_description_is_not_wiped(): void
+    {
+        \App\Models\BrokerTaxonomyTerm::create([
+            'type' => 'category',
+            'slug' => 'mt5-brokers',
+            'description' => 'Keep this MetaTrader 5 copy.',
+        ]);
+
+        $this->actingAs($this->admin, 'admin')
+            ->post(route('admin_broker_store'), [
+                'name' => 'Other Broker',
+                'slug' => 'other-broker',
+                'country' => 'UK',
+                'url' => 'https://example.com',
+                'broker_categories' => ['low-spread-brokers'],
+                'category_descriptions' => [
+                    'low-spread-brokers' => 'New low spread copy.',
+                ],
+            ]);
+
+        $this->assertDatabaseHas('broker_taxonomy_terms', [
+            'type' => 'category',
+            'slug' => 'mt5-brokers',
+            'description' => 'Keep this MetaTrader 5 copy.',
+        ]);
+        $this->assertDatabaseHas('broker_taxonomy_terms', [
+            'type' => 'category',
+            'slug' => 'low-spread-brokers',
+            'description' => 'New low spread copy.',
+        ]);
+    }
+
+    public function test_long_taxonomy_html_description_can_be_saved(): void
+    {
+        $html = '<p>'.str_repeat('Low spread brokers offer tight pricing on majors. ', 500).'</p>';
+
+        $this->assertGreaterThan(20000, strlen($html));
+
+        $response = $this->actingAs($this->admin, 'admin')
+            ->post(route('admin_broker_store'), [
+                'name' => 'Long Copy Broker',
+                'slug' => 'long-copy-broker',
+                'country' => 'Cyprus',
+                'url' => 'https://example.com',
+                'broker_categories' => ['low-spread-brokers'],
+                'category_descriptions' => [
+                    'low-spread-brokers' => $html,
+                ],
+            ]);
+
+        $broker = Broker::where('slug', 'long-copy-broker')->first();
+        $this->assertNotNull($broker);
+        $response->assertRedirect(route('admin_broker_edit', $broker->id));
+        $response->assertSessionHasNoErrors();
+
+        $this->assertDatabaseHas('broker_taxonomy_terms', [
+            'type' => 'category',
+            'slug' => 'low-spread-brokers',
+            'description' => $html,
+        ]);
+    }
+
+    public function test_empty_taxonomy_description_is_removed(): void
+    {
+        \App\Models\BrokerTaxonomyTerm::create([
+            'type' => 'category',
+            'slug' => 'scalping-brokers',
+            'description' => 'Temporary scalping copy.',
+        ]);
+
+        $this->actingAs($this->admin, 'admin')
+            ->post(route('admin_broker_store'), [
+                'name' => 'Clear Copy Broker',
+                'slug' => 'clear-copy-broker',
+                'country' => 'UK',
+                'url' => 'https://example.com',
+                'broker_categories' => ['scalping-brokers'],
+                'category_descriptions' => [
+                    'scalping-brokers' => '',
+                ],
+            ]);
+
+        $this->assertDatabaseMissing('broker_taxonomy_terms', [
+            'type' => 'category',
+            'slug' => 'scalping-brokers',
+        ]);
+    }
+
+    public function test_taxonomy_description_is_used_on_the_guide_page(): void
+    {
+        \App\Models\BrokerTaxonomyTerm::create([
+            'type' => 'category',
+            'slug' => 'low-spread-brokers',
+            'description' => 'Custom low-spread listing copy from admin.',
+        ]);
+
+        $guide = \App\Support\BestBrokerGuideDefinition::forSlug('low-spread-brokers');
+
+        $this->assertSame('Custom low-spread listing copy from admin.', $guide['description']);
+        $this->assertNotSame($guide['description'], $guide['lead']);
+    }
 }

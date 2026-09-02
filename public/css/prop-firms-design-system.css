@@ -1,6 +1,4 @@
-/* Prop Firms — layout preserved, BrokersCourt warm dark-glass theme */
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Syne:wght@600;700;800&display=swap');
-
+/* Prop Firms — BrokersCourt warm dark-glass theme */
 .pf-root {
     --pf-ocean: #e8822a;
     --pf-ocean-dark: #c46a16;
@@ -27,8 +25,8 @@
     --pf-emerald-soft: rgba(74, 222, 128, 0.12);
     --pf-radius: 14px;
     --pf-radius-lg: 20px;
-    --pf-font-display: 'Syne', system-ui, sans-serif;
-    --pf-font-body: 'DM Sans', system-ui, sans-serif;
+    --pf-font-display: var(--bc-font, "Plus Jakarta Sans", system-ui, sans-serif);
+    --pf-font-body: var(--bc-font, "Plus Jakarta Sans", system-ui, sans-serif);
     --pf-shadow: 0 24px 48px -16px rgba(0, 0, 0, 0.6);
     --pf-shadow-accent: 0 12px 40px -12px var(--pf-accent-glow);
 
@@ -57,12 +55,15 @@ body:has(.pf-root) {
 }
 
 .pf-wrap {
-    width: min(100% - 2rem, 76rem);
+    width: min(100% - 2rem, var(--bc-container, 1320px));
+    max-width: var(--bc-container, 1320px);
     margin: 0 auto;
 }
 
 @media (min-width: 1024px) {
-    .pf-wrap { width: min(100% - 3rem, 76rem); }
+    .pf-wrap {
+        width: min(100% - 3rem, var(--bc-container, 1320px));
+    }
 }
 
 .pf-display {

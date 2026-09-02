@@ -4,6 +4,7 @@
     $label = $label ?? 'Feature Image';
     $currentUrl = $currentUrl ?? null;
     $required = $required ?? false;
+    $hint = $hint ?? 'JPG, PNG, WEBP, AVIF — max 2MB. Leave empty on edit to keep the current image.';
 @endphp
 
 <div class="tw-flex tw-flex-col tw-gap-2">
@@ -27,10 +28,7 @@
         data-preview-target="{{ $previewId }}"
         @if($required) required @endif />
 
-    <p class="tw-text-xs tw-text-slate-500">
-        JPG, PNG, WEBP, AVIF — max 2MB.
-        Leave empty on edit to keep the current image.
-    </p>
+    <p class="tw-text-xs tw-text-slate-500">{{ $hint }}</p>
 
     <div class="tw-pt-1">
         <p class="tw-text-xs tw-font-semibold tw-text-slate-500 tw-mb-1">Preview</p>
@@ -71,6 +69,7 @@
         reader.onload = function (e) {
             preview.src = e.target.result;
             preview.style.display = 'block';
+            preview.classList.remove('tw-hidden');
         };
         reader.readAsDataURL(file);
     });

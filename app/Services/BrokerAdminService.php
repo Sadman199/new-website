@@ -69,10 +69,7 @@ class BrokerAdminService
             $broker->slug = Str::slug($request->input('name', $broker->name));
         }
 
-        // Fallback if slug collapses to empty (e.g. symbol-only names).
-        if ($broker->slug === '' || $broker->slug === null) {
-            $broker->slug = 'broker-' . Str::lower(Str::random(8));
-        }
+        $broker->slug = $this->uniqueSlug((string) $broker->slug, $broker->id, $request->input('name', $broker->name));
 
         // DB requires a non-null URL.
         if ($broker->url === null || $broker->url === '') {
@@ -92,6 +89,8 @@ class BrokerAdminService
         EditorialAssignmentService::applyFromRequest($broker, $request);
 
         $broker->save();
+
+        app(BrokerTaxonomyTermService::class)->syncFromRequest($request);
 
         CountryBrokersService::flush();
 
@@ -178,6 +177,25 @@ class BrokerAdminService
     protected function deletePublicFile(?string $relativePath): void
     {
         $this->uploads->delete($relativePath);
+    }
+
+    protected function uniqueSlug(string $slug, ?int $ignoreId, mixed $name): string
+    {
+        $base = Str::slug($slug) ?: Str::slug((string) $name) ?: 'broker-'.Str::lower(Str::random(8));
+        $candidate = $base;
+        $suffix = 2;
+
+        while (
+            Broker::query()
+                ->where('slug', $candidate)
+                ->when($ignoreId, fn ($query) => $query->where('id', '!=', $ignoreId))
+                ->exists()
+        ) {
+            $candidate = $base.'-'.$suffix;
+            $suffix++;
+        }
+
+        return $candidate;
     }
 
     public static function marketOptions(): array

@@ -61,6 +61,12 @@ class AuthorPostController extends Controller
         $post->is_share = $request->is_share;
         $post->is_comment = $request->is_comment;
         $post->language_id = $request->language_id;
+        if (\Illuminate\Support\Facades\Schema::hasColumn('posts', 'status')) {
+            $post->status = 'pending_review';
+        }
+        if (\Illuminate\Support\Facades\Schema::hasColumn('posts', 'reading_time')) {
+            $post->reading_time = Post::estimateReadingTime($post->post_detail);
+        }
         $post->save();
 
         $this->syncNewTags($post->id, $request->tags);
@@ -109,6 +115,9 @@ class AuthorPostController extends Controller
         $post->is_share = $request->is_share;
         $post->is_comment = $request->is_comment;
         $post->language_id = $request->language_id;
+        if (\Illuminate\Support\Facades\Schema::hasColumn('posts', 'reading_time')) {
+            $post->reading_time = Post::estimateReadingTime($post->post_detail);
+        }
         $post->save();
 
         $this->syncNewTags($post->id, $request->tags);

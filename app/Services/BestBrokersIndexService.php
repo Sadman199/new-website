@@ -76,8 +76,7 @@ class BestBrokersIndexService
 
             $lists[] = $this->buildListEntry($slug, 'country', [
                 'title' => "Best Forex Brokers in {$country['name']} in {$year}",
-                'description' => "Compare regulated brokers serving clients in {$country['name']} with competitive fees, strong platforms, and transparent trading conditions.",
-                'popular' => in_array($slug, ['india', 'united-kingdom', 'united-states', 'australia', 'singapore'], true),
+                'popular' => in_array($slug, ['india', 'united-kingdom', 'united-states', 'australia', 'singapore', 'cyprus'], true),
                 'filters' => ['forex', 'general', 'country-residence'],
             ], $brokers);
         }
@@ -105,7 +104,6 @@ class BestBrokersIndexService
             'slug' => $slug,
             'type' => $type,
             'title' => $meta['title'],
-            'description' => $meta['description'],
             'url' => route('brokers.best', ['slug' => $slug]),
             'popular' => (bool) ($meta['popular'] ?? false),
             'filters' => $meta['filters'] ?? [],
@@ -115,76 +113,94 @@ class BestBrokersIndexService
                 'logo' => $broker->logo ? asset($broker->logo) : null,
             ])->all(),
             'broker_count' => BrokerListingFilter::brokersFor($slug, $brokers)->count(),
+            'description' => \App\Support\RichText::toPlainText(\App\Models\BrokerTaxonomyTerm::descriptionFor($type, $slug)),
         ];
     }
 
-    /** @return array<string, array{title: string, description: string, popular?: bool, filters: string[]}> */
+    /** @return array<string, array{title: string, popular?: bool, filters: string[]}> */
     private function categoryDefinitions(int $year): array
     {
         return [
             'brokers-for-beginners' => [
                 'title' => "Best Brokers for Beginners in {$year}",
-                'description' => 'Find the most user-friendly brokers with low fees and strong educational resources.',
                 'popular' => true,
                 'filters' => ['forex', 'general', 'beginners'],
             ],
             'low-spread-brokers' => [
                 'title' => "Lowest Spread Forex Brokers in {$year}",
-                'description' => 'Compare top forex brokers offering low spreads, fast execution, and a safe trading environment.',
                 'popular' => true,
                 'filters' => ['forex', 'cfd', 'general', 'low-spreads'],
             ],
             'scalping-brokers' => [
                 'title' => "Best Scalping Brokers in {$year}",
-                'description' => 'Find top scalping brokers with low fees, fast execution, and reliable platform stability.',
                 'popular' => true,
                 'filters' => ['forex', 'cfd', 'scalping', 'day-trading'],
             ],
             'mt4-brokers' => [
                 'title' => "Best MetaTrader 4 Brokers in {$year}",
-                'description' => 'Find the best MT4 brokers with speed, stability, and powerful analytical tools.',
                 'popular' => true,
                 'filters' => ['forex', 'platform-mt4'],
             ],
             'mt5-brokers' => [
                 'title' => "Best MetaTrader 5 Brokers in {$year}",
-                'description' => 'Compare brokers offering MetaTrader 5 with multi-asset access and advanced charting.',
                 'popular' => true,
                 'filters' => ['forex', 'cfd', 'platform-mt5'],
             ],
             'trading-apps-brokers' => [
                 'title' => "Best Stock Trading Apps for {$year}",
-                'description' => 'Discover the best mobile trading apps for fast, intuitive, and on-the-go investing.',
                 'popular' => true,
                 'filters' => ['stocks', 'cfd', 'mobile-apps', 'general'],
             ],
             'copytrading-brokers' => [
                 'title' => "Best Copy Trading Brokers in {$year}",
-                'description' => 'Compare brokers with copy trading features, transparent stats, and flexible risk controls.',
                 'popular' => true,
                 'filters' => ['forex', 'copy-trading', 'social-trading'],
             ],
             'social-trading-brokers' => [
                 'title' => "Best Social Trading Brokers in {$year}",
-                'description' => 'Explore brokers with social trading communities, signal sharing, and collaborative tools.',
                 'filters' => ['forex', 'social-trading', 'copy-trading'],
             ],
             'free-withdrawal-brokers' => [
                 'title' => "Best Free Withdrawal Brokers in {$year}",
-                'description' => 'Compare brokers with low non-trading costs, free withdrawals, and transparent fee schedules.',
                 'filters' => ['forex', 'general', 'free-withdrawal'],
             ],
             'micro-accounts-brokers' => [
                 'title' => "Best Micro Account Brokers in {$year}",
-                'description' => 'Find brokers with micro and cent accounts, low minimum deposits, and flexible sizing.',
                 'filters' => ['forex', 'beginners', 'micro-account'],
             ],
             'high-leverage' => [
                 'title' => "Best High Leverage Brokers in {$year}",
-                'description' => 'Compare brokers offering the highest leverage limits with transparent margin requirements and platform support.',
                 'popular' => true,
                 'filters' => ['forex', 'cfd', 'professionals'],
             ],
+            'ea-brokers' => [
+                'title' => "Best Forex Brokers with Expert Advisors (EAs) in {$year}",
+                'filters' => ['forex', 'platform-mt4', 'platform-mt5', 'ea-trading'],
+            ],
+            'trading-signals-brokers' => [
+                'title' => "Best Forex Brokers with Trading Signals in {$year}",
+                'filters' => ['forex', 'signals', 'copy-trading'],
+            ],
+            'mam-brokers' => [
+                'title' => "Best Forex Brokers with MAM Accounts in {$year}",
+                'filters' => ['forex', 'managed-accounts', 'mam'],
+            ],
+            'pamm-brokers' => [
+                'title' => "Best Forex Brokers with PAMM Accounts in {$year}",
+                'filters' => ['forex', 'managed-accounts', 'pamm'],
+            ],
         ];
+    }
+
+    public function heroLead(?array $preferredCountry = null): string
+    {
+        $slug = $preferredCountry['slug'] ?? 'global';
+        $name = $preferredCountry['name'] ?? null;
+
+        if ($slug !== 'global' && $name) {
+            return "Compare regulated brokers serving clients in {$name} that offer competitive fees, robust platforms, and transparent trading conditions.";
+        }
+
+        return 'Compare regulated brokers that offer competitive fees, robust platforms, and transparent trading conditions.';
     }
 }

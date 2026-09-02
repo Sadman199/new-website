@@ -9,7 +9,7 @@
                 <h2 class="cms-section__title">{{ $d['heading'] }}</h2>
             @endif
             @if(!empty($d['body']))
-                <div class="cms-prose">{!! nl2br(e($d['body'])) !!}</div>
+                <div class="cms-prose">{!! \App\Support\RichText::forDisplay($d['body'] ?? null) !!}</div>
             @endif
         </div>
         @if(!empty($d['image']))

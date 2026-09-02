@@ -2,7 +2,6 @@
     'broker',
     'rank' => null,
     'variant' => 'listing',
-    'compare' => false,
     'save' => false,
     'context' => null,
     'as' => 'article',
@@ -13,24 +12,32 @@
     $compact = $variant === 'compact';
     $tag = in_array($as, ['article', 'li', 'div'], true) ? $as : 'article';
 
+    // Try the richest source first, but always fall back to something so every
+    // card reserves the same amount of space for its secondary line.
     $highlight = null;
     if (! $card['is_award_winner'] && ! empty($card['top_feature'])) {
         $highlight = \App\Support\RichText::toPlainText($card['top_feature']);
-    } elseif ($card['review_count'] > 0) {
-        $highlight = number_format($card['review_count']) . ' user ' . \Illuminate\Support\Str::plural('review', $card['review_count']);
-    } elseif (! empty($card['regulation_summary'])) {
-        $highlight = $card['regulation_summary'];
     } elseif (! empty($card['short_description'])) {
         $highlight = \App\Support\RichText::toPlainText($card['short_description']);
+    } elseif (! empty($card['regulation_summary'])) {
+        $highlight = $card['regulation_summary'];
+    } elseif ($card['review_count'] > 0) {
+        $highlight = number_format($card['review_count']) . ' user ' . \Illuminate\Support\Str::plural('review', $card['review_count']);
+    } else {
+        $highlight = $card['is_regulated']
+            ? 'Regulated broker — see full trading conditions in our independent review.'
+            : 'See full trading conditions and safety details in our independent review.';
     }
-    $highlight = $highlight ? \Illuminate\Support\Str::limit($highlight, 92, '…') : null;
+    $highlight = \Illuminate\Support\Str::limit($highlight, 92, '…');
 
-    $stats = array_filter([
-        ['label' => 'Min. deposit', 'value' => $card['minimum_deposit']],
-        ['label' => 'Leverage', 'value' => $card['leverage']],
-        ['label' => 'Spreads', 'value' => $card['spreads']],
-        ['label' => 'Platforms', 'value' => $card['platforms']],
-    ], fn ($row) => filled($row['value']) && $row['value'] !== '—');
+    // Always render the same 4 stat slots (with a placeholder for missing data)
+    // so every card lines up to the same grid and height.
+    $stats = [
+        ['label' => 'Min. deposit', 'value' => $card['minimum_deposit'] ?: '—'],
+        ['label' => 'Leverage', 'value' => $card['leverage'] ?: '—'],
+        ['label' => 'Spreads', 'value' => $card['spreads'] ?: '—'],
+        ['label' => 'Platforms', 'value' => $card['platforms'] ?: '—'],
+    ];
 
     $performance = array_slice($card['performance'], 0, $compact ? 4 : 2);
     $badge = null;
@@ -76,13 +83,6 @@
 @endphp
 
 <{{ $tag }} {{ $attributes->merge(['class' => implode(' ', $classes)])->merge($dataAttrs) }}>
-    @if($compare && $card['slug'])
-        <label class="broker-card__compare">
-            <input type="checkbox" class="broker-card__compare-input" data-fmb-compare value="{{ $card['slug'] }}">
-            Compare
-        </label>
-    @endif
-
     <div class="broker-card__brand">
         <a href="{{ $card['review_url'] }}" class="broker-card__logo" aria-hidden="true" tabindex="-1">
             @if($card['logo'])
@@ -107,20 +107,16 @@
             @endif
         </div>
 
-        @if($highlight)
-            <p class="broker-card__tagline" title="{{ $highlight }}">{{ $highlight }}</p>
-        @endif
+        <p class="broker-card__tagline" title="{{ $highlight }}">{{ $highlight }}</p>
 
-        @if($stats !== [])
-            <div class="broker-card__stats" aria-label="Trading conditions">
-                @foreach($stats as $stat)
-                    <div class="broker-card__stat">
-                        <span class="broker-card__stat-label">{{ $stat['label'] }}</span>
-                        <span class="broker-card__stat-value" title="{{ $stat['value'] }}">{{ $stat['value'] }}</span>
-                    </div>
-                @endforeach
-            </div>
-        @endif
+        <div class="broker-card__stats" aria-label="Trading conditions">
+            @foreach($stats as $stat)
+                <div class="broker-card__stat">
+                    <span class="broker-card__stat-label">{{ $stat['label'] }}</span>
+                    <span class="broker-card__stat-value" title="{{ $stat['value'] }}">{{ $stat['value'] }}</span>
+                </div>
+            @endforeach
+        </div>
 
         @if($performance !== [])
             <div class="broker-card__performance" aria-label="Performance metrics">
@@ -136,10 +132,6 @@
                     </div>
                 @endforeach
             </div>
-        @endif
-
-        @if(! empty($card['regulation_summary']) && $highlight !== $card['regulation_summary'])
-            <p class="broker-card__regulation" title="{{ $card['regulation_summary'] }}">{{ $card['regulation_summary'] }}</p>
         @endif
     </div>
 

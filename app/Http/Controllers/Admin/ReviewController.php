@@ -85,14 +85,57 @@ class ReviewController extends Controller
             ->with('success', 'Your review has been submitted and is pending approval.');
     }
 
-    public function pending()
+    public function pending(Request $request)
     {
-        $reviews = Review::where('status', 0)
-            ->with(['broker', 'parent', 'user'])
-            ->latest()
-            ->get();
+        $filters = [
+            'q' => trim((string) $request->get('q', '')),
+            'status' => (string) $request->get('status', 'pending'),
+            'kind' => (string) $request->get('kind', ''),
+            'broker_id' => (string) $request->get('broker_id', ''),
+        ];
 
-        return view('admin.reviews.pending', compact('reviews'));
+        if (! in_array($filters['status'], ['pending', 'approved', 'declined'], true)) {
+            $filters['status'] = 'pending';
+        }
+
+        $statusMap = ['pending' => 0, 'approved' => 1, 'declined' => -1];
+
+        $query = Review::query()
+            ->with(['broker', 'parent', 'user'])
+            ->where('status', $statusMap[$filters['status']])
+            ->latest();
+
+        if ($filters['q'] !== '') {
+            $search = $filters['q'];
+            $query->where(function ($sub) use ($search) {
+                $sub->where('name', 'like', '%'.$search.'%')
+                    ->orWhere('email', 'like', '%'.$search.'%')
+                    ->orWhere('description', 'like', '%'.$search.'%');
+            });
+        }
+
+        if ($filters['kind'] === 'review') {
+            $query->whereNull('parent_id');
+        } elseif ($filters['kind'] === 'reply') {
+            $query->whereNotNull('parent_id');
+        }
+
+        if ($filters['broker_id'] !== '') {
+            $query->where('broker_id', $filters['broker_id']);
+        }
+
+        $reviews = $query->paginate(12)->withQueryString();
+
+        return view('admin.reviews.pending', [
+            'reviews' => $reviews,
+            'filters' => $filters,
+            'brokers' => Broker::query()->orderBy('name')->get(['id', 'name']),
+            'stats' => [
+                'pending' => Review::query()->where('status', 0)->count(),
+                'approved' => Review::query()->where('status', 1)->count(),
+                'declined' => Review::query()->where('status', -1)->count(),
+            ],
+        ]);
     }
 
     public function approve(Review $review)

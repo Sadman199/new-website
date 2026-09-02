@@ -5,7 +5,9 @@ namespace App\Services;
 use App\Http\Controllers\Front\BrokerController;
 use App\Models\Broker;
 use App\Models\ForexBonus;
+use App\Support\BrokerListingFilter;
 use App\Support\BrokerRating;
+use App\Support\RichText;
 use Illuminate\Support\Collection;
 
 class BrokerComparisonService
@@ -461,81 +463,228 @@ class BrokerComparisonService
     {
         return [
             'overall' => [
-                'label' => 'Overall',
+                'label' => 'Overview',
                 'rows' => [
-                    ['key' => 'rating', 'label' => 'Reputation and Quality'],
-                    ['key' => 'regulation', 'label' => 'Regulation and Compliance'],
-                    ['key' => 'platforms', 'label' => 'Trading Platforms'],
-                    ['key' => 'spreads', 'label' => 'Trading Cost (Spreads)'],
-                    ['key' => 'regulation', 'label' => 'Regulator'],
-                    ['key' => 'broker_type', 'label' => 'Broker Type'],
-                    ['key' => 'country', 'label' => 'Headquarters'],
+                    ['key' => 'rating_display', 'label' => 'Editorial rating'],
+                    ['key' => 'trust_score', 'label' => 'Trust score'],
+                    ['key' => 'broker_type', 'label' => 'Broker type'],
+                    ['key' => 'regulatory_tier', 'label' => 'Regulatory tier'],
+                    ['key' => 'regulation', 'label' => 'Regulators'],
+                    ['key' => 'minimum_deposit', 'label' => 'Min. deposit'],
+                    ['key' => 'spreads', 'label' => 'Typical spreads'],
+                    ['key' => 'leverage', 'label' => 'Max leverage'],
+                    ['key' => 'fee_level', 'label' => 'Fee level'],
+                    ['key' => 'platforms', 'label' => 'Platforms'],
+                    ['key' => 'instrument_count', 'label' => 'Instruments'],
                     ['key' => 'year_founded', 'label' => 'Founded'],
-                    ['key' => 'minimum_deposit', 'label' => 'Min Deposit'],
-                    ['key' => 'leverage', 'label' => 'Max Lev'],
-                    ['key' => 'top_feature', 'label' => 'Label'],
+                    ['key' => 'country', 'label' => 'Headquarters'],
+                    ['key' => 'top_feature', 'label' => 'Top feature'],
                 ],
             ],
             'regulation' => [
-                'label' => 'Regulation',
+                'label' => 'Safety',
                 'rows' => [
                     ['key' => 'regulation', 'label' => 'Regulators'],
-                    ['key' => 'regulatory_tier', 'label' => 'Regulatory Tier'],
-                    ['key' => 'investor_protection', 'label' => 'Investor Protection'],
-                    ['key' => 'segregation_of_funds', 'label' => 'Segregation of Funds'],
-                    ['key' => 'negative_balance_protection', 'label' => 'Negative Balance Protection'],
-                    ['key' => 'trust_score', 'label' => 'Trust Score'],
+                    ['key' => 'regulatory_tier', 'label' => 'Regulatory tier'],
+                    ['key' => 'broker_type', 'label' => 'Broker type'],
+                    ['key' => 'investor_protection', 'label' => 'Investor protection'],
+                    ['key' => 'segregation_of_funds', 'label' => 'Segregated funds'],
+                    ['key' => 'negative_balance_protection', 'label' => 'Negative balance protection'],
+                    ['key' => 'trust_score', 'label' => 'Trust score'],
+                    ['key' => 'year_founded', 'label' => 'Year founded'],
                 ],
             ],
             'account' => [
-                'label' => 'Account & Cost',
+                'label' => 'Trading costs',
                 'rows' => [
-                    ['key' => 'minimum_deposit', 'label' => 'Minimum Deposit'],
-                    ['key' => 'spreads', 'label' => 'Average Spreads'],
+                    ['key' => 'minimum_deposit', 'label' => 'Minimum deposit'],
+                    ['key' => 'spreads', 'label' => 'Typical spreads'],
                     ['key' => 'commission', 'label' => 'Commission'],
-                    ['key' => 'leverage', 'label' => 'Maximum Leverage'],
-                    ['key' => 'account_types', 'label' => 'Account Types'],
-                    ['key' => 'instrument_count', 'label' => 'Tradable Instruments'],
+                    ['key' => 'fee_level', 'label' => 'Fee class'],
+                    ['key' => 'leverage', 'label' => 'Maximum leverage'],
+                    ['key' => 'pricing', 'label' => 'Pricing model'],
+                    ['key' => 'account_types', 'label' => 'Account types'],
+                    ['key' => 'instrument_count', 'label' => 'Tradable instruments'],
                     ['key' => 'markets', 'label' => 'Markets'],
                 ],
             ],
-            'deposit' => [
-                'label' => 'Deposit & Withdrawal',
+            'platforms' => [
+                'label' => 'Platforms',
                 'rows' => [
-                    ['key' => 'deposit_methods', 'label' => 'Deposit Methods'],
-                    ['key' => 'withdrawal_method', 'label' => 'Withdrawal Methods'],
-                    ['key' => 'withdrawal_fee', 'label' => 'Withdrawal Fee'],
-                    ['key' => 'payment_methods', 'label' => 'Payment Methods'],
+                    ['key' => 'platforms', 'label' => 'Trading platforms'],
+                    ['key' => 'mobile_trading', 'label' => 'Mobile trading'],
+                    ['key' => 'web_trader', 'label' => 'Web trader'],
+                    ['key' => 'vps_hosting', 'label' => 'VPS hosting'],
+                    ['key' => 'social_trading', 'label' => 'Social / copy trading'],
+                    ['key' => 'demo_account', 'label' => 'Demo account'],
+                    ['key' => 'charting_tools', 'label' => 'Charting tools'],
+                    ['key' => 'economic_calendar', 'label' => 'Economic calendar'],
+                ],
+            ],
+            'deposit' => [
+                'label' => 'Payments',
+                'rows' => [
+                    ['key' => 'deposit_methods', 'label' => 'Deposit methods'],
+                    ['key' => 'withdrawal_method', 'label' => 'Withdrawal methods'],
+                    ['key' => 'withdrawal_fee', 'label' => 'Withdrawal fee'],
+                    ['key' => 'payment_methods', 'label' => 'Payment methods'],
+                    ['key' => 'minimum_deposit', 'label' => 'Minimum deposit'],
                 ],
             ],
             'company' => [
-                'label' => 'Company and Service',
+                'label' => 'Service',
                 'rows' => [
                     ['key' => 'country', 'label' => 'Headquarters'],
-                    ['key' => 'year_founded', 'label' => 'Year Founded'],
+                    ['key' => 'year_founded', 'label' => 'Year founded'],
                     ['key' => 'languages', 'label' => 'Languages'],
-                    ['key' => 'customer_support', 'label' => 'Customer Support'],
-                    ['key' => 'mobile_trading', 'label' => 'Mobile Trading'],
-                    ['key' => 'web_trader', 'label' => 'Web Trader'],
-                    ['key' => 'vps_hosting', 'label' => 'VPS Hosting'],
-                    ['key' => 'social_trading', 'label' => 'Social Trading'],
+                    ['key' => 'customer_support', 'label' => 'Customer support'],
+                    ['key' => 'account_managers', 'label' => 'Account managers'],
+                    ['key' => 'educational_resources', 'label' => 'Education'],
+                    ['key' => 'research_tools', 'label' => 'Research tools'],
                 ],
             ],
             'reviews' => [
-                'label' => 'User Reviews',
+                'label' => 'Reviews',
                 'rows' => [
-                    ['key' => 'rating', 'label' => 'Overall Rating'],
-                    ['key' => 'review_count', 'label' => 'User Reviews'],
-                    ['key' => 'trust_score', 'label' => 'Trust Score'],
+                    ['key' => 'rating_display', 'label' => 'Editorial rating'],
+                    ['key' => 'review_count', 'label' => 'Approved reviews'],
+                    ['key' => 'trust_score', 'label' => 'Trust score'],
+                    ['key' => 'top_feature', 'label' => 'Standout feature'],
                 ],
             ],
         ];
     }
 
-    public function suggestedBrokers(int $limit = 6): Collection
+    /** @return array<string, mixed> */
+    public function catalogStats(Collection $brokers): array
+    {
+        $tierOne = $brokers->filter(fn (Broker $b) => (int) $b->regulatory_tier === 1)->count();
+        $lowFee = $brokers->filter(fn (Broker $b) => $b->fee_level === 'low')->count();
+        $withRating = $brokers->filter(fn (Broker $b) => $b->rating !== null);
+        $avgRating = $withRating->isNotEmpty()
+            ? round((float) $withRating->avg(fn (Broker $b) => (float) $b->rating), 1)
+            : null;
+
+        return [
+            'broker_count' => $brokers->count(),
+            'tier_one_count' => $tierOne,
+            'low_fee_count' => $lowFee,
+            'avg_rating' => $avgRating,
+            'updated_at' => now()->format('F j, Y'),
+        ];
+    }
+
+    /** @return array<int, array{title: string, url: string, description: string}> */
+    public function relatedGuides(int $limit = 4): array
+    {
+        $guideDefs = [
+            'low-spread-brokers' => 'Best Low Spread Brokers',
+            'brokers-for-beginners' => 'Best Brokers for Beginners',
+            'high-leverage' => 'Best High Leverage Brokers',
+            'mt5-brokers' => 'Best MetaTrader 5 Brokers',
+            'scalping-brokers' => 'Best Scalping Brokers',
+            'free-withdrawal-brokers' => 'Best Free Withdrawal Brokers',
+        ];
+
+        $guides = [];
+
+        foreach ($guideDefs as $slug => $title) {
+            if (BrokerListingFilter::slugType($slug) === null) {
+                continue;
+            }
+
+            $label = BrokerListingFilter::labelFor($slug);
+
+            $guides[] = [
+                'title' => $title,
+                'url' => route('brokers.best', ['slug' => $slug]),
+                'description' => 'Ranked shortlist for '.$label.' with fees, regulation, and platforms from our database.',
+            ];
+
+            if (count($guides) >= $limit) {
+                break;
+            }
+        }
+
+        return $guides;
+    }
+
+    /** @return array<int, array{question: string, answer: string}> */
+    public function toolFaqs(): array
+    {
+        return [
+            [
+                'question' => 'How many brokers can I compare at once?',
+                'answer' => 'You can compare up to three brokers side by side in the interactive table. For a deeper head-to-head breakdown — including category scores and promotions — open the full comparison page for any two-broker pair.',
+            ],
+            [
+                'question' => 'Where does BrokersCourt comparison data come from?',
+                'answer' => 'Metrics are pulled from our live broker database: regulation, spreads, commissions, platforms, deposits, leverage, trust scores, and editorial ratings. We update listings as broker terms and licenses change.',
+            ],
+            [
+                'question' => 'What do the highlighted cells mean?',
+                'answer' => 'When a metric can be ranked objectively (rating, trust score, minimum deposit, regulatory tier, leverage, and similar fields), we highlight the stronger value so winners are easy to scan.',
+            ],
+            [
+                'question' => 'Should I rely only on this comparison to open an account?',
+                'answer' => 'Use this tool as a research starting point. Always confirm local regulation, account terms, and product availability on the broker’s official site before depositing funds.',
+            ],
+        ];
+    }
+
+    /**
+     * Enrich popular comparison chips with logos and ratings.
+     *
+     * @param  array<int, array{label: string, url: string}>  $pairs
+     * @return array<int, array<string, mixed>>
+     */
+    public function enrichPopularComparisons(array $pairs): array
+    {
+        $slugs = [];
+
+        foreach ($pairs as $pair) {
+            if (preg_match('#/brokers/compare/([a-z0-9-]+)-vs-([a-z0-9-]+)#i', $pair['url'] ?? '', $m)) {
+                $slugs[] = $m[1];
+                $slugs[] = $m[2];
+            }
+        }
+
+        $brokers = Broker::query()
+            ->whereIn('slug', array_unique($slugs))
+            ->get(['id', 'name', 'slug', 'logo', 'rating'])
+            ->keyBy('slug');
+
+        return collect($pairs)->map(function (array $pair) use ($brokers) {
+            $left = null;
+            $right = null;
+
+            if (preg_match('#/brokers/compare/([a-z0-9-]+)-vs-([a-z0-9-]+)#i', $pair['url'] ?? '', $m)) {
+                $left = $brokers->get($m[1]);
+                $right = $brokers->get($m[2]);
+            }
+
+            return [
+                'label' => $pair['label'],
+                'url' => $pair['url'],
+                'left' => $left ? [
+                    'name' => $left->name,
+                    'logo' => $left->logo ? asset($left->logo) : null,
+                    'rating' => $left->rating !== null ? number_format((float) $left->rating, 1) : null,
+                ] : null,
+                'right' => $right ? [
+                    'name' => $right->name,
+                    'logo' => $right->logo ? asset($right->logo) : null,
+                    'rating' => $right->rating !== null ? number_format((float) $right->rating, 1) : null,
+                ] : null,
+            ];
+        })->all();
+    }
+
+    public function suggestedBrokers(int $limit = 8): Collection
     {
         return Broker::query()
             ->where('is_scam', false)
+            ->withCount(['reviews as approved_review_count' => fn ($q) => $q->where('status', 1)])
             ->orderByDesc('rating')
             ->orderByDesc('featured_broker')
             ->limit($limit)
@@ -559,6 +708,10 @@ class BrokerComparisonService
     {
         $rating = BrokerRating::outOfFive($broker->rating);
         $accountTypes = $broker->accountTypeLabelList();
+        $platforms = $broker->platformList();
+        $regulators = $broker->regulationList();
+        $shortDescription = RichText::toPlainText($broker->short_description);
+        $pros = array_slice(RichText::listItems($broker->pros), 0, 3);
 
         return [
             'id' => $broker->id,
@@ -567,28 +720,37 @@ class BrokerComparisonService
             'logo' => $broker->logo ? asset($broker->logo) : null,
             'og_image' => $broker->ogShareImageUrl(),
             'rating' => $rating,
-            'regulation' => implode(', ', $broker->regulationList()) ?: '—',
-            'regulatory_tier' => $broker->regulatory_tier ? 'Tier ' . $broker->regulatory_tier : '—',
-            'platforms' => implode(', ', $broker->platformList()) ?: '—',
+            'short_description' => $shortDescription ?: null,
+            'pros' => $pros,
+            'categories' => array_slice($broker->brokerCategoryList(), 0, 4),
+            'regulation' => implode(', ', $regulators) ?: '—',
+            'regulation_list' => array_slice($regulators, 0, 4),
+            'regulatory_tier' => $broker->regulatory_tier ? 'Tier '.$broker->regulatory_tier : '—',
+            'platforms' => implode(', ', $platforms) ?: '—',
+            'platform_list' => array_slice($platforms, 0, 4),
             'markets' => implode(', ', $broker->marketList()) ?: '—',
             'minimum_deposit' => $broker->minimum_deposit !== null
-                ? '$' . number_format((float) $broker->minimum_deposit, 0)
+                ? '$'.number_format((float) $broker->minimum_deposit, 0)
                 : '—',
             'minimum_deposit_raw' => $broker->minimum_deposit,
-            'spreads' => $broker->spreads ?: '—',
-            'leverage' => $broker->leverage ?: '—',
-            'commission' => $broker->commission ?: 'None',
+            'spreads' => RichText::toPlainText($broker->spreads) ?: '—',
+            'leverage' => RichText::toPlainText($broker->leverage) ?: '—',
+            'commission' => RichText::toPlainText($broker->commission) ?: 'None',
+            'pricing' => RichText::toPlainText($broker->pricing) ?: '—',
             'fee_level' => ucfirst((string) ($broker->fee_level ?: 'medium')),
             'country' => $broker->country ?: '—',
             'year_founded' => $broker->year_founded ?: '—',
             'broker_type' => $broker->isRegulated() ? 'Regulated' : 'Unregulated',
-            'top_feature' => $broker->top_feature ?: '—',
-            'deposit_methods' => strip_tags((string) ($broker->deposit_methods ?: '')) ?: '—',
-            'withdrawal_method' => strip_tags((string) ($broker->withdrawal_method ?: '')) ?: '—',
-            'withdrawal_fee' => $broker->withdrawal_fee ?: '—',
-            'payment_methods' => strip_tags((string) ($broker->payment_methods ?: '')) ?: '—',
-            'languages' => strip_tags((string) ($broker->languages ?: '')) ?: '—',
-            'customer_support' => strip_tags((string) ($broker->customer_support ?: '')) ?: '—',
+            'top_feature' => RichText::toPlainText($broker->top_feature) ?: '—',
+            'deposit_methods' => RichText::toPlainText($broker->deposit_methods) ?: '—',
+            'withdrawal_method' => RichText::toPlainText($broker->withdrawal_method) ?: '—',
+            'withdrawal_fee' => RichText::toPlainText($broker->withdrawal_fee) ?: '—',
+            'payment_methods' => RichText::toPlainText($broker->payment_methods) ?: '—',
+            'languages' => RichText::toPlainText($broker->languages) ?: '—',
+            'customer_support' => RichText::toPlainText($broker->customer_support) ?: '—',
+            'educational_resources' => RichText::toPlainText($broker->educational_resources) ?: '—',
+            'research_tools' => RichText::toPlainText($broker->research_tools) ?: '—',
+            'charting_tools' => RichText::toPlainText($broker->charting_tools) ?: '—',
             'instrument_count' => $broker->instrument_count ? (int) $broker->instrument_count : null,
             'account_types' => $accountTypes ? implode(', ', $accountTypes) : '—',
             'trust_score' => $broker->trust_score ?: '—',
@@ -596,12 +758,14 @@ class BrokerComparisonService
             'investor_protection' => $this->boolLabel($broker->investor_protection),
             'segregation_of_funds' => $this->boolLabel($broker->segregation_of_funds),
             'negative_balance_protection' => $this->boolLabel($broker->negative_balance_protection),
-            'mobile_trading' => $this->boolLabel((bool) $broker->mobile_trading),
-            'web_trader' => $this->boolLabel((bool) $broker->web_trader),
+            'mobile_trading' => $this->boolLabel((bool) RichText::toPlainText($broker->mobile_trading)),
+            'web_trader' => $this->boolLabel((bool) RichText::toPlainText($broker->web_trader)),
             'vps_hosting' => $this->boolLabel($broker->vps_hosting),
-            'social_trading' => $this->boolLabel($broker->social_trading),
+            'social_trading' => $this->boolLabel((bool) RichText::toPlainText($broker->social_trading)),
             'account_managers' => $this->boolLabel($broker->account_managers),
-            'rating_display' => $rating !== null ? number_format($rating, 1) . '/5' : '—',
+            'demo_account' => $this->boolLabel($broker->demo_account_available),
+            'economic_calendar' => $this->boolLabel($broker->economic_calendar),
+            'rating_display' => $rating !== null ? number_format($rating, 1).'/5' : '—',
             'review_url' => route('broker_detail', ['slug' => BrokerController::reviewSlugFor($broker)]),
             'scam_checker_url' => route('broker.scam_checker.show', ['slug' => $broker->listingSlug()]),
             'visit_url' => $broker->open_live ?: $broker->visit_site ?: $broker->url,

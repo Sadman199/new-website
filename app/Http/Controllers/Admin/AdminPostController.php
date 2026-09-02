@@ -3,265 +3,388 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use App\Models\Post;
-use Spatie\LaravelImageOptimizer\Facades\ImageOptimizer;
-use App\Models\Category;
-use App\Models\SubCategory;
-use App\Models\Tag;
-use App\Models\Subscriber;
+use App\Http\Requests\Admin\PostRequest;
 use App\Mail\Websitemail;
+use App\Models\Author;
+use App\Models\Broker;
+use App\Models\Category;
+use App\Models\Language;
+use App\Models\Post;
+use App\Models\SubCategory;
+use App\Models\Subscriber;
+use App\Models\Tag;
 use App\Services\EditorialAssignmentService;
-use Auth;
-use DB;
+use App\Services\PostAdminService;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Schema;
+use Throwable;
 
 class AdminPostController extends Controller
 {
-    public function show()
+    public function __construct(protected PostAdminService $posts)
     {
-        $posts = Post::with('rSubCategory.rCategory','rLanguage')->get();
-        return view('admin.post_show', compact('posts'));
+    }
+
+    public function show(Request $request)
+    {
+        $filters = $this->listingFilters($request);
+        $query = $this->filteredPosts($request);
+
+        $relations = [
+            'rSubCategory.rCategory',
+            'rLanguage',
+            'author',
+            'writtenByAuthor',
+        ];
+
+        if (Schema::hasTable('post_broker')) {
+            $relations[] = 'brokers:id,name';
+        }
+
+        $posts = $query
+            ->with($relations)
+            ->paginate(20)
+            ->withQueryString();
+
+        $stats = [
+            'total' => Post::query()->count(),
+            'published' => $this->statusCount('published'),
+            'draft' => $this->statusCount('draft'),
+            'scheduled' => $this->statusCount('scheduled'),
+            'featured' => Schema::hasColumn('posts', 'is_featured')
+                ? Post::query()->where(function ($q) {
+                    $q->where('is_featured', true)
+                        ->orWhere('featured_homepage', true)
+                        ->orWhere('featured_blog', true)
+                        ->orWhere('is_editors_pick', true);
+                })->count()
+                : 0,
+        ];
+
+        return view('admin.posts.index', [
+            'posts' => $posts,
+            'stats' => $stats,
+            'filters' => $filters,
+            'formOptions' => $this->formOptions(null, true),
+        ]);
     }
 
     public function create()
     {
-        $sub_categories = SubCategory::with('rCategory')->get();
-        $editorialOptions = $this->editorialOptions();
-
-        return view('admin.post_create', compact('sub_categories', 'editorialOptions'));
+        return view('admin.posts.create', [
+            'post' => new Post([
+                'status' => 'published',
+                'content_type' => 'article',
+                'schema_type' => 'Article',
+                'is_share' => true,
+                'is_comment' => true,
+                'show_author' => true,
+                'show_related_posts' => true,
+                'robots_index' => true,
+                'robots_follow' => true,
+                'language_id' => app(\App\Services\GlobalViewDataService::class)->currentLanguageId(),
+            ]),
+            'formOptions' => $this->formOptions(),
+        ]);
     }
 
-public function store(Request $request)
-{
-    $request->validate([
-            'post_title' => 'required',
-            'post_detail' => 'required',
-            'post_photo' => 'required|image|mimes:avif|max:18',
-            'meta_title' => 'nullable|string|max:255',
-            'meta_description' => 'nullable|string',
-            'meta_keywords' => 'nullable|string',
-            'author' => 'nullable|string|max:255',
-            'written_assignee' => 'nullable|string',
-            'edited_assignee' => 'nullable|string',
-            'fact_checked_assignee' => 'nullable|string',
-    ]);
+    public function store(PostRequest $request)
+    {
+        try {
+            $post = $this->posts->save(new Post(), $request);
+        } catch (Throwable $e) {
+            report($e);
 
-    // Handle file upload and set $final_name for post_photo
-    if ($request->hasFile('post_photo')) {
-        $now = time(); // Current timestamp for uniqueness
-        $ext = $request->file('post_photo')->extension(); // Get file extension
-        $final_name = 'post_photo_' . $now . '.' . $ext; // Generate a unique file name
-    
-        // Move the uploaded file to the correct directory in production
-        $request->file('post_photo')->move($_SERVER['DOCUMENT_ROOT'].'/uploads/', $final_name);
-    }
-
-
-    // Save Post to Database
-    $post = new Post();
-    $post->sub_category_id = $request->sub_category_id;
-    $post->post_title = $request->post_title;
-    $post->slug = $request->slug;
-    $post->post_detail = $request->post_detail;
-    $post->post_photo = $final_name;  // Use $final_name for the image
-    $post->visitors = 1;
-    $post->author_id = 0;
-    $post->admin_id = Auth::guard('admin')->user()->id;
-    $post->is_share = $request->is_share;
-    $post->is_comment = $request->is_comment;
-    $post->language_id = $request->language_id;
-    // Add meta fields
-    $post->meta_title = $request->meta_title;
-    $post->meta_description = $request->meta_description;
-    $post->meta_keywords = $request->meta_keywords;
-    $post->author = $request->author;
-    $this->applyEditorialAssignments($post, $request);
-    $post->save();  // Save first to get the post ID
-
-    // Get the ID of the newly created post
-    $ai_id = $post->id;
-
-    // Handle Tags
-    if ($request->tags != '') {
-        $tags_array_new = [];
-        $tags_array = explode(',', $request->tags);
-        for ($i = 0; $i < count($tags_array); $i++) {
-            $tags_array_new[] = trim($tags_array[$i]);
+            return redirect()
+                ->back()
+                ->withInput()
+                ->with('error', 'Could not create blog: '.$e->getMessage());
         }
-        $tags_array_new = array_values(array_unique($tags_array_new));
 
-        foreach ($tags_array_new as $tag_name) {
-            $tag = new Tag();
-            $tag->post_id = $ai_id;  // Use the ID from the saved post
-            $tag->tag_name = trim($tag_name);
-            $tag->save();
+        if ($request->boolean('subscriber_send_option') && $post->isPubliclyVisible()) {
+            $this->notifySubscribers($post);
         }
+
+        return redirect()
+            ->route('admin_post_edit', $post->id)
+            ->with('success', 'Blog created.');
     }
 
-    return redirect()->route('admin_post_show')->with('success', 'Data is added successfully.');
-}
+    public function view($id)
+    {
+        $post = $this->loadPost($id);
 
+        return view('admin.posts.view', [
+            'post' => $post,
+            'credits' => EditorialAssignmentService::creditsForPost($post),
+        ]);
+    }
 
     public function edit($id)
     {
-        $test = Post::where('id',$id)->where('admin_id',Auth::guard('admin')->user()->id)->count();
-        if(!$test) {
-            return redirect()->route('admin_home');
-        }
+        $post = $this->loadPost($id);
 
-
-        $sub_categories = SubCategory::with('rCategory')->get();
-        $existing_tags = Tag::where('post_id',$id)->get();
-        $post_single = Post::where('id',$id)->first();
-        $editorialOptions = $this->editorialOptions();
-
-        return view('admin.post_edit', compact('post_single','sub_categories','existing_tags', 'editorialOptions'));
-    }
-
-
-    
-    
-  public function update(Request $request, $id)
-{
-    // Validate basic post details
-    $request->validate([
-        'post_title' => 'required',
-        'post_detail' => 'required',
-        'meta_title' => 'nullable|string|max:255',
-        'meta_description' => 'nullable|string',
-        'meta_keywords' => 'nullable|string',
-        'author' => 'nullable|string|max:255',
-        'written_assignee' => 'nullable|string',
-        'edited_assignee' => 'nullable|string',
-        'fact_checked_assignee' => 'nullable|string',
-    ]);
-
-    $post = Post::findOrFail($id); // Ensure the post exists
-
-    // Handle image upload if a new photo is provided
-    if ($request->hasFile('post_photo')) {
-        // Validate the uploaded image
-        $request->validate([
-            'post_photo' => 'image|mimes:jpg,jpeg,png,gif'
+        return view('admin.posts.edit', [
+            'post' => $post,
+            'formOptions' => $this->formOptions($post),
         ]);
-
-        // Check if there's an old image and delete it
-        if (!empty($post->post_photo)) {
-            $oldImagePath = $_SERVER['DOCUMENT_ROOT'] . '/uploads/' . $post->post_photo;
-
-            if (file_exists($oldImagePath)) {
-                unlink($oldImagePath); // Delete the old image
-            }
-        }
-
-        // Reuse the old filename if it exists, otherwise create a new one
-        $ext = $request->file('post_photo')->extension();
-        $final_name = !empty($post->post_photo) 
-                      ? basename($post->post_photo) 
-                      : 'post_photo_' . time() . '.' . $ext;
-
-        // Upload the new image
-        $request->file('post_photo')->move($_SERVER['DOCUMENT_ROOT'] . '/uploads/', $final_name);
-
-        // Update the post_photo field in the database
-        $post->post_photo = $final_name;
     }
 
-    // Update post details
-    $post->sub_category_id = $request->sub_category_id;
-    $post->post_title = $request->post_title;
-    $post->slug = $request->slug;
-    $post->post_detail = $request->post_detail;
-    $post->is_share = $request->is_share;
-    $post->is_comment = $request->is_comment;
-    $post->language_id = $request->language_id;
-    // Add meta fields
-    $post->meta_title = $request->meta_title;
-    $post->meta_description = $request->meta_description;
-    $post->meta_keywords = $request->meta_keywords;
-    $post->author = $request->author;
-    $this->applyEditorialAssignments($post, $request);
-    $post->save(); // Save the post
-
-    // Handle Tags
-    if (!empty($request->tags)) {
-        $tags_array = explode(',', $request->tags);
-
-        // Remove existing tags first (optional but cleaner)
-        Tag::where('post_id', $id)->delete();
-
-        // Add new tags
-        foreach ($tags_array as $tag_name) {
-            $tag_name = trim($tag_name);
-            if (!empty($tag_name)) {
-                $tag = new Tag();
-                $tag->post_id = $id;
-                $tag->tag_name = $tag_name;
-                $tag->save();
-            }
-        }
-    }
-
-    return redirect()->route('admin_post_show')->with('success', 'Data is updated successfully.');
-}
-
-
-
-    
-
-    public function delete_tag($id,$id1)
+    public function update(PostRequest $request, $id)
     {
-        $tag = Tag::where('id',$id)->first();
-        $tag->delete();
-        return redirect()->route('admin_post_edit',$id1)->with('success', 'Data is deleted successfully.');
+        $post = Post::query()->findOrFail($id);
+
+        try {
+            $this->posts->save($post, $request);
+        } catch (Throwable $e) {
+            report($e);
+
+            return redirect()
+                ->back()
+                ->withInput()
+                ->with('error', 'Could not update blog: '.$e->getMessage());
+        }
+
+        return redirect()
+            ->route('admin_post_edit', $post->id)
+            ->with('success', 'Blog updated.');
     }
 
     public function delete($id)
     {
-        $test = Post::where('id', $id)->where('admin_id', Auth::guard('admin')->user()->id)->count();
-        if(!$test) {
-            return redirect()->route('admin_home');
+        $post = Post::query()->findOrFail($id);
+
+        try {
+            $this->posts->delete($post);
+        } catch (Throwable $e) {
+            report($e);
+
+            return redirect()
+                ->route('admin_post_show')
+                ->with('error', 'Could not delete blog: '.$e->getMessage());
         }
-        
-        $post = Post::where('id', $id)->first();
-    
-        // Check if the file exists before trying to delete it
-        $filePath = $_SERVER['DOCUMENT_ROOT'].'/uploads/'.$post->post_photo;
-        if (file_exists($filePath)) {
-            unlink($filePath); // Delete the file if it exists
-        }
-    
-        // Delete the post record from the database
-        $post->delete();
-    
-        // Delete related tags
-        Tag::where('post_id', $id)->delete();
-    
-        return redirect()->route('admin_post_show')->with('success', 'Data is deleted successfully.');
+
+        return redirect()
+            ->route('admin_post_show')
+            ->with('success', 'Blog deleted.');
     }
 
-    protected function editorialOptions(): array
+    public function delete_tag($id, $id1)
+    {
+        $tag = Tag::query()->where('id', $id)->where('post_id', $id1)->first();
+        abort_unless($tag, 404);
+        $tag->delete();
+
+        return redirect()
+            ->route('admin_post_edit', $id1)
+            ->with('success', 'Tag removed.');
+    }
+
+    public function duplicate($id)
+    {
+        $post = $this->loadPost($id);
+        $copy = $this->posts->duplicate($post);
+
+        return redirect()
+            ->route('admin_post_edit', $copy->id)
+            ->with('success', 'Draft copy created.');
+    }
+
+    public function status($id, $status)
+    {
+        $post = Post::query()->findOrFail($id);
+        $this->posts->setStatus($post, (string) $status);
+
+        return redirect()
+            ->back()
+            ->with('success', 'Status updated to '.$post->statusLabel().'.');
+    }
+
+    protected function loadPost($id): Post
+    {
+        $relations = [
+            'rSubCategory.rCategory',
+            'rLanguage',
+            'author',
+            'admin',
+            'tags',
+            'writtenByAuthor',
+            'editedByAuthor',
+            'factCheckedByAuthor',
+            'writtenByAdmin',
+            'editedByAdmin',
+            'factCheckedByAdmin',
+        ];
+
+        if (Schema::hasTable('post_broker')) {
+            $relations[] = 'brokers:id,name,logo,slug';
+        }
+        if (Schema::hasTable('post_related')) {
+            $relations[] = 'relatedPosts:id,post_title,slug';
+        }
+        if (Schema::hasTable('post_related_category')) {
+            $relations[] = 'relatedCategories:id,category_name';
+        }
+
+        return Post::query()->with($relations)->findOrFail($id);
+    }
+
+    /** @return array<string, mixed> */
+    protected function listingFilters(Request $request): array
     {
         return [
-            EditorialAssignmentService::ROLE_WRITTEN => EditorialAssignmentService::assigneeOptions(EditorialAssignmentService::ROLE_WRITTEN),
-            EditorialAssignmentService::ROLE_EDITED => EditorialAssignmentService::assigneeOptions(EditorialAssignmentService::ROLE_EDITED),
-            EditorialAssignmentService::ROLE_FACT_CHECKED => EditorialAssignmentService::assigneeOptions(EditorialAssignmentService::ROLE_FACT_CHECKED),
+            'q' => trim((string) $request->get('q', '')),
+            'category_id' => $request->integer('category_id') ?: '',
+            'sub_category_id' => $request->integer('sub_category_id') ?: '',
+            'author_id' => $request->integer('author_id') ?: '',
+            'broker_id' => $request->integer('broker_id') ?: '',
+            'content_type' => (string) $request->get('content_type', ''),
+            'status' => (string) $request->get('status', ''),
+            'language_id' => $request->integer('language_id') ?: '',
+            'featured' => (string) $request->get('featured', ''),
+            'from' => (string) $request->get('from', ''),
+            'to' => (string) $request->get('to', ''),
         ];
     }
 
-    protected function applyEditorialAssignments(Post $post, Request $request): void
+    protected function filteredPosts(Request $request)
     {
-        EditorialAssignmentService::applyAssignee($post, EditorialAssignmentService::ROLE_WRITTEN, $request->input('written_assignee'));
-        EditorialAssignmentService::applyAssignee($post, EditorialAssignmentService::ROLE_EDITED, $request->input('edited_assignee'));
-        EditorialAssignmentService::applyAssignee($post, EditorialAssignmentService::ROLE_FACT_CHECKED, $request->input('fact_checked_assignee'));
+        $filters = $this->listingFilters($request);
 
-        if ($post->written_by_author_id) {
-            $post->author_id = $post->written_by_author_id;
-            $post->admin_id = 0;
-        } elseif ($post->written_by_admin_id) {
-            $post->author_id = 0;
-            $post->admin_id = $post->written_by_admin_id;
+        $query = Post::query()->orderByDesc('id');
+
+        if ($filters['q'] !== '') {
+            $term = $filters['q'];
+            $query->where(function ($sub) use ($term) {
+                $sub->where('post_title', 'like', '%'.$term.'%')
+                    ->orWhere('slug', 'like', '%'.$term.'%')
+                    ->orWhere('excerpt', 'like', '%'.$term.'%');
+            });
         }
+
+        if ($filters['sub_category_id'] !== '') {
+            $query->where('sub_category_id', $filters['sub_category_id']);
+        } elseif ($filters['category_id'] !== '') {
+            $query->whereHas('rSubCategory', fn ($q) => $q->where('category_id', $filters['category_id']));
+        }
+
+        if ($filters['author_id'] !== '') {
+            $authorId = $filters['author_id'];
+            $query->where(function ($sub) use ($authorId) {
+                $sub->where('author_id', $authorId)
+                    ->orWhere('written_by_author_id', $authorId);
+            });
+        }
+
+        if ($filters['broker_id'] !== '' && Schema::hasTable('post_broker')) {
+            $query->whereHas('brokers', fn ($q) => $q->where('brokers.id', $filters['broker_id']));
+        }
+
+        if ($filters['content_type'] !== '' && Schema::hasColumn('posts', 'content_type')) {
+            $query->where('content_type', $filters['content_type']);
+        }
+
+        if ($filters['status'] !== '' && Schema::hasColumn('posts', 'status')) {
+            $query->where('status', $filters['status']);
+        }
+
+        if ($filters['language_id'] !== '') {
+            $query->where('language_id', $filters['language_id']);
+        }
+
+        if ($filters['featured'] !== '' && Schema::hasColumn('posts', 'is_featured')) {
+            $query->where(function ($sub) {
+                $sub->where('is_featured', true)
+                    ->orWhere('featured_homepage', true)
+                    ->orWhere('featured_blog', true)
+                    ->orWhere('is_editors_pick', true)
+                    ->orWhere('is_popular', true);
+            });
+        }
+
+        if ($filters['from'] !== '') {
+            $query->whereDate(Schema::hasColumn('posts', 'publish_at') ? 'publish_at' : 'created_at', '>=', $filters['from']);
+        }
+
+        if ($filters['to'] !== '') {
+            $query->whereDate(Schema::hasColumn('posts', 'publish_at') ? 'publish_at' : 'created_at', '<=', $filters['to']);
+        }
+
+        return $query;
     }
 
+    protected function statusCount(string $status): int
+    {
+        if (! Schema::hasColumn('posts', 'status')) {
+            return $status === 'published' ? Post::query()->count() : 0;
+        }
+
+        return Post::query()->where('status', $status)->count();
+    }
+
+    /** @return array<string, mixed> */
+    protected function formOptions(?Post $post = null, bool $listing = false): array
+    {
+        $subCategories = SubCategory::query()
+            ->with('rCategory:id,category_name')
+            ->orderBy('sub_category_name')
+            ->get(['id', 'sub_category_name', 'category_id']);
+
+        $relatedPostQuery = Post::query()
+            ->orderByDesc('id')
+            ->limit(250)
+            ->get(['id', 'post_title']);
+
+        if ($post?->id) {
+            $relatedPostQuery = $relatedPostQuery->reject(fn (Post $item) => $item->id === $post->id)->values();
+        }
+
+        return [
+            'subCategories' => $subCategories,
+            'categories' => Category::query()->orderBy('category_name')->get(['id', 'category_name']),
+            'brokers' => Broker::query()->orderBy('name')->get(['id', 'name', 'is_scam']),
+            'authors' => Author::query()->orderBy('name')->get(['id', 'name']),
+            'languages' => Language::query()->orderBy('name')->get(['id', 'name', 'short_name']),
+            'relatedPosts' => $relatedPostQuery,
+            'tagSuggestions' => Tag::query()->select('tag_name')->distinct()->orderBy('tag_name')->limit(80)->pluck('tag_name'),
+            'contentTypes' => $this->contentTypeOptions($post),
+            'statuses' => Post::statuses(),
+            'schemaTypes' => Post::schemaTypes(),
+            'editorialOptions' => EditorialAssignmentService::allAssigneeOptions(),
+        ];
+    }
+
+    /** @return array<string, string> */
+    protected function contentTypeOptions(?Post $post = null): array
+    {
+        $types = Post::contentTypes();
+        $current = $post?->content_type;
+
+        if ($current && ! isset($types[$current])) {
+            $types[$current] = $post->contentTypeLabel();
+        }
+
+        return $types;
+    }
+
+    protected function notifySubscribers(Post $post): void
+    {
+        $url = $post->publicUrl();
+        if (! $url) {
+            return;
+        }
+
+        $subject = 'A new post is published';
+        $message = 'Hi, A new post is published into our website. Please go to see that post:<br>';
+        $message .= '<a target="_blank" href="'.e($url).'">'.e($post->post_title).'</a>';
+
+        foreach (Subscriber::query()->where('status', 'Active')->get() as $row) {
+            try {
+                Mail::to($row->email)->send(new Websitemail($subject, $message));
+            } catch (Throwable $e) {
+                report($e);
+            }
+        }
+    }
 }

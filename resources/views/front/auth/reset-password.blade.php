@@ -6,12 +6,11 @@
 @section('canonical', route('user.password.reset', ['token' => $token]))
 
 @push('page-styles')
-    <link rel="stylesheet" href="{{ asset('css/user-account.css') }}?v=11">
+    <link rel="stylesheet" href="{{ asset('css/user-account.css') }}?v=12">
 @endpush
 
 @section('main_content')
 <div class="ua-root">
-    <div class="container">
     <div class="ua-wrap ua-wrap--narrow">
         <div class="ua-auth-card">
             <div class="ua-auth-head">

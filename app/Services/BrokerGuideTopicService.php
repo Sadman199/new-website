@@ -24,7 +24,7 @@ class BrokerGuideTopicService
         $wasInactive = $topic->exists && ! $topic->is_active;
 
         $topic->fill([
-            'slug' => $this->normalizeSlug($data['slug'] ?? $data['title']),
+            'slug' => $this->uniqueSlug((string) ($data['slug'] ?? ''), $topic->id, $data['title'] ?? ''),
             'title' => $data['title'],
             'default_summary' => $data['default_summary'] ?? null,
             'icon' => $data['icon'] ?? null,
@@ -48,6 +48,20 @@ class BrokerGuideTopicService
     public function delete(BrokerGuideTopic $topic): void
     {
         $topic->delete();
+    }
+
+    public function uniqueSlug(string $slug, ?int $ignoreId = null, mixed $title = ''): string
+    {
+        $base = $this->normalizeSlug($slug) ?: $this->normalizeSlug((string) $title) ?: 'topic';
+        $candidate = $base;
+        $suffix = 2;
+
+        while (! $this->slugIsAvailable($candidate, $ignoreId)) {
+            $candidate = $base.'-'.$suffix;
+            $suffix++;
+        }
+
+        return $candidate;
     }
 
     public function slugIsAvailable(string $slug, ?int $ignoreId = null): bool

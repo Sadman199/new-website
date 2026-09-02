@@ -44,8 +44,8 @@
         <div class="bc-country-drawer-body">
             <section class="bc-country-drawer-section" aria-labelledby="countryDrawerCountryTitle">
                 <div class="bc-country-drawer-section__head">
-                    <h3 id="countryDrawerCountryTitle" class="bc-country-drawer-section__title">{{ $t('drawer.country_title') }}</h3>
-                    <span class="bc-country-drawer-section__hint">{{ $sortedCountries->count() }} {{ strtolower($t('drawer.country_title')) }}</span>
+                    <span id="countryDrawerCountryTitle" class="bc-country-drawer-section__title">Available countries</span>
+                    <span class="bc-country-drawer-section__hint">{{ $sortedCountries->count() }} {{ $sortedCountries->count() === 1 ? 'country' : 'countries' }}</span>
                 </div>
 
                 <div class="bc-country-drawer-search-wrap">

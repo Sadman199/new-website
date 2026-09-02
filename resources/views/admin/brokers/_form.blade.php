@@ -10,32 +10,24 @@
     $categoryScores = old('category_scores', is_array($broker->category_scores) ? $broker->category_scores : []);
 @endphp
 
-<div id="broker-accordion" class="tw-space-y-5">
-    {{-- 1. Identity --}}
-    <div class="card tw-bg-white tw-rounded-2xl tw-border tw-border-slate-200/70 tw-overflow-hidden">
-        <div class="card-header tw-bg-slate-50 tw-border-b tw-border-slate-200/70 tw-px-6 tw-py-4" id="headingIdentity">
-            <h5 class="mb-0">
-                <button class="btn btn-link tw-w-full tw-text-left tw-flex tw-items-center tw-gap-3 tw-font-extrabold tw-text-slate-900 hover:tw-underline" type="button" data-toggle="collapse" data-target="#collapseIdentity" aria-expanded="true">
-                    1. Identity
-                </button>
-            </h5>
+<div class="ab-form">
+    <section class="ab-section" id="identity">
+        <div class="ab-section__head">
+            <h2>1. Identity</h2>
+            <p>Who the broker is — name, slug, HQ, logos, affiliate links, and where they appear in listings.</p>
         </div>
-        <div id="collapseIdentity" class="collapse show" data-parent="#broker-accordion">
-            <div class="card-body tw-px-6 tw-py-5">
-                <p class="tw-mt-0 tw-mb-4 tw-text-xs tw-text-slate-600">
-                    Who the broker is — name, slug, HQ, logos, affiliate links, and where they appear in listings.
-                </p>
+        <div class="ab-section__body">
 
                 <h6 class="text-primary font-weight-bold mb-3">Basics</h6>
                 <div class="row">
                     <div class="col-md-4 form-group">
                         <label for="name">Broker Name <span class="text-danger">*</span></label>
-                        <input type="text" name="name" id="name" class="form-control" required value="{{ old('name', $broker->name) }}">
+                        <input type="text" name="name" id="name" class="form-control @error('name') is-invalid @enderror" required value="{{ old('name', $broker->name) }}">
                         @error('name')<small class="text-danger d-block">{{ $message }}</small>@enderror
                     </div>
                     <div class="col-md-4 form-group">
                         <label for="slug">Slug</label>
-                        <input type="text" name="slug" id="slug" class="form-control" value="{{ old('slug', $broker->slug) }}" placeholder="auto from name if empty">
+                        <input type="text" name="slug" id="slug" class="form-control @error('slug') is-invalid @enderror" value="{{ old('slug', $broker->slug) }}" placeholder="auto from name if empty" @if($isEdit) data-autogen="off" @endif>
                         @error('slug')<small class="text-danger d-block">{{ $message }}</small>@enderror
                     </div>
                     <div class="col-md-4 form-group">
@@ -48,7 +40,7 @@
                     </div>
                     <div class="col-md-4 form-group">
                         <label for="country">Headquarters / Country <span class="text-danger">*</span></label>
-                        <input type="text" name="country" id="country" class="form-control" required value="{{ old('country', $broker->country) }}">
+                        <input type="text" name="country" id="country" class="form-control @error('country') is-invalid @enderror" required value="{{ old('country', $broker->country) }}">
                         @error('country')<small class="text-danger d-block">{{ $message }}</small>@enderror
                     </div>
                     <div class="col-md-4 form-group">
@@ -130,70 +122,52 @@
                 </div>
 
                 <h6 class="text-primary font-weight-bold mb-2 mt-3">Broker Categories</h6>
-                <p class="text-muted small mb-3">Used for <strong>Best Brokers → By Category</strong> listings.</p>
-                <div class="form-group mb-4">
-                    <div class="row">
-                        @foreach($formOptions['brokerCategories'] as $value => $label)
-                            <div class="col-md-6 col-lg-4">
-                                <div class="custom-control custom-checkbox mb-2">
-                                    <input type="checkbox" class="custom-control-input" name="broker_categories[]" id="broker_category_{{ $value }}" value="{{ $value }}" @checked(in_array($value, $selectedBrokerCategories, true))>
-                                    <label class="custom-control-label" for="broker_category_{{ $value }}">{{ $label }}</label>
-                                </div>
-                            </div>
-                        @endforeach
-                    </div>
-                    @error('broker_categories')<small class="text-danger d-block">{{ $message }}</small>@enderror
-                    @error('broker_categories.*')<small class="text-danger d-block">{{ $message }}</small>@enderror
-                </div>
+                <p class="text-muted small mb-3">Used for <strong>Best Brokers → By Category</strong> listings. Check a category to add or edit its shared listing description.</p>
+                @include('admin.brokers._taxonomy_picks', [
+                    'options' => $formOptions['brokerCategories'],
+                    'selected' => $selectedBrokerCategories,
+                    'inputName' => 'broker_categories[]',
+                    'descName' => 'category_descriptions',
+                    'idPrefix' => 'broker_category',
+                    'type' => 'category',
+                ])
+                @error('broker_categories')<small class="text-danger d-block mb-3">{{ $message }}</small>@enderror
+                @error('broker_categories.*')<small class="text-danger d-block mb-3">{{ $message }}</small>@enderror
 
                 <h6 class="text-primary font-weight-bold mb-2">Regions</h6>
-                <div class="form-group mb-4">
-                    <div class="row">
-                        @foreach($formOptions['regions'] as $value => $label)
-                            <div class="col-md-6 col-lg-4">
-                                <div class="custom-control custom-checkbox mb-2">
-                                    <input type="checkbox" class="custom-control-input" name="regions[]" id="region_{{ $value }}" value="{{ $value }}" @checked(in_array($value, $selectedRegions, true))>
-                                    <label class="custom-control-label" for="region_{{ $value }}">{{ $label }}</label>
-                                </div>
-                            </div>
-                        @endforeach
-                    </div>
-                    @error('regions')<small class="text-danger d-block">{{ $message }}</small>@enderror
-                    @error('regions.*')<small class="text-danger d-block">{{ $message }}</small>@enderror
-                </div>
+                <p class="text-muted small mb-3">Check a region to add or edit its shared listing description.</p>
+                @include('admin.brokers._taxonomy_picks', [
+                    'options' => $formOptions['regions'],
+                    'selected' => $selectedRegions,
+                    'inputName' => 'regions[]',
+                    'descName' => 'region_descriptions',
+                    'idPrefix' => 'region',
+                    'type' => 'region',
+                ])
+                @error('regions')<small class="text-danger d-block mb-3">{{ $message }}</small>@enderror
+                @error('regions.*')<small class="text-danger d-block mb-3">{{ $message }}</small>@enderror
 
                 <h6 class="text-primary font-weight-bold mb-2">Country Listings</h6>
-                <p class="text-muted small mb-3">Optional — country-specific best-broker pages.</p>
-                <div class="form-group mb-0">
-                    <div class="row">
-                        @foreach($formOptions['countryListings'] as $value => $label)
-                            <div class="col-md-6 col-lg-4">
-                                <div class="custom-control custom-checkbox mb-2">
-                                    <input type="checkbox" class="custom-control-input" name="associated_countries[]" id="country_{{ $value }}" value="{{ $value }}" @checked(in_array($value, $selectedCountries, true))>
-                                    <label class="custom-control-label" for="country_{{ $value }}">{{ $label }}</label>
-                                </div>
-                            </div>
-                        @endforeach
-                    </div>
-                </div>
-            </div>
+                <p class="text-muted small mb-3">Optional — country-specific best-broker pages. Check a country to add or edit its shared listing description.</p>
+                @include('admin.brokers._taxonomy_picks', [
+                    'options' => $formOptions['countryListings'],
+                    'selected' => $selectedCountries,
+                    'inputName' => 'associated_countries[]',
+                    'descName' => 'country_descriptions',
+                    'idPrefix' => 'country',
+                    'type' => 'country',
+                ])
+                @error('associated_countries')<small class="text-danger d-block">{{ $message }}</small>@enderror
+                @error('associated_countries.*')<small class="text-danger d-block">{{ $message }}</small>@enderror
         </div>
-    </div>
+    </section>
 
-    {{-- 2. Regulation --}}
-    <div class="card tw-bg-white tw-rounded-2xl tw-border tw-border-slate-200/70 tw-overflow-hidden">
-        <div class="card-header tw-bg-slate-50 tw-border-b tw-border-slate-200/70 tw-px-6 tw-py-4" id="headingRegulation">
-            <h5 class="mb-0">
-                <button class="btn btn-link collapsed tw-w-full tw-text-left tw-flex tw-items-center tw-gap-3 tw-font-extrabold tw-text-slate-900 hover:tw-underline" type="button" data-toggle="collapse" data-target="#collapseRegulation">
-                    2. Regulation
-                </button>
-            </h5>
+    <section class="ab-section" id="regulation">
+        <div class="ab-section__head">
+            <h2>2. Regulation</h2>
+            <p>Licenses, fund protection, trust signals, and scam flags.</p>
         </div>
-        <div id="collapseRegulation" class="collapse" data-parent="#broker-accordion">
-            <div class="card-body tw-px-6 tw-py-5">
-                <p class="tw-mt-0 tw-mb-4 tw-text-xs tw-text-slate-600">
-                    Licenses, fund protection, trust signals, and scam flags.
-                </p>
+        <div class="ab-section__body">
 
                 <div class="row">
                     <div class="col-md-6 form-group">
@@ -236,10 +210,11 @@
                                min="0"
                                name="capitalization"
                                id="capitalization"
-                               class="form-control"
+                               class="form-control @error('capitalization') is-invalid @enderror"
                                value="{{ old('capitalization', $broker->capitalization) }}"
                                placeholder="e.g. 1000000">
                         <small class="text-muted">Numeric company capital only (stored as a decimal).</small>
+                        @error('capitalization')<small class="text-danger d-block">{{ $message }}</small>@enderror
                     </div>
                     <div class="col-md-6 form-group">
                         <label for="insurance">Insurance / Compensation</label>
@@ -277,24 +252,15 @@
                     <input type="date" name="scam_reported_date" id="scam_reported_date" class="form-control"
                            value="{{ old('scam_reported_date', optional($broker->scam_reported_date)->format('Y-m-d')) }}">
                 </div>
-            </div>
         </div>
-    </div>
+    </section>
 
-    {{-- 3. Trading --}}
-    <div class="card tw-bg-white tw-rounded-2xl tw-border tw-border-slate-200/70 tw-overflow-hidden">
-        <div class="card-header tw-bg-slate-50 tw-border-b tw-border-slate-200/70 tw-px-6 tw-py-4" id="headingTrading">
-            <h5 class="mb-0">
-                <button class="btn btn-link collapsed tw-w-full tw-text-left tw-flex tw-items-center tw-gap-3 tw-font-extrabold tw-text-slate-900 hover:tw-underline" type="button" data-toggle="collapse" data-target="#collapseTrading">
-                    3. Trading
-                </button>
-            </h5>
+    <section class="ab-section" id="trading">
+        <div class="ab-section__head">
+            <h2>3. Trading</h2>
+            <p>Costs, platforms, markets, payments, and trading tools.</p>
         </div>
-        <div id="collapseTrading" class="collapse" data-parent="#broker-accordion">
-            <div class="card-body tw-px-6 tw-py-5">
-                <p class="tw-mt-0 tw-mb-4 tw-text-xs tw-text-slate-600">
-                    Costs, platforms, markets, payments, and trading tools.
-                </p>
+        <div class="ab-section__body">
 
                 <h6 class="text-primary font-weight-bold mb-3">Trading Conditions</h6>
                 <div class="row">
@@ -413,24 +379,15 @@
                         </div>
                     @endforeach
                 </div>
-            </div>
         </div>
-    </div>
+    </section>
 
-    {{-- 4. SEO --}}
-    <div class="card tw-bg-white tw-rounded-2xl tw-border tw-border-slate-200/70 tw-overflow-hidden">
-        <div class="card-header tw-bg-slate-50 tw-border-b tw-border-slate-200/70 tw-px-6 tw-py-4" id="headingSeo">
-            <h5 class="mb-0">
-                <button class="btn btn-link collapsed tw-w-full tw-text-left tw-flex tw-items-center tw-gap-3 tw-font-extrabold tw-text-slate-900 hover:tw-underline" type="button" data-toggle="collapse" data-target="#collapseSeo">
-                    4. SEO
-                </button>
-            </h5>
+    <section class="ab-section" id="seo">
+        <div class="ab-section__head">
+            <h2>4. SEO</h2>
+            <p>Meta fields for search previews on broker review pages.</p>
         </div>
-        <div id="collapseSeo" class="collapse" data-parent="#broker-accordion">
-            <div class="card-body tw-px-6 tw-py-5">
-                <p class="tw-mt-0 tw-mb-4 tw-text-xs tw-text-slate-600">
-                    Meta fields for search previews on broker review pages.
-                </p>
+        <div class="ab-section__body">
                 <div class="form-group">
                     <label for="meta_title">Meta Title</label>
                     <input type="text" name="meta_title" id="meta_title" class="form-control" value="{{ old('meta_title', $broker->meta_title) }}">
@@ -443,24 +400,15 @@
                     <label for="meta_keyword">Meta Keywords</label>
                     <textarea name="meta_keyword" id="meta_keyword" class="form-control" rows="2">{{ old('meta_keyword', $broker->meta_keyword) }}</textarea>
                 </div>
-            </div>
         </div>
-    </div>
+    </section>
 
-    {{-- 5. Publish --}}
-    <div class="card tw-bg-white tw-rounded-2xl tw-border tw-border-slate-200/70 tw-overflow-hidden">
-        <div class="card-header tw-bg-slate-50 tw-border-b tw-border-slate-200/70 tw-px-6 tw-py-4" id="headingPublish">
-            <h5 class="mb-0">
-                <button class="btn btn-link collapsed tw-w-full tw-text-left tw-flex tw-items-center tw-gap-3 tw-font-extrabold tw-text-slate-900 hover:tw-underline" type="button" data-toggle="collapse" data-target="#collapsePublish">
-                    5. Publish
-                </button>
-            </h5>
+    <section class="ab-section" id="publish">
+        <div class="ab-section__head">
+            <h2>5. Publish</h2>
+            <p>Visibility, scores, editorial review copy, and credit assignments.</p>
         </div>
-        <div id="collapsePublish" class="collapse" data-parent="#broker-accordion">
-            <div class="card-body tw-px-6 tw-py-5">
-                <p class="tw-mt-0 tw-mb-4 tw-text-xs tw-text-slate-600">
-                    Visibility, scores, editorial review copy, and credit assignments.
-                </p>
+        <div class="ab-section__body">
 
                 <h6 class="text-primary font-weight-bold mb-3">Visibility</h6>
                 <div class="row">
@@ -501,7 +449,7 @@
                 <h6 class="text-primary font-weight-bold mb-3">Review Content</h6>
                 <div class="form-group">
                     <label for="verdict">Verdict</label>
-                    <textarea name="verdict" id="verdict" class="form-control" rows="3">{{ old('verdict', $broker->verdict) }}</textarea>
+                    <textarea name="verdict" id="verdict" class="form-control snote" rows="4">{{ old('verdict', $broker->verdict) }}</textarea>
                 </div>
                 <div class="row">
                     <div class="col-md-6 form-group">
@@ -515,30 +463,19 @@
                 </div>
 
                 @include('admin.partials._editorial_fields', ['model' => $broker, 'editorialOptions' => $formOptions['editorialOptions'] ?? null])
-            </div>
         </div>
-    </div>
+    </section>
 </div>
 
-<div class="tw-pt-2 tw-flex tw-flex-col sm:tw-flex-row sm:tw-items-center sm:tw-justify-between tw-gap-3">
-    <div class="tw-flex tw-items-center tw-gap-3">
-        <button type="submit"
-                class="tw-inline-flex tw-items-center tw-gap-2 tw-rounded-xl tw-bg-brand tw-text-white tw-px-5 tw-py-2.5 tw-text-sm tw-font-bold hover:tw-bg-brand/90">
-            <i class="fas fa-save"></i>
-            {{ $isEdit ? 'Update Broker' : 'Create Broker' }}
+<div class="ab-save">
+    <div class="ab-header__actions">
+        <button type="submit" class="ab-btn ab-btn--primary">
+            <i class="fas fa-save" aria-hidden="true"></i>
+            {{ $isEdit ? 'Save changes' : 'Create broker' }}
         </button>
-
         @if($isEdit)
-            <a href="{{ route('admin_account_options_index', $broker->id) }}"
-               class="tw-inline-flex tw-items-center tw-gap-2 tw-rounded-xl tw-border tw-border-slate-200 tw-bg-white tw-text-slate-800 tw-px-4 tw-py-2.5 tw-text-sm tw-font-semibold hover:tw-bg-slate-50">
-                <i class="fas fa-layer-group tw-text-slate-400"></i>
-                Account Options
-            </a>
+            <a href="{{ route('admin_account_options_index', $broker->id) }}" class="ab-btn ab-btn--ghost">Account options</a>
         @endif
     </div>
-
-    <a href="{{ route('admin_broker_show') }}"
-       class="tw-inline-flex tw-items-center tw-gap-2 tw-rounded-xl tw-bg-slate-50 tw-border tw-border-slate-200 tw-text-slate-700 tw-px-4 tw-py-2.5 tw-text-sm tw-font-semibold hover:tw-bg-slate-100">
-        Cancel
-    </a>
+    <a href="{{ route('admin_broker_show') }}" class="ab-btn ab-btn--ghost">Cancel</a>
 </div>

@@ -107,14 +107,20 @@ class BrokerComparisonController extends FrontController
         $this->bootFront();
 
         $allBrokers = $this->comparisonService->allBrokersForCompare();
+        $popular = app(FooterIndexService::class)->popularComparisons();
 
         return view('front.comparison.broker_comparison', [
             'brokersPayload' => $allBrokers
                 ->map(fn (Broker $broker) => $this->comparisonService->serializeBroker($broker))
                 ->values(),
-            'suggestedBrokers' => $this->comparisonService->suggestedBrokers(6),
+            'suggestedBrokers' => $this->comparisonService->suggestedBrokers(8)
+                ->map(fn (Broker $broker) => $this->comparisonService->serializeBroker($broker))
+                ->values(),
             'tabGroups' => $this->comparisonService->tabGroups(),
-            'popularComparisons' => app(FooterIndexService::class)->popularComparisons(),
+            'popularComparisons' => $this->comparisonService->enrichPopularComparisons($popular),
+            'catalogStats' => $this->comparisonService->catalogStats($allBrokers),
+            'relatedGuides' => $this->comparisonService->relatedGuides(4),
+            'toolFaqs' => $this->comparisonService->toolFaqs(),
         ]);
     }
 }

@@ -8,7 +8,7 @@
             <h2 class="cms-cta__title">{{ $d['heading'] }}</h2>
         @endif
         @if(!empty($d['text']))
-            <p class="cms-cta__text">{!! nl2br(e($d['text'])) !!}</p>
+            <div class="cms-cta__text cms-prose">{!! \App\Support\RichText::forDisplay($d['text'] ?? null) !!}</div>
         @endif
         @if(!empty($d['button_label']) && !empty($d['button_url']))
             <a href="{{ $d['button_url'] }}" class="cms-btn cms-btn--primary">{{ $d['button_label'] }}</a>

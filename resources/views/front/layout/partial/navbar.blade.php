@@ -83,7 +83,7 @@ $popularReviewBrokers = ($popularReviewBrokers ?? collect())->take(10);
                             <a href="{{ route('broker.comparison') }}" class="bc-nav-dropdown-link">Compare Brokers</a>
                             <a href="{{ route('broker.scam_checker') }}" class="bc-nav-dropdown-link bc-nav-dropdown-link--danger">Scam Checker</a>
                             <a href="{{ route('scam_brokers') }}" class="bc-nav-dropdown-link bc-nav-dropdown-link--danger">Scam broker list</a>
-                            <a href="{{ route('trading.tools') }}" class="bc-nav-dropdown-link" data-bc-nav-warm>Trading Tools</a>
+                            <a href="{{ route('calculators.index') }}" class="bc-nav-dropdown-link" data-bc-nav-warm>Trading Tools</a>
                         </div>
                     </div>
                 </div>
@@ -115,7 +115,7 @@ $popularReviewBrokers = ($popularReviewBrokers ?? collect())->take(10);
                         aria-expanded="false"
                         title="{{ $preferredCountry['name'] ?? 'Global' }}">
                     <span class="bc-country-nav-flag" id="countryNavFlag">
-                        @include('front.layout.partial.country-flag', ['country' => $preferredCountry, 'width' => 20, 'height' => 15])
+                        @include('front.layout.partial.country-flag', ['country' => $preferredCountry, 'width' => 28, 'height' => 21])
                     </span>
                     <span class="bc-country-nav-label" id="countryNavLabel">{{ $countryShortcode }}</span>
                 </button>
@@ -275,6 +275,7 @@ $popularReviewBrokers = ($popularReviewBrokers ?? collect())->take(10);
             <div class="bc-mega-bottom">
                 <p>Independent comparisons — find your ideal broker in seconds.</p>
                 <div class="bc-mega-bottom__actions">
+                    <a href="{{ route('brokers.top.index') }}" class="bc-mega-footer" style="margin:0;padding:0;border:none;">Top brokers →</a>
                     <a href="{{ route('promotions.index') }}" class="bc-mega-footer" style="margin:0;padding:0;border:none;">Broker promos →</a>
                     <a href="{{ route('methodology') }}" class="bc-mega-footer" style="margin:0;padding:0;border:none;">Our methodology →</a>
                     <a href="{{ route('brokers.best.index') }}" class="bc-btn-primary">Explore all brokers</a>
@@ -315,6 +316,7 @@ $popularReviewBrokers = ($popularReviewBrokers ?? collect())->take(10);
                 </div>
             </div>
 
+            <a href="{{ route('brokers.top.index') }}" class="bc-mobile-nav-link">Top brokers</a>
             <a href="{{ route('promotions.index') }}" class="bc-mobile-nav-link">Broker promos</a>
 
             <div class="mobile-accordion">
@@ -357,7 +359,7 @@ $popularReviewBrokers = ($popularReviewBrokers ?? collect())->take(10);
                     <a href="{{ route('broker.comparison') }}" class="bc-mobile-nav-link bc-mobile-nav-link--child">Compare Brokers</a>
                     <a href="{{ route('broker.scam_checker') }}" class="bc-mobile-nav-link bc-mobile-nav-link--child" style="color:#f87171;">Scam Checker</a>
                     <a href="{{ route('scam_brokers') }}" class="bc-mobile-nav-link bc-mobile-nav-link--child" style="color:#f87171;">Scam broker list</a>
-                    <a href="{{ route('trading.tools') }}" class="bc-mobile-nav-link bc-mobile-nav-link--child">Trading Tools</a>
+                    <a href="{{ route('calculators.index') }}" class="bc-mobile-nav-link bc-mobile-nav-link--child">Trading Tools</a>
                 </div>
             </div>
 
@@ -373,7 +375,7 @@ $popularReviewBrokers = ($popularReviewBrokers ?? collect())->take(10);
 
             <button type="button" class="bc-mobile-country-btn" id="mobileCountrySelectorBtn">
                 <span class="bc-country-nav-flag bc-country-nav-flag--sm">
-                    @include('front.layout.partial.country-flag', ['country' => $preferredCountry, 'width' => 20, 'height' => 15])
+                    @include('front.layout.partial.country-flag', ['country' => $preferredCountry, 'width' => 24, 'height' => 18])
                 </span>
                 <span>Country: {{ $countryShortcode }}</span>
             </button>
@@ -411,4 +413,4 @@ $popularReviewBrokers = ($popularReviewBrokers ?? collect())->take(10);
 
 @include('front.layout.partial.country-drawer')
 
-<script src="{{ asset('js/navbar.js') }}?v=4" defer></script>
+<script src="{{ asset('js/navbar.js') }}?v=5" defer></script>

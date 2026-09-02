@@ -7,6 +7,7 @@ use App\Models\PropFirmFaq;
 use App\Models\PropFirmProgram;
 use App\Services\Admin\PublicUploadService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class PropFirmAdminService
@@ -24,37 +25,38 @@ class PropFirmAdminService
 
     public function save(PropFirm $propFirm, Request $request): PropFirm
     {
-        $propFirm->fill($request->only($this->fillableScalars));
+        return DB::transaction(function () use ($propFirm, $request) {
+            $propFirm->fill($request->only($this->fillableScalars));
 
-        $propFirm->scaling_available = $request->boolean('scaling_available');
-        $propFirm->is_featured = $request->boolean('is_featured');
-        $propFirm->is_verified = $request->boolean('is_verified');
-        $propFirm->is_active = $request->boolean('is_active', true);
+            $propFirm->scaling_available = $request->boolean('scaling_available');
+            $propFirm->is_featured = $request->boolean('is_featured');
+            $propFirm->is_verified = $request->boolean('is_verified');
+            $propFirm->is_active = $request->boolean('is_active', true);
+            $propFirm->slug = $this->uniqueSlug((string) $propFirm->slug, $propFirm->id, $propFirm->name);
 
-        if (empty($propFirm->slug)) {
-            $propFirm->slug = Str::slug($request->input('name', $propFirm->name));
-        }
+            $this->handleUpload($request, 'logo', 'uploads/prop-firms/logos', 'logo_', $propFirm, 'logo');
+            $this->handleUpload($request, 'cover_image', 'uploads/prop-firms/covers', 'cover_', $propFirm, 'cover_image');
+            $this->handleUpload($request, 'og_image', 'uploads/prop-firms/og', 'og_', $propFirm, 'og_image');
 
-        $this->handleUpload($request, 'logo', 'uploads/prop-firms/logos', 'logo_', $propFirm, 'logo');
-        $this->handleUpload($request, 'cover_image', 'uploads/prop-firms/covers', 'cover_', $propFirm, 'cover_image');
-        $this->handleUpload($request, 'og_image', 'uploads/prop-firms/og', 'og_', $propFirm, 'og_image');
+            $propFirm->save();
 
-        $propFirm->save();
+            $propFirm->attributes()->sync($request->input('attribute_ids', []));
+            $this->syncPrograms($propFirm, $request->input('programs', []));
+            $this->syncFaqs($propFirm, $request->input('faqs', []));
 
-        $propFirm->attributes()->sync($request->input('attribute_ids', []));
-        $this->syncPrograms($propFirm, $request->input('programs', []));
-        $this->syncFaqs($propFirm, $request->input('faqs', []));
-
-        return $propFirm->fresh(['category', 'programs', 'attributes', 'faqs']);
+            return $propFirm->fresh(['category', 'programs', 'attributes', 'faqs']);
+        });
     }
 
     public function delete(PropFirm $propFirm): void
     {
-        foreach (['logo', 'cover_image', 'og_image'] as $field) {
-            $this->deletePublicFile($propFirm->{$field});
-        }
+        DB::transaction(function () use ($propFirm) {
+            foreach (['logo', 'cover_image', 'og_image'] as $field) {
+                $this->deletePublicFile($propFirm->{$field});
+            }
 
-        $propFirm->delete();
+            $propFirm->delete();
+        });
     }
 
     /** @param array<int, array<string, mixed>> $programs */
@@ -83,7 +85,7 @@ class PropFirmAdminService
                 'hedging' => ! empty($row['hedging']),
                 'refund_available' => ! empty($row['refund_available']),
                 'sort_order' => (int) ($row['sort_order'] ?? $index),
-                'is_active' => ! isset($row['is_active']) || ! empty($row['is_active']),
+                'is_active' => array_key_exists('is_active', $row) ? ! empty($row['is_active']) : true,
             ];
 
             if (! empty($row['id'])) {
@@ -116,7 +118,7 @@ class PropFirmAdminService
                 'question' => $row['question'],
                 'answer' => $row['answer'] ?? '',
                 'sort_order' => (int) ($row['sort_order'] ?? $index),
-                'is_active' => ! isset($row['is_active']) || ! empty($row['is_active']),
+                'is_active' => array_key_exists('is_active', $row) ? ! empty($row['is_active']) : true,
             ];
 
             if (! empty($row['id'])) {
@@ -154,6 +156,25 @@ class PropFirmAdminService
         if ($path !== null) {
             $propFirm->{$column} = $path;
         }
+    }
+
+    protected function uniqueSlug(string $slug, ?int $ignoreId, mixed $name): string
+    {
+        $base = Str::slug($slug) ?: Str::slug((string) $name) ?: 'prop-firm-'.Str::lower(Str::random(6));
+        $candidate = $base;
+        $suffix = 2;
+
+        while (
+            PropFirm::query()
+                ->where('slug', $candidate)
+                ->when($ignoreId, fn ($query) => $query->where('id', '!=', $ignoreId))
+                ->exists()
+        ) {
+            $candidate = $base.'-'.$suffix;
+            $suffix++;
+        }
+
+        return $candidate;
     }
 
     protected function deletePublicFile(?string $path): void

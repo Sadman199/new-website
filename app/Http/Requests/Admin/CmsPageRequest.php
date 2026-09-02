@@ -4,6 +4,7 @@ namespace App\Http\Requests\Admin;
 
 use App\Support\CmsSectionRegistry;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 
 class CmsPageRequest extends FormRequest
@@ -11,6 +12,25 @@ class CmsPageRequest extends FormRequest
     public function authorize(): bool
     {
         return true;
+    }
+
+    public function prepareForValidation(): void
+    {
+        $slug = trim((string) $this->input('slug', ''));
+        $title = trim((string) $this->input('title', ''));
+
+        if ($slug === '' && $title !== '') {
+            $slug = Str::slug($title);
+        } elseif ($slug !== '') {
+            $slug = Str::slug($slug);
+        }
+
+        $this->merge([
+            'title' => $title,
+            'slug' => $slug,
+            'meta_title' => $this->filled('meta_title') ? trim((string) $this->input('meta_title')) : null,
+            'meta_description' => $this->filled('meta_description') ? trim((string) $this->input('meta_description')) : null,
+        ]);
     }
 
     public function rules(): array
@@ -38,8 +58,17 @@ class CmsPageRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'slug.regex' => 'The slug may only contain lowercase letters, numbers, and hyphens.',
-            'slug.not_in' => 'This slug is reserved by the application.',
+            'title.required' => 'Please enter a page title.',
+            'slug.required' => 'Please enter a page URL.',
+            'slug.regex' => 'The page URL may only contain lowercase letters, numbers, and hyphens.',
+            'slug.not_in' => 'That URL is already used by the site. Please choose a different one.',
+            'slug.unique' => 'Another page already uses this URL.',
+            'template.required' => 'Please choose a page layout.',
+            'template.in' => 'Please choose a valid page layout.',
+            'status.required' => 'Please choose whether this page is a draft or published.',
+            'status.in' => 'Please choose Draft or Published.',
+            'meta_title.max' => 'The search title must be 255 characters or less.',
+            'meta_description.max' => 'The search description must be 500 characters or less.',
         ];
     }
 }

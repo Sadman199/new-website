@@ -2959,24 +2959,10 @@
     color: var(--br-ocean) !important;
 }
 
-/* Reading shell — sticky TOC + content body */
+/* Reading shell — section nav now sits above content (see bbg-section-nav) */
 .br-reading-layout {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 1.5rem;
-    align-items: start;
-    padding: 1.5rem 0 0;
-    min-width: 0;
-}
-
-@media (min-width: 1024px) {
-    .br-reading-layout {
-        grid-template-columns: 16rem minmax(0, 1fr);
-        gap: 1.75rem;
-    }
-}
-
-.br-reading-layout > * {
+    display: block;
+    padding: 0;
     min-width: 0;
 }
 
@@ -2984,39 +2970,16 @@
     min-width: 0;
 }
 
-/* Sticky table of contents — scrolls naturally with the page */
+/* Legacy sidebar TOC — replaced by bbg-section-nav */
 .br-toc-sidebar {
     display: none;
 }
 
-@media (min-width: 1024px) {
-    .br-toc-sidebar {
-        display: block;
-        align-self: start;
-    }
-
-    .br-toc-sidebar .bbg-sidebar__inner {
-        position: sticky;
-        top: var(--br-sidebar-top);
-        z-index: 10;
-        max-height: calc(100vh - var(--br-sidebar-top) - 1.5rem);
-        overflow-y: auto;
-        overscroll-behavior: contain;
-        scrollbar-width: thin;
-        scrollbar-color: rgba(232, 130, 42, 0.3) transparent;
-    }
-
-    .br-toc-sidebar .bbg-sidebar__inner::-webkit-scrollbar {
-        width: 4px;
-    }
-
-    .br-toc-sidebar .bbg-sidebar__inner::-webkit-scrollbar-thumb {
-        background: rgba(232, 130, 42, 0.3);
-        border-radius: 999px;
-    }
+.br-page .bbg-container > .bbg-section-nav {
+    margin-top: 0.25rem;
 }
 
-/* Two-column review layout (main + CTA) — TOC is outside this grid */
+/* Two-column review layout (main + CTA sidebar) */
 .br-layout-v2 {
     display: grid;
     grid-template-columns: 1fr;

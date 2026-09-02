@@ -1,7 +1,7 @@
 /* Admin shell — fixes Stisla layout + component styles (works with Tailwind tw- prefix) */
 
 body {
-    font-family: 'Inter', system-ui, sans-serif;
+    font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
 }
 
 /* ---- Topbar positioning (fix Stisla 250px default) ---- */

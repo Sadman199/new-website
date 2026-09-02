@@ -22,60 +22,76 @@ class AdminPropFirmController extends Controller
     public function dashboard()
     {
         $stats = [
-            'total' => PropFirm::count(),
-            'active' => PropFirm::where('is_active', true)->count(),
-            'featured' => PropFirm::where('is_featured', true)->count(),
-            'verified' => PropFirm::where('is_verified', true)->count(),
-            'programs' => PropFirmProgram::count(),
-            'reviews' => PropFirmReview::count(),
-            'faqs' => PropFirmFaq::count(),
-            'categories' => PropFirmCategory::count(),
+            'total' => PropFirm::query()->count(),
+            'active' => PropFirm::query()->where('is_active', true)->count(),
+            'featured' => PropFirm::query()->where('is_featured', true)->count(),
+            'verified' => PropFirm::query()->where('is_verified', true)->count(),
+            'programs' => PropFirmProgram::query()->count(),
+            'reviews' => PropFirmReview::query()->count(),
+            'faqs' => PropFirmFaq::query()->count(),
+            'categories' => PropFirmCategory::query()->count(),
         ];
 
-        $recent = PropFirm::with('category')->latest()->take(8)->get();
+        $recent = PropFirm::query()
+            ->with('category')
+            ->withCount('programs')
+            ->latest()
+            ->take(8)
+            ->get();
 
         return view('admin.prop-firms.dashboard', compact('stats', 'recent'));
     }
 
     public function show(Request $request)
     {
-        $query = PropFirm::with('category');
+        $filters = [
+            'q' => trim((string) $request->get('q', '')),
+            'category_id' => $request->integer('category_id') ?: '',
+            'status' => (string) $request->get('status', ''),
+            'sort' => (string) $request->get('sort', 'newest'),
+        ];
 
-        if ($search = trim((string) $request->get('q', ''))) {
+        $query = PropFirm::query()->with('category')->withCount('programs');
+
+        if ($filters['q'] !== '') {
+            $search = $filters['q'];
             $query->where(function ($sub) use ($search) {
-                $sub->where('name', 'like', '%' . $search . '%')
-                    ->orWhere('slug', 'like', '%' . $search . '%');
+                $sub->where('name', 'like', '%'.$search.'%')
+                    ->orWhere('slug', 'like', '%'.$search.'%')
+                    ->orWhere('headquarters', 'like', '%'.$search.'%');
             });
         }
 
-        if ($request->filled('category_id')) {
-            $query->where('prop_firm_category_id', $request->integer('category_id'));
+        if ($filters['category_id'] !== '') {
+            $query->where('prop_firm_category_id', $filters['category_id']);
         }
 
-        if ($request->filled('status')) {
-            $query->where('is_active', $request->get('status') === 'active');
-        }
+        match ($filters['status']) {
+            'active' => $query->where('is_active', true),
+            'inactive' => $query->where('is_active', false),
+            'featured' => $query->where('is_featured', true),
+            'verified' => $query->where('is_verified', true),
+            default => null,
+        };
 
-        if ($request->filled('featured')) {
-            $query->where('is_featured', $request->boolean('featured'));
-        }
+        match ($filters['sort']) {
+            'name' => $query->orderBy('name'),
+            'trust' => $query->orderByDesc('trust_score')->orderBy('name'),
+            'rating' => $query->orderByDesc('overall_rating')->orderBy('name'),
+            default => $query->latest(),
+        };
 
-        if ($request->filled('verified')) {
-            $query->where('is_verified', $request->boolean('verified'));
-        }
+        $propFirms = $query->paginate(20)->withQueryString();
+        $categories = PropFirmCategory::query()->orderBy('name')->get(['id', 'name']);
 
-        $sort = $request->get('sort', 'created_at');
-        $direction = $request->get('direction', 'desc') === 'asc' ? 'asc' : 'desc';
+        $stats = [
+            'total' => PropFirm::query()->count(),
+            'active' => PropFirm::query()->where('is_active', true)->count(),
+            'featured' => PropFirm::query()->where('is_featured', true)->count(),
+            'verified' => PropFirm::query()->where('is_verified', true)->count(),
+        ];
 
-        $allowedSorts = ['name', 'trust_score', 'overall_rating', 'sort_order', 'created_at'];
-        if (! in_array($sort, $allowedSorts, true)) {
-            $sort = 'created_at';
-        }
-
-        $propFirms = $query->orderBy($sort, $direction)->paginate(15)->withQueryString();
-        $categories = PropFirmCategory::orderBy('name')->get();
-
-        return view('admin.prop-firms.show', compact('propFirms', 'categories', 'sort', 'direction'));
+        return view('admin.prop-firms.show', compact('propFirms', 'categories', 'stats', 'filters'));
     }
 
     public function create()
@@ -85,34 +101,60 @@ class AdminPropFirmController extends Controller
 
     public function store(PropFirmRequest $request)
     {
-        $propFirm = $this->propFirmAdmin->save(new PropFirm(), $request);
+        try {
+            $propFirm = $this->propFirmAdmin->save(new PropFirm(), $request);
+        } catch (\Throwable $e) {
+            report($e);
+
+            return redirect()
+                ->back()
+                ->withInput()
+                ->with('error', 'Could not create prop firm: '.$e->getMessage());
+        }
 
         return redirect()
             ->route('admin_prop_firms_edit', $propFirm->id)
-            ->with('success', 'Prop firm created successfully.');
+            ->with('success', $propFirm->name.' was created.');
     }
 
     public function edit(int $id)
     {
-        $propFirm = PropFirm::with(['programs', 'faqs', 'attributes'])->findOrFail($id);
+        $propFirm = PropFirm::with(['programs', 'faqs', 'attributes', 'category'])->findOrFail($id);
 
         return view('admin.prop-firms.edit', $this->formData($propFirm));
     }
 
     public function update(PropFirmRequest $request, int $id)
     {
-        $propFirm = PropFirm::findOrFail($id);
-        $this->propFirmAdmin->save($propFirm, $request);
+        try {
+            $propFirm = PropFirm::findOrFail($id);
+            $this->propFirmAdmin->save($propFirm, $request);
+        } catch (\Throwable $e) {
+            report($e);
+
+            return redirect()
+                ->back()
+                ->withInput()
+                ->with('error', 'Could not update prop firm: '.$e->getMessage());
+        }
 
         return redirect()
             ->route('admin_prop_firms_edit', $propFirm->id)
-            ->with('success', 'Prop firm updated successfully.');
+            ->with('success', $propFirm->name.' was updated.');
     }
 
     public function delete(int $id)
     {
-        $propFirm = PropFirm::findOrFail($id);
-        $this->propFirmAdmin->delete($propFirm);
+        try {
+            $propFirm = PropFirm::findOrFail($id);
+            $this->propFirmAdmin->delete($propFirm);
+        } catch (\Throwable $e) {
+            report($e);
+
+            return redirect()
+                ->back()
+                ->with('error', 'Could not delete prop firm: '.$e->getMessage());
+        }
 
         return redirect()
             ->route('admin_prop_firms_show')
@@ -127,13 +169,21 @@ class AdminPropFirmController extends Controller
             'ids.*' => ['integer', 'exists:prop_firms,id'],
         ]);
 
-        $ids = $request->input('ids', []);
+        try {
+            $ids = $request->input('ids', []);
 
-        match ($request->input('action')) {
-            'delete' => PropFirm::whereIn('id', $ids)->each(fn (PropFirm $firm) => $this->propFirmAdmin->delete($firm)),
-            'activate' => PropFirm::whereIn('id', $ids)->update(['is_active' => true]),
-            'deactivate' => PropFirm::whereIn('id', $ids)->update(['is_active' => false]),
-        };
+            match ($request->input('action')) {
+                'delete' => PropFirm::query()->whereIn('id', $ids)->each(fn (PropFirm $firm) => $this->propFirmAdmin->delete($firm)),
+                'activate' => PropFirm::query()->whereIn('id', $ids)->update(['is_active' => true]),
+                'deactivate' => PropFirm::query()->whereIn('id', $ids)->update(['is_active' => false]),
+            };
+        } catch (\Throwable $e) {
+            report($e);
+
+            return redirect()
+                ->back()
+                ->with('error', 'Could not complete bulk action: '.$e->getMessage());
+        }
 
         return redirect()
             ->route('admin_prop_firms_show')
@@ -145,8 +195,8 @@ class AdminPropFirmController extends Controller
     {
         return [
             'propFirm' => $propFirm,
-            'categories' => PropFirmCategory::where('is_active', true)->orderBy('sort_order')->orderBy('name')->get(),
-            'attributes' => PropFirmAttribute::where('is_active', true)->orderBy('group')->orderBy('sort_order')->orderBy('name')->get(),
+            'categories' => PropFirmCategory::query()->where('is_active', true)->orderBy('sort_order')->orderBy('name')->get(),
+            'attributes' => PropFirmAttribute::query()->where('is_active', true)->orderBy('group')->orderBy('sort_order')->orderBy('name')->get(),
         ];
     }
 }

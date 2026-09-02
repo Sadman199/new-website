@@ -16,16 +16,17 @@ class PromotionsIndexService
 
     public const LOAD_MORE_SIZE = 12;
 
-    public const FEATURED_ROW_LIMIT = 4;
+    public const FEATURED_ROW_LIMIT = 3;
 
     private const CACHE_TTL = 900;
 
     /** @var array<string, string> */
     public const SORT_OPTIONS = [
-        'featured' => 'Featured first',
+        'latest' => 'Latest',
         'ending_soon' => 'Ending soon',
+        'highest_bonus' => 'Highest bonus',
         'min_deposit' => 'Lowest min. deposit',
-        'rating' => 'Highest broker rating',
+        'featured' => 'Featured',
     ];
 
     /** @return array<string, array{name: string, promo_type: string}> */
@@ -34,38 +35,94 @@ class PromotionsIndexService
         return self::TABS;
     }
 
-    /** @var array<string, array{name: string, promo_type: string}> */
+    /** @var array<string, array{name: string, promo_type: string, description: string}> */
     private const TABS = [
-        'deposit-bonuses' => ['name' => 'Deposit Bonuses', 'promo_type' => 'Forex Deposit Bonus'],
-        'no-deposit-bonuses' => ['name' => 'No Deposit Bonus', 'promo_type' => 'Forex No Deposit Bonus'],
-        'live-contests' => ['name' => 'Live Contests', 'promo_type' => 'Forex Live Contest'],
-        'demo-contests' => ['name' => 'Demo Contests', 'promo_type' => 'Forex Demo Contest'],
-        'cashback-rebates' => ['name' => 'Cashback', 'promo_type' => 'Forex Cashback Rebate'],
-        'crypto-bonuses' => ['name' => 'Crypto Contests', 'promo_type' => 'Crypto Bonus Promotion'],
+        'deposit-bonuses' => [
+            'name' => 'Deposit Bonuses',
+            'promo_type' => 'Forex Deposit Bonus',
+            'description' => 'Extra trading credit or matched funds added to your account when you make a deposit.',
+        ],
+        'no-deposit-bonuses' => [
+            'name' => 'No Deposit Bonus',
+            'promo_type' => 'Forex No Deposit Bonus',
+            'description' => 'Free trading credit brokers offer to new clients without requiring a deposit.',
+        ],
+        'live-contests' => [
+            'name' => 'Live Contests',
+            'promo_type' => 'Forex Live Contest',
+            'description' => 'Real-money trading competitions with cash prizes awarded to top-performing traders.',
+        ],
+        'demo-contests' => [
+            'name' => 'Demo Contests',
+            'promo_type' => 'Forex Demo Contest',
+            'description' => 'Risk-free practice contests run on demo accounts, often with real cash prizes.',
+        ],
+        'cashback-rebates' => [
+            'name' => 'Cashback',
+            'promo_type' => 'Forex Cashback Rebate',
+            'description' => 'Rebates paid back on trading volume or spreads, lowering your effective trading cost.',
+        ],
+        'crypto-bonuses' => [
+            'name' => 'Crypto Contests',
+            'promo_type' => 'Crypto Bonus Promotion',
+            'description' => 'Bonuses and contests focused on crypto CFD and digital asset trading.',
+        ],
     ];
 
-    /** @return array<string, mixed> */
+    private const ALL_TAB_DESCRIPTION = 'Every live broker promotion in our database — deposit bonuses, no-deposit offers, contests, cashback, and crypto deals.';
+
+    /**
+     * @param  array{
+     *     broker?: int|null,
+     *     category?: string|null,
+     *     status?: string|null,
+     *     max_min_deposit?: string|float|null,
+     * }  $filters
+     * @return array<string, mixed>
+     */
     public function buildIndex(
         ?string $type = null,
         ?string $sort = null,
         bool $featuredOnly = false,
         ?string $search = null,
+        array $filters = [],
     ): array {
         $activeType = $this->resolveTabSlug($type);
         $sortKey = $this->resolveSort($sort);
         $searchTerm = $this->normalizeSearch($search);
+        $normalizedFilters = $this->normalizeFilters($filters);
         $catalog = $this->activePromotionsCatalog();
         $cacheKey = sprintf(
-            'promotions_index_v8_%s_%s_%d_%s',
+            'promotions_index_v11_%s_%s_%d_%s_%s',
             $activeType,
             $sortKey,
             $featuredOnly ? 1 : 0,
-            md5($searchTerm ?? '')
+            md5($searchTerm ?? ''),
+            md5(json_encode($normalizedFilters))
         );
 
-        $payload = Cache::remember($cacheKey, self::CACHE_TTL, function () use ($activeType, $sortKey, $featuredOnly, $searchTerm, $catalog) {
+        $payload = Cache::remember($cacheKey, self::CACHE_TTL, function () use (
+            $activeType,
+            $sortKey,
+            $featuredOnly,
+            $searchTerm,
+            $normalizedFilters,
+            $catalog,
+        ) {
             $tabs = $this->tabsFromCatalog($catalog);
-            $allPromotions = $this->filteredPromotionsForTab($catalog, $activeType, $sortKey, $featuredOnly, $searchTerm);
+            $allPromotions = $this->filteredPromotionsForTab(
+                $catalog,
+                $activeType,
+                $sortKey,
+                $featuredOnly,
+                $searchTerm,
+                $normalizedFilters,
+            );
+
+            if ($this->shouldShowFeaturedRow($activeType, $featuredOnly, $searchTerm, $normalizedFilters)) {
+                $allPromotions = $this->excludeFeaturedRowFromPromotions($allPromotions, $catalog);
+            }
+
             $totalCount = $allPromotions->count();
             $initialCards = $allPromotions
                 ->take(self::INITIAL_CARDS)
@@ -78,9 +135,12 @@ class PromotionsIndexService
                 'tabs' => $tabs,
                 'activeTab' => $activeType,
                 'activeTabName' => $activeTabMeta['name'] ?? 'All offers',
+                'activeTabDescription' => $activeTabMeta['description'] ?? self::ALL_TAB_DESCRIPTION,
                 'activeSort' => $sortKey,
                 'featuredOnly' => $featuredOnly,
                 'search' => $searchTerm,
+                'activeFilters' => $normalizedFilters,
+                'filterOptions' => $this->filterOptionsFromCatalog($catalog),
                 'sortOptions' => self::SORT_OPTIONS,
                 'stats' => $this->statsFromCatalog($catalog),
                 'refreshedAt' => now()->format('M j, Y'),
@@ -93,7 +153,7 @@ class PromotionsIndexService
         });
 
         $payload['catalog'] = $catalog;
-        $payload['filterQuery'] = $this->buildFilterQuery($sortKey, $featuredOnly, $searchTerm);
+        $payload['filterQuery'] = $this->buildFilterQuery($sortKey, $featuredOnly, $searchTerm, $normalizedFilters);
 
         return $payload;
     }
@@ -103,11 +163,13 @@ class PromotionsIndexService
         ?string $sort = null,
         bool $featuredOnly = false,
         ?string $search = null,
+        array $filters = [],
     ): string {
         $params = $this->buildFilterQuery(
             $this->resolveSort($sort),
             $featuredOnly,
             $this->normalizeSearch($search),
+            $this->normalizeFilters($filters),
         );
 
         if ($slug === self::TAB_ALL) {
@@ -118,30 +180,68 @@ class PromotionsIndexService
     }
 
     /**
+     * @param  array{
+     *     broker?: int|null,
+     *     category?: string|null,
+     *     status?: string|null,
+     *     max_min_deposit?: string|float|null,
+     * }  $filters
      * @return array<string, string>
      */
-    public function buildFilterQuery(string $sortKey, bool $featuredOnly, ?string $searchTerm): array
-    {
+    public function buildFilterQuery(
+        string $sortKey,
+        bool $featuredOnly,
+        ?string $searchTerm,
+        array $filters = [],
+    ): array {
+        $normalized = $this->normalizeFilters($filters);
+
         return array_filter([
             'sort' => $sortKey !== 'featured' ? $sortKey : null,
             'featured' => $featuredOnly ? '1' : null,
             'q' => $searchTerm,
+            'broker' => $normalized['broker'] ?? null,
+            'category' => $normalized['category'] ?? null,
+            'status' => $normalized['status'] ?? null,
+            'max_min_deposit' => $normalized['max_min_deposit'] ?? null,
         ], fn ($value) => $value !== null && $value !== '');
     }
 
-    /** @return array<string, mixed> */
+    /**
+     * @param  array{
+     *     broker?: int|null,
+     *     category?: string|null,
+     *     status?: string|null,
+     *     max_min_deposit?: string|float|null,
+     * }  $filters
+     * @return array<string, mixed>
+     */
     public function loadMore(
         string $type,
         int $offset,
         ?string $sort = null,
         bool $featuredOnly = false,
         ?string $search = null,
+        array $filters = [],
     ): array {
         $activeType = $this->resolveTabSlug($type);
         $sortKey = $this->resolveSort($sort);
         $searchTerm = $this->normalizeSearch($search);
+        $normalizedFilters = $this->normalizeFilters($filters);
         $catalog = $this->activePromotionsCatalog();
-        $allPromotions = $this->filteredPromotionsForTab($catalog, $activeType, $sortKey, $featuredOnly, $searchTerm);
+        $allPromotions = $this->filteredPromotionsForTab(
+            $catalog,
+            $activeType,
+            $sortKey,
+            $featuredOnly,
+            $searchTerm,
+            $normalizedFilters,
+        );
+
+        if ($this->shouldShowFeaturedRow($activeType, $featuredOnly, $searchTerm, $normalizedFilters)) {
+            $allPromotions = $this->excludeFeaturedRowFromPromotions($allPromotions, $catalog);
+        }
+
         $totalCount = $allPromotions->count();
         $batch = $allPromotions
             ->slice($offset, self::LOAD_MORE_SIZE)
@@ -199,16 +299,28 @@ class PromotionsIndexService
     {
         $broker = $bonus->broker;
         $expiryBadge = $bonus->expiryBadge();
+        $offerHighlight = $this->offerHighlight($bonus);
 
         return [
             'id' => $bonus->id,
             'title' => $bonus->title,
-            'description' => Str::limit(strip_tags((string) $bonus->description), 140),
-            'type_details' => Str::limit(strip_tags((string) $bonus->bonus_type_details), 180),
+            'description' => Str::limit(strip_tags((string) $bonus->description), 120),
+            'type_details' => Str::limit(strip_tags((string) $bonus->bonus_type_details), 120),
             'url' => $bonus->cardUrl(),
-            'offer' => $bonus->headlineOffer(),
+            'detail_url' => $bonus->detailUrl(),
+            'affiliate_link' => filled($bonus->affiliate_link) ? $bonus->affiliate_link : null,
+            'offer' => $this->listingOfferLine($bonus),
+            'offer_highlight' => $offerHighlight,
+            'promotion_status' => $bonus->promotion_status,
+            'promotion_status_label' => match ($bonus->promotion_status) {
+                'limited-time' => 'Limited time',
+                'ongoing' => 'Ongoing',
+                default => null,
+            },
+            'bonus_category' => filled($bonus->bonus_category) ? $bonus->bonus_category : null,
             'type_short' => $bonus->promoTypeShort(),
             'type_tone' => $bonus->promoTypeTone(),
+            'broker_id' => $bonus->broker_id,
             'broker_name' => $bonus->brokerDisplayName(),
             'broker_logo' => $broker?->logo ? asset($broker->logo) : null,
             'broker_rating' => $broker?->rating !== null ? round((float) $broker->rating, 1) : null,
@@ -217,12 +329,11 @@ class PromotionsIndexService
                 : null,
             'regulation_short' => $this->regulationShort($broker),
             'region_note' => $this->regionNote($bonus),
-            'eligibility_teaser' => $this->eligibilityTeaser($bonus),
             'feature_image' => $bonus->feature_image ? asset($bonus->feature_image) : null,
             'min_deposit' => $bonus->minDepositLabel(),
-            'wagering_requirement' => $bonus->wagering_requirement,
-            'volume_requirement' => $bonus->volume_requirement,
             'requirement' => $bonus->requirementLabel(),
+            'wagering_requirement' => $bonus->wageringRequirementLabel(),
+            'volume_requirement' => $bonus->volumeRequirementLabel(),
             'max_credit' => $bonus->maxCreditLabel(),
             'eligible_clients' => $bonus->eligibleClientsLabel(),
             'expiry' => $bonus->expiryLabel(),
@@ -231,7 +342,33 @@ class PromotionsIndexService
             'is_featured' => (bool) $bonus->is_featured,
             'is_limited' => $bonus->promotion_status === 'limited-time',
             'is_urgent' => $bonus->isExpiryUrgent(),
+            'expand_facts' => $this->expandFacts($bonus),
         ];
+    }
+
+    /**
+     * Additional facts surfaced only when a card is expanded inline —
+     * kept separate from the always-visible summary fields.
+     *
+     * @return array<int, array{label: string, value: string}>
+     */
+    private function expandFacts(ForexBonus $bonus): array
+    {
+        return collect([
+            ['label' => 'Eligibility criteria', 'value' => $this->cleanSnippet($bonus->eligibility_criteria, 220)],
+            ['label' => 'General terms', 'value' => $this->cleanSnippet($bonus->general_terms, 220)],
+            ['label' => 'Prize', 'value' => $this->cleanSnippet($bonus->prize, 160)],
+        ])
+            ->filter(fn ($item) => filled($item['value']))
+            ->values()
+            ->all();
+    }
+
+    private function cleanSnippet(?string $value, int $limit): ?string
+    {
+        $text = trim(strip_tags((string) $value));
+
+        return $text !== '' ? Str::limit($text, $limit) : null;
     }
 
     /** @return Collection<int, ForexBonus> */
@@ -257,6 +394,36 @@ class PromotionsIndexService
     }
 
     /**
+     * @param  array{
+     *     broker?: int|string|null,
+     *     category?: string|null,
+     *     status?: string|null,
+     *     max_min_deposit?: string|float|null,
+     * }  $filters
+     * @return array{broker: ?int, category: ?string, status: ?string, max_min_deposit: ?string}
+     */
+    public function normalizeFilters(array $filters): array
+    {
+        $broker = isset($filters['broker']) && $filters['broker'] !== '' ? (int) $filters['broker'] : null;
+        $category = filled($filters['category'] ?? null) ? (string) $filters['category'] : null;
+        $status = filled($filters['status'] ?? null) ? (string) $filters['status'] : null;
+        $maxMinDeposit = filled($filters['max_min_deposit'] ?? null)
+            ? (string) $filters['max_min_deposit']
+            : null;
+
+        if ($status !== null && ! in_array($status, ['ongoing', 'limited-time'], true)) {
+            $status = null;
+        }
+
+        return [
+            'broker' => $broker > 0 ? $broker : null,
+            'category' => $category,
+            'status' => $status,
+            'max_min_deposit' => $maxMinDeposit,
+        ];
+    }
+
+    /**
      * @param  Collection<string, Collection<int, ForexBonus>>  $catalog
      * @return array<int, array<string, mixed>>
      */
@@ -269,6 +436,7 @@ class PromotionsIndexService
             'name' => 'All offers',
             'count' => $allCount,
             'url' => route('promotions.index'),
+            'description' => self::ALL_TAB_DESCRIPTION,
         ]];
 
         foreach (self::TABS as $slug => $meta) {
@@ -279,6 +447,7 @@ class PromotionsIndexService
                 'name' => $meta['name'],
                 'count' => $count,
                 'url' => route('promotions.tab', ['type' => $slug]),
+                'description' => $meta['description'],
             ];
         }
 
@@ -293,17 +462,11 @@ class PromotionsIndexService
     {
         $all = $catalog->flatten(1)->unique('id');
         $endingSoon = $all->filter(fn (ForexBonus $bonus) => $bonus->isExpiryUrgent())->count();
-        $endingThisMonth = $all->filter(function (ForexBonus $bonus) {
-            $days = $bonus->daysUntilExpiry();
-
-            return $days !== null && $days >= 0 && $days <= 30;
-        })->count();
 
         return [
             'total_active' => $all->count(),
             'total_brokers' => $all->pluck('broker_id')->filter()->unique()->count(),
             'featured' => $all->where('is_featured', true)->count(),
-            'ending_this_month' => $endingThisMonth,
             'ending_soon' => $endingSoon,
             'show_ending_soon' => $endingSoon > 0,
         ];
@@ -327,6 +490,67 @@ class PromotionsIndexService
 
     /**
      * @param  Collection<string, Collection<int, ForexBonus>>  $catalog
+     * @return array<string, mixed>
+     */
+    private function filterOptionsFromCatalog(Collection $catalog): array
+    {
+        $all = $catalog->flatten(1)->unique('id');
+
+        $brokers = $all
+            ->filter(fn (ForexBonus $bonus) => $bonus->broker_id && $bonus->broker)
+            ->groupBy('broker_id')
+            ->map(function (Collection $items) {
+                $broker = $items->first()->broker;
+
+                return [
+                    'id' => (int) $broker->id,
+                    'name' => $broker->name,
+                ];
+            })
+            ->sortBy('name')
+            ->values()
+            ->all();
+
+        $categories = $all
+            ->pluck('bonus_category')
+            ->filter(fn ($value) => filled($value))
+            ->unique()
+            ->sort()
+            ->values()
+            ->all();
+
+        $statuses = $all
+            ->pluck('promotion_status')
+            ->filter(fn ($value) => in_array($value, ['ongoing', 'limited-time'], true))
+            ->unique()
+            ->sort()
+            ->values()
+            ->all();
+
+        $minDeposits = $all
+            ->pluck('min_deposit')
+            ->filter(fn ($value) => $value !== null && (float) $value > 0)
+            ->map(fn ($value) => (float) $value)
+            ->unique()
+            ->sort()
+            ->values()
+            ->map(fn (float $value) => [
+                'value' => (string) $value,
+                'label' => 'Up to $'.number_format($value, 0),
+            ])
+            ->all();
+
+        return [
+            'brokers' => $brokers,
+            'categories' => $categories,
+            'statuses' => $statuses,
+            'min_deposits' => $minDeposits,
+        ];
+    }
+
+    /**
+     * @param  Collection<string, Collection<int, ForexBonus>>  $catalog
+     * @param  array{broker: ?int, category: ?string, status: ?string, max_min_deposit: ?string}  $filters
      * @return Collection<int, ForexBonus>
      */
     private function filteredPromotionsForTab(
@@ -335,11 +559,43 @@ class PromotionsIndexService
         string $sortKey,
         bool $featuredOnly,
         ?string $searchTerm,
+        array $filters = [],
     ): Collection {
         $promotions = $this->promotionsForTab($catalog, $activeType);
 
         if ($featuredOnly) {
             $promotions = $promotions->filter(fn (ForexBonus $bonus) => (bool) $bonus->is_featured)->values();
+        }
+
+        if ($filters['broker'] ?? null) {
+            $promotions = $promotions
+                ->filter(fn (ForexBonus $bonus) => (int) $bonus->broker_id === (int) $filters['broker'])
+                ->values();
+        }
+
+        if ($filters['category'] ?? null) {
+            $promotions = $promotions
+                ->filter(fn (ForexBonus $bonus) => (string) $bonus->bonus_category === (string) $filters['category'])
+                ->values();
+        }
+
+        if ($filters['status'] ?? null) {
+            $promotions = $promotions
+                ->filter(fn (ForexBonus $bonus) => (string) $bonus->promotion_status === (string) $filters['status'])
+                ->values();
+        }
+
+        if ($filters['max_min_deposit'] ?? null) {
+            $threshold = (float) $filters['max_min_deposit'];
+            $promotions = $promotions
+                ->filter(function (ForexBonus $bonus) use ($threshold) {
+                    if ($bonus->min_deposit === null) {
+                        return false;
+                    }
+
+                    return (float) $bonus->min_deposit <= $threshold;
+                })
+                ->values();
         }
 
         if ($searchTerm) {
@@ -359,10 +615,19 @@ class PromotionsIndexService
     private function sortPromotions(Collection $promotions, string $sortKey): Collection
     {
         return match ($sortKey) {
+            'latest' => $promotions->sortByDesc(function (ForexBonus $bonus) {
+                return $bonus->publish_date?->timestamp ?? 0;
+            })->values(),
             'ending_soon' => $promotions->sortBy(function (ForexBonus $bonus) {
                 $days = $bonus->daysUntilExpiry();
 
                 return $days === null ? PHP_INT_MAX : max(0, $days);
+            })->values(),
+            'highest_bonus' => $promotions->sortByDesc(function (ForexBonus $bonus) {
+                $amount = (float) ($bonus->bonus_amount ?? 0);
+                $percentage = (float) ($bonus->bonus_percentage ?? 0);
+
+                return max($amount, $percentage);
             })->values(),
             'min_deposit' => $promotions->sortBy(function (ForexBonus $bonus) {
                 if ($bonus->min_deposit === null) {
@@ -370,9 +635,6 @@ class PromotionsIndexService
                 }
 
                 return (float) $bonus->min_deposit;
-            })->values(),
-            'rating' => $promotions->sortByDesc(function (ForexBonus $bonus) {
-                return (float) ($bonus->broker?->rating ?? -1);
             })->values(),
             default => $promotions->sort(function (ForexBonus $a, ForexBonus $b) {
                 $featuredCompare = ((int) $b->is_featured) <=> ((int) $a->is_featured);
@@ -390,6 +652,59 @@ class PromotionsIndexService
         $search = trim((string) $search);
 
         return $search !== '' ? Str::limit($search, 80, '') : null;
+    }
+
+    private function listingOfferLine(ForexBonus $bonus): ?string
+    {
+        if ($bonus->bonus_percentage || $bonus->bonus_amount) {
+            return $bonus->headlineOffer();
+        }
+
+        $prize = trim(strip_tags((string) $bonus->prize));
+
+        return $prize !== '' ? Str::limit($prize, 56) : null;
+    }
+
+    /**
+     * @param  array{broker: ?int, category: ?string, status: ?string, max_min_deposit: ?string}  $filters
+     */
+    private function shouldShowFeaturedRow(
+        string $activeType,
+        bool $featuredOnly,
+        ?string $searchTerm,
+        array $filters,
+    ): bool {
+        return $activeType === self::TAB_ALL
+            && ! $featuredOnly
+            && $searchTerm === null
+            && collect($filters)->filter()->isEmpty();
+    }
+
+    /** @param Collection<int, ForexBonus> $promotions */
+    private function excludeFeaturedRowFromPromotions(Collection $promotions, Collection $catalog): Collection
+    {
+        $featuredIds = $this->featuredCardsFromCatalog($catalog)->pluck('id');
+
+        if ($featuredIds->isEmpty()) {
+            return $promotions;
+        }
+
+        return $promotions
+            ->reject(fn (ForexBonus $bonus) => $featuredIds->contains($bonus->id))
+            ->values();
+    }
+
+    private function offerHighlight(ForexBonus $bonus): ?string
+    {
+        if ($bonus->bonus_percentage) {
+            return rtrim(rtrim(number_format((float) $bonus->bonus_percentage, 2), '0'), '.').'%';
+        }
+
+        if ($bonus->bonus_amount) {
+            return '$'.number_format((float) $bonus->bonus_amount, 0);
+        }
+
+        return null;
     }
 
     /** @return array<int, string> */
@@ -424,16 +739,6 @@ class PromotionsIndexService
         }
 
         return 'Verify eligibility in '.$country['name'];
-    }
-
-    private function eligibilityTeaser(ForexBonus $bonus): ?string
-    {
-        $raw = trim(strip_tags((string) ($bonus->eligibility_criteria ?? '')));
-        if ($raw === '') {
-            return null;
-        }
-
-        return Str::limit($raw, 90);
     }
 
     /** @return \Illuminate\Database\Eloquent\Builder<ForexBonus> */

@@ -22,6 +22,7 @@ class TagController extends FrontController
 
         $all_posts = Post::query()
             ->with('rSubCategory')
+            ->published()
             ->when($postIds !== [], fn ($query) => $query->whereIn('id', $postIds))
             ->when($postIds === [], fn ($query) => $query->whereRaw('1 = 0'))
             ->orderByDesc('id')

@@ -6,7 +6,7 @@
     <div class="fmb-quiz-banner" role="status">
         <div>
             <p class="fmb-quiz-banner__title">Your BrokerMatch results</p>
-            <p class="fmb-quiz-banner__text">Top matches are pinned first. Compare any two, or keep filtering the same list.</p>
+            <p class="fmb-quiz-banner__text">Top matches are pinned first. Read a review, save your favourites, or keep filtering the same list.</p>
         </div>
         <a href="{{ route('home') }}#bcMatchQuiz" class="fmb-btn fmb-btn--ghost">Retake quiz</a>
     </div>
@@ -40,14 +40,6 @@
             <button type="button" class="fmb-chips__clear fmb-reset">Clear all</button>
         </div>
 @endif
-</div>
-
-<div class="fmb-compare-bar is-hidden" id="fmb-compare-bar" aria-live="polite">
-    <p class="fmb-compare-bar__text"><span id="fmb-compare-count">0</span> selected for comparison (max 2)</p>
-    <div class="fmb-compare-bar__actions">
-        <button type="button" class="fmb-btn fmb-btn--ghost fmb-compare-clear" id="fmb-compare-clear">Clear</button>
-        <a href="{{ route('broker.comparison') }}" class="fmb-btn fmb-btn--primary is-disabled" id="fmb-compare-go" aria-disabled="true">Compare brokers</a>
-    </div>
 </div>
 
 @if($brokers->count())

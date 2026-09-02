@@ -54,6 +54,21 @@ class PropFirm extends Model
         'sort_order' => 'integer',
     ];
 
+    public function mediaUrl(?string $path = null): ?string
+    {
+        $path = $path ?? $this->logo;
+
+        if (! filled($path)) {
+            return null;
+        }
+
+        if (str_starts_with($path, 'http://') || str_starts_with($path, 'https://') || str_starts_with($path, '//')) {
+            return $path;
+        }
+
+        return asset(ltrim($path, '/'));
+    }
+
     public function category(): BelongsTo
     {
         return $this->belongsTo(PropFirmCategory::class, 'prop_firm_category_id');

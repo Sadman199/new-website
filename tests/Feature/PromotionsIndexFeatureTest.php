@@ -18,7 +18,7 @@ class PromotionsIndexFeatureTest extends TestCase
         Cache::flush();
     }
 
-    public function test_promotions_hub_renders_dynamic_guide_faq_and_top_brokers(): void
+    public function test_promotions_hub_renders_tabs_cards_and_top_brokers(): void
     {
         $broker = Broker::create([
             'name' => 'Dynamic Promo Broker',
@@ -54,25 +54,23 @@ class PromotionsIndexFeatureTest extends TestCase
         $response = $this->get(route('promotions.index'));
 
         $response->assertOk()
-            ->assertSee('What’s Inside', false)
-            ->assertSee('What is a Forex Promotion?', false)
-            ->assertSee('Types of Forex Promotions', false)
-            ->assertSee('Promotion Types at a Glance', false)
-            ->assertSee('How to Evaluate Any Forex Promotion?', false)
-            ->assertSee('Common Mistakes With Forex Promotions', false)
-            ->assertSee('Regulation and Forex Promotions', false)
-            ->assertSee('Current Promotions Available on BrokersCourt', false)
+            ->assertSee('Forex Broker Bonuses &amp; Promotions', false)
+            ->assertSee('bpr-filters__pill', false)
+            ->assertSee('All offers', false)
+            ->assertSee('Deposit Bonuses', false)
             ->assertSee('Top Rated Brokers', false)
-            ->assertSee('Broker Promos FAQ', false)
             ->assertSee('Dynamic 50% Welcome Offer', false)
             ->assertSee('Dynamic Demo Challenge', false)
-            ->assertSee('30x bonus', false)
+            ->assertSee('50%', false)
             ->assertSee('$500', false)
             ->assertSee('Dynamic Promo Broker', false)
-            ->assertSee('FAQPage', false);
+            ->assertSee('View bonus', false)
+            ->assertDontSee('What’s Inside', false)
+            ->assertDontSee('What is a Forex Promotion?', false)
+            ->assertDontSee('Broker Promos FAQ', false);
     }
 
-    public function test_expired_promotions_do_not_inflate_dynamic_guide_counts(): void
+    public function test_expired_promotions_do_not_appear_in_hub(): void
     {
         $broker = Broker::create([
             'name' => 'Expired Promo Broker',
@@ -93,7 +91,7 @@ class PromotionsIndexFeatureTest extends TestCase
         $this->get(route('promotions.index'))
             ->assertOk()
             ->assertDontSee('Expired Offer Must Not Appear', false)
-            ->assertSee('There are currently 0 active offers', false);
+            ->assertSee('No promotions match your filters', false);
     }
 
     private function createPromotion(Broker $broker, array $overrides = []): ForexBonus

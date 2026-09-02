@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests\Admin;
 
-use App\Models\BrokerGuideTopic;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -13,6 +12,15 @@ class BrokerGuideTopicRequest extends FormRequest
         return true;
     }
 
+    public function prepareForValidation(): void
+    {
+        $slug = trim((string) $this->input('slug', ''));
+
+        $this->merge([
+            'slug' => $slug === '' ? null : $slug,
+        ]);
+    }
+
     /** @return array<string, mixed> */
     public function rules(): array
     {
@@ -21,7 +29,7 @@ class BrokerGuideTopicRequest extends FormRequest
         return [
             'title' => ['required', 'string', 'max:255'],
             'slug' => [
-                'required',
+                'nullable',
                 'string',
                 'max:80',
                 'regex:/^[a-z0-9]+(?:-[a-z0-9]+)*$/',
@@ -33,6 +41,15 @@ class BrokerGuideTopicRequest extends FormRequest
             'requires_swap_free' => ['sometimes', 'boolean'],
             'sort_order' => ['nullable', 'integer', 'min:0', 'max:999'],
             'is_active' => ['sometimes', 'boolean'],
+        ];
+    }
+
+    public function attributes(): array
+    {
+        return [
+            'title' => 'topic title',
+            'default_summary' => 'default summary',
+            'context_profile' => 'context profile',
         ];
     }
 }

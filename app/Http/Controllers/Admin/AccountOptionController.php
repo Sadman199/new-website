@@ -17,24 +17,49 @@ class AccountOptionController extends Controller
 
     public function all(Request $request)
     {
+        $filters = [
+            'q' => trim((string) $request->get('q', '')),
+            'broker_id' => $request->integer('broker_id') ?: '',
+            'status' => (string) $request->get('status', ''),
+        ];
+
         $query = AccountOption::with('broker')->orderBy('broker_id')->ordered();
 
-        if ($request->filled('broker_id')) {
-            $query->where('broker_id', $request->integer('broker_id'));
+        if ($filters['broker_id'] !== '') {
+            $query->where('broker_id', $filters['broker_id']);
         }
 
-        if ($request->filled('q')) {
-            $term = $request->string('q');
+        if ($filters['q'] !== '') {
+            $term = $filters['q'];
             $query->where(function ($sub) use ($term) {
-                $sub->where('account_type', 'like', '%' . $term . '%')
-                    ->orWhereHas('broker', fn ($b) => $b->where('name', 'like', '%' . $term . '%'));
+                $sub->where('account_type', 'like', '%'.$term.'%')
+                    ->orWhere('account_currency', 'like', '%'.$term.'%')
+                    ->orWhere('slug', 'like', '%'.$term.'%')
+                    ->orWhereHas('broker', fn ($b) => $b->where('name', 'like', '%'.$term.'%'));
+            });
+        }
+
+        if ($filters['status'] === 'active') {
+            $query->where('is_active', true);
+        } elseif ($filters['status'] === 'hidden') {
+            $query->where(function ($sub) {
+                $sub->where('is_active', false)->orWhereNull('is_active');
             });
         }
 
         $accountOptions = $query->paginate(20)->withQueryString();
         $brokers = Broker::orderBy('name')->get(['id', 'name']);
 
-        return view('admin.account_options.all', compact('accountOptions', 'brokers'));
+        $stats = [
+            'total' => AccountOption::query()->count(),
+            'active' => AccountOption::query()->where('is_active', true)->count(),
+            'hidden' => AccountOption::query()->where(function ($sub) {
+                $sub->where('is_active', false)->orWhereNull('is_active');
+            })->count(),
+            'brokers' => (int) AccountOption::query()->selectRaw('count(distinct broker_id) as aggregate')->value('aggregate'),
+        ];
+
+        return view('admin.account_options.all', compact('accountOptions', 'brokers', 'stats', 'filters'));
     }
 
     public function index($broker_id)
@@ -42,7 +67,14 @@ class AccountOptionController extends Controller
         $broker = Broker::withCount('accountOptions')->findOrFail($broker_id);
         $accountOptions = $broker->accountOptions()->ordered()->get();
 
-        return view('admin.account_options.index', compact('broker', 'accountOptions'));
+        $stats = [
+            'total' => $accountOptions->count(),
+            'active' => $accountOptions->where('is_active', true)->count(),
+            'hidden' => $accountOptions->where('is_active', false)->count(),
+            'swap_free' => $accountOptions->where('swap_free', true)->count(),
+        ];
+
+        return view('admin.account_options.index', compact('broker', 'accountOptions', 'stats'));
     }
 
     public function create($broker_id)
@@ -57,8 +89,16 @@ class AccountOptionController extends Controller
     {
         Broker::findOrFail($broker_id);
 
-        $option = new AccountOption();
-        $this->service->save($option, $request, (int) $broker_id);
+        try {
+            $this->service->save(new AccountOption(), $request, (int) $broker_id);
+        } catch (\Throwable $e) {
+            report($e);
+
+            return redirect()
+                ->back()
+                ->withInput()
+                ->with('error', 'Could not create account option: '.$e->getMessage());
+        }
 
         return redirect()
             ->route('admin_account_options_index', $broker_id)
@@ -76,8 +116,17 @@ class AccountOptionController extends Controller
 
     public function update(AccountOptionRequest $request, $broker_id, $id)
     {
-        $accountOption = AccountOption::where('broker_id', $broker_id)->findOrFail($id);
-        $this->service->save($accountOption, $request, (int) $broker_id);
+        try {
+            $accountOption = AccountOption::where('broker_id', $broker_id)->findOrFail($id);
+            $this->service->save($accountOption, $request, (int) $broker_id);
+        } catch (\Throwable $e) {
+            report($e);
+
+            return redirect()
+                ->back()
+                ->withInput()
+                ->with('error', 'Could not update account option: '.$e->getMessage());
+        }
 
         return redirect()
             ->route('admin_account_options_index', $broker_id)
@@ -86,7 +135,15 @@ class AccountOptionController extends Controller
 
     public function delete($broker_id, $id)
     {
-        AccountOption::where('broker_id', $broker_id)->findOrFail($id)->delete();
+        try {
+            AccountOption::where('broker_id', $broker_id)->findOrFail($id)->delete();
+        } catch (\Throwable $e) {
+            report($e);
+
+            return redirect()
+                ->back()
+                ->with('error', 'Could not delete account option: '.$e->getMessage());
+        }
 
         return redirect()
             ->route('admin_account_options_index', $broker_id)

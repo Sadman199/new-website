@@ -5,7 +5,7 @@
             <h2 class="bc-section__title">{{ $accountOption->account_type }} — Exclusive Offers</h2>
         </div>
         <div class="bc-section__body overflow-x-auto exclusive-offers">
-            {!! html_entity_decode($accountOption->exclusive_offers) !!}
+            {!! \App\Support\RichText::forDisplay($accountOption->exclusive_offers) !!}
         </div>
     </section>
     @endif
@@ -54,7 +54,7 @@
                     <div class="bc-data-row__icon"><i class="fas fa-info-circle"></i></div>
                     <div>
                         <div class="bc-data-row__label">Special Conditions</div>
-                        <div class="bc-data-row__value">{{ $accountOption->special_conditions ? strip_tags($accountOption->special_conditions) : 'Standard conditions apply' }}</div>
+                        <div class="bc-data-row__value">{!! $accountOption->special_conditions ? \App\Support\RichText::forDisplay($accountOption->special_conditions) : 'Standard conditions apply' !!}</div>
                     </div>
                 </div>
             </div>

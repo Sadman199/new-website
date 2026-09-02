@@ -15,7 +15,7 @@
                             <h3 class="cms-timeline__title">{{ $item['title'] }}</h3>
                         @endif
                         @if(!empty($item['text']))
-                            <p class="cms-timeline__text">{!! nl2br(e($item['text'])) !!}</p>
+                            <div class="cms-timeline__text cms-prose">{!! \App\Support\RichText::forDisplay($item['text'] ?? null) !!}</div>
                         @endif
                     </li>
                 @endforeach

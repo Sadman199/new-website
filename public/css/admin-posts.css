@@ -1,0 +1,324 @@
+/* Blog CMS extras on top of admin-brokers.css */
+
+.ab-page--blog {
+    overflow-x: clip;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+.main-content--dashboard:has(.ab-page--blog) {
+    overflow-x: clip;
+    max-width: 100%;
+}
+
+.ab-page--blog .ab-wrap {
+    width: 100%;
+    max-width: none;
+    padding-inline: 1.25rem 1.5rem;
+    box-sizing: border-box;
+}
+
+.ab-blog-form {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+}
+
+.ab-section-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    margin-bottom: 1.15rem;
+    padding: 0.35rem;
+    background: #fff;
+    border: 1px solid var(--ab-border);
+    border-radius: 1rem;
+    max-width: 100%;
+}
+
+.ab-section-nav a {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.45rem 0.8rem;
+    font-size: 0.8125rem;
+    font-weight: 800;
+    color: var(--ab-body);
+    text-decoration: none;
+    border-radius: 0.7rem;
+}
+
+.ab-section-nav a:hover,
+.ab-section-nav a.is-active {
+    background: var(--ab-brand-soft);
+    color: var(--ab-ink);
+}
+
+.ab-layout--post {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(16rem, 18rem);
+    gap: 1.25rem;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+}
+
+.ab-form-main {
+    min-width: 0;
+    display: grid;
+    gap: 1rem;
+}
+
+.ab-side {
+    position: sticky;
+    top: 5.5rem;
+    display: grid;
+    gap: 0.75rem;
+    align-self: start;
+    min-width: 0;
+}
+
+.ab-save--side {
+    position: sticky;
+    bottom: 0.75rem;
+    flex-direction: column;
+    align-items: stretch;
+}
+
+.ab-save--side .ab-btn {
+    width: 100%;
+    justify-content: center;
+}
+
+.ab-page--blog .ab-tabs {
+    border-radius: 1rem;
+    max-width: 100%;
+}
+
+.ab-page--blog .note-editor.note-frame,
+.ab-page--blog .select2-container,
+.ab-page--blog .bootstrap-tagsinput {
+    max-width: 100%;
+}
+
+.ab-page--blog .note-editor.note-frame {
+    width: 100%;
+    border-color: var(--ab-border);
+    border-radius: 0.75rem;
+    overflow: hidden;
+}
+
+.ab-page--blog .note-editor .note-toolbar {
+    flex-wrap: wrap;
+}
+
+.ab-page--blog .bootstrap-tagsinput {
+    display: block;
+    width: 100%;
+    min-height: 2.6rem;
+    margin: 0;
+    padding: 0.4rem 0.65rem;
+    border: 1px solid var(--ab-border);
+    border-radius: 0.65rem;
+    box-shadow: none;
+    background: #fff;
+    line-height: 1.8;
+}
+
+.ab-page--blog .bootstrap-tagsinput input {
+    width: auto !important;
+    min-width: 8rem;
+    border: 0;
+    box-shadow: none;
+}
+
+.ab-page--blog .bootstrap-tagsinput .tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.2rem;
+    margin: 0.1rem 0.2rem 0.1rem 0;
+    padding: 0.12rem 0.55rem;
+    background: var(--ab-brand);
+    color: #fff;
+    border: 0;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+
+.ab-page--blog .select2-container .select2-selection--multiple {
+    min-height: 2.5rem;
+    border-color: var(--ab-border);
+    border-radius: 0.65rem;
+}
+
+.ab-section--details > summary {
+    list-style: none;
+    cursor: pointer;
+}
+
+.ab-section--details > summary::-webkit-details-marker {
+    display: none;
+}
+
+.ab-section--details > summary h2::after {
+    content: "Show";
+    float: right;
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--ab-brand);
+}
+
+.ab-section--details[open] > summary h2::after {
+    content: "Hide";
+}
+
+.ab-readonly {
+    margin: 0;
+    min-height: 2.5rem;
+    padding: 0.55rem 0.8rem;
+    border: 1px solid var(--ab-border);
+    border-radius: 0.65rem;
+    background: #faf8f4;
+    font-weight: 800;
+}
+
+.ab-counter {
+    display: block;
+    margin-top: 0.25rem;
+    font-size: 0.72rem;
+    color: var(--ab-muted);
+}
+
+.ab-counter.is-over {
+    color: var(--ab-danger);
+    font-weight: 800;
+}
+
+.ab-thumb-preview {
+    display: block;
+    width: 100%;
+    max-height: 9rem;
+    margin-top: 0.6rem;
+    object-fit: cover;
+    border-radius: 0.75rem;
+    border: 1px solid var(--ab-border);
+    background: #fff;
+}
+
+.ab-thumb-preview.is-empty {
+    display: none;
+}
+
+.ab-check {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0 0 0.45rem;
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: var(--ab-ink);
+}
+
+.ab-check input[type="checkbox"] {
+    width: 1rem;
+    height: 1rem;
+    accent-color: var(--ab-brand);
+}
+
+.ab-filters--posts {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0.75rem;
+    align-items: end;
+}
+
+.ab-filters--posts .ab-header__actions {
+    grid-column: 1 / -1;
+}
+
+.ab-pager {
+    padding: 1rem 1.15rem;
+}
+
+.ab-hero-media {
+    margin: 0 0 1.25rem;
+    overflow: hidden;
+    border: 1px solid var(--ab-border);
+    border-radius: var(--ab-radius);
+    background: #fff;
+}
+
+.ab-hero-media img {
+    display: block;
+    width: 100%;
+    max-height: 22rem;
+    object-fit: cover;
+}
+
+.ab-hero-media figcaption {
+    padding: 0.65rem 1rem;
+    font-size: 0.8125rem;
+    color: var(--ab-muted);
+}
+
+.ab-note {
+    font-size: 0.78rem;
+    color: var(--ab-muted);
+}
+
+.ab-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    justify-content: flex-end;
+}
+
+.ab-page--blog .ab-table-wrap {
+    overflow-x: auto;
+    max-width: 100%;
+}
+
+.ab-blog-card {
+    background: #fff;
+    border: 1px solid var(--ab-border);
+    border-radius: var(--ab-radius);
+    overflow: hidden;
+}
+
+.ab-blog-card .card-header,
+.ab-blog-card .card-body {
+    background: transparent;
+}
+
+.ab-blog-card .table {
+    margin: 0;
+}
+
+@media (max-width: 1100px) {
+    .ab-layout--post {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .ab-side {
+        position: static;
+    }
+}
+
+@media (max-width: 900px) {
+    .ab-filters--posts {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media (max-width: 640px) {
+    .ab-filters--posts {
+        grid-template-columns: 1fr;
+    }
+
+    .ab-page--blog .ab-wrap {
+        padding-inline: 0.85rem;
+    }
+}

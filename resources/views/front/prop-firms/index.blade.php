@@ -5,7 +5,7 @@
 @section('canonical', route('prop_firms.index'))
 
 @push('page-styles')
-    <link rel="stylesheet" href="{{ asset('css/prop-firms-design-system.css') }}?v=5">
+    <link rel="stylesheet" href="{{ asset('css/prop-firms-design-system.css') }}?v=6">
     <link rel="stylesheet" href="{{ asset('css/prop-firms-index.css') }}?v=6">
 @endpush
 

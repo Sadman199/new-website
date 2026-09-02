@@ -6,7 +6,7 @@
 @section('robots', $robots ?? 'index, follow')
 
 @push('page-styles')
-    <link rel="stylesheet" href="{{ asset('css/find-my-broker.css') }}?v=6">
+    <link rel="stylesheet" href="{{ asset('css/find-my-broker.css') }}?v=7">
 @endpush
 
 @section('main_content')
@@ -27,7 +27,7 @@
             </p>
             @if(!empty($fromQuiz))
                 <h1 class="fmb-hero__title">Your <span class="fmb-hero__accent">BrokerMatch</span> results</h1>
-                <p class="fmb-hero__subtitle">Brokers ranked from your quiz answers. Visit, read the review, save, or compare — or retake the quiz to refine the match.</p>
+                <p class="fmb-hero__subtitle">Brokers ranked from your quiz answers. Visit, read the review, or save your favourites — or retake the quiz to refine the match.</p>
             @else
                 <h1 class="fmb-hero__title">Find my <span class="fmb-hero__accent">broker</span></h1>
                 <p class="fmb-hero__subtitle">Filter {{ number_format($pageStats['total']) }}+ reviewed brokers by deposit, regulation, platform, costs, and features — updated live from our database. Prefer questions? <a href="{{ route('home') }}#bcMatchQuiz" class="fmb-hero__quiz-link">Take the BrokerMatch quiz</a>.</p>
@@ -38,7 +38,7 @@
         </div>
     </header>
 
-    <div class="container" id="fmb-app" data-endpoint="{{ route('find_my_broker') }}" data-compare-base="{{ url('/brokers/compare') }}">
+    <div class="container" id="fmb-app" data-endpoint="{{ route('find_my_broker') }}">
         @if(!empty($quickPresets))
             <section class="fmb-presets" aria-label="Popular searches">
                 <p class="fmb-presets__label">Popular searches</p>
@@ -59,8 +59,16 @@
             <aside class="col-12 col-lg-3 fmb-filters fmb-filters--desktop" aria-label="Filter brokers">
                 <div class="fmb-filters__shell">
                     <div class="fmb-filters__head">
-                        <h2 class="fmb-filters__title">Refine results</h2>
-                        <button type="button" class="fmb-filters__reset fmb-reset">Reset</button>
+                        <div class="fmb-filters__title-wrap">
+                            <span class="fmb-filters__title-icon" aria-hidden="true">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M7 12h10M10 18h4"/></svg>
+                            </span>
+                            <h2 class="fmb-filters__title">Refine results</h2>
+                        </div>
+                        <button type="button" class="fmb-filters__reset fmb-reset">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.836 2A8.5 8.5 0 004.582 9M20 20v-5h-.581m0 0a8.5 8.5 0 01-15.837-2"/></svg>
+                            Reset
+                        </button>
                     </div>
                     <div class="fmb-filters__body">
                         @include('front.brokers.partials.find_my_broker_filters', ['idPrefix' => 'desk'])
@@ -97,26 +105,26 @@
             </div>
         </section>
     </div>
-</div>
 
-<div class="fmb-drawer" id="fmb-drawer" aria-hidden="true">
-    <div class="fmb-drawer__backdrop" id="fmb-close-filters"></div>
-    <div class="fmb-drawer__panel">
-        <div class="fmb-drawer__head">
-            <h2 class="fmb-drawer__title">Filters</h2>
-            <button type="button" class="fmb-drawer__close" id="fmb-close-filters-btn" aria-label="Close filters">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12"/>
-                </svg>
-            </button>
-        </div>
-        <div class="fmb-drawer__body">
-            @include('front.brokers.partials.find_my_broker_filters', ['idPrefix' => 'mob'])
+    <div class="fmb-drawer" id="fmb-drawer" aria-hidden="true">
+        <div class="fmb-drawer__backdrop" id="fmb-close-filters"></div>
+        <div class="fmb-drawer__panel">
+            <div class="fmb-drawer__head">
+                <h2 class="fmb-drawer__title">Filters</h2>
+                <button type="button" class="fmb-drawer__close" id="fmb-close-filters-btn" aria-label="Close filters">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="fmb-drawer__body">
+                @include('front.brokers.partials.find_my_broker_filters', ['idPrefix' => 'mob'])
+            </div>
         </div>
     </div>
 </div>
 @endsection
 
 @push('scripts')
-<script src="{{ asset('js/find-my-broker.js') }}?v=5" defer></script>
+<script src="{{ asset('js/find-my-broker.js') }}?v=6" defer></script>
 @endpush

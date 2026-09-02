@@ -18,6 +18,9 @@
     --bc-primary-rgb: 232, 130, 42;
     --bc-dark: #1c1e24;
     --bc-text: #1c1e24;
+    --bc-surface: #ffffff;
+    --bc-bg: #f6f4f0;
+    --bc-border: rgba(226, 220, 210, 0.95);
 
     position: relative;
     background: linear-gradient(160deg, #f6f7f9 0%, #eef0f3 40%, #f9f3ea 100%);

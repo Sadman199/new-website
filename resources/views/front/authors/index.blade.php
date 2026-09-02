@@ -47,7 +47,7 @@
                                 @endif
                                 <span class="aui-card__name">{{ $author['name'] }}</span>
                                 @if($author['bio'])
-                                    <span class="aui-card__bio">{{ Str::limit($author['bio'], 220) }}</span>
+                                    <span class="aui-card__bio">{{ Str::limit(strip_tags($author['bio']), 220) }}</span>
                                 @endif
 
                                 <span class="aui-card__stats">

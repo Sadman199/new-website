@@ -147,44 +147,55 @@ class BonusDetailService
         return $items;
     }
 
-    /** @return array<int, array{key: string, title: string, content: string, html: bool}> */
+    /**
+     * Ordered to follow the BROKER → OFFER → HOW TO GET IT → ELIGIBILITY/TERMS → PRIZE
+     * reading flow. Empty fields are filtered out so the page never shows blank panels.
+     *
+     * @return array<int, array{key: string, title: string, content: string, html: bool}>
+     */
     private function sections(ForexBonus $bonus): array
     {
         $sections = [
             [
-                'key' => 'how_to',
-                'title' => 'How to claim',
-                'content' => (string) $bonus->how_to_participate,
-                'html' => true,
-            ],
-            [
                 'key' => 'overview',
                 'title' => 'Offer overview',
                 'content' => (string) $bonus->bonus_type_details,
-                'html' => false,
-            ],
-            [
-                'key' => 'eligibility',
-                'title' => 'Eligibility',
-                'content' => (string) $bonus->eligibility_criteria,
-                'html' => false,
-            ],
-            [
-                'key' => 'terms',
-                'title' => 'General terms',
-                'content' => (string) $bonus->general_terms,
-                'html' => false,
-            ],
-            [
-                'key' => 'restrictions',
-                'title' => 'Country restrictions',
-                'content' => (string) $bonus->participate,
-                'html' => false,
+                'html' => true,
             ],
             [
                 'key' => 'description',
                 'title' => 'Full description',
                 'content' => (string) $bonus->description,
+                'html' => true,
+            ],
+            [
+                'key' => 'how_to',
+                'title' => 'How to get it',
+                'content' => (string) $bonus->how_to_participate,
+                'html' => true,
+            ],
+            [
+                'key' => 'restrictions',
+                'title' => 'Who can participate',
+                'content' => (string) $bonus->participate,
+                'html' => true,
+            ],
+            [
+                'key' => 'eligibility',
+                'title' => 'Eligibility criteria',
+                'content' => (string) $bonus->eligibility_criteria,
+                'html' => true,
+            ],
+            [
+                'key' => 'terms',
+                'title' => 'General terms',
+                'content' => (string) $bonus->general_terms,
+                'html' => true,
+            ],
+            [
+                'key' => 'prize',
+                'title' => 'Prize & special conditions',
+                'content' => (string) $bonus->prize,
                 'html' => true,
             ],
         ];

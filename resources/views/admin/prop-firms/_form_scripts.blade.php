@@ -13,6 +13,11 @@
     document.getElementById('add-faq')?.addEventListener('click', function () {
         const tpl = document.getElementById('faq-row-template').innerHTML.replace(/__INDEX__/g, faqIndex++);
         document.getElementById('faqs-repeater').insertAdjacentHTML('beforeend', tpl);
+        const rows = document.querySelectorAll('#faqs-repeater .faq-row');
+        const last = rows[rows.length - 1];
+        if (window.AdminEditor && last) {
+            window.AdminEditor.mountAll(last, { force: true });
+        }
     });
 
     document.addEventListener('click', function (e) {
@@ -20,7 +25,11 @@
             e.target.closest('.program-row')?.remove();
         }
         if (e.target.closest('.remove-faq')) {
-            e.target.closest('.faq-row')?.remove();
+            const row = e.target.closest('.faq-row');
+            if (window.AdminEditor && row) {
+                window.AdminEditor.destroyAll(row);
+            }
+            row?.remove();
         }
     });
 })();

@@ -46,15 +46,18 @@ use App\Http\Controllers\Front\ForexCalculatorController;
 use App\Http\Controllers\Front\TradingToolsController;
 use App\Http\Controllers\Front\PropFirmController;
 
+use App\Http\Controllers\Admin\AdminEditorImageController;
 use App\Http\Controllers\Admin\AdminHomeController;
 use App\Http\Controllers\Admin\AdminLoginController;
 use App\Http\Controllers\Admin\AdminProfileController;
 use App\Http\Controllers\Admin\AdminAdvertisementController;
 use App\Http\Controllers\Admin\AdminAdController;
+use App\Http\Controllers\Admin\AdminBannerController;
 use App\Http\Controllers\Admin\AdminTradingToolController;
 use App\Http\Controllers\Admin\AdminCategoryController;
 use App\Http\Controllers\Admin\AdminSubCategoryController;
 use App\Http\Controllers\Admin\AdminPostController;
+use App\Http\Controllers\Admin\AdminPostContentTypeController;
 use App\Http\Controllers\Admin\AdminSettingController;
 use App\Http\Controllers\Admin\AdminFaqController;
 use App\Http\Controllers\Admin\AdminContactInquiryController;
@@ -115,6 +118,7 @@ Route::get('/brokers/award/{award}', [\App\Http\Controllers\Front\BrokerControll
 
 Route::get('/best-brokers', [BrokerController::class, 'bestBrokersIndex'])->name('brokers.best.index');
 Route::get('/best-brokers/{slug}', [BrokerController::class, 'bestBrokers'])->name('brokers.best');
+Route::get('/top-brokers', [BrokerController::class, 'topBrokersIndex'])->name('brokers.top.index');
 
 Route::get('/broker-reviews', [BrokerController::class, 'reviewsIndex'])->name('broker.reviews.index');
 Route::get('/broker-reviews/{slug}/guides/{topic}', [\App\Http\Controllers\Front\BrokerGuideController::class, 'show'])->name('broker.guide.show');
@@ -167,9 +171,14 @@ Route::get('/broker/search', [BrokerController::class, 'search'])->name('brokers
 
 
 Route::get('/forex-calculator', function () {
-    return redirect()->route('trading.tools', ['tool' => 'profit']);
+    return redirect()->route('calculators.show', ['slug' => 'profit-calculator'], 301);
 })->name('forex.calculator');
-Route::get('/trading-tools', [TradingToolsController::class, 'index'])->name('trading.tools');
+Route::get('/calculators', [TradingToolsController::class, 'calculatorsIndex'])->name('calculators.index');
+Route::get('/calculators/{slug}', [TradingToolsController::class, 'show'])
+    ->where('slug', '[a-z0-9\-]+')
+    ->name('calculators.show');
+Route::post('/calculators/calculate', [TradingToolsController::class, 'calculate'])->name('calculators.calculate');
+Route::get('/trading-tools', fn () => redirect()->route('calculators.index', [], 301))->name('trading.tools');
 Route::get('/trading-tools/{slug}', [TradingToolsController::class, 'show'])
     ->where('slug', '[a-z0-9\-]+')
     ->name('trading.tools.show');
@@ -224,6 +233,7 @@ Route::middleware('author:author')->prefix('author')->group(function () {
     Route::post('/post/update/{id}', [AuthorPostController::class, 'update'])->name('author_post_update');
     Route::delete('/post/delete/{id}', [AuthorPostController::class, 'delete'])->name('author_post_delete');
     Route::delete('/post/tag/delete/{id}/{id1}', [AuthorPostController::class, 'delete_tag'])->name('author_post_delete_tag');
+    Route::post('/editor/image', [AdminEditorImageController::class, 'store'])->name('author_editor_image');
 });
 
 
@@ -237,11 +247,13 @@ Route::post('/admin/logout', [AdminLoginController::class, 'logout'])->middlewar
 
 Route::get('/admin/home', [AdminHomeController::class, 'index'])->name('admin_home')->middleware('admin:admin');
 Route::get('/admin/search', AdminSearchController::class)->name('admin_search')->middleware('admin:admin');
+Route::post('/admin/editor/image', [AdminEditorImageController::class, 'store'])->name('admin_editor_image')->middleware('admin:admin');
 
 Route::group(['prefix' => 'admin/cms-pages', 'middleware' => 'admin:admin'], function () {
     Route::get('/', [AdminCmsPageController::class, 'index'])->name('admin_cms_pages_index');
     Route::get('/create', [AdminCmsPageController::class, 'create'])->name('admin_cms_pages_create');
     Route::post('/store', [AdminCmsPageController::class, 'store'])->name('admin_cms_pages_store');
+    Route::get('/view/{id}', [AdminCmsPageController::class, 'view'])->name('admin_cms_pages_view');
     Route::get('/edit/{id}', [AdminCmsPageController::class, 'edit'])->name('admin_cms_pages_edit');
     Route::put('/update/{id}', [AdminCmsPageController::class, 'update'])->name('admin_cms_pages_update');
     Route::delete('/destroy/{id}', [AdminCmsPageController::class, 'destroy'])->name('admin_cms_pages_destroy');
@@ -280,6 +292,16 @@ Route::post('/admin/ads/update/{id}', [AdminAdController::class, 'update'])->nam
 Route::post('/admin/ads/toggle/{id}', [AdminAdController::class, 'toggle'])->name('admin_ads_toggle')->middleware('admin:admin');
 Route::delete('/admin/ads/delete/{id}', [AdminAdController::class, 'destroy'])->name('admin_ads_delete')->middleware('admin:admin');
 
+Route::group(['prefix' => 'admin/banners', 'middleware' => 'admin:admin'], function () {
+    Route::get('/', [AdminBannerController::class, 'index'])->name('admin_banners_index');
+    Route::get('/create', [AdminBannerController::class, 'create'])->name('admin_banners_create');
+    Route::post('/store', [AdminBannerController::class, 'store'])->name('admin_banners_store');
+    Route::get('/edit/{id}', [AdminBannerController::class, 'edit'])->name('admin_banners_edit');
+    Route::post('/update/{id}', [AdminBannerController::class, 'update'])->name('admin_banners_update');
+    Route::post('/toggle/{id}', [AdminBannerController::class, 'toggle'])->name('admin_banners_toggle');
+    Route::delete('/delete/{id}', [AdminBannerController::class, 'destroy'])->name('admin_banners_delete');
+});
+
 Route::get('/admin/trading-tools', [AdminTradingToolController::class, 'index'])->name('admin_trading_tools_index')->middleware('admin:admin');
 Route::get('/admin/trading-tools/edit/{id}', [AdminTradingToolController::class, 'edit'])->name('admin_trading_tools_edit')->middleware('admin:admin');
 Route::post('/admin/trading-tools/update/{id}', [AdminTradingToolController::class, 'update'])->name('admin_trading_tools_update')->middleware('admin:admin');
@@ -313,6 +335,7 @@ Route::group(['prefix' => 'admin/forex-bonus', 'middleware' => 'admin:admin'], f
     Route::get('/show', [AdminForexBonusController::class, 'show'])->name('admin_forex_bonus_show');
     Route::get('/create', [AdminForexBonusController::class, 'create'])->name('admin_forex_bonus_create');
     Route::post('/store', [AdminForexBonusController::class, 'store'])->name('admin_forex_bonus_store');
+    Route::get('/view/{id}', [AdminForexBonusController::class, 'view'])->name('admin_forex_bonus_view');
     Route::get('/edit/{id}', [AdminForexBonusController::class, 'edit'])->name('admin_forex_bonus_edit');
     Route::put('/update/{id}', [AdminForexBonusController::class, 'update'])->name('admin_forex_bonus_update');
     Route::delete('/delete/{id}', [AdminForexBonusController::class, 'delete'])->name('admin_forex_bonus_delete');
@@ -326,6 +349,7 @@ Route::group(['prefix' => 'admin/broker', 'middleware' => 'admin:admin'], functi
     Route::get('/scam', [AdminBrokerController::class, 'scam'])->name('admin_broker_scam');
     Route::get('/create', [AdminBrokerController::class, 'create'])->name('admin_broker_create');
     Route::post('/store', [AdminBrokerController::class, 'store'])->name('admin_broker_store');
+    Route::get('/view/{id}', [AdminBrokerController::class, 'view'])->whereNumber('id')->name('admin_broker_view');
     Route::get('/edit/{id}', [AdminBrokerController::class, 'edit'])->whereNumber('id')->name('admin_broker_edit');
     Route::put('/update/{id}', [AdminBrokerController::class, 'update'])->whereNumber('id')->name('admin_broker_update');
     Route::delete('/delete/{id}', [AdminBrokerController::class, 'delete'])->whereNumber('id')->name('admin_broker_delete');
@@ -427,11 +451,17 @@ Route::group(['middleware' => 'admin:admin'], function () {
     Route::get('/admin/post/show', [AdminPostController::class, 'show'])->name('admin_post_show');
     Route::get('/admin/post/create', [AdminPostController::class, 'create'])->name('admin_post_create');
     Route::post('/admin/post/store', [AdminPostController::class, 'store'])->name('admin_post_store');
+    Route::get('/admin/post/view/{id}', [AdminPostController::class, 'view'])->name('admin_post_view');
     Route::get('/admin/post/edit/{id}', [AdminPostController::class, 'edit'])->name('admin_post_edit');
     Route::match(['post', 'put'], '/admin/post/update/{id}', [AdminPostController::class, 'update'])->name('admin_post_update');
-
+    Route::post('/admin/post/duplicate/{id}', [AdminPostController::class, 'duplicate'])->name('admin_post_duplicate');
+    Route::post('/admin/post/status/{id}/{status}', [AdminPostController::class, 'status'])->name('admin_post_status');
     Route::delete('/admin/post/delete/{id}', [AdminPostController::class, 'delete'])->name('admin_post_delete');
     Route::delete('/admin/post/tag/delete/{id}/{id1}', [AdminPostController::class, 'delete_tag'])->name('admin_post_delete_tag');
+    Route::get('/admin/post/content-types', [AdminPostContentTypeController::class, 'index'])->name('admin_post_content_types_index');
+    Route::post('/admin/post/content-types', [AdminPostContentTypeController::class, 'store'])->name('admin_post_content_types_store');
+    Route::put('/admin/post/content-types/{id}', [AdminPostContentTypeController::class, 'update'])->name('admin_post_content_types_update');
+    Route::delete('/admin/post/content-types/{id}', [AdminPostContentTypeController::class, 'destroy'])->name('admin_post_content_types_destroy');
 
     // Setting-related routes
     Route::get('/admin/setting', [AdminSettingController::class, 'index'])->name('admin_setting');
@@ -441,6 +471,7 @@ Route::group(['middleware' => 'admin:admin'], function () {
 Route::get('/admin/faq/show', [AdminFaqController::class, 'show'])->name('admin_faq_show')->middleware('admin:admin');
 Route::get('/admin/faq/create', [AdminFaqController::class, 'create'])->name('admin_faq_create')->middleware('admin:admin');
 Route::post('/admin/faq/store', [AdminFaqController::class, 'store'])->name('admin_faq_store');
+Route::get('/admin/faq/view/{id}', [AdminFaqController::class, 'view'])->name('admin_faq_view')->middleware('admin:admin');
 Route::get('/admin/faq/edit/{id}', [AdminFaqController::class, 'edit'])->name('admin_faq_edit')->middleware('admin:admin');
 Route::post('/admin/faq/update/{id}', [AdminFaqController::class, 'update'])->name('admin_faq_update');
 Route::delete('/admin/faq/delete/{id}', [AdminFaqController::class, 'delete'])->name('admin_faq_delete')->middleware('admin:admin');
@@ -470,6 +501,7 @@ Route::delete('/admin/online-poll/delete/{id}', [AdminOnlinePollController::clas
 Route::get('/admin/author/show', [AdminAuthorController::class, 'show'])->name('admin_author_show')->middleware('admin:admin');
 Route::get('/admin/author/create', [AdminAuthorController::class, 'create'])->name('admin_author_create')->middleware('admin:admin');
 Route::post('/admin/author/store', [AdminAuthorController::class, 'store'])->name('admin_author_store')->middleware('admin:admin');
+Route::get('/admin/author/view/{id}', [AdminAuthorController::class, 'view'])->name('admin_author_view')->middleware('admin:admin');
 Route::get('/admin/author/edit/{id}', [AdminAuthorController::class, 'edit'])->name('admin_author_edit')->middleware('admin:admin');
 Route::match(['post', 'put'], '/admin/author/update/{id}', [AdminAuthorController::class, 'update'])->name('admin_author_update')->middleware('admin:admin');
 Route::delete('/admin/author/delete/{id}', [AdminAuthorController::class, 'delete'])->name('admin_author_delete')->middleware('admin:admin');

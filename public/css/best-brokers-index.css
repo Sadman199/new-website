@@ -49,7 +49,7 @@
 }
 
 .bbh-wrap {
-    width: min(100% - 2rem, 80rem);
+    width: min(100% - 2rem, var(--bc-container, 82.5rem));
     margin: 0 auto;
 }
 
@@ -124,11 +124,11 @@
 
 .bbh-hero__subtitle {
     margin: 0 0 1.25rem;
-    max-width: 38rem;
+    max-width: 42rem;
     font-size: clamp(0.9375rem, 2vw, 1.0625rem);
     font-weight: 500;
-    color: #6b7280;
-    line-height: 1.55;
+    color: #4b5563;
+    line-height: 1.65;
 }
 
 .bbh-hero__search-wrap {
@@ -540,7 +540,7 @@
 }
 
 .bbh-page .bbh-card.bbh-card--award .bbh-card__desc {
-    color: #6b7280;
+    color: rgba(255, 255, 255, 0.82);
 }
 
 .bbh-page .bbh-card.bbh-card--award .bbh-card__cta {
@@ -562,24 +562,33 @@
     flex-direction: column;
     justify-content: space-between;
     height: 100%;
-    min-height: 17.5rem;
+    min-height: 13.5rem;
     background: var(--bbh-surface);
+    border: 1px solid rgba(226, 220, 210, 0.9);
     border-radius: 0.875rem;
     padding: 1.125rem;
     box-shadow: 0 1px 3px rgba(60, 50, 40, 0.06);
-    transition: box-shadow 0.15s, transform 0.15s;
+    transition: box-shadow 0.15s, transform 0.15s, border-color 0.15s;
+}
+
+.bbh-page .bbh-card__body {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    min-height: 0;
 }
 
 .bbh-page .bbh-card:hover {
+    border-color: rgba(232, 130, 42, 0.28);
     box-shadow: 0 8px 24px rgba(60, 50, 40, 0.1);
     transform: translateY(-1px);
 }
 
 .bbh-page .bbh-card__title {
     display: block;
-    margin: 0 0 0.75rem;
-    font-size: 1.0625rem;
-    font-weight: 700;
+    margin: 0 0 0.5rem;
+    font-size: 1rem;
+    font-weight: 800;
     line-height: 1.35;
     color: var(--bbh-text);
     text-decoration: none;
@@ -590,11 +599,18 @@
     color: var(--bbh-ocean);
 }
 
+.bbh-page .bbh-card__meta {
+    margin: 0 0 0.85rem;
+    font-size: 0.8125rem;
+    line-height: 1.45;
+    color: var(--bbh-muted);
+}
+
 .bbh-page .bbh-card__desc {
-    margin: 0;
+    margin: 0 0 0.75rem;
     font-size: 0.875rem;
     line-height: 1.55;
-    color: #57534e;
+    color: var(--bbh-muted);
     display: -webkit-box;
     -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
@@ -605,7 +621,7 @@
     position: relative;
     display: flex;
     align-items: center;
-    margin: 1.25rem 0 1rem;
+    margin: 0 0 0.85rem;
     min-height: 2.5rem;
 }
 
@@ -650,6 +666,7 @@
 
 .bbh-page .bbh-card__updated {
     display: block;
+    margin-top: auto;
     margin-bottom: 0.75rem;
     font-size: 0.75rem;
     color: var(--bbh-muted);

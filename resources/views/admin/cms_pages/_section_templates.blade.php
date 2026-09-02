@@ -10,8 +10,8 @@
                 </div>
             </div>
             <div class="cms-section-card__actions">
-                <button type="button" class="btn btn-sm btn-light cms-section-toggle" title="Expand/collapse"><i class="fas fa-chevron-down"></i></button>
-                <button type="button" class="btn btn-sm btn-danger cms-section-remove" title="Remove section"><i class="fas fa-trash"></i></button>
+                <button type="button" class="ab-btn ab-btn--ghost ab-btn--sm cms-section-toggle" title="Show or hide fields"><i class="fas fa-chevron-down"></i></button>
+                <button type="button" class="ab-btn ab-btn--danger ab-btn--sm cms-section-remove" title="Remove this block"><i class="fas fa-trash"></i></button>
             </div>
         </div>
         <div class="cms-section-body"></div>

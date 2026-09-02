@@ -67,8 +67,16 @@
         type = type || 'text';
         var html = '<div class="cms-field-row">';
         html += '<label>' + esc(label) + '</label>';
-        if (type === 'textarea') {
-            html += '<textarea class="form-control form-control-sm" data-field="' + esc(name) + '">' + esc(value) + '</textarea>';
+        if (type === 'textarea' || type === 'html' || type === 'html-compact') {
+            var editorAttr = '';
+            if (type === 'html') {
+                editorAttr = ' data-admin-editor="full" data-admin-editor-lazy';
+            } else if (type === 'html-compact') {
+                editorAttr = ' data-admin-editor="compact" data-admin-editor-lazy';
+            } else {
+                editorAttr = ' data-admin-editor="off"';
+            }
+            html += '<textarea class="form-control form-control-sm" data-field="' + esc(name) + '"' + editorAttr + '>' + esc(value) + '</textarea>';
         } else if (type === 'select-dark-light') {
             html += '<select class="form-control form-control-sm" data-field="' + esc(name) + '">';
             html += '<option value="dark"' + (value === 'dark' ? ' selected' : '') + '>Dark (site standard)</option>';
@@ -135,7 +143,7 @@
             case 'hero':
                 html += field('Eyebrow label', 'eyebrow', data.eyebrow, 'text', 'Small pill above the title');
                 html += field('Headline', 'headline', data.headline);
-                html += field('Subheadline', 'subheadline', data.subheadline, 'textarea');
+                html += field('Subheadline', 'subheadline', data.subheadline, 'html-compact');
                 html += field('Background style', 'background_style', data.background_style, 'select-dark-light', 'Dark matches Contact, Promotions, and other site pages');
                 html += '<div class="cms-field-grid cms-field-grid--2">';
                 html += field('Primary button label', 'cta_label', data.cta_label);
@@ -151,12 +159,12 @@
                 break;
             case 'text_content':
                 html += field('Heading', 'heading', data.heading);
-                html += field('Body', 'body', data.body, 'textarea', 'HTML allowed for links and emphasis');
+                html += field('Body', 'body', data.body, 'html', 'Formatted text, links, lists, images, and tables');
                 html += field('Alignment', 'align', data.align, 'select-align');
                 break;
             case 'image_text':
                 html += field('Heading', 'heading', data.heading);
-                html += field('Body', 'body', data.body, 'textarea');
+                html += field('Body', 'body', data.body, 'html');
                 html += field('Image URL', 'image', data.image);
                 html += field('Image alt text', 'image_alt', data.image_alt);
                 html += field('Image position', 'image_position', data.image_position, 'select-left-right');
@@ -167,7 +175,7 @@
                 html += field('Columns', 'columns', data.columns, 'select-columns');
                 html += repeater('Cards', 'items', [
                     { key: 'title', label: 'Title' },
-                    { key: 'text', label: 'Text', type: 'textarea' },
+                    { key: 'text', label: 'Text', type: 'html-compact' },
                     { key: 'icon', label: 'Icon', hint: 'Emoji or Font Awesome class' },
                     { key: 'url', label: 'Link URL (optional)' }
                 ], data.items);
@@ -184,7 +192,7 @@
                 html += field('Heading', 'heading', data.heading);
                 html += repeater('Questions', 'items', [
                     { key: 'question', label: 'Question' },
-                    { key: 'answer', label: 'Answer', type: 'textarea' }
+                    { key: 'answer', label: 'Answer', type: 'html' }
                 ], data.items);
                 break;
             case 'timeline':
@@ -192,7 +200,7 @@
                 html += repeater('Timeline events', 'items', [
                     { key: 'year', label: 'Year' },
                     { key: 'title', label: 'Title' },
-                    { key: 'text', label: 'Description', type: 'textarea' }
+                    { key: 'text', label: 'Description', type: 'html-compact' }
                 ], data.items);
                 break;
             case 'team_members':
@@ -202,7 +210,7 @@
                     { key: 'name', label: 'Name' },
                     { key: 'role', label: 'Role' },
                     { key: 'photo', label: 'Photo URL' },
-                    { key: 'bio', label: 'Bio', type: 'textarea' }
+                    { key: 'bio', label: 'Bio', type: 'html-compact' }
                 ], data.items);
                 break;
             case 'table':
@@ -213,22 +221,22 @@
                 break;
             case 'cta':
                 html += field('Heading', 'heading', data.heading);
-                html += field('Text', 'text', data.text, 'textarea');
+                html += field('Text', 'text', data.text, 'html-compact');
                 html += field('Button label', 'button_label', data.button_label);
                 html += field('Button URL', 'button_url', data.button_url);
                 html += field('Style', 'style', data.style, 'text', 'primary (ocean blue) or dark (midnight)');
                 break;
             case 'contact_form':
                 html += field('Heading', 'heading', data.heading);
-                html += field('Subheading', 'subheading', data.subheading, 'textarea');
+                html += field('Subheading', 'subheading', data.subheading, 'html-compact');
                 html += field('Show info cards', 'show_info_cards', data.show_info_cards, 'checkbox');
                 break;
             case 'glossary':
                 html += field('Heading', 'heading', data.heading);
-                html += field('Intro', 'intro', data.intro, 'textarea');
+                html += field('Intro', 'intro', data.intro, 'html-compact');
                 html += repeater('Terms', 'items', [
                     { key: 'term', label: 'Term' },
-                    { key: 'definition', label: 'Definition', type: 'textarea' }
+                    { key: 'definition', label: 'Definition', type: 'html-compact' }
                 ], data.items);
                 break;
             default:
@@ -238,10 +246,50 @@
         return html;
     }
 
+    function fieldTypeFromEl(el) {
+        var mode = el.getAttribute('data-admin-editor');
+        if (mode === 'full') {
+            return 'html';
+        }
+        if (mode === 'compact') {
+            return 'html-compact';
+        }
+        if (el.tagName === 'TEXTAREA') {
+            return 'textarea';
+        }
+        if (el.type === 'checkbox') {
+            return 'checkbox';
+        }
+        return 'text';
+    }
+
+    function mountEditors(root) {
+        if (!window.AdminEditor || !root) {
+            return;
+        }
+        window.AdminEditor.mountAll(root, { force: true });
+    }
+
+    function destroyEditors(root) {
+        if (!window.AdminEditor || !root) {
+            return;
+        }
+        window.AdminEditor.destroyAll(root);
+    }
+
+    function syncEditors(root) {
+        if (!window.AdminEditor || !root) {
+            return;
+        }
+        window.AdminEditor.syncAll(root);
+    }
+
     function readCard(card) {
         var type = card.getAttribute('data-type');
         var body = card.querySelector('.cms-section-body');
         var data = {};
+
+        syncEditors(body);
 
         body.querySelectorAll('[data-field]').forEach(function (el) {
             var key = el.getAttribute('data-field');
@@ -285,14 +333,19 @@
         if (cards.length) {
             var last = cards[cards.length - 1];
             last.classList.remove('is-collapsed');
+            mountEditors(last);
             last.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
     }
 
     function renderAll() {
+        destroyEditors(listEl);
         listEl.innerHTML = '';
         sections.forEach(function (section, index) { renderCard(section, index); });
         updateCounts();
+        listEl.querySelectorAll('.cms-section-card:not(.is-collapsed)').forEach(function (card) {
+            mountEditors(card);
+        });
     }
 
     function renderCard(section, index) {
@@ -351,7 +404,14 @@
         }
 
         if (e.target.closest('.cms-section-toggle')) {
+            var opening = card.classList.contains('is-collapsed');
+            if (!opening) {
+                syncEditors(card);
+            }
             card.classList.toggle('is-collapsed');
+            if (opening) {
+                mountEditors(card);
+            }
             return;
         }
 
@@ -364,23 +424,28 @@
                 fields.push({
                     key: el.getAttribute('data-field'),
                     label: labelEl ? labelEl.textContent : el.getAttribute('data-field'),
-                    type: el.tagName === 'TEXTAREA' ? 'textarea' : (el.type === 'checkbox' ? 'checkbox' : 'text')
+                    type: fieldTypeFromEl(el)
                 });
             });
             container.insertAdjacentHTML('beforeend', repeaterItem(fields, {}, container.children.length));
+            mountEditors(container.lastElementChild);
             syncPayload();
             return;
         }
 
         if (e.target.closest('.cms-repeater-remove')) {
             var item = e.target.closest('.cms-repeater-item');
-            if (item) item.remove();
+            if (item) {
+                destroyEditors(item);
+                item.remove();
+            }
             syncFromDom();
             syncPayload();
         }
     });
 
     form.addEventListener('submit', function () {
+        syncEditors(listEl);
         syncFromDom();
         syncPayload();
     }, true);

@@ -144,7 +144,7 @@
         box.innerHTML = rows.join('') || '<p class="tt-results__placeholder">No results</p>';
     }
 
-    root.querySelectorAll('.tt-calc-btn').forEach(function (btn) {
+    root.querySelectorAll('.tt-calc-btn, .calc-tool__submit[data-calc]').forEach(function (btn) {
         btn.addEventListener('click', function () {
             var slug = btn.getAttribute('data-calc');
             var panel = findPanel(slug);

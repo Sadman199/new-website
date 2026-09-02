@@ -5,11 +5,12 @@
     var brokers = config.brokers || [];
     var tabGroups = config.tabGroups || {};
     var slots = [null, null, null];
-    var activeTab = 'overall';
+    var activeTab = Object.keys(tabGroups)[0] || 'overall';
     var openSlotIndex = null;
     var skipNextPrompt = false;
+    var matrixFilter = 'all';
 
-    var HIGHER_KEYS = ['rating', 'trust_score', 'review_count', 'instrument_count'];
+    var HIGHER_KEYS = ['rating', 'rating_display', 'trust_score', 'review_count', 'instrument_count'];
     var LOWER_KEYS = ['minimum_deposit', 'year_founded'];
     var TIER_KEYS = ['regulatory_tier'];
     var LEVERAGE_KEYS = ['leverage'];
@@ -52,12 +53,19 @@
         els.pairLink = $('bcComparePairLink');
         els.battleLink = $('bcBattleModeLink');
         els.winners = $('bcCompareWinners');
+        els.profiles = $('bcCompareProfiles');
+        els.toolbar = $('bcCompareToolbar');
+        els.diffCount = $('bcCompareDiffCount');
+        els.filterButtons = document.querySelectorAll('[data-compare-filter]');
         els.main = $('bcCompareMain');
+        els.shell = $('bcCompareShell');
+        els.arena = $('compare-tool');
 
         bindTabs();
         bindPickers();
         bindSuggestions();
         bindActions();
+        bindFilters();
         skipNextPrompt = true;
         prefillFromQuery();
         renderAll();
@@ -98,6 +106,24 @@
                     b.setAttribute('aria-selected', b === btn ? 'true' : 'false');
                 });
                 renderAll();
+            });
+        });
+    }
+
+    function bindFilters() {
+        if (!els.filterButtons) {
+            return;
+        }
+        els.filterButtons.forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                matrixFilter = btn.getAttribute('data-compare-filter') || 'all';
+                els.filterButtons.forEach(function (b) {
+                    b.classList.toggle('is-active', b === btn);
+                });
+                var selected = selectedBrokers();
+                if (selected.length >= 2) {
+                    renderMatrix(selected);
+                }
             });
         });
     }
@@ -216,6 +242,20 @@
         }
     }
 
+    function brokerSubline(b) {
+        var parts = [];
+        if (b.rating !== null && b.rating !== undefined) {
+            parts.push(numberFormat(b.rating, 1) + '/5');
+        }
+        if (b.regulatory_tier && b.regulatory_tier !== '—') {
+            parts.push(b.regulatory_tier);
+        }
+        if (b.minimum_deposit && b.minimum_deposit !== '—') {
+            parts.push(b.minimum_deposit + ' min');
+        }
+        return parts.join(' · ');
+    }
+
     function renderSearchResults(index, query) {
         var slotEl = els.pickers[index];
         var resultsEl = slotEl.querySelector('.bc-compare-slot__results');
@@ -226,7 +266,7 @@
                 return false;
             }
             return true;
-        }).slice(0, 20);
+        }).slice(0, 24);
 
         if (!filtered.length) {
             resultsEl.innerHTML = '<div class="bc-compare-slot__empty">No brokers found</div>';
@@ -243,7 +283,10 @@
                 'data-pick-slug="' + escapeAttr(b.slug) + '" data-slot-index="' + index + '"' +
                 (disabled ? ' disabled' : '') + '>' +
                 '<span class="bc-compare-slot__logo">' + logo + '</span>' +
-                '<span>' + escapeHtml(b.name) + '</span>' +
+                '<span class="bc-compare-slot__result-body">' +
+                '<span class="bc-compare-slot__result-name">' + escapeHtml(b.name) + '</span>' +
+                '<span class="bc-compare-slot__result-meta">' + escapeHtml(brokerSubline(b) || 'Broker') + '</span>' +
+                '</span>' +
                 '</button>'
             );
         }).join('');
@@ -282,11 +325,23 @@
         renderHint(selected);
         renderPairLink(selected);
         renderWinners(selected);
+        renderProfiles(selected);
         renderSuggestions(selected);
         syncUrl(selected);
 
         if (els.main) {
             els.main.classList.toggle('is-comparing', selected.length >= 2);
+        }
+        if (els.shell) {
+            els.shell.classList.toggle('is-comparing', selected.length >= 2);
+        }
+        if (els.arena) {
+            els.arena.classList.toggle('is-filled', selected.length > 0);
+            els.arena.classList.toggle('is-ready', selected.length >= 2);
+        }
+
+        if (els.toolbar) {
+            els.toolbar.classList.toggle('bc-compare-hidden', selected.length < 2);
         }
 
         if (selected.length >= 2) {
@@ -294,6 +349,10 @@
             renderMatrix(selected);
         } else {
             els.matrixWrap.classList.add('bc-compare-hidden');
+            els.matrixWrap.innerHTML = '';
+            if (els.diffCount) {
+                els.diffCount.textContent = '';
+            }
         }
     }
 
@@ -310,14 +369,19 @@
             var inner = slotEl.querySelector('.bc-compare-slot__inner');
             var placeholder = slotEl.querySelector('.bc-compare-slot__placeholder');
             var selectedWrap = slotEl.querySelector('.bc-compare-slot__selected');
+            var subEl = selectedWrap ? selectedWrap.querySelector('.bc-compare-slot__sub') : null;
 
             slotEl.classList.toggle('is-needed', index === neededIndex);
+            slotEl.classList.toggle('has-broker', !!broker);
 
             if (broker) {
                 inner.classList.add('has-broker');
                 placeholder.classList.add('bc-compare-hidden');
                 selectedWrap.classList.remove('bc-compare-hidden');
                 selectedWrap.querySelector('.bc-compare-slot__name').textContent = broker.name;
+                if (subEl) {
+                    subEl.textContent = brokerSubline(broker);
+                }
                 var logoEl = selectedWrap.querySelector('.bc-compare-slot__logo');
                 logoEl.innerHTML = broker.logo
                     ? '<img src="' + escapeAttr(broker.logo) + '" alt="" loading="lazy" decoding="async">'
@@ -335,7 +399,7 @@
             return;
         }
         if (selected.length === 0) {
-            els.hint.textContent = 'Pick at least 2 brokers to see the comparison table below.';
+            els.hint.textContent = 'Pick at least 2 brokers to unlock the comparison matrix.';
         } else if (selected.length === 1) {
             els.hint.textContent = 'Add a second broker to compare side by side.';
         } else if (selected.length === 2) {
@@ -411,18 +475,30 @@
         var chips = [];
         var rating = winnerBroker(selected, 'rating', 'higher');
         if (rating) {
-            chips.push(winnerChip('Highest rating', rating));
+            chips.push(winnerChip('Highest rating', rating, rating.rating_display || numberFormat(rating.rating, 1) + '/5'));
         }
         var deposit = winnerBroker(selected, 'minimum_deposit_raw', 'lower');
         if (deposit) {
-            chips.push(winnerChip('Lowest min deposit', deposit));
+            chips.push(winnerChip('Lowest min deposit', deposit, deposit.minimum_deposit));
+        }
+        var trust = winnerBroker(selected, 'trust_score', 'higher');
+        if (trust) {
+            chips.push(winnerChip('Best trust score', trust, String(trust.trust_score)));
         }
         var regulation = winnerBroker(selected, 'regulatory_tier', 'tier');
         if (!regulation) {
             regulation = winnerBroker(selected, 'broker_type', 'type');
         }
         if (regulation) {
-            chips.push(winnerChip('Strongest regulation', regulation));
+            chips.push(winnerChip('Strongest regulation', regulation, regulation.regulatory_tier !== '—' ? regulation.regulatory_tier : regulation.broker_type));
+        }
+        var instruments = winnerBroker(selected, 'instrument_count', 'higher');
+        if (instruments) {
+            chips.push(winnerChip('Most instruments', instruments, instruments.instrument_count + '+'));
+        }
+        var leverage = winnerBroker(selected, 'leverage', 'leverage');
+        if (leverage) {
+            chips.push(winnerChip('Highest leverage', leverage, leverage.leverage));
         }
 
         if (!chips.length) {
@@ -432,14 +508,15 @@
         }
 
         els.winners.classList.remove('bc-compare-hidden');
-        els.winners.innerHTML = chips.join('');
+        els.winners.innerHTML = '<p class="bc-compare-winners__label">Quick winners</p><div class="bc-compare-winners__grid">' + chips.join('') + '</div>';
     }
 
-    function winnerChip(label, broker) {
+    function winnerChip(label, broker, value) {
         return (
             '<span class="bc-compare-winner">' +
             '<span class="bc-compare-winner__label">' + escapeHtml(label) + '</span>' +
             '<span class="bc-compare-winner__name">' + escapeHtml(broker.name) + '</span>' +
+            (value ? '<span class="bc-compare-winner__value">' + escapeHtml(String(value)) + '</span>' : '') +
             '</span>'
         );
     }
@@ -460,6 +537,58 @@
             return null;
         }
         return scored[0].broker;
+    }
+
+    function renderProfiles(selected) {
+        if (!els.profiles) {
+            return;
+        }
+        if (selected.length < 2) {
+            els.profiles.classList.add('bc-compare-hidden');
+            els.profiles.innerHTML = '';
+            return;
+        }
+
+        els.profiles.classList.remove('bc-compare-hidden');
+        els.profiles.innerHTML = selected.map(function (b) {
+            var logo = b.logo
+                ? '<img src="' + escapeAttr(b.logo) + '" alt="" loading="lazy" decoding="async">'
+                : '<span>' + escapeHtml(b.name.charAt(0)) + '</span>';
+            var tags = (b.regulation_list || []).slice(0, 3).map(function (tag) {
+                return '<span class="bc-compare-profile__tag">' + escapeHtml(tag) + '</span>';
+            }).join('');
+            var summary = b.short_description || b.top_feature || '';
+            if (summary && summary.length > 140) {
+                summary = summary.slice(0, 137) + '…';
+            }
+            return (
+                '<article class="bc-compare-profile">' +
+                '<div class="bc-compare-profile__head">' +
+                '<div class="bc-compare-profile__logo">' + logo + '</div>' +
+                '<div>' +
+                '<h3 class="bc-compare-profile__name">' + escapeHtml(b.name) + '</h3>' +
+                '<p class="bc-compare-profile__score">' + escapeHtml(b.rating_display || '—') +
+                (b.broker_type ? ' · ' + escapeHtml(b.broker_type) : '') + '</p>' +
+                '</div></div>' +
+                (summary ? '<p class="bc-compare-profile__summary">' + escapeHtml(summary) + '</p>' : '') +
+                '<dl class="bc-compare-profile__facts">' +
+                '<div><dt>Min. deposit</dt><dd>' + escapeHtml(b.minimum_deposit || '—') + '</dd></div>' +
+                '<div><dt>Spreads</dt><dd>' + escapeHtml(truncate(b.spreads || '—', 36)) + '</dd></div>' +
+                '<div><dt>Leverage</dt><dd>' + escapeHtml(truncate(b.leverage || '—', 28)) + '</dd></div>' +
+                '<div><dt>Fee level</dt><dd>' + escapeHtml(b.fee_level || '—') + '</dd></div>' +
+                '</dl>' +
+                (tags ? '<div class="bc-compare-profile__tags">' + tags + '</div>' : '') +
+                '<div class="bc-compare-profile__actions">' +
+                (b.review_url ? '<a href="' + escapeAttr(b.review_url) + '" class="bc-compare-btn bc-compare-btn--ghost bc-compare-btn--sm">Review</a>' : '') +
+                (b.visit_url ? '<a href="' + escapeAttr(b.visit_url) + '" class="bc-compare-btn bc-compare-btn--primary bc-compare-btn--sm" target="_blank" rel="noopener nofollow">Visit</a>' : '') +
+                '</div></article>'
+            );
+        }).join('');
+    }
+
+    function truncate(str, max) {
+        str = String(str);
+        return str.length > max ? str.slice(0, max - 1) + '…' : str;
     }
 
     function renderSuggestions(selected) {
@@ -490,34 +619,42 @@
 
     function renderSidebar() {
         var group = tabGroups[activeTab];
-        if (!group || !els.sidebarHead || !els.sidebarRows) {
+        if (!group) {
             return;
         }
-        els.sidebarHead.textContent = group.label;
-        els.sidebarRows.innerHTML = group.rows.map(function (row) {
-            return '<li class="bc-compare-sidebar__row">' + escapeHtml(row.label) + '</li>';
-        }).join('');
+        if (els.sidebarHead) {
+            els.sidebarHead.textContent = group.label;
+        }
+        if (els.sidebarRows) {
+            els.sidebarRows.innerHTML = group.rows.map(function (row) {
+                return '<li class="bc-compare-sidebar__row">' + escapeHtml(row.label) + '</li>';
+            }).join('');
+        }
     }
 
     function renderMatrix(selected) {
-        var rows = currentRows();
-        var uniqueRows = dedupeRows(rows);
+        var rows = dedupeRows(currentRows());
+        var diffCount = 0;
 
         var headHtml = '<th class="compare-table__cell bc-compare-matrix__metric" scope="col">Metric</th>' + selected.map(function (b) {
             var logo = b.logo
                 ? '<img src="' + escapeAttr(b.logo) + '" alt="" loading="lazy" decoding="async">'
                 : '<span>' + escapeHtml(b.name.charAt(0)) + '</span>';
-            var score = b.rating !== null ? numberFormat(b.rating, 1) : '—';
+            var score = b.rating !== null && b.rating !== undefined ? numberFormat(b.rating, 1) : '—';
             return (
                 '<th class="compare-table__cell compare-table__broker" scope="col"><div class="bc-compare-matrix__broker-head">' +
                 '<div class="bc-compare-matrix__broker-logo">' + logo + '</div>' +
-                '<div class="bc-compare-matrix__broker-name">' + escapeHtml(b.name) + '</div>' +
-                '<div class="bc-compare-matrix__broker-score">' + score + '</div>' +
+                '<div class="bc-compare-matrix__broker-name">' +
+                (b.review_url
+                    ? '<a href="' + escapeAttr(b.review_url) + '">' + escapeHtml(b.name) + '</a>'
+                    : escapeHtml(b.name)) +
+                '</div>' +
+                '<div class="bc-compare-matrix__broker-score">' + score + '/5</div>' +
                 '</div></th>'
             );
         }).join('');
 
-        var bodyHtml = uniqueRows.map(function (row) {
+        var bodyHtml = rows.map(function (row) {
             var values = selected.map(function (b) {
                 return formatValue(row.key, b[row.key]);
             });
@@ -525,6 +662,12 @@
             var allSame = values.length > 1 && values.every(function (val) {
                 return val === values[0];
             });
+            if (!allSame) {
+                diffCount += 1;
+            }
+            if (matrixFilter === 'diff' && allSame) {
+                return '';
+            }
             var cells = values.map(function (val, i) {
                 var cls = cellClass(row.key, val, i === bestIndex, allSame);
                 return '<td class="compare-table__cell ' + cls + '" data-broker="' + escapeAttr(selected[i].name) + '">' + escapeHtml(String(val)) + '</td>';
@@ -533,6 +676,14 @@
                 '<th class="compare-table__cell bc-compare-matrix__metric" scope="row">' + escapeHtml(row.label) + '</th>' +
                 cells + '</tr>';
         }).join('');
+
+        if (els.diffCount) {
+            els.diffCount.textContent = diffCount + ' difference' + (diffCount === 1 ? '' : 's');
+        }
+
+        if (!bodyHtml && matrixFilter === 'diff') {
+            bodyHtml = '<tr><td class="compare-table__cell" colspan="' + (selected.length + 1) + '">No differences in this category.</td></tr>';
+        }
 
         els.matrixWrap.innerHTML =
             '<div class="compare-table-wrap">' +
@@ -557,6 +708,12 @@
     function formatValue(key, val) {
         if (val === null || val === undefined || val === '') {
             return '—';
+        }
+        if (key === 'instrument_count') {
+            return String(val) + '+';
+        }
+        if (key === 'review_count') {
+            return String(val);
         }
         return val;
     }
@@ -610,7 +767,14 @@
         }
         var mode = compareMode(key);
         var numeric = selected.map(function (b, i) {
-            var raw = key === 'minimum_deposit' ? b.minimum_deposit_raw : b[key];
+            var raw;
+            if (key === 'minimum_deposit') {
+                raw = b.minimum_deposit_raw;
+            } else if (key === 'rating_display') {
+                raw = b.rating;
+            } else {
+                raw = b[key];
+            }
             return { index: i, num: comparableNumber(key, raw !== undefined && raw !== null ? raw : values[i], mode) };
         }).filter(function (x) {
             return x.num !== null;
@@ -654,7 +818,7 @@
             var n = parseFloat(String(val).replace(/[^0-9.]/g, ''));
             return isNaN(n) ? null : n;
         }
-        if (key === 'instrument_count' || key === 'review_count' || key === 'year_founded') {
+        if (key === 'instrument_count' || key === 'review_count' || key === 'year_founded' || key === 'trust_score') {
             var whole = String(val).replace(/[^0-9]/g, '');
             return whole ? parseInt(whole, 10) : null;
         }

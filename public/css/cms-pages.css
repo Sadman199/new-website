@@ -227,6 +227,69 @@ body:has(.cms-page) {
     margin-top: 0.85rem;
 }
 
+.cms-prose h2,
+.cms-prose h3,
+.cms-prose h4 {
+    color: var(--cms-text);
+    font-weight: 700;
+    line-height: 1.3;
+    margin: 1.25rem 0 0.5rem;
+}
+
+.cms-prose h2 { font-size: 1.35rem; }
+.cms-prose h3 { font-size: 1.15rem; }
+
+.cms-prose ul,
+.cms-prose ol {
+    margin: 0.75rem 0 0.75rem 1.25rem;
+}
+
+.cms-prose li {
+    margin-bottom: 0.35rem;
+}
+
+.cms-prose a {
+    color: var(--cms-ocean);
+}
+
+.cms-prose img,
+.cms-prose table {
+    max-width: 100%;
+    height: auto;
+}
+
+.cms-prose table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 0.85rem 0;
+}
+
+.cms-prose th,
+.cms-prose td {
+    border: 1px solid rgba(12, 29, 50, 0.12);
+    padding: 0.45rem 0.6rem;
+    text-align: left;
+}
+
+.cms-prose blockquote {
+    margin: 0.85rem 0;
+    padding: 0.35rem 0.9rem;
+    border-left: 3px solid var(--cms-ocean);
+    color: var(--cms-text-soft);
+}
+
+.cms-prose pre,
+.cms-prose code {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    background: rgba(12, 29, 50, 0.04);
+}
+
+.cms-prose pre {
+    padding: 0.75rem;
+    overflow-x: auto;
+    border-radius: 0.5rem;
+}
+
 .cms-image-text__grid {
     display: grid;
     gap: 1.75rem;

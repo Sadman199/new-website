@@ -2,6 +2,8 @@
 
 namespace App\Support;
 
+use Illuminate\Support\Str;
+
 class BrokerTaxonomy
 {
     /** @return array<string, string> slug => label */
@@ -19,7 +21,35 @@ class BrokerTaxonomy
             'trading-apps-brokers' => 'Brokers with Trading Apps',
             'brokers-for-beginners' => 'Forex Brokers for Beginners',
             'high-leverage' => 'High Leverage',
+            'ea-brokers' => 'Expert Advisors (EAs)',
+            'trading-signals-brokers' => 'Trading Signals',
+            'mam-brokers' => 'MAM Accounts',
+            'pamm-brokers' => 'PAMM Accounts',
         ];
+    }
+
+    /** @return array<string, string> slug => guide/list heading without year */
+    public static function categoryGuideHeadings(): array
+    {
+        return [
+            'ea-brokers' => 'Best Forex Brokers with Expert Advisors (EAs)',
+            'trading-signals-brokers' => 'Best Forex Brokers with Trading Signals',
+            'mam-brokers' => 'Best Forex Brokers with MAM Accounts',
+            'pamm-brokers' => 'Best Forex Brokers with PAMM Accounts',
+        ];
+    }
+
+    public static function categoryGuideHeading(string $slug): string
+    {
+        if (isset(self::categoryGuideHeadings()[$slug])) {
+            return self::categoryGuideHeadings()[$slug];
+        }
+
+        $label = self::categories()[$slug] ?? Str::headline(str_replace('-', ' ', $slug));
+
+        return Str::endsWith(Str::lower($label), 'brokers')
+            ? "Best {$label}"
+            : "Best {$label} Brokers";
     }
 
     /** @return array<string, string> slug => label */

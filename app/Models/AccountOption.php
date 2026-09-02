@@ -100,8 +100,10 @@ class AccountOption extends Model
 
     public function getLeverageLabelAttribute(): ?string
     {
-        if (! empty($this->leverage_label)) {
-            return (string) $this->leverage_label;
+        $stored = $this->attributes['leverage_label'] ?? null;
+
+        if (! empty($stored)) {
+            return (string) $stored;
         }
 
         if ($this->max_leverage_numeric) {

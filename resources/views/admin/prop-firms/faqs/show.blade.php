@@ -1,15 +1,66 @@
 @extends('admin.layout.app')
+@include('admin.brokers._assets')
+@section('dashboard_page', true)
+@section('main_content_class', 'main-content--dashboard')
 @section('heading', 'Prop Firm FAQs')
-@section('button')<a href="{{ route('admin_prop_firm_faqs_create') }}" class="btn btn-primary"><i class="fas fa-plus"></i> Add FAQ</a>@endsection
 @section('main_content')
-<div class="section-body"><div class="card shadow mb-3"><div class="card-body">
-<form method="GET" class="form-inline flex-wrap">
-<input type="text" name="q" class="form-control mr-2 mb-2" placeholder="Search..." value="{{ request('q') }}">
-<select name="prop_firm_id" class="form-control mr-2 mb-2"><option value="">All Firms</option>@foreach($propFirms as $firm)<option value="{{ $firm->id }}" @selected(request('prop_firm_id') == $firm->id)>{{ $firm->name }}</option>@endforeach</select>
-<button type="submit" class="btn btn-primary mb-2">Filter</button>
-</form></div></div>
-<div class="card shadow"><div class="card-body table-responsive">
-<table class="table table-bordered table-hover"><thead class="thead-dark"><tr><th>Question</th><th>Firm</th><th>Order</th><th>Status</th><th>Actions</th></tr></thead>
-<tbody>@forelse($faqs as $faq)<tr><td>{{ Str::limit($faq->question, 60) }}</td><td>{{ $faq->propFirm?->name ?? '—' }}</td><td>{{ $faq->sort_order }}</td><td>@if($faq->is_active)<span class="badge badge-success">Active</span>@else<span class="badge badge-secondary">Inactive</span>@endif</td><td><a href="{{ route('admin_prop_firm_faqs_edit', $faq->id) }}" class="btn btn-sm btn-primary">Edit</a><form action="{{ route('admin_prop_firm_faqs_delete', $faq->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Delete?')">@csrf @method('DELETE')<button class="btn btn-sm btn-danger">Delete</button></form></td></tr>@empty<tr><td colspan="5" class="text-center text-muted">No FAQs found.</td></tr>@endforelse</tbody></table>
-{{ $faqs->links() }}</div></div></div>
+<div class="ab-page"><div class="ab-wrap">
+    <header class="ab-header">
+        <div><p class="ab-header__eyebrow">Prop firms</p><h1 class="ab-header__title">FAQs</h1><p class="ab-header__sub">Questions shown on public firm pages.</p></div>
+        <div class="ab-header__actions"><a href="{{ route('admin_prop_firm_faqs_create') }}" class="ab-btn ab-btn--primary"><i class="fas fa-plus" aria-hidden="true"></i> Add FAQ</a></div>
+    </header>
+    @include('admin.prop-firms._nav', ['active' => 'faqs'])
+    <div class="ab-panel">
+        <form method="GET" class="ab-filters">
+            <div class="ab-field"><label for="ab-q">Search</label><input id="ab-q" class="ab-input" type="search" name="q" value="{{ request('q') }}" placeholder="Question…"></div>
+            <div class="ab-field">
+                <label for="ab-firm">Firm</label>
+                <select id="ab-firm" class="ab-select" name="prop_firm_id">
+                    <option value="">All firms</option>
+                    @foreach($propFirms as $firm)
+                        <option value="{{ $firm->id }}" @selected(request('prop_firm_id') == $firm->id)>{{ $firm->name }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div></div>
+            <div class="ab-header__actions">
+                <button type="submit" class="ab-btn ab-btn--primary">Filter</button>
+                @if(request()->filled('q') || request()->filled('prop_firm_id'))
+                    <a href="{{ route('admin_prop_firm_faqs_show') }}" class="ab-btn ab-btn--ghost">Reset</a>
+                @endif
+            </div>
+        </form>
+        @if($faqs->isEmpty())
+            <div class="ab-empty"><h3>No FAQs found</h3><p>Add a FAQ, or attach them while editing a firm.</p><a href="{{ route('admin_prop_firm_faqs_create') }}" class="ab-btn ab-btn--primary">Add FAQ</a></div>
+        @else
+            <div class="ab-table-wrap">
+                <table class="ab-table">
+                    <thead><tr><th>Question</th><th>Firm</th><th>Order</th><th></th></tr></thead>
+                    <tbody>
+                        @foreach($faqs as $faq)
+                            <tr>
+                                <td>
+                                    <p class="ab-broker__name">{{ \Illuminate\Support\Str::limit($faq->question, 70) }}</p>
+                                    <div class="ab-pills">@if($faq->is_active)<span class="ab-pill ab-pill--ok">Active</span>@else<span class="ab-pill">Inactive</span>@endif</div>
+                                </td>
+                                <td>{{ $faq->propFirm?->name ?? '—' }}</td>
+                                <td>{{ $faq->sort_order }}</td>
+                                <td>
+                                    <div class="ab-actions">
+                                        <a class="ab-btn ab-btn--ghost ab-btn--sm" href="{{ route('admin_prop_firm_faqs_edit', $faq->id) }}">Edit</a>
+                                        <form action="{{ route('admin_prop_firm_faqs_delete', $faq->id) }}" method="POST" data-ab-delete data-ab-name="this FAQ" data-ab-warn="This question will be removed from the firm page." data-ab-confirm="Delete FAQ">
+                                            @csrf @method('DELETE')
+                                            <button type="submit" class="ab-btn ab-btn--danger ab-btn--sm">Delete</button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+            <div class="ab-foot">{{ $faqs->links('pagination::bootstrap-4') }}</div>
+        @endif
+    </div>
+</div></div>
 @endsection

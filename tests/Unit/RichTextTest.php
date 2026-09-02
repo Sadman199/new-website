@@ -48,6 +48,38 @@ class RichTextTest extends TestCase
         );
     }
 
+    public function test_for_display_keeps_headings_and_lists(): void
+    {
+        $html = '<h2>Low spreads</h2><p>We ranked brokers on <strong>cost</strong>.</p><ul><li>EURUSD</li></ul>';
+
+        $this->assertStringContainsString('<h2>', (string) RichText::forDisplay($html));
+        $this->assertStringContainsString('<ul>', (string) RichText::forDisplay($html));
+        $this->assertStringContainsString('<strong>', (string) RichText::forDisplay($html));
+    }
+
+    public function test_sanitize_strips_scripts_and_keeps_safe_markup(): void
+    {
+        $html = '<p onclick="alert(1)">Hello <script>alert(1)</script><a href="javascript:alert(1)">x</a><a href="https://example.com">ok</a></p>';
+
+        $clean = RichText::sanitize($html);
+
+        $this->assertStringNotContainsString('<script', (string) $clean);
+        $this->assertStringNotContainsString('onclick', (string) $clean);
+        $this->assertStringNotContainsString('javascript:', (string) $clean);
+        $this->assertStringContainsString('https://example.com', (string) $clean);
+    }
+
+    public function test_sanitize_keeps_alignment_and_color(): void
+    {
+        $html = '<p style="text-align: center; color: #e8822a; position: absolute;">Aligned</p>';
+
+        $clean = RichText::sanitize($html);
+
+        $this->assertStringContainsString('text-align: center', (string) $clean);
+        $this->assertStringContainsString('color: #e8822a', (string) $clean);
+        $this->assertStringNotContainsString('position', (string) $clean);
+    }
+
     public function test_list_items_extracts_list_entries(): void
     {
         $html = '<ul><li><p>Low spreads</p></li><li>Strong regulation</li></ul>';

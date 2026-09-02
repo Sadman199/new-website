@@ -1,5 +1,5 @@
 @php
-    $winners = collect($awardWinners ?? [])->take(6)->values();
+    $winners = collect($awardWinners ?? [])->take(5)->values();
     $awardYear = date('Y');
 @endphp
 

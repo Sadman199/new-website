@@ -117,6 +117,12 @@ class BrokerRequest extends FormRequest
             'regulatory_licenses' => ['nullable', 'string'],
             'associated_countries' => ['nullable', 'array'],
             'associated_countries.*' => ['string', 'max:100'],
+            'category_descriptions' => ['nullable', 'array'],
+            'category_descriptions.*' => ['nullable', 'string'],
+            'region_descriptions' => ['nullable', 'array'],
+            'region_descriptions.*' => ['nullable', 'string'],
+            'country_descriptions' => ['nullable', 'array'],
+            'country_descriptions.*' => ['nullable', 'string'],
             'capitalization' => ['nullable', 'numeric', 'min:0', 'max:9999999999999.99'],
             'insurance' => ['nullable', 'string'],
             'investor_protection' => ['nullable', 'boolean'],
@@ -143,6 +149,21 @@ class BrokerRequest extends FormRequest
             'demo_account_available' => 'demo account available',
             'investor_protection' => 'investor protection',
             'negative_balance_protection' => 'negative balance protection',
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'name.required' => 'Enter the broker name.',
+            'country.required' => 'Enter the headquarters country.',
+            'slug.unique' => 'That slug is already used by another broker.',
+            'fee_level.in' => 'Fee level must be low, medium, or high.',
+            'trust_score.max' => 'Trust score must be 99 or lower.',
+            'rating.max' => 'Overall rating cannot be higher than 5.',
+            'capitalization.numeric' => 'Capitalization must be a number, without words or symbols.',
+            'logo.image' => 'The logo must be an image file.',
+            'logo.max' => 'The logo must be 2MB or smaller.',
         ];
     }
 }

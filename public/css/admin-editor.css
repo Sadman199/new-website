@@ -1,0 +1,40 @@
+/* TinyMCE chrome for admin + author forms */
+
+.tox-tinymce {
+    width: 100% !important;
+    max-width: 100%;
+    border: 1px solid #d9e2e9 !important;
+    border-radius: 0.625rem !important;
+    overflow: hidden;
+}
+
+.tox .tox-editor-header {
+    box-shadow: none !important;
+    border-bottom: 1px solid #e6edf3 !important;
+    background: #f7f9fb !important;
+    padding: 0.15rem 0.25rem !important;
+}
+
+.tox .tox-toolbar,
+.tox .tox-toolbar__overflow,
+.tox .tox-toolbar__primary {
+    background: #f7f9fb !important;
+}
+
+.tox .tox-edit-area__iframe {
+    background: #fff !important;
+}
+
+.tox-tinymce-aux {
+    z-index: 2000 !important;
+}
+
+.tox .tox-dialog-wrap {
+    z-index: 2010;
+}
+
+@media (max-width: 767.98px) {
+    .tox .tox-toolbar__primary {
+        overflow-x: auto;
+    }
+}

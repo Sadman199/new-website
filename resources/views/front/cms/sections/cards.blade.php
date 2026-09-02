@@ -21,7 +21,7 @@
                             <h3 class="cms-card__title">{{ $item['title'] }}</h3>
                         @endif
                         @if(!empty($item['text']))
-                            <p class="cms-card__text">{!! nl2br(e($item['text'])) !!}</p>
+                            <div class="cms-card__text cms-prose">{!! \App\Support\RichText::forDisplay($item['text'] ?? null) !!}</div>
                         @endif
                         @if(!empty($item['url']))
                             <a href="{{ $item['url'] }}" class="cms-card__link">Learn more</a>

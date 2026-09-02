@@ -150,8 +150,8 @@ class AdminAdvertisementController extends Controller
 
     public function sidebar_ad_show()
     {
-        $sidebar_ad_data = SidebarAdvertisement::get();
-        return view('admin.advertisement_sidebar_view',compact('sidebar_ad_data'));
+        $sidebar_ad_data = SidebarAdvertisement::query()->orderByDesc('id')->get();
+        return view('admin.advertisement_sidebar_view', compact('sidebar_ad_data'));
     }
 
     public function sidebar_ad_create()
@@ -169,8 +169,8 @@ class AdminAdvertisementController extends Controller
     
         // Handle the new image upload
         $ext = $request->file('sidebar_ad')->extension();
-        $final_name = 'sidebar_ad' . '.' . $ext;
-        $request->file('sidebar_ad')->move($_SERVER['DOCUMENT_ROOT'] . '/uploads/', $final_name);
+        $final_name = 'sidebar_ad_' . time() . '.' . $ext;
+        $request->file('sidebar_ad')->move(public_path('uploads'), $final_name);
     
         $sidebar_ad_data = new SidebarAdvertisement();
         $sidebar_ad_data->sidebar_ad = $final_name;
@@ -200,15 +200,14 @@ class AdminAdvertisementController extends Controller
             ]);
     
             // Check if the old image exists and delete it using $_SERVER['DOCUMENT_ROOT']
-            $oldImagePath = $_SERVER['DOCUMENT_ROOT'] . '/uploads/' . $sidebar_ad_data->sidebar_ad;
-            if (file_exists($oldImagePath)) {
-                unlink($oldImagePath); // Delete the old image
+            $oldImagePath = public_path('uploads/' . $sidebar_ad_data->sidebar_ad);
+            if (is_file($oldImagePath)) {
+                unlink($oldImagePath);
             }
-    
-            // Handle the new image upload
+
             $ext = $request->file('sidebar_ad')->extension();
-            $final_name = 'sidebar_ad' . time() . '.' . $ext; // Add timestamp to avoid overwriting
-            $request->file('sidebar_ad')->move($_SERVER['DOCUMENT_ROOT'] . '/uploads/', $final_name);
+            $final_name = 'sidebar_ad_' . time() . '.' . $ext;
+            $request->file('sidebar_ad')->move(public_path('uploads'), $final_name);
     
             // Update the image name in the database (no need to prepend 'uploads/' again)
             $sidebar_ad_data->sidebar_ad = $final_name;

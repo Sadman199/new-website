@@ -11,8 +11,13 @@ class AdminTradingToolController extends Controller
     public function index()
     {
         $tools = TradingTool::orderBy('sort_order')->orderBy('id')->get();
+        $stats = [
+            'total' => $tools->count(),
+            'active' => $tools->where('is_active', true)->count(),
+            'hidden' => $tools->where('is_active', false)->count(),
+        ];
 
-        return view('admin.trading_tools.index', compact('tools'));
+        return view('admin.trading_tools.index', compact('tools', 'stats'));
     }
 
     public function edit($id)

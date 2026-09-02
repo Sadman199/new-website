@@ -12,7 +12,7 @@
                         <span>{{ $faq->faq_title }}</span>
                         <span class="br-faq-q__indicator" aria-hidden="true"></span>
                     </button>
-                    <div class="br-faq-a">{!! strip_tags($faq->faq_detail, '<a><b><strong><br><p><ul><ol><li>') !!}</div>
+                    <div class="br-faq-a">{!! \App\Support\RichText::forDisplay($faq->faq_detail) !!}</div>
                 </div>
             @endforeach
         @else

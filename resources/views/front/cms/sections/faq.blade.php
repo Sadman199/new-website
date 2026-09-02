@@ -9,7 +9,7 @@
                 @foreach($d['items'] as $index => $item)
                     <details class="cms-faq__item" @if($index === 0) open @endif>
                         <summary>{{ $item['question'] ?? '' }}</summary>
-                        <div class="cms-prose">{!! nl2br(e($item['answer'] ?? '')) !!}</div>
+                        <div class="cms-prose">{!! \App\Support\RichText::forDisplay($item['answer'] ?? null) !!}</div>
                     </details>
                 @endforeach
             </div>

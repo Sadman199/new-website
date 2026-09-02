@@ -6,12 +6,12 @@
 @section('canonical', route('user.register'))
 
 @push('page-styles')
-    <link rel="stylesheet" href="{{ asset('css/user-account.css') }}?v=11">
+    <link rel="stylesheet" href="{{ asset('css/user-account.css') }}?v=12">
 @endpush
 
 @section('main_content')
 <div class="ua-root">
-    <div class="container">
+    <div class="ua-wrap">
     <div class="ua-auth-shell">
         <aside class="ua-auth-aside">
             <p class="ua-auth-aside__eyebrow">

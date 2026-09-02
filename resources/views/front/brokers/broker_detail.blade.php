@@ -8,8 +8,8 @@
 @section('og_image_height', (string) \App\Services\BrokerOgImageService::HEIGHT)
 
 @push('page-styles')
-    <link rel="stylesheet" href="{{ asset('css/best-broker-guide.css') }}?v=11">
-    <link rel="stylesheet" href="{{ asset('css/broker-review.css') }}?v=28">
+    <link rel="stylesheet" href="{{ asset('css/best-broker-guide.css') }}?v=13">
+    <link rel="stylesheet" href="{{ asset('css/broker-review.css') }}?v=30">
 @endpush
 
 @push('json_ld')
@@ -32,84 +32,71 @@
     ])
 
     <div class="bbg-container">
-        <div class="br-reading-layout">
-            @include('front.brokers.partials.review_toc_sidebar', ['reviewToc' => $reviewToc ?? []])
+        @include('front.brokers.partials.best_guide_section_nav', ['sectionNavItems' => $reviewToc ?? []])
 
-            <div class="br-reading-layout__body">
-                <div class="bbg-layout br-layout-v2">
-                    <main class="bbg-main br-main">
-                        <div class="bbg-mobile-toc" aria-label="Jump to section">
-                            <label for="bbg-mobile-toc-select" class="bbg-sr-only">Jump to section</label>
-                            <select id="bbg-mobile-toc-select" class="bbg-mobile-toc__select">
-                                @foreach($reviewToc ?? [] as $item)
-                                    <option value="{{ $item['id'] }}">{{ $item['label'] }}</option>
-                                @endforeach
-                            </select>
-                        </div>
+        <div class="bbg-layout br-layout-v2">
+            <main class="bbg-main br-main">
+                @include('front.brokers.partials.score-breakdown', [
+                    'broker' => $broker,
+                    'scoreBreakdown' => $scoreBreakdown ?? ['has_scores' => false],
+                ])
 
-                        @include('front.brokers.partials.score-breakdown', [
-                            'broker' => $broker,
-                            'scoreBreakdown' => $scoreBreakdown ?? ['has_scores' => false],
-                        ])
+                @include('front.brokers.partials.key-stats', ['broker' => $broker])
 
-                        @include('front.brokers.partials.key-stats', ['broker' => $broker])
+                @if(strip_tags($broker->description ?? ''))
+                <section class="br-section br-section--prose" id="review-body">
+                    <div class="br-section__head">
+                        <h2 class="br-section__title">Full Review</h2>
+                        <p class="br-section__desc">In-depth analysis of {{ $broker->name }}</p>
+                    </div>
+                    <div class="br-section__body br-prose">
+                        {!! $broker->description !!}
+                    </div>
+                </section>
+                @endif
 
-                        @if(strip_tags($broker->description ?? ''))
-                        <section class="br-section br-section--prose" id="review-body">
-                            <div class="br-section__head">
-                                <h2 class="br-section__title">Full Review</h2>
-                                <p class="br-section__desc">In-depth analysis of {{ $broker->name }}</p>
-                            </div>
-                            <div class="br-section__body br-prose">
-                                {!! $broker->description !!}
-                            </div>
-                        </section>
+                @include('front.brokers.partials.review-sections', ['broker' => $broker, 'account_options' => $account_options])
+                @unless($snapshot['is_scam'])
+                    @include('front.brokers.partials.promotions', ['broker' => $broker])
+                @endunless
+            </main>
+
+            <aside class="br-sidebar" aria-label="Broker actions">
+                <div class="br-sidebar__inner{{ $snapshot['is_scam'] ? ' br-sidebar__inner--scam' : '' }}">
+                    @if($broker->logo)
+                        <img src="{{ asset($broker->logo) }}" alt="{{ $broker->name }}" class="br-sidebar__logo">
+                    @endif
+                    <div class="br-sidebar__info">
+                        <p class="br-sidebar__name">{{ $broker->name }}</p>
+                        <p class="br-sidebar__score-row">
+                            <span class="br-sidebar__score">{{ $snapshot['score'] }}</span>
+                            <span class="br-sidebar__score-label">Overall score</span>
+                        </p>
+                        @if(!empty($reviewPageMeta['updated_at']))
+                            <p class="br-sidebar__updated">
+                                <i class="far fa-clock" aria-hidden="true"></i>
+                                Updated {{ $reviewPageMeta['updated_at'] }}
+                            </p>
                         @endif
-
-                        @include('front.brokers.partials.review-sections', ['broker' => $broker, 'account_options' => $account_options])
-                        @unless($snapshot['is_scam'])
-                            @include('front.brokers.partials.promotions', ['broker' => $broker])
-                        @endunless
-                    </main>
-
-                    <aside class="br-sidebar" aria-label="Broker actions">
-                        <div class="br-sidebar__inner{{ $snapshot['is_scam'] ? ' br-sidebar__inner--scam' : '' }}">
-                            @if($broker->logo)
-                                <img src="{{ asset($broker->logo) }}" alt="{{ $broker->name }}" class="br-sidebar__logo">
-                            @endif
-                            <div class="br-sidebar__info">
-                                <p class="br-sidebar__name">{{ $broker->name }}</p>
-                                <p class="br-sidebar__score-row">
-                                    <span class="br-sidebar__score">{{ $snapshot['score'] }}</span>
-                                    <span class="br-sidebar__score-label">Overall score</span>
-                                </p>
-                                @if(!empty($reviewPageMeta['updated_at']))
-                                    <p class="br-sidebar__updated">
-                                        <i class="far fa-clock" aria-hidden="true"></i>
-                                        Updated {{ $reviewPageMeta['updated_at'] }}
-                                    </p>
-                                @endif
-                            </div>
-                            @if(!empty($scoreBreakdown['has_scores']))
-                                <ul class="br-sidebar__scores" aria-label="Category scores">
-                                    @foreach(array_slice($scoreBreakdown['items'], 0, 4) as $item)
-                                        <li>
-                                            <span>{{ $item['label'] }}</span>
-                                            <strong>{{ $item['display'] }}</strong>
-                                        </li>
-                                    @endforeach
-                                </ul>
-                                <a href="#score-breakdown" class="br-sidebar__scores-link">Full breakdown</a>
-                            @endif
-                            @include('front.brokers.partials.decision_ctas', [
-                                'broker' => $broker,
-                                'snapshot' => $snapshot,
-                                'variant' => 'sidebar',
-                            ])
-                        </div>
-                    </aside>
+                    </div>
+                    @if(!empty($scoreBreakdown['has_scores']))
+                        <ul class="br-sidebar__scores" aria-label="Category scores">
+                            @foreach(array_slice($scoreBreakdown['items'], 0, 4) as $item)
+                                <li>
+                                    <span>{{ $item['label'] }}</span>
+                                    <strong>{{ $item['display'] }}</strong>
+                                </li>
+                            @endforeach
+                        </ul>
+                        <a href="#score-breakdown" class="br-sidebar__scores-link">Full breakdown</a>
+                    @endif
+                    @include('front.brokers.partials.decision_ctas', [
+                        'broker' => $broker,
+                        'snapshot' => $snapshot,
+                        'variant' => 'sidebar',
+                    ])
                 </div>
-            </div>
+            </aside>
         </div>
     </div>
 
@@ -148,6 +135,6 @@
 @endsection
 
 @push('scripts')
-    <script src="{{ asset('js/best-broker-guide.js') }}?v=6" defer></script>
+    <script src="{{ asset('js/best-broker-guide.js') }}?v=8" defer></script>
     <script src="{{ asset('js/broker-review.js') }}?v=10" defer></script>
 @endpush

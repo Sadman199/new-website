@@ -12,7 +12,6 @@
     var abortController = null;
     var MULTI_KEYS = ['account_type', 'regulation', 'platform', 'markets', 'payment', 'features', 'country'];
     var SAVED_KEY = 'savedBrokers';
-    var compareBase = app.getAttribute('data-compare-base') || '/brokers/compare';
 
     function qs(sel, root) {
         return (root || document).querySelector(sel);
@@ -157,85 +156,6 @@
             : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/></svg>Save';
     }
 
-    function selectedCompareSlugs() {
-        if (!resultsEl) {
-            return [];
-        }
-        return qsa('[data-fmb-compare]:checked', resultsEl).map(function (el) {
-            return el.value;
-        }).filter(Boolean);
-    }
-
-    function updateCompareBar() {
-        var bar = document.getElementById('fmb-compare-bar');
-        var goBtn = document.getElementById('fmb-compare-go');
-        var countEl = document.getElementById('fmb-compare-count');
-        if (!bar || !goBtn) {
-            return;
-        }
-
-        var slugs = selectedCompareSlugs();
-        bar.classList.toggle('is-hidden', slugs.length === 0);
-
-        if (countEl) {
-            countEl.textContent = String(slugs.length);
-        }
-
-        if (slugs.length === 2) {
-            slugs = slugs.slice().sort();
-            goBtn.href = compareBase.replace(/\/$/, '') + '/' + slugs[0] + '-vs-' + slugs[1];
-            goBtn.classList.remove('is-disabled');
-            goBtn.setAttribute('aria-disabled', 'false');
-        } else {
-            goBtn.href = '#';
-            goBtn.classList.add('is-disabled');
-            goBtn.setAttribute('aria-disabled', 'true');
-        }
-
-        qsa('[data-fmb-compare]:not(:checked)', resultsEl).forEach(function (el) {
-            el.disabled = slugs.length >= 2;
-        });
-    }
-
-    function bindCompareInputs() {
-        qsa('[data-fmb-compare]', resultsEl).forEach(function (input) {
-            input.onchange = function () {
-                var slugs = selectedCompareSlugs();
-                if (slugs.length > 2) {
-                    input.checked = false;
-                    return;
-                }
-                updateCompareBar();
-            };
-        });
-        updateCompareBar();
-    }
-
-    function autoSelectQuizMatches() {
-        var params = new URLSearchParams(window.location.search);
-        if (params.get('from') !== 'quiz') {
-            return;
-        }
-
-        var match = (params.get('match') || '').split(',').map(function (slug) {
-            return slug.trim();
-        }).filter(Boolean).slice(0, 2);
-
-        if (!match.length) {
-            match = qsa('[data-fmb-card]', resultsEl).slice(0, 2).map(function (card) {
-                return card.getAttribute('data-broker-slug');
-            }).filter(Boolean);
-        }
-
-        match.forEach(function (slug) {
-            var input = qs('[data-fmb-compare][value="' + slug + '"]', resultsEl);
-            if (input) {
-                input.checked = true;
-            }
-        });
-        updateCompareBar();
-    }
-
     function copyShareLink(button) {
         var url = window.location.href.split('#')[0];
 
@@ -307,7 +227,6 @@
                 }
                 bindResultsEvents();
                 bindSaveButtons();
-                bindCompareInputs();
                 updateCountsFromHtml();
                 updateMobileBadge(params);
             })
@@ -499,19 +418,6 @@
 
         bindResultsEvents();
         bindSaveButtons();
-        bindCompareInputs();
-        autoSelectQuizMatches();
-
-        var clearCompare = document.getElementById('fmb-compare-clear');
-        if (clearCompare) {
-            clearCompare.addEventListener('click', function () {
-                qsa('[data-fmb-compare]', resultsEl).forEach(function (el) {
-                    el.checked = false;
-                    el.disabled = false;
-                });
-                updateCompareBar();
-            });
-        }
 
         var copyBtn = qs('[data-fmb-copy-link]', resultsEl);
         if (copyBtn) {

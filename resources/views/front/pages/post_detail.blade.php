@@ -1,13 +1,32 @@
 @extends('front.layout.app')
 
-@section('title', $post_detail->meta_title ?? $post_detail->post_title)
-@section('meta_description', $post_detail->meta_description ?? Str::limit(strip_tags($post_detail->post_detail), 150))
-@section('canonical', route('news_detail', ['subcategory_slug' => $post_detail->rSubCategory->slug ?? request()->route('subcategory_slug'), 'post_slug' => $post_detail->slug]))
-@section('og_image', $post_detail->post_photo ? 'uploads/'.$post_detail->post_photo : '')
+@php
+    $publicCanonical = $post_detail->canonical_url ?: ($post_detail->publicUrl() ?: url()->current());
+@endphp
 
-@push('page-styles')
+@section('title', $post_detail->meta_title ?? $post_detail->post_title)
+@section('meta_description', $post_detail->meta_description ?? ($post_detail->excerpt ?? Str::limit(strip_tags($post_detail->post_detail), 150)))
+@section('meta_keywords', $post_detail->meta_keywords ?? null)
+@section('canonical', $publicCanonical)
+@section('og_type', 'article')
+@section('og_title', $post_detail->og_title ?: ($post_detail->meta_title ?? $post_detail->post_title))
+@section('og_description', $post_detail->og_description ?: ($post_detail->meta_description ?? $post_detail->excerpt))
+@section('og_image', $post_detail->socialSharePath() ?: '')
+@section('robots', $post_detail->robotsDirective())
+
+@push('json_ld')
+    <script type="application/ld+json">@json(\App\Support\ArticleJsonLd::graph($post_detail, $publicCanonical))</script>
+@endpush
+
+@push('head')
+    @if($post_detail->created_at)
+        <meta property="article:published_time" content="{{ $post_detail->created_at->toAtomString() }}">
+    @endif
+    @if($post_detail->updated_at)
+        <meta property="article:modified_time" content="{{ $post_detail->updated_at->toAtomString() }}">
+    @endif
     <link rel="stylesheet" href="{{ asset('css/best-broker-guide.css') }}?v=11">
-    <link rel="stylesheet" href="{{ asset('css/blog-post-detail.css') }}?v=3">
+    <link rel="stylesheet" href="{{ asset('css/blog-post-detail.css') }}?v=4">
     <link rel="stylesheet" href="{{ asset('css/insight-cards.css') }}?v=3">
 @endpush
 
@@ -37,7 +56,7 @@
             <h1 class="bpd-hero__title">{{ $post_detail->post_title }}</h1>
 
             @include('front.brokers.partials.best_guide_hero_author', [
-                'editorialTeam' => $editorialTeam,
+                'editorialTeam' => $post_detail->shouldShowAuthor() ? $editorialTeam : [],
                 'guidePage' => $guidePageMeta,
             ])
 
@@ -54,14 +73,17 @@
             <article class="bpd-article">
                 @if($post_detail->post_photo)
                     <figure class="bpd-featured">
-                        <img src="{{ asset('uploads/'.$post_detail->post_photo) }}"
-                             alt="{{ $post_detail->post_title }}"
+                        <img src="{{ $post_detail->photoUrl() }}"
+                             alt="{{ $post_detail->image_alt ?: $post_detail->post_title }}"
                              loading="eager">
+                        @if($post_detail->image_caption)
+                            <figcaption>{{ $post_detail->image_caption }}</figcaption>
+                        @endif
                     </figure>
                 @endif
 
                 <div class="bpd-content rich-text">
-                    {!! $post_detail->post_detail !!}
+                    {!! \App\Support\RichText::forDisplay($post_detail->post_detail) !!}
                 </div>
 
                 @if($tag_data->isNotEmpty())
@@ -84,7 +106,7 @@
             </aside>
         </div>
 
-        @if($relatedCards->isNotEmpty())
+        @if($post_detail->shouldShowRelatedPosts() && $relatedCards->isNotEmpty())
             <section class="bpd-related" aria-labelledby="bpdRelatedTitle">
                 <div class="bpd-related__head">
                     <h2 class="bpd-related__title" id="bpdRelatedTitle">Related articles</h2>

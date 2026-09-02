@@ -48,7 +48,7 @@ class AdminPropFirmFaqController extends Controller
 
     public function edit(int $id)
     {
-        $faq = PropFirmFaq::findOrFail($id);
+        $faq = PropFirmFaq::with('propFirm')->findOrFail($id);
 
         return view('admin.prop-firms.faqs.edit', [
             'faq' => $faq,

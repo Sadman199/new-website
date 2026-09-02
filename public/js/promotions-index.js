@@ -5,43 +5,18 @@
     var loadMoreBtn = document.getElementById('bpr-load-more-btn');
     var grid = document.getElementById('bpr-grid');
     var loadedCountEl = document.getElementById('bpr-loaded-count');
-    var totalCountEl = document.getElementById('bpr-total-count');
+    var totalCountFooterEl = document.getElementById('bpr-total-count-footer');
     var showingCountEl = document.getElementById('bpr-showing-count');
-    var sortSelect = document.getElementById('bpr-sort-select');
-    var featuredToggle = document.getElementById('bpr-featured-toggle');
-    var filterBar = document.querySelector('.bpr-filters__bar');
+    var totalCountEl = document.getElementById('bpr-total-count');
+    var filterBar = document.getElementById('bpr-toolbar');
+    var searchInput = document.getElementById('bpr-search-input');
+    var filterForm = document.getElementById('bpr-filter-form');
 
-    function navigateTo(url) {
-        if (url) {
-            window.location.href = url;
-        }
-    }
-
-    function appendSortParam(baseUrl, sortValue) {
-        try {
-            var url = new URL(baseUrl, window.location.origin);
-            if (sortValue && sortValue !== 'featured') {
-                url.searchParams.set('sort', sortValue);
-            } else {
-                url.searchParams.delete('sort');
+    if (searchInput && filterForm) {
+        filterForm.addEventListener('submit', function (event) {
+            if (!searchInput.value.trim()) {
+                searchInput.removeAttribute('name');
             }
-            return url.pathname + url.search;
-        } catch (error) {
-            return baseUrl;
-        }
-    }
-
-    if (sortSelect) {
-        sortSelect.addEventListener('change', function () {
-            navigateTo(appendSortParam(sortSelect.getAttribute('data-base-url'), sortSelect.value));
-        });
-    }
-
-    if (featuredToggle) {
-        featuredToggle.addEventListener('change', function () {
-            navigateTo(featuredToggle.checked
-                ? featuredToggle.getAttribute('data-featured-url')
-                : featuredToggle.getAttribute('data-base-url'));
         });
     }
 
@@ -64,6 +39,11 @@
             var offset = parseInt(loadMoreBtn.getAttribute('data-offset'), 10) || 0;
             var sort = loadMoreBtn.getAttribute('data-sort') || 'featured';
             var featured = loadMoreBtn.getAttribute('data-featured') === '1';
+            var search = loadMoreBtn.getAttribute('data-search') || '';
+            var broker = loadMoreBtn.getAttribute('data-broker') || '';
+            var category = loadMoreBtn.getAttribute('data-category') || '';
+            var status = loadMoreBtn.getAttribute('data-status') || '';
+            var maxMinDeposit = loadMoreBtn.getAttribute('data-max-min-deposit') || '';
 
             if (!endpoint) {
                 return;
@@ -84,6 +64,21 @@
             if (featured) {
                 params.set('featured', '1');
             }
+            if (search.trim()) {
+                params.set('q', search.trim());
+            }
+            if (broker) {
+                params.set('broker', broker);
+            }
+            if (category) {
+                params.set('category', category);
+            }
+            if (status) {
+                params.set('status', status);
+            }
+            if (maxMinDeposit) {
+                params.set('max_min_deposit', maxMinDeposit);
+            }
 
             fetch(endpoint + '?' + params.toString(), {
                 headers: {
@@ -102,20 +97,24 @@
                     var temp = document.createElement('div');
                     temp.innerHTML = html.trim();
 
-                    temp.querySelectorAll('.bpr-card').forEach(function (card) {
-                        grid.appendChild(card);
+                    temp.querySelectorAll('.bpr-offer').forEach(function (row) {
+                        grid.appendChild(row);
                     });
 
                     var meta = temp.querySelector('[data-loaded-count]');
                     if (meta) {
+                        var loaded = meta.getAttribute('data-loaded-count');
                         if (loadedCountEl) {
-                            loadedCountEl.textContent = meta.getAttribute('data-loaded-count');
+                            loadedCountEl.textContent = loaded;
                         }
                         if (showingCountEl) {
-                            showingCountEl.textContent = meta.getAttribute('data-loaded-count');
+                            showingCountEl.textContent = loaded;
                         }
                         if (totalCountEl) {
                             totalCountEl.textContent = meta.getAttribute('data-total-count');
+                        }
+                        if (totalCountFooterEl) {
+                            totalCountFooterEl.textContent = meta.getAttribute('data-total-count');
                         }
                         loadMoreBtn.setAttribute('data-offset', meta.getAttribute('data-next-offset'));
 
@@ -133,31 +132,4 @@
                 });
         });
     }
-
-    document.querySelectorAll('.bpr-faq__question').forEach(function (button) {
-        button.addEventListener('click', function () {
-            var item = button.closest('.bpr-faq__item');
-            var answer = item ? item.querySelector('.bpr-faq__answer') : null;
-            var isOpen = item && item.classList.contains('is-open');
-
-            document.querySelectorAll('.bpr-faq__item.is-open').forEach(function (openItem) {
-                openItem.classList.remove('is-open');
-                var openButton = openItem.querySelector('.bpr-faq__question');
-                var openAnswer = openItem.querySelector('.bpr-faq__answer');
-                if (openButton) {
-                    openButton.setAttribute('aria-expanded', 'false');
-                }
-                if (openAnswer) {
-                    openAnswer.hidden = true;
-                }
-            });
-
-            if (!isOpen && item && answer) {
-                item.classList.add('is-open');
-                button.setAttribute('aria-expanded', 'true');
-                answer.hidden = false;
-            }
-        });
-    });
-
 })();

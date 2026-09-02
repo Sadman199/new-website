@@ -1,123 +1,164 @@
 @extends('admin.layout.app')
+@include('admin.cms_pages._assets')
 
+@section('dashboard_page', true)
+@section('main_content_class', 'main-content--dashboard')
 @section('heading', 'CMS Pages')
 
-@section('button')
-    <a href="{{ route('admin_cms_pages_create') }}" class="btn btn-primary">
-        <i class="fas fa-plus"></i> New Page
-    </a>
-@endsection
+@php
+    $hasFilters = $filters['q'] !== ''
+        || $filters['status'] !== ''
+        || $filters['template'] !== ''
+        || ($filters['sort'] !== '' && $filters['sort'] !== 'updated');
+@endphp
 
 @section('main_content')
-@php
-    $stats = $stats ?? ['total' => 0, 'published' => 0, 'draft' => 0];
-@endphp
-<div class="section-body">
-    <div class="cms-index-stats">
-        <div class="cms-index-stat">
-            <div class="cms-index-stat__value">{{ $stats['total'] }}</div>
-            <div class="cms-index-stat__label">Total pages</div>
-        </div>
-        <div class="cms-index-stat">
-            <div class="cms-index-stat__value">{{ $stats['published'] }}</div>
-            <div class="cms-index-stat__label">Published</div>
-        </div>
-        <div class="cms-index-stat">
-            <div class="cms-index-stat__value">{{ $stats['draft'] }}</div>
-            <div class="cms-index-stat__label">Drafts</div>
-        </div>
-    </div>
-
-    <div class="card shadow">
-        <div class="card-header bg-white d-flex justify-content-between align-items-center flex-wrap gap-2">
+<div class="ab-page ab-page--cms">
+    <div class="ab-wrap">
+        <header class="ab-header">
             <div>
-                <h4 class="mb-0">Dynamic pages</h4>
-                <small class="text-muted">Build and manage unlimited site pages with the section builder.</small>
+                <p class="ab-header__eyebrow">Site content</p>
+                <h1 class="ab-header__title">CMS Pages</h1>
+                <p class="ab-header__sub">Create and manage standalone pages such as About, Careers, or Glossary. Visitors see published pages; drafts stay private.</p>
             </div>
-            <form method="GET" class="form-inline">
-                <input type="text" name="q" value="{{ request('q') }}" class="form-control form-control-sm mr-2" placeholder="Search title or slug">
-                <select name="status" class="form-control form-control-sm mr-2">
-                    <option value="">All</option>
-                    <option value="published" @selected(request('status') === 'published')>Published</option>
-                    <option value="draft" @selected(request('status') === 'draft')>Draft</option>
-                </select>
-                <button type="submit" class="btn btn-sm btn-primary">Filter</button>
-            </form>
+            <div class="ab-header__actions">
+                <a href="{{ route('admin_cms_pages_create') }}" class="ab-btn ab-btn--primary">
+                    <i class="fas fa-plus" aria-hidden="true"></i>
+                    Create Page
+                </a>
+            </div>
+        </header>
+
+        <div class="ab-kpis">
+            <div class="ab-kpi">
+                <span class="ab-kpi__icon"><i class="fas fa-layer-group" aria-hidden="true"></i></span>
+                <div>
+                    <p class="ab-kpi__label">Total pages</p>
+                    <p class="ab-kpi__value">{{ number_format($stats['total']) }}</p>
+                </div>
+            </div>
+            <div class="ab-kpi">
+                <span class="ab-kpi__icon"><i class="fas fa-check-circle" aria-hidden="true"></i></span>
+                <div>
+                    <p class="ab-kpi__label">Published</p>
+                    <p class="ab-kpi__value">{{ number_format($stats['published']) }}</p>
+                </div>
+            </div>
+            <div class="ab-kpi">
+                <span class="ab-kpi__icon"><i class="fas fa-pencil-alt" aria-hidden="true"></i></span>
+                <div>
+                    <p class="ab-kpi__label">Drafts</p>
+                    <p class="ab-kpi__value">{{ number_format($stats['draft']) }}</p>
+                </div>
+            </div>
         </div>
-        <div class="card-body p-0 cms-index-table">
+
+        <div class="ab-panel">
+            <form method="GET" action="{{ route('admin_cms_pages_index') }}" class="ab-filters ab-filters--cms">
+                <div class="ab-field">
+                    <label for="cms-q">Search</label>
+                    <input id="cms-q" class="ab-input" type="search" name="q" value="{{ $filters['q'] }}" placeholder="Title or URL">
+                </div>
+                <div class="ab-field">
+                    <label for="cms-status">Status</label>
+                    <select id="cms-status" class="ab-select" name="status">
+                        <option value="">All</option>
+                        <option value="published" @selected($filters['status'] === 'published')>Published</option>
+                        <option value="draft" @selected($filters['status'] === 'draft')>Draft</option>
+                    </select>
+                </div>
+                <div class="ab-field">
+                    <label for="cms-template">Layout</label>
+                    <select id="cms-template" class="ab-select" name="template">
+                        <option value="">All layouts</option>
+                        @foreach($templates as $value => $label)
+                            <option value="{{ $value }}" @selected($filters['template'] === $value)>{{ $label }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="ab-field">
+                    <label for="cms-sort">Sort</label>
+                    <select id="cms-sort" class="ab-select" name="sort">
+                        <option value="updated" @selected($filters['sort'] === 'updated')>Recently updated</option>
+                        <option value="newest" @selected($filters['sort'] === 'newest')>Newest</option>
+                        <option value="title" @selected($filters['sort'] === 'title')>Title A–Z</option>
+                        <option value="sections" @selected($filters['sort'] === 'sections')>Most sections</option>
+                    </select>
+                </div>
+                <div class="ab-header__actions">
+                    <button type="submit" class="ab-btn ab-btn--primary">Filter</button>
+                    @if($hasFilters)
+                        <a href="{{ route('admin_cms_pages_index') }}" class="ab-btn ab-btn--ghost">Reset</a>
+                    @endif
+                </div>
+            </form>
+
             @if($pages->isEmpty())
-                <div class="cms-index-empty">
-                    <i class="fas fa-layer-group"></i>
-                    <h5>No CMS pages yet</h5>
-                    <p class="text-muted mb-3">Create your first page — For Businesses, Glossary, Careers, and more.</p>
-                    <a href="{{ route('admin_cms_pages_create') }}" class="btn btn-primary">Create first page</a>
+                <div class="ab-empty">
+                    <h3>{{ $hasFilters ? 'No pages match these filters' : 'No pages yet' }}</h3>
+                    <p>{{ $hasFilters ? 'Try a different search, or reset the filters.' : 'Create a page, add content blocks, then publish it when it is ready.' }}</p>
+                    @if($hasFilters)
+                        <a href="{{ route('admin_cms_pages_index') }}" class="ab-btn ab-btn--ghost">Reset filters</a>
+                    @else
+                        <a href="{{ route('admin_cms_pages_create') }}" class="ab-btn ab-btn--primary">Create Page</a>
+                    @endif
                 </div>
             @else
-                <div class="table-responsive">
-                    <table class="table table-striped mb-0">
+                <div class="ab-table-wrap">
+                    <table class="ab-table">
                         <thead>
                             <tr>
                                 <th>Page</th>
-                                <th>URL</th>
-                                <th>Template</th>
+                                <th>Layout</th>
                                 <th>Sections</th>
                                 <th>Status</th>
                                 <th>Updated</th>
-                                <th class="text-right">Actions</th>
+                                <th></th>
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach($pages as $page)
+                            @foreach($pages as $row)
                                 <tr>
-                                    <td><strong>{{ $page->title }}</strong></td>
-                                    <td class="cms-index-slug"><code>/{{ $page->slug }}</code></td>
-                                    <td><span class="badge badge-light">{{ ucfirst($page->template) }}</span></td>
-                                    <td>{{ $page->sections_count }}</td>
                                     <td>
-                                        @if($page->status === 'published')
-                                            <span class="badge badge-success">Live</span>
-                                        @else
-                                            <span class="badge badge-secondary">Draft</span>
-                                        @endif
+                                        <p class="ab-broker__name">{{ $row->title }}</p>
+                                        <p class="ab-broker__meta">/{{ $row->slug }}</p>
                                     </td>
-                                    <td>{{ $page->updated_at?->format('M j, Y') }}</td>
-                                    <td class="text-right cms-index-actions text-nowrap">
-                                        <a href="{{ route('admin_cms_pages_edit', $page->id) }}" class="btn btn-sm btn-primary" title="Edit">
-                                            <i class="fas fa-edit"></i>
-                                        </a>
-                                        @if($page->status === 'published')
-                                            <a href="{{ url('/' . $page->slug) }}" class="btn btn-sm btn-info" target="_blank" rel="noopener" title="View live">
-                                                <i class="fas fa-external-link-alt"></i>
-                                            </a>
-                                        @endif
-                                        <form action="{{ route('admin_cms_pages_toggle', $page->id) }}" method="POST" class="d-inline">
-                                            @csrf
-                                            <button type="submit" class="btn btn-sm btn-{{ $page->status === 'published' ? 'warning' : 'success' }}" title="{{ $page->status === 'published' ? 'Unpublish' : 'Publish' }}">
-                                                <i class="fas fa-{{ $page->status === 'published' ? 'eye-slash' : 'eye' }}"></i>
-                                            </button>
-                                        </form>
-                                        <form action="{{ route('admin_cms_pages_destroy', $page->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Delete &quot;{{ $page->title }}&quot;? This cannot be undone.');">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-sm btn-danger" title="Delete">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
-                                        </form>
+                                    <td>{{ $row->templateLabel() }}</td>
+                                    <td>{{ number_format($row->sections_count) }}</td>
+                                    <td>
+                                        <span class="ab-pill {{ $row->isPublished() ? 'ab-pill--ok' : '' }}">{{ $row->statusLabel() }}</span>
+                                    </td>
+                                    <td>{{ $row->updated_at?->format('M j, Y') }}</td>
+                                    <td>
+                                        <div class="ab-actions">
+                                            <a class="ab-btn ab-btn--ghost ab-btn--sm" href="{{ route('admin_cms_pages_view', $row->id) }}">View</a>
+                                            <a class="ab-btn ab-btn--ghost ab-btn--sm" href="{{ route('admin_cms_pages_edit', $row->id) }}">Edit</a>
+                                            @if($row->isPublished())
+                                                <a class="ab-btn ab-btn--ghost ab-btn--sm" href="{{ $row->publicUrl() }}" target="_blank" rel="noopener">Open live</a>
+                                            @endif
+                                            <form action="{{ route('admin_cms_pages_toggle', $row->id) }}" method="POST">
+                                                @csrf
+                                                <button class="ab-btn ab-btn--ghost ab-btn--sm" type="submit">
+                                                    {{ $row->isPublished() ? 'Unpublish' : 'Publish' }}
+                                                </button>
+                                            </form>
+                                            <form action="{{ route('admin_cms_pages_destroy', $row->id) }}" method="POST" data-ab-delete data-ab-name="{{ $row->title }}" data-ab-warn="This cannot be undone. The live URL will stop working." data-ab-confirm="Delete page">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button class="ab-btn ab-btn--ghost ab-btn--sm" type="submit">Delete</button>
+                                            </form>
+                                        </div>
                                     </td>
                                 </tr>
                             @endforeach
                         </tbody>
                     </table>
                 </div>
+                @if($pages->hasPages())
+                    <div class="ab-pager">{{ $pages->links() }}</div>
+                @endif
             @endif
         </div>
-        @if($pages->hasPages())
-            <div class="card-footer">{{ $pages->links() }}</div>
-        @endif
     </div>
 </div>
 @endsection
-
-@push('styles')
-<link rel="stylesheet" href="{{ asset('css/cms-page-builder.css') }}?v=3">
-@endpush

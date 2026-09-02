@@ -52,7 +52,7 @@ class AdminPropFirmReviewController extends Controller
 
     public function edit(int $id)
     {
-        $review = PropFirmReview::findOrFail($id);
+        $review = PropFirmReview::with('propFirm')->findOrFail($id);
 
         return view('admin.prop-firms.reviews.edit', [
             'review' => $review,
