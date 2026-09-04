@@ -11,20 +11,14 @@
 @endpush
 
 @push('page-styles')
-    <link rel="stylesheet" href="{{ asset('css/promotions-index.css') }}?v=33">
-    <link rel="stylesheet" href="{{ asset('css/promotions-index-layout.css') }}?v=3">
+    <link rel="stylesheet" href="{{ asset('css/promotions-index.css') }}?v=34">
 @endpush
 
 @section('main_content')
 @php
     $stats = $stats ?? [];
-    $tabs = $tabs ?? [];
     $activeOffers = (int) ($stats['total_active'] ?? 0);
     $activeBrokers = (int) ($stats['total_brokers'] ?? 0);
-    $featuredCount = (int) ($stats['featured'] ?? 0);
-    $endingSoon = (int) ($stats['ending_soon'] ?? 0);
-    $depositCount = (int) (collect($tabs)->firstWhere('slug', 'deposit-bonuses')['count'] ?? 0);
-    $liveTypes = collect($tabs)->where('slug', '!=', 'all')->where('count', '>', 0)->count();
 @endphp
 <div class="bpr-page" id="bpr-app"
      data-active-tab="{{ $activeTab }}"
@@ -57,27 +51,6 @@
                         <li>Terms on every card</li>
                     </ul>
                 </div>
-
-                @if($activeOffers > 0)
-                    <dl class="bpr-metrics" aria-label="Promotions snapshot">
-                        <div class="bpr-metrics__item">
-                            <dt>Active offers</dt>
-                            <dd>{{ number_format($activeOffers) }}</dd>
-                        </div>
-                        <div class="bpr-metrics__item">
-                            <dt>{{ $activeBrokers > 0 ? 'Brokers with offers' : 'Deposit bonuses' }}</dt>
-                            <dd>{{ $activeBrokers > 0 ? number_format($activeBrokers) : number_format($depositCount) }}</dd>
-                        </div>
-                        <div class="bpr-metrics__item">
-                            <dt>Featured</dt>
-                            <dd>{{ number_format($featuredCount) }}</dd>
-                        </div>
-                        <div class="bpr-metrics__item">
-                            <dt>{{ $endingSoon > 0 ? 'Ending soon' : 'Offer types' }}</dt>
-                            <dd>{{ $endingSoon > 0 ? number_format($endingSoon) : number_format(max(1, $liveTypes)) }}</dd>
-                        </div>
-                    </dl>
-                @endif
             </div>
 
             @include('front.brokers.partials.country_context_hero', [

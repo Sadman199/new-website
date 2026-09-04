@@ -100,6 +100,11 @@ class Broker extends Model
         return $this->hasMany(ForexBonus::class);
     }
 
+    public function alternativePage()
+    {
+        return $this->hasOne(BrokerAlternativePage::class);
+    }
+
     public function posts()
     {
         return $this->belongsToMany(Post::class, 'post_broker')->withTimestamps();
@@ -418,6 +423,12 @@ class Broker extends Model
     /** @return array<int, string> */
     public function accountTypeLabelList(): array
     {
+        $fromFacts = \App\Support\BrokerFacts::for($this)['account_types'] ?? [];
+
+        if ($fromFacts !== []) {
+            return $fromFacts;
+        }
+
         [, $labels] = \App\Support\BrokerTaxonomy::splitLegacyAccountTypes($this->account_types);
 
         if ($labels !== []) {

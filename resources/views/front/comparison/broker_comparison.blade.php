@@ -5,12 +5,11 @@
 @section('canonical', route('broker.comparison'))
 
 @push('page-styles')
-    <link rel="stylesheet" href="{{ asset('css/broker-compare.css') }}?v=16">
-    <link rel="stylesheet" href="{{ asset('css/broker-compare-layout.css') }}?v=2">
+    <link rel="stylesheet" href="{{ asset('css/broker-compare.css') }}?v=17">
 @endpush
 
 @section('main_content')
-<div class="bc-compare-page">
+<div class="bc-compare-page bc-compare-tool">
     <section class="bc-compare-hero">
         <div class="container">
             <nav class="bc-compare-breadcrumb" aria-label="Breadcrumb">
@@ -36,27 +35,6 @@
                         <li>Winners highlighted</li>
                     </ul>
                 </div>
-
-                @if(! empty($catalogStats))
-                    <dl class="bc-compare-metrics" aria-label="Catalog snapshot">
-                        <div class="bc-compare-metrics__item">
-                            <dt>Brokers in database</dt>
-                            <dd>{{ number_format($catalogStats['broker_count']) }}</dd>
-                        </div>
-                        <div class="bc-compare-metrics__item">
-                            <dt>Tier 1 regulated</dt>
-                            <dd>{{ number_format($catalogStats['tier_one_count']) }}</dd>
-                        </div>
-                        <div class="bc-compare-metrics__item">
-                            <dt>Avg. editorial rating</dt>
-                            <dd>{{ $catalogStats['avg_rating'] ? number_format($catalogStats['avg_rating'], 1) : '—' }}</dd>
-                        </div>
-                        <div class="bc-compare-metrics__item">
-                            <dt>Low fee class</dt>
-                            <dd>{{ number_format($catalogStats['low_fee_count']) }}</dd>
-                        </div>
-                    </dl>
-                @endif
             </div>
 
             <div class="bc-compare-arena" id="compare-tool">

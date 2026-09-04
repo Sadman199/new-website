@@ -343,21 +343,36 @@
 
 .bgx-hero {
     position: relative;
-    z-index: 0;
+    z-index: 1;
     overflow: visible;
-    padding: calc(var(--bc-nav-height, 5.5rem) + 1.25rem) 0 1.25rem;
+    padding: calc(var(--bc-nav-height, 5.5rem) + 1.25rem) 0 1.75rem;
+    background:
+        radial-gradient(ellipse 34rem 16rem at 10rem 3.25rem, rgba(245, 166, 35, 0.12) 0%, transparent 68%),
+        radial-gradient(ellipse 26rem 14rem at 38rem 0.5rem, rgba(232, 130, 42, 0.08) 0%, transparent 70%),
+        linear-gradient(180deg, #fffbf6 0%, #fffdfb 52%, #ffffff 100%);
 }
 
 .bgx-hero::before {
     content: '';
     position: absolute;
-    inset: 0;
+    z-index: 0;
+    inset: auto auto -2.5rem -12%;
+    width: 48%;
+    height: 8rem;
     pointer-events: none;
-    background: radial-gradient(ellipse 48% 80% at 88% -18%, rgba(245, 166, 35, 0.09), transparent 64%);
+    background: radial-gradient(ellipse at center, rgba(245, 166, 35, 0.08) 0%, transparent 72%);
+    filter: blur(8px);
 }
 
 .bgx-hero > .bgx-shell {
     position: relative;
+    z-index: 1;
+}
+
+.bgx-hero:has(.bbg-author-popover:hover),
+.bgx-hero:has(.bbg-author-popover.is-open),
+.bgx-hero:has(.bbg-author-popover:focus-within) {
+    z-index: 30;
 }
 
 .bgx-crumbs {
@@ -387,7 +402,6 @@
 
 .bgx-hero__title {
     margin: 0 0 0.75rem;
-    max-width: 18ch;
     font-size: clamp(2rem, 4.4vw, 2.85rem);
     font-weight: 700;
     line-height: 1.12;
@@ -2339,11 +2353,14 @@
     color: var(--bgx-muted);
 }
 
-/* ---------- Hero byline overrides for the shared editorial partial ---------- */
+/* ---------- Hero byline + author popover (self-contained; do not load best-broker-guide.css) ---------- */
 
 .bgx .bbg-editorial--compact {
     margin: 0 0 0.35rem;
     padding: 0.15rem 0 0;
+    background: none;
+    box-shadow: none;
+    overflow: visible;
 }
 
 .bgx .bbg-editorial__updated {
@@ -2351,7 +2368,13 @@
 }
 
 .bgx .bbg-editorial__list {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
     gap: 1.25rem 2rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
 }
 
 .bgx .bbg-editorial__item {
@@ -2361,16 +2384,30 @@
     column-gap: 0.65rem;
     row-gap: 0.1rem;
     align-items: center;
+    position: relative;
 }
 
 .bgx .bbg-editorial__avatar {
     grid-row: 1 / 3;
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     width: 2.25rem;
     height: 2.25rem;
+    overflow: hidden;
     background: var(--bgx-accent-soft);
-    border-color: var(--bgx-accent-line);
+    border: 1px solid var(--bgx-accent-line);
+    border-radius: 999px;
     color: var(--bgx-accent-deep);
     font-size: 0.75rem;
+    font-weight: 800;
+}
+
+.bgx .bbg-editorial__avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
 
 .bgx .bbg-editorial__label {
@@ -2383,25 +2420,148 @@
 }
 
 .bgx .bbg-author-popover {
+    position: relative;
+    display: inline-flex;
     grid-column: 2;
     z-index: 60;
 }
 
-.bgx .bbg-author-popover__card {
-    z-index: 70;
-}
-
 .bgx .bbg-author-popover__trigger {
+    padding: 0;
+    border: 0;
+    background: none;
+    font: inherit;
     font-size: 0.9375rem;
     font-weight: 700;
     color: var(--bgx-ink);
+    cursor: pointer;
+    text-decoration: underline;
     text-decoration-color: var(--bgx-accent-line);
+    text-underline-offset: 0.15em;
 }
 
 .bgx .bbg-author-popover__trigger:hover,
 .bgx .bbg-author-popover.is-open .bbg-author-popover__trigger {
     color: var(--bgx-accent-deep);
     text-decoration-color: var(--bgx-accent);
+}
+
+.bgx .bbg-author-popover__card {
+    position: absolute;
+    top: calc(100% + 0.65rem);
+    bottom: auto;
+    left: 0;
+    height: auto;
+    z-index: 80;
+    width: 18rem;
+    max-width: calc(100vw - 2rem);
+    padding: 1rem;
+    background: #ffffff;
+    border: 1px solid rgba(226, 220, 210, 0.95);
+    border-radius: 0.75rem;
+    box-shadow: 0 12px 34px rgba(60, 50, 40, 0.16);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-0.35rem);
+    transition: opacity 0.15s, transform 0.15s, visibility 0.15s;
+    pointer-events: none;
+}
+
+.bgx .bbg-author-popover.is-open .bbg-author-popover__card,
+.bgx .bbg-author-popover:hover .bbg-author-popover__card,
+.bgx .bbg-author-popover:focus-within .bbg-author-popover__card {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+    pointer-events: auto;
+}
+
+.bgx .bbg-author-popover__card::after {
+    content: '';
+    position: absolute;
+    top: -5px;
+    bottom: auto;
+    left: 1.15rem;
+    width: 10px;
+    height: 10px;
+    background: #ffffff;
+    border-top: 1px solid rgba(226, 220, 210, 0.95);
+    border-left: 1px solid rgba(226, 220, 210, 0.95);
+    transform: rotate(45deg);
+}
+
+.bgx .bbg-editorial__item:last-child .bbg-author-popover__card {
+    left: auto;
+    right: 0;
+}
+
+.bgx .bbg-editorial__item:last-child .bbg-author-popover__card::after {
+    left: auto;
+    right: 1.15rem;
+}
+
+.bgx .bbg-author-popover__card-head {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    margin-bottom: 0.625rem;
+}
+
+.bgx .bbg-author-popover__card-photo {
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 999px;
+    object-fit: cover;
+}
+
+.bgx .bbg-author-popover__card-name {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 800;
+    color: var(--bgx-ink);
+}
+
+.bgx .bbg-author-popover__card-role {
+    display: block;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--bgx-accent-strong);
+}
+
+.bgx .bbg-author-popover__card-bio {
+    margin: 0 0 0.625rem;
+    font-size: 0.8125rem;
+    line-height: 1.55;
+    color: #57534e;
+}
+
+.bgx .bbg-author-popover__card .bbg-member-social {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    margin-top: 0.625rem;
+    padding-top: 0.625rem;
+    border-top: 1px solid rgba(226, 220, 210, 0.8);
+}
+
+.bgx .bbg-author-popover__card .bbg-member-social__link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.75rem;
+    height: 1.75rem;
+    border-radius: 999px;
+    background: rgba(232, 130, 42, 0.1);
+    color: var(--bgx-accent-strong);
+    font-size: 0.6875rem;
+    text-decoration: none;
+}
+
+.bgx .bbg-author-popover__card .bbg-member-social__link:hover {
+    background: var(--bgx-accent-strong);
+    color: #fffdfb;
 }
 
 .bgx .bbg-editorial__item > .bbg-member-social {
@@ -2420,11 +2580,20 @@
     Docking it to the viewport keeps it out of ancestor overflow and reads better on touch.
 */
 @media (max-width: 47.9375rem) {
-    .bgx .bbg-author-popover__card {
+    .bgx .bbg-author-popover__card,
+    .bgx .bbg-editorial__item:last-child .bbg-author-popover__card {
         position: fixed;
-        inset: auto 1rem 1rem;
+        top: auto;
+        right: 1rem;
+        bottom: 1rem;
+        left: 1rem;
         width: auto;
         max-width: none;
+        transform: none;
+    }
+
+    .bgx .bbg-author-popover__card::after {
+        display: none;
     }
 }
 
@@ -2551,10 +2720,6 @@
         gap: 1rem 1.25rem;
     }
 
-    .bgx-hero__title {
-        max-width: none;
-    }
-
     .bgx-review__cta {
         max-width: none;
         width: 100%;
@@ -2601,34 +2766,15 @@
 }
 
 /*
-    The site navbar is a floating capsule inside a transparent fixed wrapper.
-    On this page we paint the wrapper so scrolled content cannot flash through
-    as an orange rim, and we drop the capsule's orange border.
+    Same site navbar as every other page. Do not restyle html/body/nav here —
+    .bgx already owns page type. Only raise z-index above the sticky rail.
 */
-html:has(.bgx) {
-    background: #ffffff;
-    overflow-x: visible;
-}
-
+html:has(.bgx),
 body:has(.bgx) {
-    font-family: 'Nunito Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
-    background: #ffffff;
     overflow-x: visible;
 }
 
 body:has(.bgx) #navbar {
     z-index: 4000;
-    background: #ffffff;
-    isolation: isolate;
     overflow: visible;
-}
-
-body:has(.bgx) .bc-nav-bar {
-    border-color: #e8e4de;
-    box-shadow: 0 1px 2px rgba(40, 38, 34, 0.05);
-}
-
-body:has(.bgx) #scrollToTopBtn,
-body:has(.bgx) .bc-scroll-top {
-    box-shadow: 0 1px 2px rgba(40, 38, 34, 0.08);
 }

@@ -29,7 +29,11 @@
                 @endforeach
             </div>
             <div class="br-compare__footer">
+                @if($broker->alternativePage?->is_published)
+                    <a href="{{ route('broker.alternatives.show', ['slug' => $broker->slug]) }}" class="br-btn br-btn--primary br-btn--sm">View alternatives</a>
+                @endif
                 <a href="{{ $snapshot['compare_url'] ?? route('broker.comparison', ['brokers' => $broker->slug]) }}" class="br-btn br-btn--primary br-btn--sm">Open comparison tool</a>
+                <a href="{{ route('calculators.show', ['slug' => 'trading-cost-calculator']) }}" class="br-btn br-btn--secondary br-btn--sm">Calculate trading costs</a>
                 <a href="{{ route('broker.reviews.index') }}" class="br-btn br-btn--secondary br-btn--sm">Browse all brokers</a>
             </div>
         </div>

@@ -139,10 +139,82 @@
             if (result.note) {
                 rows.push('<p class="tt-results__note">' + result.note + '</p>');
             }
+        } else if (slug === 'cost') {
+            add('Spread cost', result.spread_available ? money(result.spread_cost, result.account_currency) : 'Unavailable');
+            add('Commission', result.commission_available ? money(result.commission_cost, result.account_currency) : 'Unavailable');
+            add('Swap', result.swap_available ? money(result.swap_cost, result.account_currency) : 'Unavailable');
+            add(
+                'Estimated total',
+                result.total_cost != null ? money(result.total_cost, result.account_currency) : 'Unavailable',
+                'calc-result-total'
+            );
+            if (result.unavailable && result.unavailable.length) {
+                rows.push('<p class="tt-results__note">Unavailable: ' + result.unavailable.join(', ') + '. Missing broker values are not invented.</p>');
+            }
+            if (result.note) {
+                rows.push('<p class="tt-results__note">' + result.note + '</p>');
+            }
         }
 
         box.innerHTML = rows.join('') || '<p class="tt-results__placeholder">No results</p>';
     }
+
+    function bindCostBroker() {
+        var select = root.querySelector('[data-field="broker_id"]');
+        if (!select) {
+            return;
+        }
+
+        var brokers = [];
+        try {
+            brokers = JSON.parse(root.getAttribute('data-brokers') || '[]');
+        } catch (error) {
+            brokers = [];
+        }
+
+        var hint = root.querySelector('[data-broker-hint]');
+        var spread = root.querySelector('[data-field="spread_pips"]');
+
+        select.addEventListener('change', function () {
+            var id = parseInt(select.value, 10);
+            var broker = brokers.find(function (item) {
+                return Number(item.id) === id;
+            });
+
+            if (!broker) {
+                if (hint) {
+                    hint.hidden = true;
+                    hint.textContent = '';
+                }
+                return;
+            }
+
+            if (spread) {
+                spread.value = broker.spread_known && broker.spread_pips != null ? broker.spread_pips : '';
+            }
+
+            if (hint) {
+                var parts = [];
+                if (broker.spread_known) {
+                    parts.push('Parsed published spread: ' + broker.spread_pips + ' pips.');
+                    if (broker.spread_raw) {
+                        parts.push('Source text: “' + broker.spread_raw + '”.');
+                    }
+                } else {
+                    parts.push(broker.spread_raw
+                        ? 'Numeric spread unavailable (published: ' + broker.spread_raw + '). Enter it from the broker spec.'
+                        : 'Numeric spread unavailable — enter it from the broker spec.');
+                }
+                parts.push(broker.commission
+                    ? 'Published commission: ' + broker.commission + '.'
+                    : 'Commission unavailable in the database.');
+                hint.textContent = parts.join(' ');
+                hint.hidden = false;
+            }
+        });
+    }
+
+    bindCostBroker();
 
     root.querySelectorAll('.tt-calc-btn, .calc-tool__submit[data-calc]').forEach(function (btn) {
         btn.addEventListener('click', function () {

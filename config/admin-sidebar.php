@@ -22,6 +22,7 @@ return [
                 ['route' => 'admin_broker_scam', 'icon' => 'fas fa-exclamation-triangle', 'label' => 'Scam Brokers', 'match' => 'admin/broker/scam'],
                 ['route' => 'admin_account_options_all', 'icon' => 'fas fa-layer-group', 'label' => 'Account Options', 'match' => 'admin/account-options*'],
                 ['route' => 'admin_broker_guide_topics_index', 'icon' => 'fas fa-book-open', 'label' => 'Guide Topics', 'match' => 'admin/broker-guide-topics*'],
+                ['route' => 'admin_broker_alternatives_show', 'icon' => 'fas fa-exchange-alt', 'label' => 'Broker Alternatives', 'match' => 'admin/broker-alternatives*'],
                 ['route' => 'admin_prop_firms_dashboard', 'icon' => 'fas fa-chart-line', 'label' => 'Prop Firms', 'match' => 'admin/prop-firms*'],
                 ['route' => 'reviews.pending', 'icon' => 'fas fa-comments', 'label' => 'User Reviews', 'match' => 'admin/reviews*', 'badge' => 'pending_reviews'],
             ],

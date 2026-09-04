@@ -27,6 +27,7 @@ use App\Http\Controllers\Front\BrokerTypeController;
 use App\Http\Controllers\Front\BrokerCountryController;
 use App\Http\Controllers\Front\BrokerAccountTypeController;
 use App\Http\Controllers\Front\BrokerComparisonController;
+use App\Http\Controllers\Front\BrokerAlternativesController;
 use App\Http\Controllers\Front\FindMyBrokerController;
 use App\Http\Controllers\Front\BrokerRecommendationController;
 use App\Http\Controllers\Front\CmsPageController;
@@ -65,6 +66,7 @@ use App\Http\Controllers\Admin\AdminLiveChannelController;
 use App\Http\Controllers\Admin\AdminOnlinePollController;
 use App\Http\Controllers\Admin\AdminAuthorController;
 use App\Http\Controllers\Admin\AdminForexBonusController;
+use App\Http\Controllers\Admin\AdminBrokerAlternativesController;
 use App\Http\Controllers\Admin\AdminBrokerController;
 use App\Http\Controllers\Admin\AdminPropFirmController;
 use App\Http\Controllers\Admin\AdminPropFirmCategoryController;
@@ -123,6 +125,10 @@ Route::get('/top-brokers', [BrokerController::class, 'topBrokersIndex'])->name('
 Route::get('/broker-reviews', [BrokerController::class, 'reviewsIndex'])->name('broker.reviews.index');
 Route::get('/broker-reviews/{slug}/guides/{topic}', [\App\Http\Controllers\Front\BrokerGuideController::class, 'show'])->name('broker.guide.show');
 Route::get('/broker-reviews/{slug}', [BrokerController::class, 'reviewDetail'])->name('broker_detail');
+Route::get('/broker-alternatives', [BrokerAlternativesController::class, 'index'])->name('broker.alternatives.index');
+Route::get('/broker-alternatives/{slug}', [BrokerAlternativesController::class, 'show'])
+    ->where('slug', '[A-Za-z0-9\-]+')
+    ->name('broker.alternatives.show');
 Route::get('/og/broker/{slug}.png', [OgImageController::class, 'broker'])
     ->where('slug', '[A-Za-z0-9\-]+')
     ->name('og.broker');
@@ -329,6 +335,18 @@ Route::group(['prefix' => 'admin/sub-category', 'middleware' => 'admin:admin'], 
     Route::delete('/delete/{id}', [AdminSubCategoryController::class, 'delete'])->name('admin_sub_category_delete');
 });
 // ==== Forex Subcategory End ====
+
+// ==== Broker Alternatives Start ====
+Route::group(['prefix' => 'admin/broker-alternatives', 'middleware' => 'admin:admin'], function () {
+    Route::get('/show', [AdminBrokerAlternativesController::class, 'show'])->name('admin_broker_alternatives_show');
+    Route::get('/create', [AdminBrokerAlternativesController::class, 'create'])->name('admin_broker_alternatives_create');
+    Route::post('/store', [AdminBrokerAlternativesController::class, 'store'])->name('admin_broker_alternatives_store');
+    Route::get('/edit/{id}', [AdminBrokerAlternativesController::class, 'edit'])->whereNumber('id')->name('admin_broker_alternatives_edit');
+    Route::put('/update/{id}', [AdminBrokerAlternativesController::class, 'update'])->whereNumber('id')->name('admin_broker_alternatives_update');
+    Route::post('/toggle/{id}', [AdminBrokerAlternativesController::class, 'toggle'])->whereNumber('id')->name('admin_broker_alternatives_toggle');
+    Route::delete('/delete/{id}', [AdminBrokerAlternativesController::class, 'delete'])->whereNumber('id')->name('admin_broker_alternatives_delete');
+});
+// ==== Broker Alternatives End ====
 
 // ==== Forex Bonus Start ====
 Route::group(['prefix' => 'admin/forex-bonus', 'middleware' => 'admin:admin'], function () {

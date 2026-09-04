@@ -1083,17 +1083,14 @@ body:has(.tt-page) {
 }
 
 .tt-page--hub .tt-broker-slider .bcs__slide {
-    flex-basis: clamp(18rem, 78vw, 22rem);
+    flex-basis: auto;
 }
 
 .tt-page--hub .tt-broker-slider .bcs-card {
     position: relative;
-    min-height: 15.5rem;
-    padding: 1.25rem;
     overflow: hidden;
     background: linear-gradient(145deg, rgba(255, 255, 255, 0.105), rgba(255, 255, 255, 0.045));
     border-color: rgba(255, 255, 255, 0.12);
-    border-radius: 1.15rem;
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
 }
 
@@ -1120,17 +1117,13 @@ body:has(.tt-page) {
 .tt-page--hub .tt-broker-slider .bcs-card:hover::before { opacity: 1; }
 
 .tt-page--hub .tt-broker-slider .bcs-card__logo {
-    width: 3rem;
-    height: 3rem;
-    flex-basis: 3rem;
-    border-radius: 0.85rem;
     background: #fff;
     border-color: rgba(255, 255, 255, 0.15);
 }
 
-.tt-page--hub .tt-broker-slider .bcs-card__name { font-size: 1rem; }
-.tt-page--hub .tt-broker-slider .bcs-card__name a { color: #fff; }
-.tt-page--hub .tt-broker-slider .bcs-card__name a:hover { color: #f8bf7a; }
+.tt-page--hub .tt-broker-slider .bcs-card__name { color: #fff; }
+.tt-page--hub .tt-broker-slider .bcs-card:hover .bcs-card__name,
+.tt-page--hub .tt-broker-slider .bcs-card:focus-visible .bcs-card__name { color: #f8bf7a; }
 
 .tt-page--hub .tt-broker-slider .bcs-card__tag {
     color: #f8bf7a;
@@ -2332,8 +2325,9 @@ body:has(.tt-page) {
     border-color: rgba(226, 220, 210, 0.9);
 }
 
-.tt-page--hub .tt-broker-slider .bcs-card__name a { color: #1c1e24; }
-.tt-page--hub .tt-broker-slider .bcs-card__name a:hover { color: #d8751d; }
+.tt-page--hub .tt-broker-slider .bcs-card__name { color: #1c1e24; }
+.tt-page--hub .tt-broker-slider .bcs-card:hover .bcs-card__name,
+.tt-page--hub .tt-broker-slider .bcs-card:focus-visible .bcs-card__name { color: #d8751d; }
 
 .tt-page--hub .tt-broker-slider .bcs-card__tag {
     color: #c66a19;

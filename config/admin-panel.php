@@ -31,6 +31,7 @@ return [
             'label' => 'Frontend Features',
             'items' => [
                 ['route' => 'admin.panel.comparison.index', 'icon' => 'fas fa-columns', 'label' => 'Compare', 'suffix' => '(app)'],
+                ['route' => 'admin.panel.broker-alternatives.index', 'icon' => 'fas fa-exchange-alt', 'label' => 'Broker Alternatives'],
                 ['route' => 'admin.panel.find-my-broker.index', 'icon' => 'fas fa-search', 'label' => 'Find My Broker', 'suffix' => '(app)'],
             ],
         ],

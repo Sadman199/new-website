@@ -28,8 +28,7 @@
 
 @push('page-styles')
     {{-- Shared editorial byline + author popover styles --}}
-    <link rel="stylesheet" href="{{ asset('css/best-broker-guide.css') }}?v=13">
-    <link rel="stylesheet" href="{{ asset('css/best-guide.css') }}?v=19">
+    <link rel="stylesheet" href="{{ asset('css/best-guide.css') }}?v=26">
 @endpush
 
 @section('main_content')

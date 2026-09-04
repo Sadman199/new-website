@@ -5,7 +5,7 @@
 @section('canonical', route('trading.tools'))
 
 @push('page-styles')
-    <link rel="stylesheet" href="{{ asset('css/trading-tools.css') }}?v=7">
+    <link rel="stylesheet" href="{{ asset('css/trading-tools.css') }}?v=8">
     <link rel="stylesheet" href="{{ asset('css/insight-cards.css') }}?v=3">
 @endpush
 

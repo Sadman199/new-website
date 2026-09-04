@@ -81,6 +81,7 @@ $popularReviewBrokers = ($popularReviewBrokers ?? collect())->take(10);
                     <div id="toolsMenu" class="bc-nav-dropdown is-hidden" aria-labelledby="toolsButton">
                         <div class="bc-nav-dropdown-panel">
                             <a href="{{ route('broker.comparison') }}" class="bc-nav-dropdown-link">Compare Brokers</a>
+                            <a href="{{ route('broker.alternatives.index') }}" class="bc-nav-dropdown-link">Broker Alternatives</a>
                             <a href="{{ route('broker.scam_checker') }}" class="bc-nav-dropdown-link bc-nav-dropdown-link--danger">Scam Checker</a>
                             <a href="{{ route('scam_brokers') }}" class="bc-nav-dropdown-link bc-nav-dropdown-link--danger">Scam broker list</a>
                             <a href="{{ route('calculators.index') }}" class="bc-nav-dropdown-link" data-bc-nav-warm>Trading Tools</a>
@@ -357,6 +358,7 @@ $popularReviewBrokers = ($popularReviewBrokers ?? collect())->take(10);
                 </button>
                 <div id="mob-tools" class="is-hidden bc-mobile-subpanel">
                     <a href="{{ route('broker.comparison') }}" class="bc-mobile-nav-link bc-mobile-nav-link--child">Compare Brokers</a>
+                    <a href="{{ route('broker.alternatives.index') }}" class="bc-mobile-nav-link bc-mobile-nav-link--child">Broker Alternatives</a>
                     <a href="{{ route('broker.scam_checker') }}" class="bc-mobile-nav-link bc-mobile-nav-link--child" style="color:#f87171;">Scam Checker</a>
                     <a href="{{ route('scam_brokers') }}" class="bc-mobile-nav-link bc-mobile-nav-link--child" style="color:#f87171;">Scam broker list</a>
                     <a href="{{ route('calculators.index') }}" class="bc-mobile-nav-link bc-mobile-nav-link--child">Trading Tools</a>

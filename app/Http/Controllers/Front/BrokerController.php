@@ -190,6 +190,32 @@ class BrokerController extends Controller
         return $broker->slug . '-review';
     }
 
+    public static function brokerSlugFromPublicSlug(string $slug): ?string
+    {
+        $slug = trim($slug);
+
+        if ($slug === '') {
+            return null;
+        }
+
+        if (isset(self::REVIEW_SLUG_ALIASES[$slug])) {
+            return self::REVIEW_SLUG_ALIASES[$slug];
+        }
+
+        $broker = Broker::where('slug', $slug)->first();
+        if ($broker) {
+            return $broker->slug;
+        }
+
+        $baseSlug = Str::endsWith($slug, '-review')
+            ? substr($slug, 0, -strlen('-review'))
+            : $slug;
+
+        $broker = Broker::where('slug', $baseSlug)->first();
+
+        return $broker?->slug;
+    }
+
     private function resolveCategorySlug(string $slug): string
     {
         return self::CATEGORY_SLUG_ALIASES[$slug] ?? $slug;
@@ -247,6 +273,7 @@ class BrokerController extends Controller
             'faqs',
             'accountOptions',
             'guides',
+            'alternativePage',
             'forexBonuses' => fn ($q) => $q->where('promotion_status', '!=', 'expired')->latest('publish_date'),
             'writtenByAuthor',
             'editedByAuthor',

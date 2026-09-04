@@ -1,10 +1,11 @@
 @props([
     'brokers' => null,
-    'title' => 'Top rated brokers',
+    'title' => 'Top Rated Brokers',
     'eyebrow' => null,
     'lead' => null,
     'viewAllUrl' => null,
     'viewAllLabel' => 'View all broker reviews',
+    'ctaLabel' => 'Read Review',
     'limit' => 10,
     'tone' => 'light',
     'sectionId' => null,
@@ -25,7 +26,7 @@
 
 @once
     @push('page-styles')
-        <link rel="stylesheet" href="{{ asset('css/broker-slider.css') }}?v=5">
+        <link rel="stylesheet" href="{{ asset('css/broker-slider.css') }}?v=6">
     @endpush
     @push('scripts')
         <script src="{{ asset('js/broker-slider.js') }}?v=3" defer></script>
@@ -49,7 +50,12 @@
 
         <div class="bcs__tools">
             @if($viewAllUrl)
-                <a href="{{ $viewAllUrl }}" class="bcs__all">{{ $viewAllLabel }}</a>
+                <a href="{{ $viewAllUrl }}" class="bcs__all">
+                    <span>{{ $viewAllLabel }}</span>
+                    <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M7.5 4.5 13 10l-5.5 5.5"/>
+                    </svg>
+                </a>
             @endif
 
             @if($items->count() > 1)
@@ -82,31 +88,27 @@
                     @endphp
 
                     <li class="bcs__slide">
-                        <article class="bcs-card">
-                            <span class="bcs-card__rank" aria-label="Rank {{ $rank }}">{{ $rank }}</span>
+                        <a href="{{ $reviewUrl }}" class="bcs-card{{ $rank === 1 ? ' bcs-card--lead' : '' }}" aria-label="{{ $broker->name }} review, rated {{ $rating !== null ? number_format($rating, 1).' out of 5' : 'unrated' }}">
+                            <span class="bcs-card__rank" aria-hidden="true">{{ $rank }}</span>
 
-                            <a href="{{ $reviewUrl }}" class="bcs-card__logo-link" aria-label="{{ $broker->name }} review">
-                                <span class="bcs-card__logo">
-                                    @if($broker->logo)
-                                        <img src="{{ asset($broker->logo) }}"
-                                             alt=""
-                                             loading="lazy"
-                                             decoding="async"
-                                             width="72"
-                                             height="72">
-                                    @else
-                                        <span class="bcs-card__initial" aria-hidden="true">{{ Str::upper(Str::substr($broker->name, 0, 1)) }}</span>
-                                    @endif
-                                </span>
-                            </a>
+                            <span class="bcs-card__logo">
+                                @if($broker->logo)
+                                    <img src="{{ asset($broker->logo) }}"
+                                         alt=""
+                                         loading="lazy"
+                                         decoding="async"
+                                         width="80"
+                                         height="80">
+                                @else
+                                    <span class="bcs-card__initial">{{ Str::upper(Str::substr($broker->name, 0, 1)) }}</span>
+                                @endif
+                            </span>
 
-                            <h3 class="bcs-card__name">
-                                <a href="{{ $reviewUrl }}">{{ $broker->name }}</a>
-                            </h3>
+                            <span class="bcs-card__name">{{ $broker->name }}</span>
 
                             @if($rating !== null)
-                                <div class="bcs-card__rating" aria-label="Rated {{ number_format($rating, 1) }} out of 5">
-                                    <span class="bcs-card__stars" aria-hidden="true">
+                                <span class="bcs-card__rating" aria-hidden="true">
+                                    <span class="bcs-card__stars">
                                         @for($star = 1; $star <= 5; $star++)
                                             @php
                                                 $fill = max(0, min(1, $rating - ($star - 1)));
@@ -122,18 +124,18 @@
                                         @endfor
                                     </span>
                                     <span class="bcs-card__score">{{ number_format($rating, 1) }}</span>
-                                </div>
+                                </span>
                             @endif
 
-                            <a href="{{ $reviewUrl }}" class="bcs-card__cta">
-                                <span>Read Review</span>
+                            <span class="bcs-card__cta">
+                                <span>{{ $ctaLabel }}</span>
                                 <span class="bcs-card__cta-icon" aria-hidden="true">
                                     <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M7 10h6m0 0-2.5-2.5M13 10l-2.5 2.5"/>
                                     </svg>
                                 </span>
-                            </a>
-                        </article>
+                            </span>
+                        </a>
                     </li>
                 @endforeach
             </ul>

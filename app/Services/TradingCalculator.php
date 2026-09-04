@@ -114,6 +114,7 @@ class TradingCalculator
             'profit' => self::calcProfit($input, $rates),
             'margin' => self::calcMargin($input, $rates),
             'risk' => self::calcRisk($input, $rates),
+            'cost' => self::calcCost($input, $rates),
             'pivot' => self::calcPivot($input),
             'fibonacci' => self::calcFibonacci($input),
             'converter' => self::calcConverter($input, $rates),
@@ -291,6 +292,82 @@ class TradingCalculator
             ];
         }
         return ['trend' => $trend, 'levels' => $out];
+    }
+
+    private static function calcCost(array $in, array $rates): array
+    {
+        $pair = $in['pair'] ?? 'EUR/USD';
+        $lots = (float) ($in['lots'] ?? 1);
+        $currency = $in['account_currency'] ?? 'USD';
+        $nights = max(0, (int) ($in['nights'] ?? 0));
+        $price = isset($in['price']) && $in['price'] !== '' ? (float) $in['price'] : self::approxPrice($pair, $rates);
+
+        $hasSpread = self::hasNumericInput($in['spread_pips'] ?? null);
+        $hasCommission = self::hasNumericInput($in['commission_per_lot'] ?? null);
+        $hasSwap = self::hasNumericInput($in['swap_per_lot'] ?? null);
+
+        if (! $hasSpread && ! $hasCommission && ! $hasSwap) {
+            return ['error' => 'Enter at least a spread, commission, or swap value. Missing figures are not invented.'];
+        }
+
+        $pipVal = self::pipValue($pair, $lots, $currency, $price, $rates);
+        $spreadPips = $hasSpread ? (float) $in['spread_pips'] : null;
+        $spreadCost = $hasSpread ? round($pipVal * $spreadPips, 2) : null;
+        $commission = $hasCommission ? (float) $in['commission_per_lot'] : null;
+        $commissionCost = $hasCommission ? round($commission * $lots, 2) : null;
+        $swap = $hasSwap ? (float) $in['swap_per_lot'] : null;
+        $swapCost = $hasSwap ? round($swap * $lots * $nights, 2) : null;
+
+        $total = 0.0;
+        $hasTotal = false;
+        foreach ([$spreadCost, $commissionCost, $swapCost] as $part) {
+            if ($part !== null) {
+                $total += $part;
+                $hasTotal = true;
+            }
+        }
+
+        $unavailable = [];
+        if (! $hasSpread) {
+            $unavailable[] = 'spread';
+        }
+        if (! $hasCommission) {
+            $unavailable[] = 'commission';
+        }
+        if ($nights > 0 && ! $hasSwap) {
+            $unavailable[] = 'swap';
+        }
+
+        return [
+            'pair' => strtoupper(str_replace(['-', '_', ' '], '/', (string) $pair)),
+            'lots' => $lots,
+            'nights' => $nights,
+            'price' => round($price, 5),
+            'pip_value' => round($pipVal, 4),
+            'spread_pips' => $spreadPips,
+            'spread_cost' => $spreadCost,
+            'spread_available' => $hasSpread,
+            'commission_per_lot' => $commission,
+            'commission_cost' => $commissionCost,
+            'commission_available' => $hasCommission,
+            'swap_per_lot' => $swap,
+            'swap_cost' => $nights === 0 ? 0.0 : $swapCost,
+            'swap_available' => $nights === 0 || $hasSwap,
+            'total_cost' => $hasTotal ? round($total, 2) : null,
+            'total_complete' => $hasSpread && $hasCommission && ($nights === 0 || $hasSwap),
+            'unavailable' => $unavailable,
+            'account_currency' => strtoupper((string) $currency),
+            'note' => 'Estimates use the figures you entered and reference pip values. Broker conditions can differ by account and session.',
+        ];
+    }
+
+    private static function hasNumericInput(mixed $value): bool
+    {
+        if ($value === null || $value === '') {
+            return false;
+        }
+
+        return is_numeric($value);
     }
 
     private static function calcConverter(array $in, array $rates): array

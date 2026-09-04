@@ -5,13 +5,17 @@ namespace App\Http\Controllers\Front;
 use App\Http\Controllers\Controller;
 use App\Helper\Helpers;
 use App\Models\Language;
-use App\Models\TradingTool;
 use App\Services\TradingCalculator;
+use App\Services\TradingToolsPageService;
 use App\Support\TradingToolsRegistry;
 use Illuminate\Http\Request;
 
 class TradingToolsController extends Controller
 {
+    public function __construct(private TradingToolsPageService $tools)
+    {
+    }
+
     public function calculatorsIndex(Request $request)
     {
         if ($request->filled('tool')) {
@@ -24,10 +28,18 @@ class TradingToolsController extends Controller
 
         Helpers::read_json();
         $current_short_name = $this->currentShortName();
-        $calculators = $this->resolveCalculators();
-        $widgetTool = $this->resolveTools()->firstWhere('slug', 'live-markets');
+        $toolGroups = $this->tools->groupedForHub();
+        $calculators = $this->tools->resolveCalculators();
+        $widgetTool = $this->tools->resolveTools()->firstWhere('slug', 'live-markets');
+        $hubJsonLd = $this->tools->hubJsonLd($toolGroups);
 
-        return view('front.calculators.index', compact('current_short_name', 'calculators', 'widgetTool'));
+        return view('front.calculators.index', compact(
+            'current_short_name',
+            'toolGroups',
+            'calculators',
+            'widgetTool',
+            'hubJsonLd'
+        ));
     }
 
     public function index(Request $request)
@@ -43,44 +55,51 @@ class TradingToolsController extends Controller
         abort_if(! $toolKey, 404);
 
         $current_short_name = $this->currentShortName();
-        $tools = $this->resolveTools();
-        $calculators = $this->resolveCalculators();
-        $tool = $tools->firstWhere('slug', $toolKey);
+        $allTools = $this->tools->resolveTools();
+        $calculators = $this->tools->resolveCalculators();
+        $tool = $allTools->firstWhere('slug', $toolKey);
         abort_if(! $tool, 404);
         $calculator = $tool;
 
         $meta = TradingToolsRegistry::meta($toolKey);
+        $pageContent = $this->tools->pageContent($tool);
+        $faqs = $this->tools->faqs($tool);
+        $relatedTools = $this->tools->relatedTools($tool, $allTools);
+        $relatedBrokers = $this->tools->relatedBrokers($tool);
+        $brokerCostCards = $this->tools->brokerCostCards($relatedBrokers);
+        $showBrokerCosts = TradingToolsRegistry::showsBrokerCosts($toolKey) && $brokerCostCards !== [];
+        $seo = $this->tools->seo($tool, $slug);
+        $jsonLd = $this->tools->jsonLd($tool, $faqs, $seo['canonical'], $pageContent);
+
+        $shared = [
+            'current_short_name' => $current_short_name,
+            'tools' => $allTools,
+            'calculators' => $calculators,
+            'tool' => $tool,
+            'calculator' => $calculator,
+            'toolKey' => $toolKey,
+            'meta' => $meta,
+            'slug' => $slug,
+            'pageContent' => $pageContent,
+            'faqs' => $faqs,
+            'relatedTools' => $relatedTools,
+            'relatedBrokers' => $relatedBrokers,
+            'brokerCostCards' => $brokerCostCards,
+            'showBrokerCosts' => $showBrokerCosts,
+            'seo' => $seo,
+            'jsonLd' => $jsonLd,
+        ];
 
         if (TradingToolsRegistry::isWidget($toolKey)) {
-            return view('front.trading-tools.show-live-markets', compact(
-                'current_short_name',
-                'tools',
-                'calculators',
-                'tool',
-                'calculator',
-                'toolKey',
-                'meta',
-                'slug'
-            ));
+            return view('front.trading-tools.show-live-markets', $shared);
         }
 
-        $pairs = ['EUR/USD', 'GBP/USD', 'USD/JPY', 'AUD/USD', 'USD/CAD', 'NZD/USD', 'EUR/GBP', 'USD/CHF', 'EUR/JPY', 'GBP/JPY'];
-        $currencies = array_keys(TradingCalculator::defaultRates());
-        $rates = TradingCalculator::defaultRates();
+        $shared['pairs'] = ['EUR/USD', 'GBP/USD', 'USD/JPY', 'AUD/USD', 'USD/CAD', 'NZD/USD', 'EUR/GBP', 'USD/CHF', 'EUR/JPY', 'GBP/JPY'];
+        $shared['currencies'] = array_keys(TradingCalculator::defaultRates());
+        $shared['rates'] = TradingCalculator::defaultRates();
+        $shared['costBrokerHints'] = $toolKey === 'cost' ? $this->tools->costBrokerHints() : [];
 
-        return view('front.calculators.show', compact(
-            'current_short_name',
-            'tools',
-            'calculators',
-            'tool',
-            'calculator',
-            'toolKey',
-            'meta',
-            'pairs',
-            'currencies',
-            'rates',
-            'slug'
-        ));
+        return view('front.calculators.show', $shared);
     }
 
     public function calculate(Request $request)
@@ -111,95 +130,5 @@ class TradingToolsController extends Controller
         }
 
         return session()->get('session_short_name');
-    }
-
-    /** @return \Illuminate\Support\Collection<int, object> */
-    private function resolveTools()
-    {
-        try {
-            $tools = TradingTool::active()->get();
-        } catch (\Exception $e) {
-            $tools = collect();
-        }
-
-        if ($tools->isEmpty()) {
-            $tools = collect($this->fallbackTools());
-        }
-
-        return $tools->map(function ($tool) {
-            $routeSlug = TradingToolsRegistry::routeSlug($tool->slug);
-            $registry = TradingToolsRegistry::meta($tool->slug);
-
-            $tool->route_slug = $routeSlug;
-            $tool->page_title = $registry['title'] ?? $tool->name;
-            $tool->page_meta = $registry['meta'] ?? ($tool->short_description ?? '');
-            $tool->page_about = $registry['about'] ?? ($tool->description ?? $tool->short_description ?? '');
-            $tool->tool_summary = $tool->short_description ?: ($registry['meta'] ?? $tool->page_about);
-            $tool->tool_description = $tool->description ?: ($registry['about'] ?? $tool->short_description ?? '');
-
-            if ($registry && ! empty($registry['icon']) && empty($tool->icon)) {
-                $tool->icon = $registry['icon'];
-            }
-
-            return $tool;
-        })->filter(fn ($tool) => $tool->route_slug)->values()
-            ->pipe(fn ($collection) => $this->appendMissingRegistryTools($collection));
-    }
-
-    /** @param \Illuminate\Support\Collection<int, object> $tools */
-    private function appendMissingRegistryTools($tools)
-    {
-        $existing = $tools->pluck('slug')->all();
-
-        foreach (TradingToolsRegistry::allToolKeys() as $key) {
-            if (in_array($key, $existing, true)) {
-                continue;
-            }
-
-            $registry = TradingToolsRegistry::meta($key);
-            if (! $registry) {
-                continue;
-            }
-
-            $tools->push((object) [
-                'slug' => $key,
-                'name' => $registry['title'],
-                'icon' => $registry['icon'] ?? 'fas fa-calculator',
-                'short_description' => $registry['about'],
-                'description' => $registry['about'],
-                'route_slug' => $registry['slug'],
-                'page_title' => $registry['title'],
-                'page_meta' => $registry['meta'],
-                'page_about' => $registry['about'],
-                'tool_summary' => $registry['meta'],
-                'tool_description' => $registry['about'],
-            ]);
-        }
-
-        return $tools->values();
-    }
-
-    /** @return \Illuminate\Support\Collection<int, object> */
-    private function resolveCalculators()
-    {
-        return $this->resolveTools()
-            ->filter(fn ($tool) => ! TradingToolsRegistry::isWidget($tool->slug))
-            ->values();
-    }
-
-    /** @return array<int, object> */
-    private function fallbackTools(): array
-    {
-        return [
-            (object) ['slug' => 'pip', 'name' => 'Pip Calculator', 'icon' => 'fas fa-exchange-alt', 'short_description' => 'Pip value and position notional'],
-            (object) ['slug' => 'position', 'name' => 'Position Size', 'icon' => 'fas fa-layer-group', 'short_description' => 'Size lots from risk & stop loss'],
-            (object) ['slug' => 'profit', 'name' => 'Profit / Loss', 'icon' => 'fas fa-chart-line', 'short_description' => 'Estimate trade P/L'],
-            (object) ['slug' => 'margin', 'name' => 'Margin Calculator', 'icon' => 'fas fa-percentage', 'short_description' => 'Required margin by leverage'],
-            (object) ['slug' => 'risk', 'name' => 'Risk Calculator', 'icon' => 'fas fa-shield-alt', 'short_description' => 'Risk amount from balance'],
-            (object) ['slug' => 'pivot', 'name' => 'Pivot Points', 'icon' => 'fas fa-crosshairs', 'short_description' => 'Support & resistance pivots'],
-            (object) ['slug' => 'fibonacci', 'name' => 'Fibonacci', 'icon' => 'fas fa-wave-square', 'short_description' => 'Retracement levels'],
-            (object) ['slug' => 'converter', 'name' => 'Currency Converter', 'icon' => 'fas fa-coins', 'short_description' => 'Convert major currencies'],
-            (object) ['slug' => 'live-markets', 'name' => 'Live Market Widgets', 'icon' => 'fas fa-chart-area', 'short_description' => 'Live FX rates, heatmap & calendar'],
-        ];
     }
 }

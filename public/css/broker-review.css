@@ -4634,12 +4634,56 @@
    Broker review v5 — score breakdown, verdict, comments, compare, byline
    ========================================================================== */
 
+.br-review-rail.bgx {
+    padding-bottom: 0;
+    overflow: visible;
+    background: transparent;
+    color: inherit;
+}
+
+.br-review-rail .bgx-rail {
+    z-index: 30;
+    top: calc(var(--bc-nav-height, 5.5rem) + 1.1rem);
+    margin: 1.15rem 0 1.5rem;
+}
+
+.br-review-rail .bgx-rail__bar {
+    margin-inline: 0;
+    padding: 0.55rem 0;
+    background: transparent;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    transition: background-color 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.br-review-rail .bgx-rail.is-stuck .bgx-rail__bar {
+    background: rgba(246, 244, 240, 0.96);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(232, 227, 218, 0.95);
+    box-shadow: 0 8px 20px rgba(60, 50, 40, 0.06);
+}
+
+.br-review-rail .bgx-shell {
+    width: min(100% - 2rem, 80rem);
+}
+
+.br-page .br-hero {
+    margin-bottom: 0;
+}
+
 .br-section,
 .br-full-section,
 .br-reviews,
 .br-compare,
-.bbg-editorial--compact {
-    scroll-margin-top: calc(var(--bc-nav-height, 5.5rem) + 0.75rem);
+.br-faqs,
+.bbg-editorial--compact,
+.br-page .br-hero,
+.br-page #score-breakdown,
+.br-page #key-stats,
+.br-page #review-body {
+    scroll-margin-top: calc(var(--bc-nav-height, 5.5rem) + 6.25rem);
 }
 
 .br-hero .bbg-author-popover__card-bio,

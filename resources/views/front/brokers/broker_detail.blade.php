@@ -9,7 +9,9 @@
 
 @push('page-styles')
     <link rel="stylesheet" href="{{ asset('css/best-broker-guide.css') }}?v=13">
-    <link rel="stylesheet" href="{{ asset('css/broker-review.css') }}?v=30">
+    <link rel="stylesheet" href="{{ asset('css/best-guide.css') }}?v=26">
+    <link rel="stylesheet" href="{{ asset('css/broker-review.css') }}?v=34">
+    <link rel="stylesheet" href="{{ asset('css/broker-alternatives-cta.css') }}?v=4">
 @endpush
 
 @push('json_ld')
@@ -19,6 +21,14 @@
 @section('main_content')
 @php
     $snapshot = $snapshot ?? \App\Support\BrokerReviewPresenter::decisionSnapshot($broker, $reviewStats ?? []);
+    $reviewRailNav = collect($reviewToc ?? [])->map(static function (array $item) {
+        return [
+            'id' => $item['id'],
+            'label' => $item['label'],
+            'icon' => null,
+            'group' => 'Review',
+        ];
+    })->all();
 @endphp
 <div class="bbg-page br-page{{ $snapshot['is_scam'] ? ' br-page--scam' : '' }}">
     @include('front.brokers.partials.hero', [
@@ -31,9 +41,12 @@
         'reviewStats' => $reviewStats ?? [],
     ])
 
-    <div class="bbg-container">
-        @include('front.brokers.partials.best_guide_section_nav', ['sectionNavItems' => $reviewToc ?? []])
+    <div class="bgx br-review-rail">
+        @if($reviewRailNav !== [])
+            @include('front.brokers.partials.guide_rail', ['nav' => $reviewRailNav])
+        @endif
 
+    <div class="bbg-container">
         <div class="bbg-layout br-layout-v2">
             <main class="bbg-main br-main">
                 @include('front.brokers.partials.score-breakdown', [
@@ -98,6 +111,8 @@
                 </div>
             </aside>
         </div>
+
+        <x-broker-alternatives :broker="$broker" />
     </div>
 
     <div class="br-full-section br-full-section--faqs">
@@ -131,10 +146,12 @@
         'broker' => $broker,
         'snapshot' => $snapshot,
     ])
+    </div>
 </div>
 @endsection
 
 @push('scripts')
     <script src="{{ asset('js/best-broker-guide.js') }}?v=8" defer></script>
+    <script src="{{ asset('js/best-guide.js') }}?v=4" defer></script>
     <script src="{{ asset('js/broker-review.js') }}?v=10" defer></script>
 @endpush

@@ -37,6 +37,8 @@ Route::middleware(['web', 'admin:admin'])
             'pageTitle' => 'Compare',
         ])->name('comparison.index');
 
+        Route::get('/broker-alternatives', fn () => redirect()->route('admin_broker_alternatives_show'))->name('broker-alternatives.index');
+
         Route::view('/find-my-broker', 'admin.panel.pages.find-my-broker.index', [
             'title' => 'Find My Broker',
             'pageTitle' => 'Find My Broker',

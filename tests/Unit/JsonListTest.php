@@ -42,4 +42,29 @@ class JsonListTest extends TestCase
             RichText::toPlainText($raw)
         );
     }
+
+    public function test_normalize_flattens_double_encoded_json_blob(): void
+    {
+        $raw = ['["beginner-friendly", "ecn-raw", "standard", "islamic"]'];
+
+        $this->assertSame(
+            ['beginner-friendly', 'ecn-raw', 'standard', 'islamic'],
+            JsonList::normalize($raw)
+        );
+    }
+
+    public function test_normalize_recovers_mangled_escaped_json(): void
+    {
+        $raw = '["[\\"Standard Accounts\\", \\"Islamic Account\\"]"]';
+
+        $this->assertSame(
+            ['Standard Accounts', 'Islamic Account'],
+            JsonList::normalize($raw)
+        );
+    }
+
+    public function test_rich_text_strips_html_paragraphs_to_plain_text(): void
+    {
+        $this->assertSame('demo', RichText::toPlainText('<p>demo&nbsp;</p>'));
+    }
 }

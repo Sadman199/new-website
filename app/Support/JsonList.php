@@ -26,6 +26,12 @@ class JsonList
                 if (json_last_error() === JSON_ERROR_NONE) {
                     return self::normalize($decoded);
                 }
+
+                return self::fromMangled($trimmed);
+            }
+
+            if (str_contains($trimmed, '\\"')) {
+                return self::fromMangled($trimmed);
             }
 
             if (str_contains($trimmed, ',')) {
@@ -44,7 +50,7 @@ class JsonList
         $items = [];
 
         foreach ($value as $item) {
-            if (is_string($item) && self::looksLikeJson($item)) {
+            if (is_string($item) && (self::looksLikeJson($item) || str_contains($item, '\\"'))) {
                 $items = array_merge($items, self::normalize($item));
                 continue;
             }
@@ -61,6 +67,16 @@ class JsonList
         }
 
         return array_values(array_unique($items));
+    }
+
+    /**
+     * Legacy imports re-encoded list columns until json_decode could not recover them.
+     *
+     * @return array<int, string>
+     */
+    public static function fromMangled(mixed $value): array
+    {
+        return BrokerFacts::decodeMangledList($value);
     }
 
     public static function toPlainText(mixed $value, string $separator = ', '): ?string

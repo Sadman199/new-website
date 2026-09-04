@@ -12,7 +12,7 @@
             <div>
                 <p class="ab-header__eyebrow">Marketing</p>
                 <h1 class="ab-header__title">Trading Tools</h1>
-                <p class="ab-header__sub">Rename, reorder, or hide calculators on the public trading tools dashboard. The tools themselves are built into the site.</p>
+                <p class="ab-header__sub">Manage names, categories, SEO, FAQs, and related tools or brokers. Calculator math stays in the site code so public URLs do not change.</p>
             </div>
         </header>
 
@@ -53,6 +53,7 @@
                             <tr>
                                 <th>Order</th>
                                 <th>Tool</th>
+                                <th>Category</th>
                                 <th>Slug</th>
                                 <th>Status</th>
                                 <th>Actions</th>
@@ -66,6 +67,7 @@
                                         <p class="ab-broker__name"><i class="{{ $tool->icon }}" aria-hidden="true"></i> {{ $tool->name }}</p>
                                         <p class="ab-broker__meta">{{ $tool->short_description }}</p>
                                     </td>
+                                    <td>{{ \App\Support\TradingToolCategories::label($tool->categoryKey()) }}</td>
                                     <td>{{ $tool->slug }}</td>
                                     <td>
                                         <span class="ab-pill {{ $tool->is_active ? 'ab-pill--ok' : '' }}">{{ $tool->is_active ? 'Visible' : 'Hidden' }}</span>

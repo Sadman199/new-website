@@ -1,71 +1,83 @@
 @extends('front.layout.app')
 
-@section('title', 'Forex Calculators | Free Trading Tools | BrokersCourt')
-@section('meta_description', 'Free forex calculators for pip value, position sizing, profit and loss, margin, risk management, pivot points, Fibonacci levels, and currency conversion.')
+@section('title', 'Forex Trading Tools | Calculators & Market Data | BrokersCourt')
+@section('meta_description', 'Free forex trading tools to calculate pip value, position size, profit, margin, risk, and trading costs, plus pivot points, Fibonacci levels, currency conversion, and live market data.')
 @section('canonical', route('calculators.index'))
 
 @push('page-styles')
-    <link rel="stylesheet" href="{{ asset('css/calculators.css') }}?v=4">
+    <link rel="stylesheet" href="{{ asset('css/calculators.css') }}?v=6">
+@endpush
+
+@push('json_ld')
+    <script type="application/ld+json">@json($hubJsonLd ?? [])</script>
 @endpush
 
 @section('main_content')
-<div class="calc-page">
+<div class="calc-page calc-page--hub">
     <header class="calc-hero">
         <div class="container">
             <nav class="calc-breadcrumb" aria-label="Breadcrumb">
                 <a href="{{ route('home') }}">Home</a>
                 <span aria-hidden="true">/</span>
-                <span>Forex calculators</span>
+                <span>Forex trading tools</span>
             </nav>
 
             <p class="calc-hero__eyebrow">
                 <i class="fas fa-calculator" aria-hidden="true"></i>
-                Trading tools
+                BrokersCourt tools
             </p>
-            <h1 class="calc-hero__title">Forex Calculators</h1>
+            <h1 class="calc-hero__title">Forex Trading Tools</h1>
             <p class="calc-hero__lead">
-                Estimate trading costs, position sizes, profit and loss, margin requirements, pip values,
-                and other key metrics before you place a trade.
+                Calculate trading costs, position size, risk, and margin, then map technical levels
+                and convert currencies before you compare brokers.
             </p>
+            <div class="calc-hero__links">
+                <a href="{{ route('broker.comparison') }}" class="bc-btn bc-btn--ghost">Compare brokers</a>
+                <a href="{{ route('broker.alternatives.index') }}" class="bc-btn bc-btn--ghost">Broker alternatives</a>
+                <a href="{{ route('brokers.best.index') }}" class="bc-btn bc-btn--ghost">Best broker guides</a>
+            </div>
         </div>
     </header>
 
     <div class="container calc-main">
-        @if($calculators->isNotEmpty())
-            <div class="row g-3 g-lg-4">
-                @foreach($calculators as $calculator)
-                    @include('front.calculators.partials.card', ['calculator' => $calculator])
-                @endforeach
-            </div>
-        @else
+        @forelse($toolGroups as $group)
+            <section class="calc-category" aria-labelledby="calc-cat-{{ $group['key'] }}">
+                <div class="calc-category__head">
+                    <span class="calc-category__icon" aria-hidden="true">
+                        <i class="{{ $group['icon'] }}"></i>
+                    </span>
+                    <div>
+                        <h2 class="calc-category__title" id="calc-cat-{{ $group['key'] }}">{{ $group['label'] }}</h2>
+                        <p class="calc-category__intro">{{ $group['intro'] }}</p>
+                    </div>
+                </div>
+                <div class="row g-3 g-lg-4">
+                    @foreach($group['tools'] as $calculator)
+                        @include('front.calculators.partials.card', ['calculator' => $calculator])
+                    @endforeach
+                </div>
+            </section>
+        @empty
             <div class="calc-empty-state">
                 <div class="calc-empty-state__icon" aria-hidden="true">
                     <i class="fas fa-calculator"></i>
                 </div>
-                <h2 class="calc-empty-state__title">No calculators available at the moment</h2>
+                <h2 class="calc-empty-state__title">No tools available at the moment</h2>
                 <p class="calc-empty-state__text">Check back soon — we are preparing new trading tools for you.</p>
             </div>
-        @endif
+        @endforelse
 
-        @if($widgetTool ?? null)
-            <section class="calc-widget-promo" aria-labelledby="calc-widget-promo-title">
-                <a href="{{ route('trading.tools.show', ['slug' => $widgetTool->route_slug]) }}"
-                   class="calc-widget-promo__card">
-                    <span class="calc-widget-promo__icon" aria-hidden="true">
-                        <i class="{{ $widgetTool->icon ?? 'fas fa-chart-area' }}"></i>
-                    </span>
-                    <span class="calc-widget-promo__body">
-                        <span class="calc-widget-promo__eyebrow">Market data</span>
-                        <span class="calc-widget-promo__title" id="calc-widget-promo-title">{{ $widgetTool->name }}</span>
-                        <span class="calc-widget-promo__text">{{ $widgetTool->short_description }}</span>
-                    </span>
-                    <span class="calc-widget-promo__cta">
-                        Open widgets
-                        <i class="fas fa-arrow-right" aria-hidden="true"></i>
-                    </span>
-                </a>
-            </section>
-        @endif
+        <section class="calc-journey" aria-labelledby="calc-journey-title">
+            <h2 class="calc-journey__title" id="calc-journey-title">From calculation to broker comparison</h2>
+            <p class="calc-journey__text">
+                After you have a pip value, position size, or estimated cost, compare published spreads and
+                minimum deposits on live broker profiles. Missing figures stay marked unavailable.
+            </p>
+            <div class="calc-journey__actions">
+                <a href="{{ route('broker.reviews.index') }}" class="bc-btn bc-btn--primary">Browse broker reviews</a>
+                <a href="{{ route('broker.comparison') }}" class="bc-btn bc-btn--ghost">Open comparison tool</a>
+            </div>
+        </section>
 
         <p class="calc-disclaimer">
             Calculators use standard forex formulas with reference rates for planning. They are educational and do not

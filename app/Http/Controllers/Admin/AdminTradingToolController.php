@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\TradingToolRequest;
+use App\Models\Broker;
 use App\Models\TradingTool;
-use Illuminate\Http\Request;
+use App\Support\TradingToolCategories;
 
 class AdminTradingToolController extends Controller
 {
@@ -23,24 +25,24 @@ class AdminTradingToolController extends Controller
     public function edit($id)
     {
         $tool = TradingTool::findOrFail($id);
+        $categories = TradingToolCategories::all();
+        $otherTools = TradingTool::query()
+            ->where('id', '!=', $tool->id)
+            ->orderBy('sort_order')
+            ->orderBy('id')
+            ->get(['id', 'name', 'slug']);
+        $brokers = Broker::query()
+            ->where('is_scam', false)
+            ->orderBy('name')
+            ->get(['id', 'name', 'slug']);
 
-        return view('admin.trading_tools.edit', compact('tool'));
+        return view('admin.trading_tools.edit', compact('tool', 'categories', 'otherTools', 'brokers'));
     }
 
-    public function update(Request $request, $id)
+    public function update(TradingToolRequest $request, $id)
     {
         $tool = TradingTool::findOrFail($id);
-
-        $data = $request->validate([
-            'name' => 'required|string|max:255',
-            'icon' => 'nullable|string|max:80',
-            'short_description' => 'nullable|string|max:255',
-            'description' => 'nullable|string',
-            'sort_order' => 'nullable|integer|min:0|max:999',
-            'is_active' => 'nullable|boolean',
-        ]);
-
-        $data['is_active'] = $request->boolean('is_active');
+        $data = $request->validated();
         $data['sort_order'] = (int) ($data['sort_order'] ?? 0);
         $tool->update($data);
 

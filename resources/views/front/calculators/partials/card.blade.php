@@ -1,16 +1,17 @@
 @php
     $summary = trim((string) ($calculator->short_description ?? ''));
     $searchText = strtolower(trim(($calculator->name ?? '') . ' ' . $summary));
+    $url = $calculator->public_url ?? route('calculators.show', ['slug' => $calculator->route_slug]);
+    $cta = ! empty($calculator->is_widget) ? 'Open widgets' : 'Calculate now';
 @endphp
 <div class="col-12 col-md-6 col-lg-4 calc-grid__item"
      data-calc-search="{{ $searchText }}">
-    <a href="{{ route('calculators.show', ['slug' => $calculator->route_slug]) }}"
-       class="calc-card">
+    <a href="{{ $url }}" class="calc-card">
         <div class="calc-card__top">
             <span class="calc-card__icon" aria-hidden="true">
                 <i class="{{ $calculator->icon ?? 'fas fa-calculator' }}"></i>
             </span>
-            <h2 class="calc-card__title">{{ $calculator->name }}</h2>
+            <h3 class="calc-card__title">{{ $calculator->name }}</h3>
         </div>
 
         @if($summary !== '')
@@ -18,7 +19,7 @@
         @endif
 
         <span class="calc-card__cta">
-            Calculate now
+            {{ $cta }}
             <i class="fas fa-arrow-right" aria-hidden="true"></i>
         </span>
     </a>

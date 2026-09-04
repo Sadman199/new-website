@@ -8,6 +8,10 @@ return new class extends Migration
 {
     public function up(): void
     {
+        if (Schema::getConnection()->getDriverName() !== 'mysql') {
+            return;
+        }
+
         foreach ([
             'languages',
             'pricing',
@@ -23,6 +27,10 @@ return new class extends Migration
 
     public function down(): void
     {
+        if (Schema::getConnection()->getDriverName() !== 'mysql') {
+            return;
+        }
+
         foreach ([
             'languages',
             'pricing',

@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Http\Controllers\Front\BrokerController;
 use App\Models\Author;
 use App\Models\Broker;
+use App\Models\BrokerAlternativePage;
 use App\Models\BrokerGuide;
 use App\Models\CmsPage;
 use App\Models\ForexBonus;
@@ -23,7 +24,7 @@ use Throwable;
 
 class SitemapService
 {
-    private const CACHE_KEY = 'sitemap_xml_v1';
+    public const CACHE_KEY = 'sitemap_xml_v1';
 
     private const CACHE_TTL = 3600;
 
@@ -32,6 +33,11 @@ class SitemapService
         return Cache::remember(self::CACHE_KEY, self::CACHE_TTL, function () {
             return $this->render($this->urls());
         });
+    }
+
+    public static function flush(): void
+    {
+        Cache::forget(self::CACHE_KEY);
     }
 
     /** @return array<string, array{loc: string, lastmod: string, changefreq: string, priority: string}> */
@@ -45,6 +51,7 @@ class SitemapService
         $this->addBestBrokerLists($urls);
         $this->addCountries($urls);
         $this->addComparisons($urls);
+        $this->addBrokerAlternatives($urls);
         $this->addPromotions($urls);
         $this->addPropFirms($urls);
         $this->addContent($urls);
@@ -64,6 +71,7 @@ class SitemapService
         $this->push($urls, route('brokers.top.index'), $now, 'weekly', '0.85');
         $this->push($urls, route('find_my_broker'), $now, 'weekly', '0.8');
         $this->push($urls, route('broker.comparison'), $now, 'weekly', '0.8');
+        $this->push($urls, route('broker.alternatives.index'), $now, 'weekly', '0.75');
         $this->push($urls, route('promotions.index'), $now, 'daily', '0.8');
         $this->push($urls, route('scam_brokers'), $now, 'weekly', '0.7');
         $this->push($urls, route('broker.scam_checker'), $now, 'weekly', '0.6');
@@ -182,6 +190,34 @@ class SitemapService
                     $this->push($urls, $pair['url'], now(), 'weekly', '0.7');
                 }
             }
+        });
+    }
+
+    private function addBrokerAlternatives(array &$urls): void
+    {
+        $this->safe(function () use (&$urls) {
+            if (! Schema::hasTable('broker_alternative_pages')) {
+                return;
+            }
+
+            BrokerAlternativePage::query()
+                ->published()
+                ->with('broker:id,slug,updated_at')
+                ->orderBy('id')
+                ->get()
+                ->each(function (BrokerAlternativePage $page) use (&$urls) {
+                    if (! $page->broker?->slug) {
+                        return;
+                    }
+
+                    $this->push(
+                        $urls,
+                        route('broker.alternatives.show', ['slug' => $page->broker->slug]),
+                        $page->updated_at ?? $page->broker->updated_at,
+                        'weekly',
+                        '0.7'
+                    );
+                });
         });
     }
 

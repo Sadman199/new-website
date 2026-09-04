@@ -1,16 +1,25 @@
 @extends('front.layout.app')
 
-@section('title', ($meta['title'] ?? $tool->name) . ' | Forex Calculators | BrokersCourt')
-@section('meta_description', $meta['meta'] ?? $tool->short_description)
-@section('canonical', route('trading.tools.show', ['slug' => $slug]))
+@section('title', $seo['title'] ?? (($meta['title'] ?? $tool->name) . ' | Forex Calculators | BrokersCourt'))
+@section('meta_description', $seo['description'] ?? ($meta['meta'] ?? $tool->short_description))
+@section('canonical', $seo['canonical'] ?? route('trading.tools.show', ['slug' => $slug]))
+@section('og_title', $seo['og_title'] ?? ($seo['title'] ?? $tool->name))
+@section('og_description', $seo['og_description'] ?? ($seo['description'] ?? ''))
 
 @push('page-styles')
-    <link rel="stylesheet" href="{{ asset('css/calculators.css') }}?v=4">
+    <link rel="stylesheet" href="{{ asset('css/calculators.css') }}?v=6">
     <link rel="stylesheet" href="{{ asset('css/live-markets.css') }}?v=4">
 @endpush
 
+@if(! empty($jsonLd))
+@push('json_ld')
+    <script type="application/ld+json">@json($jsonLd)</script>
+@endpush
+@endif
+
 @section('main_content')
 @php
+    $intro = trim((string) (($pageContent['introduction'] ?? '') ?: ($tool->short_description ?? '')));
     $aboutText = trim((string) ($calculator->description ?: ($meta['about'] ?? '')));
 @endphp
 <div class="calc-page calc-page--detail calc-page--markets">
@@ -19,9 +28,9 @@
             <nav class="calc-breadcrumb" aria-label="Breadcrumb">
                 <a href="{{ route('home') }}">Home</a>
                 <span aria-hidden="true">/</span>
-                <a href="{{ route('calculators.index') }}">Forex calculators</a>
+                <a href="{{ route('calculators.index') }}">Forex trading tools</a>
                 <span aria-hidden="true">/</span>
-                <span>{{ $meta['title'] ?? $tool->name }}</span>
+                <span>{{ $tool->name }}</span>
             </nav>
 
             <div class="calc-detail__hero">
@@ -33,9 +42,9 @@
                         <i class="fas fa-chart-area" aria-hidden="true"></i>
                         Market data
                     </p>
-                    <h1 class="calc-detail__title">{{ $meta['title'] ?? $tool->name }}</h1>
-                    @if(trim((string) ($tool->short_description ?? '')) !== '')
-                        <p class="calc-detail__subtitle">{{ $tool->short_description }}</p>
+                    <h1 class="calc-detail__title">{{ $tool->name }}</h1>
+                    @if($intro !== '')
+                        <p class="calc-detail__subtitle">{{ $intro }}</p>
                     @endif
                 </div>
             </div>
@@ -48,6 +57,15 @@
                 <div class="calc-markets" id="bcMarketsAppRoot">
                     @include('front.partials.live_markets_board')
                 </div>
+
+                @isset($pageContent)
+                    @include('front.calculators.partials.content-sections', [
+                        'pageContent' => $pageContent,
+                        'howToTitle' => 'How to use these widgets',
+                    ])
+                    @include('front.calculators.partials.related-tools', ['relatedTools' => $relatedTools ?? collect()])
+                    @include('front.calculators.partials.faq', ['faqs' => $faqs ?? []])
+                @endisset
             </div>
 
             <aside class="col-lg-4">
@@ -63,19 +81,38 @@
                         @endif
                     </section>
 
-                    @if($calculators->isNotEmpty())
+                    <section class="calc-aside__panel" aria-labelledby="calc-markets-next-title">
+                        <h2 class="calc-aside__title" id="calc-markets-next-title">Next steps</h2>
+                        <nav class="calc-aside__nav" aria-label="BrokersCourt links">
+                            <a href="{{ route('calculators.show', ['slug' => 'trading-cost-calculator']) }}" class="calc-aside__link">
+                                <i class="fas fa-file-invoice-dollar" aria-hidden="true"></i>
+                                <span>Calculate trading costs</span>
+                            </a>
+                            <a href="{{ route('broker.comparison') }}" class="calc-aside__link">
+                                <i class="fas fa-balance-scale" aria-hidden="true"></i>
+                                <span>Compare brokers</span>
+                            </a>
+                            <a href="{{ route('broker.alternatives.index') }}" class="calc-aside__link">
+                                <i class="fas fa-random" aria-hidden="true"></i>
+                                <span>Broker alternatives</span>
+                            </a>
+                        </nav>
+                    </section>
+
+                    @php $sidebarTools = ($relatedTools ?? collect())->isNotEmpty() ? $relatedTools : $calculators->take(6); @endphp
+                    @if($sidebarTools->isNotEmpty())
                         <section class="calc-aside__panel" aria-labelledby="calc-more-title">
                             <h2 class="calc-aside__title" id="calc-more-title">Forex calculators</h2>
                             <nav class="calc-aside__nav" aria-label="Related calculators">
-                                @foreach($calculators->take(6) as $item)
-                                    <a href="{{ route('calculators.show', ['slug' => $item->route_slug]) }}"
+                                @foreach($sidebarTools as $item)
+                                    <a href="{{ $item->public_url ?? route('calculators.show', ['slug' => $item->route_slug]) }}"
                                        class="calc-aside__link">
                                         <i class="{{ $item->icon ?? 'fas fa-calculator' }}" aria-hidden="true"></i>
                                         <span>{{ $item->name }}</span>
                                     </a>
                                 @endforeach
                             </nav>
-                            <a href="{{ route('calculators.index') }}" class="calc-aside__back">← All calculators</a>
+                            <a href="{{ route('calculators.index') }}" class="calc-aside__back">← All trading tools</a>
                         </section>
                     @endif
                 </div>
