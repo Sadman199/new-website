@@ -7,7 +7,7 @@
 @section('og_description', $seo['og_description'])
 
 @push('page-styles')
-    <link rel="stylesheet" href="{{ asset('css/calculators.css') }}?v=6">
+    <link rel="stylesheet" href="{{ asset('css/calculators.css') }}?v=7">
 @endpush
 
 @push('json_ld')
@@ -56,7 +56,8 @@
                      id="toolsDashboard"
                      data-calc-url="{{ route('calculators.calculate') }}"
                      data-rates='@json($rates)'
-                     @if(($costBrokerHints ?? []) !== []) data-brokers='@json($costBrokerHints)' @endif>
+                     @if(($costBrokerHints ?? []) !== []) data-brokers='@json($costBrokerHints)' @endif
+                     @if(! empty($costBrokerSearchUrl)) data-broker-search-url="{{ $costBrokerSearchUrl }}" @endif>
                     <div class="calc-detail__panes">
                         <div class="calc-detail__pane calc-detail__pane--inputs">
                             <h2 class="calc-detail__pane-title">Inputs</h2>
@@ -164,5 +165,5 @@
 @endsection
 
 @push('scripts')
-<script src="{{ asset('js/trading-tools.js') }}?v=4" defer></script>
+<script src="{{ asset('js/trading-tools.js') }}?v=5" defer></script>
 @endpush

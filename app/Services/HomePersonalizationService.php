@@ -52,7 +52,7 @@ class HomePersonalizationService
             'homepagePromotions' => $allPromos->take(6),
             'preferredCountry' => $preferredCountry,
             'showSavedStrip' => $user && $savedCards->isNotEmpty(),
-            'showCountryStrip' => $countryBrokers->isNotEmpty(),
+            'showCountryStrip' => false,
             'showPromosSection' => $promotionCards->isNotEmpty(),
             'countryBrokersUrl' => $this->countryBrokers->brokersPageUrl($countrySlug) ?? route('find_my_broker'),
         ];

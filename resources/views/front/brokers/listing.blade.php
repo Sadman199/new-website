@@ -1,5 +1,7 @@
 @extends('front.layout.app')
 @section('title', 'BrokersCourt | ' . $awardName . ' Brokers')
+@section('meta_description', 'Compare ' . \Illuminate\Support\Str::title($awardName) . ' forex brokers. Check ratings, regulation, spreads, and trading conditions on BrokersCourt.')
+@section('canonical', url()->current())
 @section('main_content')
 
 <div class="min-h-screen bg-gray-50">
@@ -7,7 +9,7 @@
         <div class="border-gray-200 pt-8">
             <div class="py-8">
                 <nav class="flex justify-between items-center" aria-label="Breadcrumb">
-                    <ol class="flex items-center space-x-4">
+                    <ol class="flex flex-wrap items-center space-x-4">
                         <li class="flex items-center">
                             <a href="{{ url('/') }}" class="flex items-center text-sm font-medium text-gray-500 hover:text-blue-600 transition-colors duration-200">
                                 <i class="fas fa-home mr-2 text-gray-400 group-hover:text-blue-500"></i>

@@ -1,9 +1,10 @@
 @extends('front.layout.app')
 @section('title', 'Disclaimer | BrokersCourt')
+@section('meta_description', 'Important disclaimer: BrokersCourt content is educational and independent. Trading leveraged products involves risk and is not financial advice.')
 @section('canonical', route('disclaimer'))
 
 @push('page-styles')
-    <link rel="stylesheet" href="{{ asset('css/legal-page.css') }}?v=2">
+    <link rel="stylesheet" href="{{ asset('css/legal-page.css') }}?v=3">
 @endpush
 
 @section('main_content')

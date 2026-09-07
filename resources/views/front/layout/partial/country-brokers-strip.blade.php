@@ -18,7 +18,7 @@
                             Top brokers in {{ $preferredCountry['name'] }}
                         </h2>
                         <p class="bc-country-strip__sub">
-                            {{ $total }} broker{{ $total === 1 ? '' : 's' }} headquartered in {{ $preferredCountry['name'] }}
+                            {{ $total }} broker{{ $total === 1 ? '' : 's' }} in our database
                         </p>
                     </div>
                 </div>

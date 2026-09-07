@@ -6,7 +6,7 @@
 
 @push('page-styles')
     <link rel="stylesheet" href="{{ asset('css/insight-cards.css') }}?v=3">
-    <link rel="stylesheet" href="{{ asset('css/homepage.css') }}?v=56">
+    <link rel="stylesheet" href="{{ asset('css/homepage.css') }}?v=63">
     <link rel="stylesheet" href="{{ asset('css/broker-reviews-index.css') }}?v=11">
     <link rel="stylesheet" href="{{ asset('css/broker-reviews-discovery.css') }}?v=3">
 @endpush

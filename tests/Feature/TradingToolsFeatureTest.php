@@ -79,6 +79,33 @@ class TradingToolsFeatureTest extends TestCase
 
         $this->assertStringContainsString('Unavailable', $html);
         $this->assertStringNotContainsString('Invented Broker', $html);
+        $this->assertStringContainsString('cost-broker-search', $html);
+        $this->assertStringContainsString('Search your broker', $html);
+    }
+
+    public function test_trading_cost_calculator_broker_search_returns_matching_database_brokers(): void
+    {
+        $match = $this->makeBroker('Zulu Prime');
+        $this->makeBroker('No Commission Desk', ['commission' => null, 'spreads' => 'Variable']);
+        $this->makeBroker('Hidden Scam Desk', ['is_scam' => true]);
+
+        $this->get(route('calculators.broker_search', ['q' => 'Zulu']))
+            ->assertOk()
+            ->assertJsonCount(1, 'brokers')
+            ->assertJsonPath('brokers.0.id', $match->id)
+            ->assertJsonPath('brokers.0.name', 'Zulu Prime');
+
+        $this->get(route('calculators.broker_search', ['q' => 'zuluprime']))
+            ->assertOk()
+            ->assertJsonPath('brokers.0.name', 'Zulu Prime');
+
+        $this->get(route('calculators.broker_search', ['q' => 'Invented Broker']))
+            ->assertOk()
+            ->assertJsonCount(0, 'brokers');
+
+        $this->get(route('calculators.broker_search', ['q' => 'Scam']))
+            ->assertOk()
+            ->assertJsonCount(0, 'brokers');
     }
 
     public function test_hidden_tool_is_not_on_hub(): void

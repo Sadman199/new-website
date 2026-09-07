@@ -1,6 +1,7 @@
 @extends('front.layout.app')
 @section('title', 'Blog Archive | Discover Forex Insights and Broker Tips')
 @section('meta_description', 'Browse archived forex broker insights, trading tips, and market analysis published on BrokersCourt.')
+@section('canonical', url()->current())
 @section('main_content')
 <div id="loader-overlay">
     <div class="loader"></div>

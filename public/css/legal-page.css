@@ -8,7 +8,7 @@
     --legal-muted: #64748b;
     --legal-title: #0C1D32;
     min-height: 100vh;
-    padding: 5.5rem 0 3rem;
+    padding: calc(var(--bc-nav-height, 5.5rem) + 1.75rem) 0 3rem;
     background: #f4f6f9;
     color: var(--legal-text);
     position: relative;
@@ -210,4 +210,32 @@
 .legal-page__cta {
     text-align: center;
     margin-top: 2.5rem;
+}
+
+@media (max-width: 767px) {
+    .legal-page {
+        padding-bottom: 2rem;
+    }
+
+    .legal-page__head {
+        margin-bottom: 1.75rem;
+        text-align: left;
+    }
+
+    .legal-page__meta {
+        font-size: 1rem;
+    }
+
+    .legal-card {
+        padding: 1.15rem;
+    }
+
+    .legal-card__title {
+        font-size: 1.125rem;
+    }
+
+    .legal-cta {
+        width: 100%;
+        justify-content: center;
+    }
 }

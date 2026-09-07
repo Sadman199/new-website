@@ -5,7 +5,7 @@
 @section('canonical', route('about'))
 
 @push('page-styles')
-    <link rel="stylesheet" href="{{ asset('css/about-page.css') }}?v=2">
+    <link rel="stylesheet" href="{{ asset('css/about-page.css') }}?v=3">
 @endpush
 
 @section('main_content')

@@ -159,9 +159,20 @@
         box.innerHTML = rows.join('') || '<p class="tt-results__placeholder">No results</p>';
     }
 
+    function escapeHtml(value) {
+        return String(value == null ? '' : value)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;');
+    }
+
     function bindCostBroker() {
-        var select = root.querySelector('[data-field="broker_id"]');
-        if (!select) {
+        var combobox = root.querySelector('[data-broker-combobox]');
+        var hidden = root.querySelector('[data-field="broker_id"]');
+        var input = root.querySelector('#cost-broker-search');
+        var list = root.querySelector('#cost-broker-list');
+        if (!hidden || !input || !list) {
             return;
         }
 
@@ -172,14 +183,19 @@
             brokers = [];
         }
 
+        var searchUrl = root.getAttribute('data-broker-search-url') || '';
         var hint = root.querySelector('[data-broker-hint]');
         var spread = root.querySelector('[data-field="spread_pips"]');
+        var selectedBroker = null;
+        var visibleBrokers = [];
+        var activeIndex = -1;
+        var debounceTimer = null;
+        var lastQuery = null;
+        var requestSeq = 0;
 
-        select.addEventListener('change', function () {
-            var id = parseInt(select.value, 10);
-            var broker = brokers.find(function (item) {
-                return Number(item.id) === id;
-            });
+        function applyBroker(broker) {
+            selectedBroker = broker || null;
+            hidden.value = broker ? String(broker.id) : '';
 
             if (!broker) {
                 if (hint) {
@@ -188,6 +204,8 @@
                 }
                 return;
             }
+
+            input.value = broker.name;
 
             if (spread) {
                 spread.value = broker.spread_known && broker.spread_pips != null ? broker.spread_pips : '';
@@ -211,6 +229,186 @@
                 hint.textContent = parts.join(' ');
                 hint.hidden = false;
             }
+        }
+
+        function closeList() {
+            list.hidden = true;
+            list.innerHTML = '';
+            visibleBrokers = [];
+            input.setAttribute('aria-expanded', 'false');
+            input.removeAttribute('aria-activedescendant');
+            activeIndex = -1;
+            if (combobox) {
+                combobox.classList.remove('is-open');
+            }
+        }
+
+        function setActive(index) {
+            var options = list.querySelectorAll('[role="option"]');
+            if (!options.length) {
+                activeIndex = -1;
+                input.removeAttribute('aria-activedescendant');
+                return;
+            }
+
+            activeIndex = Math.max(0, Math.min(index, options.length - 1));
+            options.forEach(function (option, i) {
+                var isActive = i === activeIndex;
+                option.classList.toggle('is-active', isActive);
+                option.setAttribute('aria-selected', isActive ? 'true' : 'false');
+                if (isActive) {
+                    input.setAttribute('aria-activedescendant', option.id);
+                    if (option.scrollIntoView) {
+                        option.scrollIntoView({ block: 'nearest' });
+                    }
+                }
+            });
+        }
+
+        function renderList(items, query) {
+            visibleBrokers = items || [];
+            list.innerHTML = '';
+
+            if (!visibleBrokers.length) {
+                var empty = document.createElement('li');
+                empty.className = 'calc-broker-combobox__empty';
+                empty.textContent = query
+                    ? 'No matching brokers in our database.'
+                    : 'Type a broker name to search.';
+                list.appendChild(empty);
+            } else {
+                visibleBrokers.forEach(function (broker, i) {
+                    var option = document.createElement('li');
+                    option.id = 'cost-broker-option-' + broker.id;
+                    option.className = 'calc-broker-combobox__option';
+                    option.setAttribute('role', 'option');
+                    option.setAttribute('aria-selected', 'false');
+                    option.dataset.index = String(i);
+                    option.innerHTML = '<span class="calc-broker-combobox__name">' + escapeHtml(broker.name) + '</span>';
+                    if (broker.spread_known && broker.spread_pips != null) {
+                        option.innerHTML += '<span class="calc-broker-combobox__meta">' + escapeHtml(broker.spread_pips + ' pips') + '</span>';
+                    }
+                    option.addEventListener('mousedown', function (event) {
+                        event.preventDefault();
+                        applyBroker(broker);
+                        closeList();
+                    });
+                    list.appendChild(option);
+                });
+            }
+
+            list.hidden = false;
+            input.setAttribute('aria-expanded', 'true');
+            if (combobox) {
+                combobox.classList.add('is-open');
+            }
+            setActive(visibleBrokers.length ? 0 : -1);
+        }
+
+        function localMatches(query) {
+            var needle = query.toLowerCase().replace(/[\s\-]/g, '');
+            if (!needle) {
+                return brokers.slice(0, 12);
+            }
+
+            return brokers.filter(function (item) {
+                var name = String(item.name || '').toLowerCase();
+                var compact = name.replace(/[\s\-]/g, '');
+                return name.indexOf(query.toLowerCase()) !== -1 || compact.indexOf(needle) !== -1;
+            }).slice(0, 12);
+        }
+
+        function searchBrokers(query, immediate) {
+            var run = function () {
+                if (query === lastQuery && list.hidden === false && immediate !== true) {
+                    return;
+                }
+                lastQuery = query;
+
+                if (!searchUrl) {
+                    renderList(localMatches(query), query);
+                    return;
+                }
+
+                var seq = ++requestSeq;
+                fetch(searchUrl + '?q=' + encodeURIComponent(query), {
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest',
+                    },
+                })
+                    .then(function (response) {
+                        return response.json();
+                    })
+                    .then(function (json) {
+                        if (seq !== requestSeq) {
+                            return;
+                        }
+                        var results = json && json.brokers ? json.brokers : [];
+                        results.forEach(function (item) {
+                            var exists = brokers.some(function (known) {
+                                return Number(known.id) === Number(item.id);
+                            });
+                            if (!exists) {
+                                brokers.push(item);
+                            }
+                        });
+                        renderList(results, query);
+                    })
+                    .catch(function () {
+                        if (seq !== requestSeq) {
+                            return;
+                        }
+                        renderList(localMatches(query), query);
+                    });
+            };
+
+            if (immediate) {
+                run();
+                return;
+            }
+
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(run, 180);
+        }
+
+        input.addEventListener('focus', function () {
+            searchBrokers(input.value.trim(), true);
+        });
+
+        input.addEventListener('input', function () {
+            var query = input.value.trim();
+            if (selectedBroker && query !== selectedBroker.name) {
+                applyBroker(null);
+                input.value = query;
+            }
+            searchBrokers(query);
+        });
+
+        input.addEventListener('keydown', function (event) {
+            if (event.key === 'ArrowDown') {
+                event.preventDefault();
+                if (list.hidden) {
+                    searchBrokers(input.value.trim(), true);
+                    return;
+                }
+                setActive(activeIndex + 1);
+            } else if (event.key === 'ArrowUp') {
+                event.preventDefault();
+                setActive(activeIndex - 1);
+            } else if (event.key === 'Enter') {
+                if (!list.hidden && activeIndex >= 0 && visibleBrokers[activeIndex]) {
+                    event.preventDefault();
+                    applyBroker(visibleBrokers[activeIndex]);
+                    closeList();
+                }
+            } else if (event.key === 'Escape') {
+                closeList();
+            }
+        });
+
+        input.addEventListener('blur', function () {
+            setTimeout(closeList, 120);
         });
     }
 

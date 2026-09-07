@@ -153,22 +153,68 @@ class BrokerTaxonomy
         ];
     }
 
+    /**
+     * Extra HQ jurisdictions that appear in brokers.country but are not
+     * part of the curated residence taxonomy.
+     *
+     * @return array<string, array{name: string, flag: string, code: ?string}>
+     */
+    public static function additionalHqCountriesWithFlags(): array
+    {
+        return [
+            'seychelles' => ['name' => 'Seychelles', 'flag' => '🇸🇨', 'code' => 'sc'],
+            'belize' => ['name' => 'Belize', 'flag' => '🇧🇿', 'code' => 'bz'],
+            'vanuatu' => ['name' => 'Vanuatu', 'flag' => '🇻🇺', 'code' => 'vu'],
+            'dominica' => ['name' => 'Dominica', 'flag' => '🇩🇲', 'code' => 'dm'],
+            'new-zealand' => ['name' => 'New Zealand', 'flag' => '🇳🇿', 'code' => 'nz'],
+            'ireland' => ['name' => 'Ireland', 'flag' => '🇮🇪', 'code' => 'ie'],
+            'malta' => ['name' => 'Malta', 'flag' => '🇲🇹', 'code' => 'mt'],
+            'mauritius' => ['name' => 'Mauritius', 'flag' => '🇲🇺', 'code' => 'mu'],
+            'israel' => ['name' => 'Israel', 'flag' => '🇮🇱', 'code' => 'il'],
+            'cayman-islands' => ['name' => 'Cayman Islands', 'flag' => '🇰🇾', 'code' => 'ky'],
+            'marshall-islands' => ['name' => 'Marshall Islands', 'flag' => '🇲🇭', 'code' => 'mh'],
+            'british-virgin-islands' => ['name' => 'British Virgin Islands', 'flag' => '🇻🇬', 'code' => 'vg'],
+            'st-vincent-and-the-grenadines' => ['name' => 'St. Vincent and the Grenadines', 'flag' => '🇻🇨', 'code' => 'vc'],
+            'saint-lucia' => ['name' => 'Saint Lucia', 'flag' => '🇱🇨', 'code' => 'lc'],
+        ];
+    }
+
+    /**
+     * Taxonomy + extra HQ jurisdictions, excluding Global.
+     *
+     * @return array<string, array{name: string, flag: string, code: ?string}>
+     */
+    public static function headquartersCountryCatalog(): array
+    {
+        $catalog = self::countriesWithFlags();
+        unset($catalog['global']);
+
+        return $catalog + self::additionalHqCountriesWithFlags();
+    }
+
     /** @return string[] */
     public static function countryMatchNames(string $slug): array
     {
-        $countries = self::countriesWithFlags();
-        if (! isset($countries[$slug]) || $slug === 'global') {
+        $catalog = self::headquartersCountryCatalog();
+        if (! isset($catalog[$slug])) {
             return [];
         }
 
-        $name = $countries[$slug]['name'];
+        $name = $catalog[$slug]['name'];
         $aliases = [
             'united-kingdom' => ['UK', 'U.K.', 'Great Britain', 'England'],
-            'united-states' => ['USA', 'U.S.A.', 'U.S.', 'America'],
-            'uae' => ['UAE', 'U.A.E.', 'United Arab Emirates'],
+            'united-states' => ['USA', 'U.S.A.', 'U.S.', 'Usa', 'America'],
+            'uae' => ['UAE', 'U.A.E.', 'United Arab Emirates', 'Dubai'],
             'south-africa' => ['SA'],
             'netherlands' => ['Holland'],
             'czechia' => ['Czech Republic'],
+            'seychelles' => ['Seychelles'],
+            'british-virgin-islands' => ['BVI', 'British Virgin Islands'],
+            'st-vincent-and-the-grenadines' => [
+                'St. Vincent and the Grenadines',
+                'Saint Vincent and the Grenadines',
+                'St Vincent and the Grenadines',
+            ],
         ];
 
         $names = [$name];
@@ -177,6 +223,177 @@ class BrokerTaxonomy
         }
 
         return array_values(array_unique($names));
+    }
+
+    /**
+     * Map a free-text brokers.country value to a canonical selector country.
+     *
+     * @return array{slug: string, name: string, flag: string, code: ?string}|null
+     */
+    public static function canonicalFromHeadquarters(?string $raw): ?array
+    {
+        $raw = trim(html_entity_decode(strip_tags((string) $raw), ENT_QUOTES | ENT_HTML5, 'UTF-8'));
+        $raw = trim($raw, " \t\n\r\0\x0B.,;:-");
+
+        if ($raw === '') {
+            return null;
+        }
+
+        $catalog = self::headquartersCountryCatalog();
+
+        if ($meta = self::catalogMatch($raw, $catalog)) {
+            return $meta;
+        }
+
+        $firstClause = trim((string) preg_split('/[\/(]/', $raw)[0]);
+        $firstClause = trim($firstClause, " \t.,;:-");
+        if ($firstClause !== '' && $firstClause !== $raw && ($meta = self::catalogMatch($firstClause, $catalog))) {
+            return $meta;
+        }
+
+        if (str_contains($raw, ',')) {
+            $lastComma = trim((string) substr($raw, (int) strrpos($raw, ',') + 1));
+            $lastComma = trim($lastComma, " \t.,;:()-");
+            if ($lastComma !== '' && ($meta = self::catalogMatch($lastComma, $catalog))) {
+                return $meta;
+            }
+        }
+
+        if ($meta = self::containedCatalogMatch($raw, $catalog)) {
+            return $meta;
+        }
+
+        $candidate = $firstClause !== '' ? $firstClause : $raw;
+        if (! self::looksLikeCountryName($candidate)) {
+            return null;
+        }
+
+        $slug = Str::slug($candidate);
+        if ($slug === '' || $slug === 'global' || isset(self::categories()[$slug]) || isset(self::regions()[$slug])) {
+            return null;
+        }
+
+        if (isset($catalog[$slug])) {
+            return self::catalogMeta($slug, $catalog[$slug]);
+        }
+
+        return [
+            'slug' => $slug,
+            'name' => Str::title($candidate),
+            'flag' => '🌍',
+            'code' => null,
+        ];
+    }
+
+    /**
+     * @param  array<string, array{name: string, flag: string, code: ?string}>  $catalog
+     * @return array{slug: string, name: string, flag: string, code: ?string}|null
+     */
+    private static function catalogMatch(string $value, array $catalog): ?array
+    {
+        $normalized = Str::lower(trim($value));
+        if ($normalized === '' || $normalized === 'global') {
+            return null;
+        }
+
+        foreach ($catalog as $slug => $meta) {
+            if (Str::lower($meta['name']) === $normalized || Str::slug($meta['name']) === Str::slug($value)) {
+                return self::catalogMeta($slug, $meta);
+            }
+
+            foreach (self::countryMatchNames($slug) as $label) {
+                if (Str::lower($label) === $normalized) {
+                    return self::catalogMeta($slug, $meta);
+                }
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * @param  array<string, array{name: string, flag: string, code: ?string}>  $catalog
+     * @return array{slug: string, name: string, flag: string, code: ?string}|null
+     */
+    private static function containedCatalogMatch(string $raw, array $catalog): ?array
+    {
+        $haystack = Str::lower($raw);
+        $hits = [];
+
+        foreach ($catalog as $slug => $meta) {
+            foreach (self::countryMatchNames($slug) as $label) {
+                if (mb_strlen($label) < 4) {
+                    continue;
+                }
+
+                $position = self::labelPosition($haystack, $label);
+                if ($position === null) {
+                    continue;
+                }
+
+                $hits[$slug] = min($hits[$slug] ?? PHP_INT_MAX, $position);
+            }
+        }
+
+        if ($hits === [] || count($hits) >= 3) {
+            return null;
+        }
+
+        asort($hits);
+        $slug = (string) array_key_first($hits);
+
+        return self::catalogMeta($slug, $catalog[$slug]);
+    }
+
+    private static function labelPosition(string $haystack, string $label): ?int
+    {
+        $needle = Str::lower($label);
+        $pattern = '/(?<![[:alnum:]])'.preg_quote($needle, '/').'(?![[:alnum:]])/u';
+
+        if (! preg_match($pattern, $haystack, $matches, PREG_OFFSET_CAPTURE)) {
+            return null;
+        }
+
+        return (int) $matches[0][1];
+    }
+
+    private static function looksLikeCountryName(string $value): bool
+    {
+        $value = trim($value);
+        if ($value === '' || mb_strlen($value) > 48 || preg_match('/\d/', $value)) {
+            return false;
+        }
+
+        $blocked = [
+            'operates', 'entities', 'regulated', 'offices', 'relocated',
+            'headquarters', 'headquartered', 'licensed', 'operational',
+            'multiple', 'regions', 'global', 'vincent',
+        ];
+
+        $lower = Str::lower($value);
+        foreach ($blocked as $word) {
+            if (str_contains($lower, $word)) {
+                return false;
+            }
+        }
+
+        $words = preg_split('/\s+/', $value) ?: [];
+
+        return count($words) >= 1 && count($words) <= 5;
+    }
+
+    /**
+     * @param  array{name: string, flag: string, code: ?string}  $meta
+     * @return array{slug: string, name: string, flag: string, code: ?string}
+     */
+    private static function catalogMeta(string $slug, array $meta): array
+    {
+        return [
+            'slug' => $slug,
+            'name' => $meta['name'],
+            'flag' => $meta['flag'],
+            'code' => $meta['code'],
+        ];
     }
 
     public static function countryFlagUrl(?string $code, int $width = 40): ?string

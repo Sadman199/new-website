@@ -11,7 +11,9 @@ use App\Support\RichText;
 use App\Support\TradingToolCategories;
 use App\Support\TradingToolCopy;
 use App\Support\TradingToolsRegistry;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class TradingToolsPageService
@@ -164,27 +166,66 @@ class TradingToolsPageService
      */
     public function costBrokerHints(int $limit = 24): array
     {
-        return Broker::query()
+        return $this->mapCostBrokerHints(
+            Broker::query()
+                ->where('is_scam', false)
+                ->orderBy('name')
+                ->limit($limit)
+                ->get()
+        );
+    }
+
+    /**
+     * Search live brokers for the Trading Cost Calculator autocomplete.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    public function searchCostBrokerHints(string $query, int $limit = 12): array
+    {
+        $query = trim($query);
+
+        $builder = Broker::query()
             ->where('is_scam', false)
             ->orderBy('name')
-            ->limit($limit)
-            ->get()
-            ->map(function (Broker $broker) {
-                $facts = BrokerFacts::for($broker);
-                $spread = $facts['spread'] ?? ['known' => false, 'value' => null, 'raw' => null];
-                $commission = trim((string) (RichText::toPlainText($broker->commission) ?? ''));
+            ->limit($limit);
 
-                return [
-                    'id' => $broker->id,
-                    'name' => $broker->name,
-                    'spread_pips' => ! empty($spread['known']) ? $spread['value'] : null,
-                    'spread_raw' => $spread['raw'] ?: null,
-                    'spread_known' => ! empty($spread['known']),
-                    'commission' => $commission !== '' ? $commission : null,
-                ];
-            })
-            ->values()
-            ->all();
+        if ($query !== '') {
+            $escaped = addcslashes($query, '%_\\');
+            $normalized = addcslashes(str_replace([' ', '-'], '', $query), '%_\\');
+
+            $builder->where(function (Builder $q) use ($escaped, $normalized) {
+                $q->where('name', 'like', '%'.$escaped.'%')
+                    ->orWhere(
+                        DB::raw("REPLACE(REPLACE(name,' ',''),'-','')"),
+                        'like',
+                        '%'.$normalized.'%'
+                    );
+            });
+        }
+
+        return $this->mapCostBrokerHints($builder->get());
+    }
+
+    /**
+     * @param  Collection<int, Broker>  $brokers
+     * @return array<int, array<string, mixed>>
+     */
+    private function mapCostBrokerHints(Collection $brokers): array
+    {
+        return $brokers->map(function (Broker $broker) {
+            $facts = BrokerFacts::for($broker);
+            $spread = $facts['spread'] ?? ['known' => false, 'value' => null, 'raw' => null];
+            $commission = trim((string) (RichText::toPlainText($broker->commission) ?? ''));
+
+            return [
+                'id' => $broker->id,
+                'name' => $broker->name,
+                'spread_pips' => ! empty($spread['known']) ? $spread['value'] : null,
+                'spread_raw' => $spread['raw'] ?: null,
+                'spread_known' => ! empty($spread['known']),
+                'commission' => $commission !== '' ? $commission : null,
+            ];
+        })->values()->all();
     }
 
     /** @return array<int, array{question: string, answer: string}> */

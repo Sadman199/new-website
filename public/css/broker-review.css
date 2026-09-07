@@ -5876,3 +5876,15 @@ body.br-modal-open {
     }
 }
 
+@media (max-width: 480px) {
+    .br-hero__actions > a,
+    .br-hero__actions > button,
+    .br-hero__actions .br-btn {
+        width: 100%;
+    }
+
+    .br-btn {
+        min-height: 2.75rem;
+    }
+}
+

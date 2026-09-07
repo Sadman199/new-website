@@ -180,6 +180,7 @@ Route::get('/forex-calculator', function () {
     return redirect()->route('calculators.show', ['slug' => 'profit-calculator'], 301);
 })->name('forex.calculator');
 Route::get('/calculators', [TradingToolsController::class, 'calculatorsIndex'])->name('calculators.index');
+Route::get('/calculators/broker-search', [TradingToolsController::class, 'searchCostBrokers'])->name('calculators.broker_search');
 Route::get('/calculators/{slug}', [TradingToolsController::class, 'show'])
     ->where('slug', '[a-z0-9\-]+')
     ->name('calculators.show');

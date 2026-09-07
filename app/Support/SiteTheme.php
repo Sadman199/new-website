@@ -115,7 +115,6 @@ class SiteTheme
             '--bc-radius' => '12px',
             '--bc-container' => '1320px',
             '--bc-section-spacing' => '80px',
-            '--bc-nav-height' => '5.5rem',
             '--bc-transition' => '0.2s ease',
             '--bc-font' => '"Nunito Sans", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
             '--bc-primary-rgb' => $primaryRgb,
@@ -220,6 +219,13 @@ class SiteTheme
     public static function contactPhone(): string
     {
         return trim((string) (self::setting()?->contact_phone ?? '+44 7577 309951'));
+    }
+
+    public static function contactEmail(): string
+    {
+        $email = trim((string) (self::setting()?->top_bar_email ?? ''));
+
+        return $email !== '' ? $email : 'info@brokerscourt.com';
     }
 
     public static function defaultMetaDescription(): string

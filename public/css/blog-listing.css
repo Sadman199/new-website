@@ -16,7 +16,7 @@
 .bll-hero {
     background: var(--bll-surface);
     border-bottom: 1px solid var(--bll-border);
-    padding: 5.5rem 0 1.75rem;
+    padding: calc(var(--bc-nav-height, 5.5rem) + 1.25rem) 0 1.75rem;
 }
 
 .bll-hero__row {
@@ -40,6 +40,7 @@
 
 .bll-breadcrumb {
     display: inline-flex;
+    flex-wrap: wrap;
     align-items: center;
     gap: 0.5rem;
     padding: 0.5rem 1rem;
@@ -48,6 +49,7 @@
     font-size: 0.875rem;
     list-style: none;
     margin: 0;
+    max-width: 100%;
 }
 
 .bll-breadcrumb a {

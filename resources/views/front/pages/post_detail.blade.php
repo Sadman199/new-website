@@ -26,7 +26,7 @@
         <meta property="article:modified_time" content="{{ $post_detail->updated_at->toAtomString() }}">
     @endif
     <link rel="stylesheet" href="{{ asset('css/best-broker-guide.css') }}?v=11">
-    <link rel="stylesheet" href="{{ asset('css/blog-post-detail.css') }}?v=4">
+    <link rel="stylesheet" href="{{ asset('css/blog-post-detail.css') }}?v=5">
     <link rel="stylesheet" href="{{ asset('css/insight-cards.css') }}?v=3">
 @endpush
 

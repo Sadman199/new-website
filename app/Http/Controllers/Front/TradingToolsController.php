@@ -98,8 +98,22 @@ class TradingToolsController extends Controller
         $shared['currencies'] = array_keys(TradingCalculator::defaultRates());
         $shared['rates'] = TradingCalculator::defaultRates();
         $shared['costBrokerHints'] = $toolKey === 'cost' ? $this->tools->costBrokerHints() : [];
+        $shared['costBrokerSearchUrl'] = $toolKey === 'cost' ? route('calculators.broker_search') : null;
 
         return view('front.calculators.show', $shared);
+    }
+
+    public function searchCostBrokers(Request $request)
+    {
+        $query = trim((string) $request->query('q', ''));
+
+        if (mb_strlen($query) > 80) {
+            $query = mb_substr($query, 0, 80);
+        }
+
+        return response()->json([
+            'brokers' => $this->tools->searchCostBrokerHints($query),
+        ]);
     }
 
     public function calculate(Request $request)

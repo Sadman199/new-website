@@ -1,9 +1,10 @@
 @extends('front.layout.app')
 @section('title', 'BrokersCourt Privacy Policy | Your Data Protection Rights')
+@section('meta_description', 'Read how BrokersCourt collects, uses, and protects your personal data when you compare brokers, create an account, or contact our editorial team.')
 @section('canonical', route('privacy'))
 
 @push('page-styles')
-    <link rel="stylesheet" href="{{ asset('css/legal-page.css') }}?v=2">
+    <link rel="stylesheet" href="{{ asset('css/legal-page.css') }}?v=3">
 @endpush
 
 @section('main_content')

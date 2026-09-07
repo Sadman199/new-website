@@ -1,5 +1,6 @@
 @extends('front.layout.app')
 @section('title', 'BrokersCourt | Get in Touch with Us')
+@section('meta_description', 'Contact BrokersCourt for broker review questions, partnership inquiries, editorial feedback, and scam broker reports.')
 @section('canonical', route('contact'))
 @section('main_content')
 <div class="bg-gray-900 py-12 border-b border-gray-800 relative overflow-hidden mt-12">

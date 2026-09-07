@@ -33,7 +33,7 @@ class AppServiceProvider extends ServiceProvider
         try {
             app(GlobalViewDataService::class)->share();
             View::share('topRatedBrokers', app(GlobalViewDataService::class)->topRatedBrokers());
-            View::share('popularReviewBrokers', app(GlobalViewDataService::class)->popularReviews(10));
+            View::share('popularReviewBrokers', app(GlobalViewDataService::class)->popularReviews(16));
         } catch (\Throwable) {
             View::share('topRatedBrokers', collect());
             View::share('popularReviewBrokers', collect());

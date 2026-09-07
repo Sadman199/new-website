@@ -1,8 +1,10 @@
 @extends('front.layout.app')
 @section('title', ucfirst($tag_name) . ' | Forex Content by Tag | BrokersCourt')
+@section('meta_description', 'Browse BrokersCourt articles tagged "' . $tag_name . '" — broker reviews, trading guides, and market analysis.')
+@section('canonical', url()->current())
 
 @push('page-styles')
-    <link rel="stylesheet" href="{{ asset('css/blog-listing.css') }}?v=2">
+    <link rel="stylesheet" href="{{ asset('css/blog-listing.css') }}?v=3">
 @endpush
 
 @section('main_content')

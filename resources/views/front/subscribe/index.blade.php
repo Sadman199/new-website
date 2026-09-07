@@ -5,7 +5,7 @@
 @section('canonical', route('subscribe.index'))
 
 @push('page-styles')
-    <link rel="stylesheet" href="{{ asset('css/subscribe.css') }}?v=1">
+    <link rel="stylesheet" href="{{ asset('css/subscribe.css') }}?v=2">
 @endpush
 
 @section('main_content')

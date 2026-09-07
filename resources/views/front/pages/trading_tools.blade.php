@@ -2,6 +2,7 @@
 
 @section('title', 'Trading Tools Dashboard | BrokersCourt')
 @section('meta_description', 'Free forex trading tools dashboard: pip, position size, profit/loss, margin, risk, pivot points, Fibonacci and currency converter — calculate results instantly.')
+@section('canonical', url()->current())
 
 @push('page-styles')
     <link rel="stylesheet" href="{{ asset('css/trading-tools.css') }}?v=6">

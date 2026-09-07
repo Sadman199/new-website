@@ -1001,7 +1001,7 @@ body.bsc-modal-open {
 
 @media (max-width: 767px) {
     .bsc-hero {
-        padding-top: 5.5rem;
+        padding-top: calc(var(--bc-nav-height, 9.25rem) + 1.25rem);
     }
 
     .bsc-search__btn {

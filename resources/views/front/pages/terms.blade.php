@@ -1,9 +1,10 @@
 @extends('front.layout.app')
 @section('title', 'BrokersCourt | Terms and Conditions for Using Our Platform')
+@section('meta_description', 'Terms of service for BrokersCourt: how you may use our broker reviews, comparisons, tools, and community features.')
 @section('canonical', route('terms'))
 
 @push('page-styles')
-    <link rel="stylesheet" href="{{ asset('css/legal-page.css') }}?v=2">
+    <link rel="stylesheet" href="{{ asset('css/legal-page.css') }}?v=3">
 @endpush
 
 @section('main_content')

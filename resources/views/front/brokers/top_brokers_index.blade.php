@@ -5,7 +5,7 @@
 @section('canonical', route('brokers.top.index'))
 
 @push('page-styles')
-    <link rel="stylesheet" href="{{ asset('css/homepage.css') }}?v=60">
+    <link rel="stylesheet" href="{{ asset('css/homepage.css') }}?v=63">
     <link rel="stylesheet" href="{{ asset('css/top-brokers-index.css') }}?v=6">
 @endpush
 

@@ -1,5 +1,7 @@
 @extends('front.layout.app')
 @section('title', 'BrokersCourt | High Leverage Brokers (1:1000+)')
+@section('meta_description', 'Compare high leverage forex brokers offering 1:1000+ accounts. See regulation, margin requirements, and trading conditions before you open an account.')
+@section('canonical', url()->current())
 @section('main_content')
 
 {{-- Hero Section with Breadcrumb --}}

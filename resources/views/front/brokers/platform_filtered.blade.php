@@ -1,5 +1,7 @@
 @extends('front.layout.app')
 @section('title', 'BrokersCourt | Brokers Supporting ' . $platform)
+@section('meta_description', 'Find forex brokers that support ' . $platform . '. Compare platforms, regulation, fees, and trading conditions on BrokersCourt.')
+@section('canonical', url()->current())
 @section('main_content')
 
 {{-- Hero Section with Breadcrumb --}}

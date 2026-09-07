@@ -1,16 +1,23 @@
 <div class="td-grid td-grid-2">
-    @if(($costBrokerHints ?? []) !== [])
-        <div class="td-field td-field--full">
-            <label for="cost-broker">Broker (optional)</label>
-            <select id="cost-broker" data-field="broker_id">
-                <option value="">Enter costs manually</option>
-                @foreach($costBrokerHints as $hint)
-                    <option value="{{ $hint['id'] }}">{{ $hint['name'] }}</option>
-                @endforeach
-            </select>
-            <p class="calc-field-hint" data-broker-hint hidden></p>
+    <div class="td-field td-field--full">
+        <label for="cost-broker-search">Broker (optional)</label>
+        <div class="calc-broker-combobox" data-broker-combobox>
+            <input type="hidden" id="cost-broker" data-field="broker_id" value="">
+            <input type="search"
+                   id="cost-broker-search"
+                   class="calc-broker-combobox__input"
+                   placeholder="Search your broker…"
+                   autocomplete="off"
+                   spellcheck="false"
+                   role="combobox"
+                   aria-autocomplete="list"
+                   aria-expanded="false"
+                   aria-controls="cost-broker-list"
+                   aria-haspopup="listbox">
+            <ul id="cost-broker-list" class="calc-broker-combobox__list" role="listbox" hidden></ul>
         </div>
-    @endif
+        <p class="calc-field-hint" data-broker-hint hidden></p>
+    </div>
     <div class="td-field">
         <label>Currency pair</label>
         <select data-field="pair">

@@ -57,7 +57,7 @@
 
 /* ── Hero ─────────────────────────────────────────────────── */
 .aui-hero {
-    padding: 5.5rem 0 2.25rem;
+    padding: calc(var(--bc-nav-height, 5.5rem) + 1.25rem) 0 2.25rem;
     margin-bottom: 2rem;
     border-bottom: 1px solid var(--aui-line);
 }

@@ -28,14 +28,22 @@ class BestBrokerGuideService
         $guide = BestBrokerGuideDefinition::forSlug($slug);
 
         if ($guide === null) {
-            return null;
+            $countryMeta = app(CountryBrokersService::class)->countryMeta($slug);
+            if ($countryMeta === null || $slug === 'global') {
+                return null;
+            }
+
+            $guide = BestBrokerGuideDefinition::forCountry($slug, $countryMeta['name']);
         }
 
         $matches = $brokers ?? BrokerListingFilter::brokersFor($slug);
         $matchCount = $matches->count();
         $rankedFromAll = false;
+        $isCountryGuide = ($guide['type'] ?? null) === 'country';
 
-        if ($matchCount < self::MIN_ENTRIES) {
+        // Country pages must stay aligned with selector counts. Do not pad a
+        // sparse market with the full catalog.
+        if ($matchCount < self::MIN_ENTRIES && ! $isCountryGuide) {
             $matches = Broker::query()->where('is_scam', false)->get();
             $rankedFromAll = true;
         }

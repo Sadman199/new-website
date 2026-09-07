@@ -52,7 +52,7 @@ body:has(.cms-page) {
 .cms-hero {
     position: relative;
     overflow: hidden;
-    padding: 5.25rem 0 2.25rem;
+    padding: calc(var(--bc-nav-height, 5.5rem) + 1.15rem) 0 2.25rem;
     border-bottom: 1px solid var(--cms-border);
 }
 

@@ -8,35 +8,14 @@ use Illuminate\Support\Str;
 
 class BrokerListingFilter
 {
-    /** @var array<string, string[]> */
-    private const COUNTRY_REGION_MAP = [
-        'india' => ['asia'],
-        'bangladesh' => ['asia'],
-        'singapore' => ['asia'],
-        'malaysia' => ['asia'],
-        'pakistan' => ['asia'],
-        'indonesia' => ['asia'],
-        'philippines' => ['asia'],
-        'australia' => ['australia'],
-        'canada' => ['canada'],
-        'united-kingdom' => ['united-kingdom', 'global'],
-        'united-states' => ['united-states', 'global'],
-        'uae' => ['middle-east', 'global'],
-        'south-africa' => ['africa'],
-        'nigeria' => ['africa'],
-        'germany' => ['united-kingdom', 'global'],
-        'france' => ['global'],
-        'brazil' => ['global'],
-        'mexico' => ['global'],
-    ];
-
     public static function slugType(string $slug): ?string
     {
         if (isset(BrokerTaxonomy::categories()[$slug])) {
             return 'category';
         }
 
-        if (isset(BrokerTaxonomy::countriesWithFlags()[$slug])) {
+        if (isset(BrokerTaxonomy::countriesWithFlags()[$slug])
+            || isset(BrokerTaxonomy::headquartersCountryCatalog()[$slug])) {
             return 'country';
         }
 
@@ -51,6 +30,7 @@ class BrokerListingFilter
     {
         return BrokerTaxonomy::categories()[$slug]
             ?? BrokerTaxonomy::countriesWithFlags()[$slug]['name']
+            ?? BrokerTaxonomy::headquartersCountryCatalog()[$slug]['name']
             ?? BrokerTaxonomy::regions()[$slug]
             ?? Str::headline(str_replace('-', ' ', $slug));
     }
@@ -83,16 +63,16 @@ class BrokerListingFilter
             return self::hasPlatform($broker, $slug);
         }
 
-        $categories = $broker->brokerCategoryList();
-        $regions = $broker->regionList();
-        $countries = self::normalizeList($broker->associated_countries);
-
-        if (in_array($slug, $categories, true) || in_array($slug, $regions, true) || in_array($slug, $countries, true)) {
-            return true;
+        if (isset(BrokerTaxonomy::countriesWithFlags()[$slug])
+            || isset(BrokerTaxonomy::headquartersCountryCatalog()[$slug])) {
+            return self::isAvailableInCountry($broker, $slug);
         }
 
-        if (isset(BrokerTaxonomy::countriesWithFlags()[$slug])) {
-            return self::matchesCountry($broker, $slug, $regions, $countries);
+        $categories = $broker->brokerCategoryList();
+        $regions = $broker->regionList();
+
+        if (in_array($slug, $categories, true) || in_array($slug, $regions, true)) {
+            return true;
         }
 
         // Category tags are only filled in on a handful of rows, so fall back to the
@@ -101,7 +81,36 @@ class BrokerListingFilter
             return BrokerCategorySignals::derivedMatch($broker, $slug);
         }
 
-        return false;
+        if (isset(BrokerTaxonomy::regions()[$slug]) || isset(BrokerTaxonomy::categories()[$slug])) {
+            return false;
+        }
+
+        return self::isAvailableInCountry($broker, $slug);
+    }
+
+    /**
+     * Trader-country availability: associated_countries contains the slug, or HQ country matches.
+     * Region tags are ignored. Scam brokers never match a specific market.
+     */
+    public static function isAvailableInCountry(Broker $broker, string $slug): bool
+    {
+        if ($slug === 'global') {
+            return ! $broker->is_scam;
+        }
+
+        if ($broker->is_scam) {
+            return false;
+        }
+
+        foreach (JsonList::normalize($broker->associated_countries) as $value) {
+            if (self::associatedValueMatchesCountry((string) $value, $slug)) {
+                return true;
+            }
+        }
+
+        $canonical = BrokerTaxonomy::canonicalFromHeadquarters((string) ($broker->country ?? ''));
+
+        return $canonical !== null && $canonical['slug'] === $slug;
     }
 
     /** Was this broker tagged for the slug in the admin, rather than matched from its data? */
@@ -183,25 +192,40 @@ class BrokerListingFilter
         return $fromField;
     }
 
-    /** @param  array<int, string>|null  $associatedCountries */
-    private static function matchesCountry(Broker $broker, string $slug, array $regions, array $associatedCountries): bool
+    private static function associatedValueMatchesCountry(string $value, string $slug): bool
     {
-        $countryName = BrokerTaxonomy::countriesWithFlags()[$slug]['name'] ?? null;
+        $value = trim($value);
+        if ($value === '') {
+            return false;
+        }
 
-        if ($countryName && Str::lower((string) $broker->country) === Str::lower($countryName)) {
+        $normalized = Str::slug($value);
+        if ($normalized === $slug) {
             return true;
         }
 
-        foreach (self::COUNTRY_REGION_MAP[$slug] ?? [] as $region) {
-            if (in_array($region, $regions, true)) {
+        foreach (BrokerTaxonomy::countryMatchNames($slug) as $name) {
+            if (Str::lower($value) === Str::lower($name) || Str::slug($name) === $normalized) {
                 return true;
             }
         }
 
-        foreach ($associatedCountries as $value) {
-            $normalized = Str::slug($value);
+        return false;
+    }
 
-            if ($normalized === $slug || Str::contains(Str::lower($value), Str::lower($countryName ?? ''))) {
+    private static function headquartersMatchesCountry(string $country, string $slug): bool
+    {
+        $hq = Str::lower(trim($country));
+        if ($hq === '') {
+            return false;
+        }
+
+        if (Str::slug($country) === $slug) {
+            return true;
+        }
+
+        foreach (BrokerTaxonomy::countryMatchNames($slug) as $name) {
+            if ($hq === Str::lower($name)) {
                 return true;
             }
         }

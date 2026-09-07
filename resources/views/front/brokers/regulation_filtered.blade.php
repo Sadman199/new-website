@@ -1,5 +1,7 @@
 @extends('front.layout.app')
 @section('title', 'BrokersCourt | Brokers Regulated by ' . $regulator)
+@section('meta_description', 'Compare forex brokers regulated by ' . $regulator . '. Check licences, safety scores, and trading conditions on BrokersCourt.')
+@section('canonical', url()->current())
 @section('main_content')
 
 {{-- Hero Section with Breadcrumb --}}

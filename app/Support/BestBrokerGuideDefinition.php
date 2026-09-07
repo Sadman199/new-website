@@ -101,6 +101,23 @@ class BestBrokerGuideDefinition
         }
 
         $label = BrokerListingFilter::labelFor($slug);
+
+        return self::makeGuide($type, $slug, $label);
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public static function forCountry(string $slug, string $label): array
+    {
+        return self::makeGuide('country', $slug, $label);
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private static function makeGuide(string $type, string $slug, string $label): array
+    {
         $explainer = self::EXPLAINERS[$slug] ?? self::genericExplainer($type, $label);
         $customDescription = \App\Models\BrokerTaxonomyTerm::descriptionFor($type, $slug);
         $customPlain = \App\Support\RichText::toPlainText($customDescription);

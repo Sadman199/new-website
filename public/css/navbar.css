@@ -314,7 +314,12 @@
         margin: 0 auto;
         padding: 20px 24px 18px;
     }
-    #brokersMegaMenu .bc-mega-grid,
+    #brokersMegaMenu .bc-mega-grid {
+        display: grid;
+        grid-template-columns: 1.12fr 1.18fr 1.08fr;
+        gap: 12px;
+        align-items: stretch;
+    }
     #propFirmsMegaMenu .bc-mega-grid {
         display: grid;
         grid-template-columns: 1.2fr 1fr 0.85fr 0.9fr;
@@ -325,9 +330,13 @@
         background: var(--nav-menu-bg);
         border: 1px solid var(--nav-menu-border);
         border-radius: 16px;
-        padding: 18px 16px;
+        padding: 16px 14px;
         box-shadow: none;
         min-width: 0;
+    }
+    #brokersMegaMenu .bc-glass-card {
+        display: flex;
+        flex-direction: column;
     }
     #brokersMegaMenu .bc-mega-icon,
     #propFirmsMegaMenu .bc-mega-icon {
@@ -369,6 +378,13 @@
         flex-wrap: wrap;
         gap: 7px;
     }
+    #brokersMegaMenu .bc-chip-wrap {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 6px;
+        flex: 1 1 auto;
+        align-content: start;
+    }
     #brokersMegaMenu .bc-chip-link,
     #propFirmsMegaMenu .bc-chip-link,
     #reviewsMegaMenu .bc-chip-link {
@@ -385,6 +401,16 @@
         text-decoration: none;
         transition: all 0.2s ease;
         white-space: nowrap;
+    }
+    #brokersMegaMenu .bc-chip-link {
+        width: 100%;
+        min-width: 0;
+        justify-content: flex-start;
+        white-space: normal;
+        line-height: 1.3;
+        padding: 7px 10px;
+        font-size: 12px;
+        border-radius: 10px;
     }
     #brokersMegaMenu .bc-chip-flag,
     #reviewsMegaMenu .bc-chip-flag {
@@ -425,6 +451,30 @@
         grid-template-columns: 1fr 1fr;
         gap: 4px 10px;
     }
+    #brokersMegaMenu .bc-glass-card--countries .bc-chip-wrap {
+        flex: 1 1 auto;
+        align-content: stretch;
+        gap: 7px;
+    }
+    #brokersMegaMenu .bc-glass-card--countries .bc-chip-link {
+        padding: 8px 11px;
+        min-height: 38px;
+    }
+    #brokersMegaMenu .bc-mega-col-more {
+        display: inline-flex;
+        align-items: center;
+        margin-top: auto;
+        padding-top: 12px;
+        font-size: 12.5px;
+        font-weight: 600;
+        color: var(--nav-orange);
+        text-decoration: none;
+        line-height: 1.2;
+    }
+    #brokersMegaMenu .bc-mega-col-more:hover {
+        color: var(--nav-orange);
+        text-decoration: underline;
+    }
     #brokersMegaMenu .bc-link-list .bc-mega-link,
     #propFirmsMegaMenu .bc-link-list .bc-mega-link {
         padding: 6px 8px;
@@ -451,6 +501,10 @@
         border-radius: 12px;
         background: var(--nav-menu-surface);
         border: 1px solid var(--nav-menu-border);
+    }
+    #brokersMegaMenu .bc-broker-row:last-child,
+    #brokersMegaMenu .bc-broker-row:has(+ .bc-mega-col-more) {
+        margin-bottom: 0;
     }
     #brokersMegaMenu .bc-broker-row:hover,
     #propFirmsMegaMenu .bc-broker-row:hover {
@@ -512,7 +566,9 @@
         #propFirmsMegaMenu .bc-mega-grid {
             grid-template-columns: 1fr 1fr;
         }
-        #brokersMegaMenu .bc-glass-card:first-child,
+        #brokersMegaMenu .bc-glass-card--countries {
+            grid-column: 1 / -1;
+        }
         #propFirmsMegaMenu .bc-glass-card:first-child {
             grid-column: 1 / -1;
         }
@@ -954,6 +1010,63 @@
         margin-top: 10px;
         padding-top: 8px;
         border-top: 1px solid var(--nav-menu-border);
+        width: 100%;
+    }
+    .bc-review-link {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        min-width: 0;
+        padding: 6px 8px;
+        border-radius: 10px;
+        text-decoration: none;
+        color: var(--nav-menu-text);
+        background: var(--nav-menu-surface);
+        border: 1px solid var(--nav-menu-border);
+        font-size: 12.5px;
+        font-weight: 500;
+        line-height: 1.25;
+        transition: background 0.15s ease, border-color 0.15s ease;
+    }
+    .bc-review-link:hover {
+        color: var(--nav-menu-text);
+        background: var(--nav-menu-hover);
+        border-color: rgba(232, 130, 42, 0.35);
+    }
+    .bc-review-link__logo {
+        width: 28px;
+        height: 28px;
+        border-radius: 8px;
+        background: #fff;
+        border: 1px solid var(--nav-menu-border);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        flex-shrink: 0;
+    }
+    .bc-review-link__logo-img {
+        width: 22px;
+        height: 22px;
+        object-fit: contain;
+    }
+    .bc-review-link__name {
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+    #reviewsMegaMenu .bc-review-link-list {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        min-width: 16rem;
+    }
+    #reviewsMegaMenu .bc-reviews-mega-grid {
+        grid-template-columns: minmax(16rem, 19rem) minmax(11rem, 15rem);
+    }
+    .bc-review-link--mobile {
+        margin: 0 0 6px;
         width: 100%;
     }
     @media (max-width: 1023px) {

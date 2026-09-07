@@ -1,5 +1,6 @@
 @extends('front.layout.app')
 @section('title', $page_title)
+@section('meta_description', 'Compare ' . strtolower($promo_type ?? 'broker') . ' promotions, bonuses, and current trading offers. Check terms, expiry, and eligibility on BrokersCourt.')
 @section('canonical', url()->current())
 @section('main_content')
 <section class="bg-white py-8 border-b">

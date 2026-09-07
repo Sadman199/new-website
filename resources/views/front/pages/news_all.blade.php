@@ -1,9 +1,10 @@
 @extends('front.layout.app')
 @section('title', $section_title . ' | Expert Forex Coverage | BrokersCourt')
 @section('meta_description', 'Dive into ' . strtolower($section_title) . ' and stay updated with the most insightful articles and forex trends on BrokersCourt.')
+@section('canonical', url()->current())
 
 @push('page-styles')
-    <link rel="stylesheet" href="{{ asset('css/blog-listing.css') }}?v=2">
+    <link rel="stylesheet" href="{{ asset('css/blog-listing.css') }}?v=3">
 @endpush
 
 @section('main_content')

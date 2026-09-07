@@ -1,4 +1,4 @@
-/* Country selection (homepage) + targeted brokers strip — brand theme vars */
+﻿/* Country selection (homepage) + targeted brokers strip — brand theme vars */
 .bc-country-section {
     padding: 3rem 0;
     background: linear-gradient(180deg, #fff 0%, rgba(var(--bc-light-rgb, 217, 226, 233), 0.35) 100%);
@@ -59,6 +59,12 @@
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 0.625rem;
+}
+
+@media (max-width: 479px) {
+    .bc-country-section__grid {
+        grid-template-columns: 1fr;
+    }
 }
 
 .bc-country-section__sidebar {
@@ -280,6 +286,12 @@
     background: rgba(var(--bc-light-rgb, 217, 226, 233), 0.25);
 }
 
+.bc-country-mini__lead {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
 .bc-country-mini__rank {
     font-size: 0.75rem;
     font-weight: 800;
@@ -425,6 +437,7 @@
 
 .bc-country-strip__actions {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
     gap: 0.75rem;
 }

@@ -1,12 +1,6 @@
 @php
     $stats = $homeStats ?? [];
     $brokersTotal = (int) ($stats['total'] ?? $brokerCount ?? 0);
-    $regulatedTotal = (int) ($stats['regulated'] ?? 0);
-    $reviewsTotal = (int) ($stats['reviews'] ?? 0);
-    $avgRating = \App\Support\BrokerRating::outOfFive($stats['avg_rating'] ?? 0) ?? 0;
-    $propFirmsTotal = (int) ($stats['prop_firms'] ?? 0);
-    $demoTotal = (int) ($stats['with_demo'] ?? 0);
-    $ratingPct = max(8, (int) round(\App\Support\BrokerRating::percent($stats['avg_rating'] ?? 0)));
 @endphp
 
 <section class="bc-hero" id="hero">
@@ -75,16 +69,16 @@
                     <div class="bc-hero-carousel__tilt">
                         <div class="bc-hero-carousel__ring">
                             <div class="bc-hero-card bc-hero-card--lg" style="--a: 0deg;">
-                                <p class="bc-hero-card__label">Brokers listed</p>
-                                <p class="bc-hero-card__value">{{ number_format($brokersTotal) }}</p>
+                                <p class="bc-hero-card__value">Regulated</p>
+                                <p class="bc-hero-card__label">Licensed &amp; Verified</p>
                                 <svg class="bc-hero-card__chart" viewBox="0 0 200 64" fill="none" preserveAspectRatio="none">
                                     <path d="M4 52 C28 18, 48 58, 74 38 S120 8, 146 30 182 16, 196 24" stroke="#e8822a" stroke-width="4" stroke-linecap="round"/>
                                 </svg>
                             </div>
 
                             <div class="bc-hero-card bc-hero-card--lg" style="--a: 90deg;">
-                                <p class="bc-hero-card__label">Regulated brokers</p>
-                                <p class="bc-hero-card__value">{{ number_format($regulatedTotal) }}</p>
+                                <p class="bc-hero-card__value">Reviews</p>
+                                <p class="bc-hero-card__label">Real Trader Insights</p>
                                 <div class="bc-hero-card__bars">
                                     <span style="height:45%"></span>
                                     <span style="height:70%"></span>
@@ -94,16 +88,16 @@
                             </div>
 
                             <div class="bc-hero-card bc-hero-card--lg" style="--a: 180deg;">
-                                <p class="bc-hero-card__label">Reviews published</p>
-                                <p class="bc-hero-card__value">{{ number_format($reviewsTotal) }}</p>
+                                <p class="bc-hero-card__value">Trading Conditions</p>
+                                <p class="bc-hero-card__label">Clear &amp; Transparent</p>
                                 <svg class="bc-hero-card__chart" viewBox="0 0 200 64" fill="none" preserveAspectRatio="none">
                                     <path d="M4 42 C30 56, 52 12, 84 28 S138 56, 162 26 188 38, 196 32" stroke="#f5a623" stroke-width="4" stroke-linecap="round"/>
                                 </svg>
                             </div>
 
                             <div class="bc-hero-card bc-hero-card--lg" style="--a: 270deg;">
-                                <p class="bc-hero-card__label">Avg. broker rating</p>
-                                <p class="bc-hero-card__value">{{ number_format($avgRating, 1) }}/5</p>
+                                <p class="bc-hero-card__value">Research</p>
+                                <p class="bc-hero-card__label">Independent &amp; Unbiased</p>
                                 <div class="bc-hero-card__bars">
                                     <span style="height:60%"></span>
                                     <span style="height:40%"></span>
@@ -113,7 +107,7 @@
                             </div>
 
                             <div class="bc-hero-card bc-hero-card--sm bc-hero-card--row" style="--a: 45deg;">
-                                <div class="bc-hero-card__donut" style="--pct: {{ $ratingPct }}%;"></div>
+                                <div class="bc-hero-card__donut" style="--pct: 68%;"></div>
                                 <div class="bc-hero-card__lines">
                                     <span class="bc-hero-card__line bc-hero-card__line--accent"></span>
                                     <span class="bc-hero-card__line" style="width:75%"></span>

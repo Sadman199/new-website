@@ -3,8 +3,9 @@
 namespace App\Services;
 
 use App\Models\Broker;
-use Illuminate\Support\Collection;
+use App\Support\BrokerListingFilter;
 use App\Support\BrokerTaxonomy;
+use Illuminate\Support\Collection;
 
 class BrokerPopularityService
 {
@@ -45,16 +46,19 @@ class BrokerPopularityService
             return $this->globalRecommended($reviewCounts);
         }
 
-        $countryService = app(CountryBrokersService::class);
-        if (! isset(BrokerTaxonomy::countriesWithFlags()[$countrySlug])) {
+        if (! isset(BrokerTaxonomy::countriesWithFlags()[$countrySlug])
+            && ! isset(BrokerTaxonomy::headquartersCountryCatalog()[$countrySlug])) {
             return $this->globalRecommended($reviewCounts);
         }
 
-        $countryBrokers = $countryService->headquartersQueryForSlug($countrySlug)
-            ->orderByDesc('top_broker')
-            ->orderByDesc('rating')
+        $countryBrokers = BrokerListingFilter::brokersFor($countrySlug)
+            ->sort(function (Broker $left, Broker $right) {
+                $rank = (int) $right->top_broker <=> (int) $left->top_broker;
+
+                return $rank !== 0 ? $rank : ((float) $right->rating <=> (float) $left->rating);
+            })
             ->take(self::RECOMMENDED_SIZE)
-            ->get();
+            ->values();
 
         if ($countryBrokers->isNotEmpty()) {
             return $countryBrokers->values()->map(fn (Broker $broker, int $index) => $this->formatBroker(

@@ -9,7 +9,7 @@ $countryShortcode = $preferredCountry['shortcode'] ?? BrokerTaxonomy::countrySho
     $preferredCountry['code'] ?? null
 );
 
-$popularReviewBrokers = ($popularReviewBrokers ?? collect())->take(10);
+$popularReviewBrokers = ($popularReviewBrokers ?? collect())->take(7);
 @endphp
 
 <nav class="fixed top-0 inset-x-0" id="navbar">
@@ -46,11 +46,11 @@ $popularReviewBrokers = ($popularReviewBrokers ?? collect())->take(10);
                             <div class="bc-reviews-mega-grid">
                                 <div class="bc-reviews-mega-col">
                                     <p class="bc-mega-title">Popular reviews</p>
-                                    <div class="bc-link-list">
+                                    <div class="bc-review-link-list">
                                         @forelse($popularReviewBrokers as $broker)
-                                            <a href="{{ route('broker_detail', ['slug' => BrokerController::reviewSlugFor($broker)]) }}" class="bc-mega-link">{{ $broker->name }} Review</a>
+                                            @include('front.layout.partial.mega-review-link', ['broker' => $broker])
                                         @empty
-                                            <a href="{{ route('broker.reviews.index') }}" class="bc-mega-link">Browse all reviews</a>
+                                            <a href="{{ route('broker.reviews.index') }}" class="bc-review-link">Browse all reviews</a>
                                         @endforelse
                                     </div>
                                 </div>
@@ -212,7 +212,7 @@ $popularReviewBrokers = ($popularReviewBrokers ?? collect())->take(10);
                         </span>
                         <p class="bc-mega-title">Top rated brokers</p>
                     </div>
-                    @foreach($topRatedBrokers->take(5) as $index => $broker)
+                    @foreach($topRatedBrokers->take(6) as $index => $broker)
                         <a href="{{ route('broker_detail', ['slug' => BrokerController::reviewSlugFor($broker)]) }}" class="bc-broker-row">
                             <span class="bc-broker-rank">{{ $index + 1 }}</span>
                             <div class="bc-broker-row__logo">
@@ -222,6 +222,7 @@ $popularReviewBrokers = ($popularReviewBrokers ?? collect())->take(10);
                             <span class="bc-score">★ {{ number_format($broker->rating, 1) }}</span>
                         </a>
                     @endforeach
+                    <a href="{{ route('brokers.top.index') }}" class="bc-mega-col-more">See all rankings →</a>
                 </div>
 
                 <div class="bc-glass-card">
@@ -236,14 +237,15 @@ $popularReviewBrokers = ($popularReviewBrokers ?? collect())->take(10);
                             <a href="{{ route('brokers.best', ['slug' => $slug]) }}" class="bc-chip-link">{{ $name }}</a>
                         @endforeach
                     </div>
+                    <a href="{{ route('brokers.best.index') }}" class="bc-mega-col-more">View all categories →</a>
                 </div>
 
-                <div class="bc-glass-card">
+                <div class="bc-glass-card bc-glass-card--countries">
                     <div class="bc-mega-head">
                         <span class="bc-mega-icon">
                             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                         </span>
-                        <p class="bc-mega-title">By country</p>
+                        <p class="bc-mega-title">By country &amp; region</p>
                     </div>
                     <div class="bc-chip-wrap">
                         @foreach($listedCountries as $slug => $country)
@@ -254,29 +256,21 @@ $popularReviewBrokers = ($popularReviewBrokers ?? collect())->take(10);
                                 {{ $country['name'] }}
                             </a>
                         @endforeach
-                    </div>
-                </div>
-
-                <div class="bc-glass-card">
-                    <div class="bc-mega-head">
-                        <span class="bc-mega-icon">
-                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-                        </span>
-                        <p class="bc-mega-title">Popular reviews</p>
-                    </div>
-                    <div class="bc-link-list">
-                        @forelse($popularReviewBrokers->take(6) as $broker)
-                            <a href="{{ route('broker_detail', ['slug' => BrokerController::reviewSlugFor($broker)]) }}" class="bc-mega-link">{{ $broker->name }} Review</a>
-                        @empty
-                            <a href="{{ route('broker.reviews.index') }}" class="bc-mega-link">Browse all reviews</a>
-                        @endforelse
+                        @foreach($listedRegions as $slug => $region)
+                            @continue(isset($listedCountries[$slug]))
+                            <a href="{{ route('brokers.best', ['slug' => $slug]) }}" class="bc-chip-link">
+                                <span class="bc-chip-flag">
+                                    @include('front.layout.partial.country-flag', ['country' => array_merge($region, ['slug' => $slug]), 'width' => 18, 'height' => 13])
+                                </span>
+                                {{ $region['name'] }}
+                            </a>
+                        @endforeach
                     </div>
                 </div>
             </div>
             <div class="bc-mega-bottom">
                 <p>Independent comparisons — find your ideal broker in seconds.</p>
                 <div class="bc-mega-bottom__actions">
-                    <a href="{{ route('brokers.top.index') }}" class="bc-mega-footer" style="margin:0;padding:0;border:none;">Top brokers →</a>
                     <a href="{{ route('promotions.index') }}" class="bc-mega-footer" style="margin:0;padding:0;border:none;">Broker promos →</a>
                     <a href="{{ route('methodology') }}" class="bc-mega-footer" style="margin:0;padding:0;border:none;">Our methodology →</a>
                     <a href="{{ route('brokers.best.index') }}" class="bc-btn-primary">Explore all brokers</a>
@@ -330,7 +324,7 @@ $popularReviewBrokers = ($popularReviewBrokers ?? collect())->take(10);
                         <div>
                             <p class="bc-mobile-subtitle">Popular reviews</p>
                             @forelse($popularReviewBrokers as $broker)
-                                <a href="{{ route('broker_detail', ['slug' => BrokerController::reviewSlugFor($broker)]) }}" class="bc-mobile-nav-link bc-mobile-nav-link--child">{{ $broker->name }} Review</a>
+                                @include('front.layout.partial.mega-review-link', ['broker' => $broker, 'class' => 'bc-review-link bc-review-link--mobile'])
                             @empty
                                 <a href="{{ route('broker.reviews.index') }}" class="bc-mobile-nav-link bc-mobile-nav-link--child">Browse all reviews</a>
                             @endforelse

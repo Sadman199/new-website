@@ -10,7 +10,7 @@
 @push('page-styles')
     <link rel="stylesheet" href="{{ asset('css/best-broker-guide.css') }}?v=13">
     <link rel="stylesheet" href="{{ asset('css/best-guide.css') }}?v=26">
-    <link rel="stylesheet" href="{{ asset('css/broker-review.css') }}?v=34">
+    <link rel="stylesheet" href="{{ asset('css/broker-review.css') }}?v=35">
     <link rel="stylesheet" href="{{ asset('css/broker-alternatives-cta.css') }}?v=4">
 @endpush
 

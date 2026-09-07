@@ -21,6 +21,7 @@
         $seoRobots = trim($__env->yieldContent('robots')) ?: 'index, follow';
         $seoSiteName = \App\Support\SiteTheme::siteName();
         $seoLocale = trim($__env->yieldContent('og_locale')) ?: 'en_GB';
+        $seoOgImageAlt = trim($__env->yieldContent('og_image_alt')) ?: $seoOgTitle;
     @endphp
 
     <!-- SEO Meta Tags -->
@@ -31,7 +32,13 @@
     <meta name="author" content="{{ $seoSiteName }}">
     <meta name="robots" content="{{ $seoRobots }}">
     <meta name="theme-color" content="{{ \App\Support\SiteTheme::primary() }}">
+    <meta name="color-scheme" content="light">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="referrer" content="strict-origin-when-cross-origin">
     <link rel="canonical" href="{{ $seoCanonical }}">
+    <link rel="alternate" hreflang="en" href="{{ $seoCanonical }}">
+    <link rel="alternate" hreflang="x-default" href="{{ $seoCanonical }}">
+    <link rel="sitemap" type="application/xml" title="Sitemap" href="{{ url('/sitemap.xml') }}">
 
     <title>{{ $seoTitle }}</title>
 
@@ -50,7 +57,8 @@
     <meta property="og:title" content="{{ $seoOgTitle }}">
     <meta property="og:description" content="{{ $seoOgDescription }}">
     <meta property="og:image" content="{{ $seoOgImage }}">
-    <meta property="og:image:alt" content="{{ $seoOgTitle }}">
+    <meta property="og:image:alt" content="{{ $seoOgImageAlt }}">
+    <meta property="og:image:type" content="image/png">
     @if($seoOgImageWidth)
         <meta property="og:image:width" content="{{ $seoOgImageWidth }}">
     @endif
@@ -65,11 +73,14 @@
     <meta name="twitter:title" content="{{ $seoOgTitle }}">
     <meta name="twitter:description" content="{{ $seoOgDescription }}">
     <meta name="twitter:image" content="{{ $seoOgImage }}">
+    <meta name="twitter:image:alt" content="{{ $seoOgImageAlt }}">
 
     <script type="application/ld+json">@json(\App\Support\SiteJsonLd::globalGraph())</script>
+    <script type="application/ld+json">@json(\App\Support\SiteJsonLd::webPage($seoCanonical, $seoTitle, $seoDescription))</script>
     @stack('json_ld')
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="{{ \App\Support\SiteTheme::faviconUrl() }}">
+    <link rel="apple-touch-icon" href="{{ \App\Support\SiteTheme::faviconUrl() }}">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -85,9 +96,10 @@
     @include('front.layout.styles')
     @include('front.layout.scripts')
     @if($showCountryBrokersStrip ?? false)
-        <link rel="stylesheet" href="{{ asset('css/country-brokers.css') }}?v=5">
+        <link rel="stylesheet" href="{{ asset('css/country-brokers.css') }}?v=10">
     @endif
     @stack('page-styles')
+    <link rel="stylesheet" href="{{ asset('css/site-responsive.css') }}?v=7" data-bc-global>
     <script src="{{ asset('js/bc-nav-optimizer.js') }}?v=4" defer></script>
 </head>
 
@@ -95,6 +107,7 @@
 <body data-bc-nav="prefetch" @auth('web') data-user-auth="1" data-saved-sync-url="{{ route('user.saved_brokers.sync') }}" data-saved-index-url="{{ route('user.saved_brokers.index') }}" @endauth>
     <!-- Google Tag Manager (noscript) -->
     <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-W3MTNWPW" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <a class="bc-skip-link" href="#bc-page-root">Skip to main content</a>
     <div id="bc-nav-progress" aria-hidden="true"><div id="bc-nav-progress__bar"></div></div>
     <div id="bc-nav-veil" aria-hidden="true"></div>
 

@@ -33,7 +33,7 @@
 .bpd-hero {
     background: #ffffff;
     border-bottom: 1px solid #e2e8f0;
-    padding: 5.5rem 0 2rem;
+    padding: calc(var(--bc-nav-height, 5.5rem) + 1.25rem) 0 2rem;
     margin-bottom: 1.5rem;
     background-image: none;
 }

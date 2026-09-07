@@ -1,7 +1,7 @@
 /* About page — light theme */
 .abt-page {
     min-height: 100vh;
-    padding: 5.5rem 0 3rem;
+    padding: calc(var(--bc-nav-height, 5.5rem) + 1.75rem) 0 3rem;
     background: #f4f6f9;
     color: #334155;
 }

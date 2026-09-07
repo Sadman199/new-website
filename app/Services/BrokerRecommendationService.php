@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Broker;
+use App\Support\BrokerListingFilter;
 use App\Support\BrokerMatchQuiz;
 use App\Support\BrokerTaxonomy;
 use App\Support\FindMyBrokerFilters;
@@ -397,23 +398,7 @@ class BrokerRecommendationService
 
     protected function matchesCountry(Broker $broker, string $slug): bool
     {
-        if ($slug === 'global') {
-            return true;
-        }
-
-        $haystacks = [
-            json_encode($broker->associated_countries ?? []),
-            (string) $broker->country,
-            (string) $broker->regions,
-        ];
-
-        foreach ($haystacks as $haystack) {
-            if (stripos($haystack, $slug) !== false || stripos($haystack, str_replace('-', ' ', $slug)) !== false) {
-                return true;
-            }
-        }
-
-        return false;
+        return BrokerListingFilter::isAvailableInCountry($broker, $slug);
     }
 
     /** @param  array<int, string>  $terms */

@@ -2,6 +2,7 @@
 
 namespace App\Support;
 
+use App\Services\CountryBrokersService;
 use Illuminate\Http\Request;
 
 class CountryBrokersPlacement
@@ -54,7 +55,7 @@ class CountryBrokersPlacement
             return false;
         }
 
-        $slug = BrokerTaxonomy::resolvePreferredCountry()['slug'] ?? 'global';
+        $slug = app(CountryBrokersService::class)->resolvePreferredCountry()['slug'] ?? 'global';
 
         if ($slug === 'global') {
             return false;
