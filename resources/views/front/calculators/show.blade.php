@@ -7,7 +7,7 @@
 @section('og_description', $seo['og_description'])
 
 @push('page-styles')
-    <link rel="stylesheet" href="{{ asset('css/calculators.css') }}?v=7">
+    <link rel="stylesheet" href="{{ asset('css/calculators.css') }}?v=10">
 @endpush
 
 @push('json_ld')
@@ -20,7 +20,8 @@
 @endphp
 <div class="calc-page calc-page--detail">
     <header class="calc-hero calc-hero--detail">
-        <div class="container">
+        <div class="calc-hero__bg" aria-hidden="true"></div>
+        <div class="calc-wrap">
             <nav class="calc-breadcrumb" aria-label="Breadcrumb">
                 <a href="{{ route('home') }}">Home</a>
                 <span aria-hidden="true">/</span>
@@ -49,7 +50,7 @@
         </div>
     </header>
 
-    <div class="container calc-main calc-main--detail">
+    <div class="calc-wrap calc-main calc-main--detail">
         <div class="calc-detail__layout">
             <div class="calc-detail__workspace">
                 <div class="calc-detail__card calc-tool"

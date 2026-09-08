@@ -5,7 +5,7 @@
 @section('canonical', route('broker.alternatives.index'))
 
 @push('page-styles')
-    <link rel="stylesheet" href="{{ asset('css/broker-alternatives.css') }}?v=1">
+    <link rel="stylesheet" href="{{ asset('css/broker-alternatives.css') }}?v=4">
 @endpush
 
 @section('main_content')

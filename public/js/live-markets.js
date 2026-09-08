@@ -1,12 +1,20 @@
 (function () {
     'use strict';
 
-    var THEME = {
-        colorTheme: 'light',
-        isTransparent: true,
-        locale: 'en',
-        backgroundColor: '#ffffff',
-    };
+    var isCalcDark = !!document.querySelector('.calc-page');
+    var THEME = isCalcDark
+        ? {
+            colorTheme: 'dark',
+            isTransparent: true,
+            locale: 'en',
+            backgroundColor: '#0b0d12',
+        }
+        : {
+            colorTheme: 'light',
+            isTransparent: true,
+            locale: 'en',
+            backgroundColor: '#ffffff',
+        };
 
     var WIDGETS = {
         ticker: {

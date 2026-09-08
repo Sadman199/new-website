@@ -7,8 +7,8 @@
 @section('og_description', $seo['og_description'] ?? ($seo['description'] ?? ''))
 
 @push('page-styles')
-    <link rel="stylesheet" href="{{ asset('css/calculators.css') }}?v=6">
-    <link rel="stylesheet" href="{{ asset('css/live-markets.css') }}?v=4">
+    <link rel="stylesheet" href="{{ asset('css/calculators.css') }}?v=10">
+    <link rel="stylesheet" href="{{ asset('css/live-markets.css') }}?v=5">
 @endpush
 
 @if(! empty($jsonLd))
@@ -24,7 +24,8 @@
 @endphp
 <div class="calc-page calc-page--detail calc-page--markets">
     <header class="calc-hero calc-hero--detail">
-        <div class="container">
+        <div class="calc-hero__bg" aria-hidden="true"></div>
+        <div class="calc-wrap">
             <nav class="calc-breadcrumb" aria-label="Breadcrumb">
                 <a href="{{ route('home') }}">Home</a>
                 <span aria-hidden="true">/</span>
@@ -51,7 +52,7 @@
         </div>
     </header>
 
-    <div class="container calc-main">
+    <div class="calc-wrap calc-main calc-main--detail">
         <div class="row g-4 g-xl-5">
             <div class="col-lg-8">
                 <div class="calc-markets" id="bcMarketsAppRoot">
@@ -123,19 +124,10 @@
             Market data is provided by TradingView for informational purposes. Rates and calendar events are
             indicative — verify with your broker before trading.
         </p>
-
-        <x-broker-slider
-            :brokers="$topRatedBrokers ?? collect()"
-            section-id="top-rated-brokers"
-            title="Top Rated Brokers"
-            lead="Compare highly rated brokers while monitoring live market conditions."
-            :view-all-url="route('broker.reviews.index')"
-            :compact="true"
-            class="calc-brokers calc-brokers--footer" />
     </div>
 </div>
 @endsection
 
 @push('scripts')
-<script src="{{ asset('js/live-markets.js') }}?v=2" defer></script>
+<script src="{{ asset('js/live-markets.js') }}?v=3" defer></script>
 @endpush

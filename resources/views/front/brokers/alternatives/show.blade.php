@@ -6,7 +6,7 @@
 @section('og_image', $broker->ogShareImageUrl())
 
 @push('page-styles')
-    <link rel="stylesheet" href="{{ asset('css/broker-alternatives.css') }}?v=1">
+    <link rel="stylesheet" href="{{ asset('css/broker-alternatives.css') }}?v=4">
 @endpush
 
 @push('json_ld')
@@ -67,7 +67,10 @@
             @else
                 <div class="bal-card-list">
                     @foreach($alternatives as $alternative)
-                        <x-broker.card :broker="$alternative" :rank="$loop->iteration" />
+                        @include('front.brokers.alternatives.partials.alt_card', [
+                            'broker' => $alternative,
+                            'rank' => $loop->iteration,
+                        ])
                     @endforeach
                 </div>
             @endif

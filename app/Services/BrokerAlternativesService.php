@@ -84,7 +84,10 @@ class BrokerAlternativesService
         $resolved = $this->resolveAlternatives($page);
         $alternatives = $resolved['brokers'];
         $compared = collect([$broker])->concat($alternatives)->values();
-        $compared->each(fn (Broker $item) => $item->loadMissing('forexBonuses'));
+        $compared->each(function (Broker $item) {
+            $item->loadMissing('forexBonuses');
+            $item->loadCount(['reviews as approved_review_count' => fn ($q) => $q->where('status', 1)]);
+        });
         $serialized = $compared->mapWithKeys(
             fn (Broker $item) => [$item->id => app(BrokerComparisonService::class)->serializeBroker($item)]
         );
