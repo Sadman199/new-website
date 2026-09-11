@@ -28,3 +28,21 @@ yarn-error.log
 
 # Stray logs / one-off artifacts
 error_log
+**/error_log
+*.bak
+*.bak-*
+*.blade.txt
+
+# Root-level one-off probes / patch scripts (never ship)
+/_probe.php
+/_patch*.py
+/_write*.py
+/_shots/
+/tools/
+/js/
+
+# Duplicate upload tree (canonical path is public/uploads/)
+/uploads/
+
+# Accidental nested Laravel copy
+/database/database/
